@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct DonDog_iOSApp: App {
+    
     var body: some Scene {
         WindowGroup {
-            AuthView()
+            let factory = ModuleFactory.shared
+            let coordinator = AppCoordinator(factory: factory)
+            RootNavigationView(coordinator: coordinator)
         }
     }
 }

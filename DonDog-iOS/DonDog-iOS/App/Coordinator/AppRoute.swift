@@ -5,14 +5,11 @@
 //  Created by 조유진 on 10/3/25.
 //
 
-import SwiftUI
+import Foundation
 
-struct AppRoute: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
-#Preview {
-    AppRoute()
+enum AppRoute: Hashable {
+    case auth
+    case invite
+    case camera
+    case feed
 }

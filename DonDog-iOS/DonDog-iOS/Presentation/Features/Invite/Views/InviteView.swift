@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct InviteView: View {
+    @EnvironmentObject var coordinator: AppCoordinator
+    @StateObject var viewModel: InviteViewModel
+    
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    InviteView()
+    InviteView(viewModel: InviteViewModel())
 }

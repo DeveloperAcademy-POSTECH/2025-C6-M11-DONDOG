@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct FeedView: View {
+    @EnvironmentObject var coordinator: AppCoordinator
+    @StateObject var viewModel: FeedViewModel
+    
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    FeedView()
+    FeedView(viewModel: FeedViewModel())
 }

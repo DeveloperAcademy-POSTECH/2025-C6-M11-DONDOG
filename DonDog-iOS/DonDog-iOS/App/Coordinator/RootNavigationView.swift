@@ -8,11 +8,19 @@
 import SwiftUI
 
 struct RootNavigationView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+    @StateObject var coordinator: AppCoordinator
+    
+    init(coordinator: AppCoordinator) {
+        self._coordinator = StateObject(wrappedValue: coordinator)
     }
-}
-
-#Preview {
-    RootNavigationView()
+    
+    var body: some View {
+        NavigationStack(path: $coordinator.path) {
+            coordinator.build(.auth)
+                .navigationDestination(for: AppRoute.self) { route in
+                    coordinator.build(route)
+                }
+                .environmentObject(coordinator)
+        }
+    }
 }

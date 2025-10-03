@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct CameraView: View {
+    @EnvironmentObject var coordinator: AppCoordinator
+    @StateObject var viewModel: CameraViewModel
+    
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    CameraView()
+    CameraView(viewModel: CameraViewModel())
 }

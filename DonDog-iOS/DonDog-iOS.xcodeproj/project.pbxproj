@@ -1,0 +1,552 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */; };
+		CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */; };
+		CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */; };
+		CAA9AED92E8FC15C0047A89A /* DonDog_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBD2E8FC15C0047A89A /* DonDog_iOSApp.swift */; };
+		CAA9AEDA2E8FC15C0047A89A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEC32E8FC15C0047A89A /* AuthViewModel.swift */; };
+		CAA9AEDB2E8FC15C0047A89A /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEC52E8FC15C0047A89A /* AuthView.swift */; };
+		CAA9AEDC2E8FC15C0047A89A /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEC92E8FC15C0047A89A /* CameraViewModel.swift */; };
+		CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AECB2E8FC15C0047A89A /* CameraView.swift */; };
+		CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AECE2E8FC15C0047A89A /* FeedViewModel.swift */; };
+		CAA9AEDF2E8FC15C0047A89A /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AED02E8FC15C0047A89A /* FeedView.swift */; };
+		CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAA9AED32E8FC15C0047A89A /* Assets.xcassets */; };
+		CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEE42E8FC1B40047A89A /* InviteView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CAA9AE802E8FBE250047A89A /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
+		CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootNavigationView.swift; sourceTree = "<group>"; };
+		CAA9AEBD2E8FC15C0047A89A /* DonDog_iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonDog_iOSApp.swift; sourceTree = "<group>"; };
+		CAA9AEC32E8FC15C0047A89A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		CAA9AEC52E8FC15C0047A89A /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		CAA9AEC92E8FC15C0047A89A /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
+		CAA9AECB2E8FC15C0047A89A /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		CAA9AECE2E8FC15C0047A89A /* FeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
+		CAA9AED02E8FC15C0047A89A /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
+		CAA9AED32E8FC15C0047A89A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CAA9AEE42E8FC1B40047A89A /* InviteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CAA9AE7D2E8FBE250047A89A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CAA9AE772E8FBE250047A89A = {
+			isa = PBXGroup;
+			children = (
+				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
+				CAA9AE812E8FBE250047A89A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CAA9AE812E8FBE250047A89A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AE802E8FBE250047A89A /* DonDog-iOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CAA9AEBC2E8FC15C0047A89A /* Coordinator */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */,
+				CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */,
+				CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */,
+			);
+			path = Coordinator;
+			sourceTree = "<group>";
+		};
+		CAA9AEBE2E8FC15C0047A89A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEBD2E8FC15C0047A89A /* DonDog_iOSApp.swift */,
+				CAA9AEBC2E8FC15C0047A89A /* Coordinator */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		CAA9AEBF2E8FC15C0047A89A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		CAA9AEC42E8FC15C0047A89A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEC32E8FC15C0047A89A /* AuthViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CAA9AEC62E8FC15C0047A89A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEC52E8FC15C0047A89A /* AuthView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CAA9AEC72E8FC15C0047A89A /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEC62E8FC15C0047A89A /* Views */,
+				CAA9AEC42E8FC15C0047A89A /* ViewModels */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		CAA9AEC82E8FC15C0047A89A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AECB2E8FC15C0047A89A /* CameraView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CAA9AECA2E8FC15C0047A89A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEC92E8FC15C0047A89A /* CameraViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CAA9AECC2E8FC15C0047A89A /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEC82E8FC15C0047A89A /* Views */,
+				CAA9AECA2E8FC15C0047A89A /* ViewModels */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
+		CAA9AECD2E8FC15C0047A89A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AED02E8FC15C0047A89A /* FeedView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CAA9AECF2E8FC15C0047A89A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AECE2E8FC15C0047A89A /* FeedViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CAA9AED12E8FC15C0047A89A /* Feed */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AECD2E8FC15C0047A89A /* Views */,
+				CAA9AECF2E8FC15C0047A89A /* ViewModels */,
+			);
+			path = Feed;
+			sourceTree = "<group>";
+		};
+		CAA9AED22E8FC15C0047A89A /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEED2E8FC72E0047A89A /* Features */,
+				CAA9AEE62E8FC1D00047A89A /* Common */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		CAA9AED42E8FC15C0047A89A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AED32E8FC15C0047A89A /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		CAA9AED52E8FC15C0047A89A /* DonDog-iOS */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEBE2E8FC15C0047A89A /* App */,
+				CAA9AEE72E8FC2CA0047A89A /* Core */,
+				CAA9AED22E8FC15C0047A89A /* Presentation */,
+				CAA9AED42E8FC15C0047A89A /* Resources */,
+			);
+			path = "DonDog-iOS";
+			sourceTree = "<group>";
+		};
+		CAA9AEE12E8FC17C0047A89A /* Invite */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEE22E8FC18B0047A89A /* Views */,
+				CAA9AEE32E8FC1930047A89A /* ViewModels */,
+			);
+			path = Invite;
+			sourceTree = "<group>";
+		};
+		CAA9AEE22E8FC18B0047A89A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEE42E8FC1B40047A89A /* InviteView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CAA9AEE32E8FC1930047A89A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CAA9AEE62E8FC1D00047A89A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEBF2E8FC15C0047A89A /* Components */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		CAA9AEE72E8FC2CA0047A89A /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEE82E8FC2E70047A89A /* Services */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		CAA9AEE82E8FC2E70047A89A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		CAA9AEED2E8FC72E0047A89A /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				CAA9AEC72E8FC15C0047A89A /* Auth */,
+				CAA9AEE12E8FC17C0047A89A /* Invite */,
+				CAA9AECC2E8FC15C0047A89A /* Camera */,
+				CAA9AED12E8FC15C0047A89A /* Feed */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CAA9AE7F2E8FBE250047A89A /* DonDog-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CAA9AE8B2E8FBE260047A89A /* Build configuration list for PBXNativeTarget "DonDog-iOS" */;
+			buildPhases = (
+				CAA9AE7C2E8FBE250047A89A /* Sources */,
+				CAA9AE7D2E8FBE250047A89A /* Frameworks */,
+				CAA9AE7E2E8FBE250047A89A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DonDog-iOS";
+			packageProductDependencies = (
+			);
+			productName = "DonDog-iOS";
+			productReference = CAA9AE802E8FBE250047A89A /* DonDog-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CAA9AE782E8FBE250047A89A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					CAA9AE7F2E8FBE250047A89A = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+				};
+			};
+			buildConfigurationList = CAA9AE7B2E8FBE250047A89A /* Build configuration list for PBXProject "DonDog-iOS" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CAA9AE772E8FBE250047A89A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = CAA9AE812E8FBE250047A89A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CAA9AE7F2E8FBE250047A89A /* DonDog-iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CAA9AE7E2E8FBE250047A89A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CAA9AE7C2E8FBE250047A89A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */,
+				CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */,
+				CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */,
+				CAA9AED92E8FC15C0047A89A /* DonDog_iOSApp.swift in Sources */,
+				CAA9AEDA2E8FC15C0047A89A /* AuthViewModel.swift in Sources */,
+				CAA9AEDB2E8FC15C0047A89A /* AuthView.swift in Sources */,
+				CAA9AEDC2E8FC15C0047A89A /* CameraViewModel.swift in Sources */,
+				CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */,
+				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
+				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
+				CAA9AEDF2E8FC15C0047A89A /* FeedView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CAA9AE892E8FBE260047A89A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 6TW9MCXPJD;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CAA9AE8A2E8FBE260047A89A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 6TW9MCXPJD;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CAA9AE8C2E8FBE260047A89A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6TW9MCXPJD;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yuu.DonDog-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CAA9AE8D2E8FBE260047A89A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6TW9MCXPJD;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yuu.DonDog-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CAA9AE7B2E8FBE250047A89A /* Build configuration list for PBXProject "DonDog-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAA9AE892E8FBE260047A89A /* Debug */,
+				CAA9AE8A2E8FBE260047A89A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CAA9AE8B2E8FBE260047A89A /* Build configuration list for PBXNativeTarget "DonDog-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAA9AE8C2E8FBE260047A89A /* Debug */,
+				CAA9AE8D2E8FBE260047A89A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CAA9AE782E8FBE250047A89A /* Project object */;
+}

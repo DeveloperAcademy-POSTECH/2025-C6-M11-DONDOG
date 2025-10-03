@@ -1,6 +1,6 @@
 name: 🍀 기타 작업
 description: 분류되지 않는 기타 작업을 관리할 때 사용합니다.
-title: "🍀 ETC: "
+title: "chore: "
 labels: ["Chore"]
 body:
   - type: textarea
@@ -27,4 +27,4 @@ body:
       placeholder: |
         - [ ] 설정 파일 수정
     validations:
-      required: true
+      required: false

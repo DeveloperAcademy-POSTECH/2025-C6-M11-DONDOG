@@ -1,6 +1,6 @@
 name: 🐛 버그 수정
 description: 테스트 중 발생한 문제를 추적하기 위해 사용합니다.
-title: "🐛 Bug: "
+title: "bug: "
 labels: ["Bug", "QA"]
 body:
   - type: textarea
@@ -20,7 +20,7 @@ body:
         2. 화면을 아래로 당김
         3. Crash 발생
     validations:
-      required: true
+      required: false
 
   - type: input
     id: device

@@ -1,6 +1,6 @@
 name: ♻️ 리팩토링
 description: 코드 정리 또는 구조 개선 시 사용합니다.
-title: "♻️ Refactor: "
+title: "refactor: "
 labels: ["Refactor"]
 body:
   - type: textarea
@@ -17,7 +17,7 @@ body:
       label: 📦 리팩토링 범위
       placeholder: ex) SearchViewModel, SearchUseCase
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: effect

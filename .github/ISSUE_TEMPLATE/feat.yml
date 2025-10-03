@@ -1,7 +1,7 @@
 name: ✨ 기능 개발
 description: 새로운 기능을 개발할 때 사용하세요!
-title: "✨ Feature: "
-labels: ["Feature"]
+title: "feat: "
+labels: ["Feat"]
 body:
   - type: textarea
     id: summary
@@ -23,7 +23,7 @@ body:
         - [ ] 수정 API 연동
       value: "- [ ] "
     validations:
-      required: true
+      required: false
 
   - type: input
     id: due

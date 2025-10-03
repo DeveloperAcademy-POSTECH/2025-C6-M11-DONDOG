@@ -1,6 +1,6 @@
 name: 📄 문서 작업
 description: 문서 생성 또는 갱신이 필요할 때 사용합니다.
-title: "📄 Docs: "
+title: "docs: "
 labels: ["Docs"]
 body:
   - type: textarea
@@ -20,4 +20,4 @@ body:
         - [ ] 기존 구조 설명 보완
         - [ ] 사용 예시 추가
     validations:
-      required: true
+      required: false

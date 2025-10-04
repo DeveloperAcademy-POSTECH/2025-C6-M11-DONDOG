@@ -36,6 +36,8 @@
 		CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEE42E8FC1B40047A89A /* InviteView.swift */; };
 		CAA9AEF02E8FE2990047A89A /* ModuleFactoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEEF2E8FE2990047A89A /* ModuleFactoryProtocol.swift */; };
 		CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */; };
+		D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */; };
+		D2D16C022E9153BE008FB3E2 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16C012E9153BC008FB3E2 /* PostView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +60,8 @@
 		CAA9AEE42E8FC1B40047A89A /* InviteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteView.swift; sourceTree = "<group>"; };
 		CAA9AEEF2E8FE2990047A89A /* ModuleFactoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleFactoryProtocol.swift; sourceTree = "<group>"; };
 		CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteViewModel.swift; sourceTree = "<group>"; };
+		D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
+		D2D16C012E9153BC008FB3E2 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,13 +123,6 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		CAA9AEBF2E8FC15C0047A89A /* Components */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
 		CAA9AEC42E8FC15C0047A89A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -181,6 +178,7 @@
 		CAA9AECD2E8FC15C0047A89A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D2D16C012E9153BC008FB3E2 /* PostView.swift */,
 				CAA9AED02E8FC15C0047A89A /* FeedView.swift */,
 			);
 			path = Views;
@@ -189,6 +187,7 @@
 		CAA9AECF2E8FC15C0047A89A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */,
 				CAA9AECE2E8FC15C0047A89A /* FeedViewModel.swift */,
 			);
 			path = ViewModels;
@@ -207,7 +206,6 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AEED2E8FC72E0047A89A /* Features */,
-				CAA9AEE62E8FC1D00047A89A /* Common */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -226,7 +224,6 @@
 				8B5F44592E90FF95003137F2 /* Info.plist */,
 				8B5F44D42E9111DB003137F2 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
-				CAA9AEE72E8FC2CA0047A89A /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
 				CAA9AED42E8FC15C0047A89A /* Resources */,
 			);
@@ -256,29 +253,6 @@
 				CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */,
 			);
 			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		CAA9AEE62E8FC1D00047A89A /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				CAA9AEBF2E8FC15C0047A89A /* Components */,
-			);
-			path = Common;
-			sourceTree = "<group>";
-		};
-		CAA9AEE72E8FC2CA0047A89A /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				CAA9AEE82E8FC2E70047A89A /* Services */,
-			);
-			path = Core;
-			sourceTree = "<group>";
-		};
-		CAA9AEE82E8FC2E70047A89A /* Services */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Services;
 			sourceTree = "<group>";
 		};
 		CAA9AEED2E8FC72E0047A89A /* Features */ = {
@@ -397,11 +371,13 @@
 				CAA9AEDB2E8FC15C0047A89A /* AuthView.swift in Sources */,
 				CAA9AEDC2E8FC15C0047A89A /* CameraViewModel.swift in Sources */,
 				CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */,
+				D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */,
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
 				8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */,
 				CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */,
 				CAA9AEF02E8FE2990047A89A /* ModuleFactoryProtocol.swift in Sources */,
+				D2D16C022E9153BE008FB3E2 /* PostView.swift in Sources */,
 				CAA9AEDF2E8FC15C0047A89A /* FeedView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -538,6 +514,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 47UM88R722;
+				DEVELOPMENT_TEAM = A65CGWHSL8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";
@@ -573,6 +550,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 47UM88R722;
+				DEVELOPMENT_TEAM = A65CGWHSL8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";

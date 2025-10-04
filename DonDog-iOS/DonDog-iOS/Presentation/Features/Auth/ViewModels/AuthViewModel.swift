@@ -52,44 +52,19 @@ final class AuthViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Phone number helpers
-    /// 숫자만 남긴다 (하이픈/공백/문자 제거)
-    private func digitsOnly(_ s: String) -> String {
-        return s.filter { $0.isNumber }
-    }
-    
-    /// 사용자가 01012345678 형식으로 입력하면 서버에는 +821012345678 형식으로 전달
-    var serverPhoneNumber: String {
-        let digits = digitsOnly(userPhoneNumber)
-        
-        // 빈 값 처리
-        guard !digits.isEmpty else { return "" }
-        
-        // 0으로 시작(국내) -> +82 + (앞의 0 제거)
-        if digits.hasPrefix("0") {
-            let withoutLeadingZero = String(digits.dropFirst())
-            return "+82" + withoutLeadingZero
-        }
-        
-        // 이미 국가코드 형태(82...) -> +82...
-        if digits.hasPrefix("82") {
-            return "+" + digits
-        }
-        
-        // 그 외(가급적 한국 번호로 간주)
-        return "+82" + digits
-    }
-    
-    // MARK: - Actions
-    /// 인증번호(SMS) 요청
+    //인증번호(SMS) 요청
     func sendCode() {
-        // 기본 검증
-        let number = serverPhoneNumber
-        guard number.count >= 10 else {
-            self.message = "전화번호 형식이 올바르지 않습니다."
+        // 기본 검증: 한국 휴대폰 010으로 시작 + 총 11자리(뒤 8자리 숫자)
+        let digits = userPhoneNumber.filter { $0.isNumber }
+        let isValidKRMobile = NSPredicate(format: "SELF MATCHES %@", "^010\\d{8}$").evaluate(with: digits)
+        guard isValidKRMobile else {
+            self.message = "전화번호는 010으로 시작하는 11자리여야 해요."
             return
         }
-        
+        // 앞의 0 제거 후 +82 붙이기 → +8210xxxx....
+        let withoutLeadingZero = String(digits.dropFirst())
+        let number = "+82" + withoutLeadingZero
+        print("서버로 보내는 전화번호: \(number)")
         self.isLoading = true
         self.message = ""
         
@@ -103,20 +78,22 @@ final class AuthViewModel: ObservableObject {
                    let code = AuthErrorCode(rawValue: nsError.code) {
                     switch code {
                     case .invalidPhoneNumber:
-                        self.message = "전화번호 형식이 올바르지 않아요."
+                        self.message = "전화번호 형식이 맞지 않아요. 010-0000-0000 형식으로 입력해 주세요."
                     case .sessionExpired:
-                        self.message = "인증 세션이 만료되었어요. 다시 시도해 주세요."
+                        self.message = "인증 시간이 만료되었어요. 다시 시도해 주세요."
                     case .quotaExceeded, .tooManyRequests:
-                        self.message = "요청이 많아요. 잠시 후 다시 시도해 주세요."
+                        self.message = "요청이 많아요. 1~2분 후에 다시 시도해 주세요."
                     case .captchaCheckFailed:
-                        self.message = "reCAPTCHA 인증에 실패했어요. 네트워크를 확인하고 다시 시도해 주세요."
+                        self.message = "인증을 확인하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요."
                     default:
-                        self.message = "[인증번호 요청 실패] \(code) - \(nsError.localizedDescription)"
+                        print("[Auth][verifyPhoneNumber] error: code=\(code), desc=\(nsError.localizedDescription)")
+                        self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요."
                     }
                     self.isCodeSent = false
                     return
                 } else if let error = error {
-                    self.message = "[인증번호 요청 실패] \(error.localizedDescription)"
+                    print("[Auth][verifyPhoneNumber] error: \(error.localizedDescription)")
+                    self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요."
                     self.isCodeSent = false
                     return
                 }
@@ -136,7 +113,7 @@ final class AuthViewModel: ObservableObject {
         // verifyPhoneNumber로 받은 verificationID 확보
         let storedID = UserDefaults.standard.string(forKey: "authVerificationID")
         guard let verificationID = self.verificationID ?? storedID else {
-            self.message = "인증 ID를 찾을 수 없습니다."
+            self.message = "인증을 다시 요청해주세요."
             return
         }
         

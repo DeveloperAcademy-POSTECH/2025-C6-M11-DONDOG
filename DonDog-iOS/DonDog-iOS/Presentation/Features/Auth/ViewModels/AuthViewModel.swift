@@ -47,7 +47,6 @@ final class AuthViewModel: ObservableObject {
                 if let user = result?.user {
                     self.isLoggedIn = true
                     self.message = "익명 로그인 성공! uid: \(user.uid)"
-                    self.routeAfterLogin()
                 }
             }
         }
@@ -159,39 +158,6 @@ final class AuthViewModel: ObservableObject {
                 } else {
                     self.isLoggedIn = true
                     self.message = "로그인 성공!"
-                    self.routeAfterLogin()
-                }
-            }
-        }
-    }
-    
-    /// 로그인 성공 후 사용자 문서 존재 여부에 따른 라우팅
-    func routeAfterLogin() {
-        guard let uid = Auth.auth().currentUser?.uid else {
-            self.message = "로그인 사용자 정보를 확인할 수 없어요."
-            return
-        }
-        
-        let db = Firestore.firestore()
-        db.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                
-                if let error = error as NSError? {
-                    // 권한 오류 식별 (FIRFirestoreErrorDomain / permission-denied)
-                    if error.domain == FirestoreErrorDomain && error.code == FirestoreErrorCode.permissionDenied.rawValue {
-                        self.message = "권한 오류: Firestore 보안 규칙 때문에 사용자 문서를 읽을 수 없어요. (permission-denied)"
-                    } else {
-                        self.message = "[라우팅 실패] 사용자 정보 조회 오류: \(error.localizedDescription)"
-                    }
-                    return
-                }
-                
-                if let doc = snapshot, doc.exists {
-                    // Users/{uid} 문서가 있으면 피드로 이동
-                    self.coordinator?.replaceRoot(.feed)
-                } else {
-                    self.coordinator?.replaceRoot(.profileSetup)
                 }
             }
         }

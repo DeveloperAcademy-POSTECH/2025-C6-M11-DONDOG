@@ -78,9 +78,6 @@ extension AppCoordinator {
     }
 
     private func applyRouteForUser() {
-        // 프로필 설정 중에는 루트 자동 교체 금지
-        if root == .profileSetup { return }
-        
         guard let user = Auth.auth().currentUser else {
             replaceRoot(.auth)
             return
@@ -121,5 +118,9 @@ extension AppCoordinator {
                 self.replaceRoot(.profileSetup)
             }
         }
+        
+        // 프로필 설정 중에는 루트 자동 교체 금지
+        if root == .profileSetup { return }
+        
     }
 }

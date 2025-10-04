@@ -24,6 +24,7 @@ struct FeedView: View {
                 }
             }
         }
+        PostView()
     }
 }
 

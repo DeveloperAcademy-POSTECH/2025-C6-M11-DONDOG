@@ -9,6 +9,22 @@ import SwiftUI
 import FirebaseCore
 import FirebaseAuth
 
+@main
+struct DonDog_iOSApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+    var body: some Scene {
+        WindowGroup {
+            let factory = ModuleFactory.shared
+            let coordinator = AppCoordinator(factory: factory)
+            RootNavigationView(coordinator: coordinator)
+                .onOpenURL { url in
+                    _ = Auth.auth().canHandle(url)
+                }
+        }
+    }
+}
+
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -43,21 +59,5 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return true
         }
         return false
-    }
-}
-
-@main
-struct DonDog_iOSApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
-    var body: some Scene {
-        WindowGroup {
-            let factory = ModuleFactory.shared
-            let coordinator = AppCoordinator(factory: factory)
-            RootNavigationView(coordinator: coordinator)
-                .onOpenURL { url in
-                    _ = Auth.auth().canHandle(url)
-                }
-        }
     }
 }

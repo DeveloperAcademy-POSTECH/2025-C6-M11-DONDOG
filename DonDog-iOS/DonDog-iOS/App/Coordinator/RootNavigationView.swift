@@ -16,7 +16,7 @@ struct RootNavigationView: View {
     
     var body: some View {
         NavigationStack(path: $coordinator.path) {
-            coordinator.build(.feed)
+            coordinator.build(coordinator.root)
                 .navigationDestination(for: AppRoute.self) { route in
                     coordinator.build(route)
                 }

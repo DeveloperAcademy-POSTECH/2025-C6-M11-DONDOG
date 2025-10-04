@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8B3182672E90CA51004505AE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B3182662E90CA51004505AE /* GoogleService-Info.plist */; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
 		8B31826E2E90CE1B004505AE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826D2E90CE1B004505AE /* FirebaseAuthCombine-Community */; };
@@ -20,6 +19,9 @@
 		8B31827C2E90CE1B004505AE /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31827B2E90CE1B004505AE /* FirebaseRemoteConfig */; };
 		8B31827E2E90CE1B004505AE /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31827D2E90CE1B004505AE /* FirebaseStorage */; };
 		8B3182802E90CE1B004505AE /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31827F2E90CE1B004505AE /* FirebaseStorageCombine-Community */; };
+		8B5F44562E90FA74003137F2 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */; };
+		8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */; };
+		8B5F44D52E9111DB003137F2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B5F44D42E9111DB003137F2 /* GoogleService-Info.plist */; };
 		A1AEBED12E9110160006FBBA /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AEBED02E9110120006FBBA /* CameraViewController.swift */; };
 		CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */; };
 		CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */; };
@@ -38,7 +40,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8B3182662E90CA51004505AE /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
+		8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewModel.swift; sourceTree = "<group>"; };
+		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8B5F44D42E9111DB003137F2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A1AEBED02E9110120006FBBA /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		CAA9AE802E8FBE250047A89A /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -127,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AEC32E8FC15C0047A89A /* AuthViewModel.swift */,
+				8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -135,6 +141,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AEC52E8FC15C0047A89A /* AuthView.swift */,
+				8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -212,7 +219,6 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED32E8FC15C0047A89A /* Assets.xcassets */,
-				8B3182662E90CA51004505AE /* GoogleService-Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -220,6 +226,8 @@
 		CAA9AED52E8FC15C0047A89A /* DonDog-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				8B5F44592E90FF95003137F2 /* Info.plist */,
+				8B5F44D42E9111DB003137F2 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CAA9AEE72E8FC2CA0047A89A /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -372,7 +380,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
-				8B3182672E90CA51004505AE /* GoogleService-Info.plist in Resources */,
+				8B5F44D52E9111DB003137F2 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -385,6 +393,7 @@
 			files = (
 				CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */,
 				CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */,
+				8B5F44562E90FA74003137F2 /* ProfileSetupView.swift in Sources */,
 				CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */,
 				CAA9AED92E8FC15C0047A89A /* DonDog_iOSApp.swift in Sources */,
 				CAA9AEDA2E8FC15C0047A89A /* AuthViewModel.swift in Sources */,
@@ -393,6 +402,7 @@
 				CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */,
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
+				8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */,
 				CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */,
 				A1AEBED12E9110160006FBBA /* CameraViewController.swift in Sources */,
 				CAA9AEF02E8FE2990047A89A /* ModuleFactoryProtocol.swift in Sources */,
@@ -534,6 +544,7 @@
 				DEVELOPMENT_TEAM = 8FKM9FB4PH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "DonDog-iOS/Info.plist";
 				INFOPLIST_KEY_NSCameraUsageDescription = "사진 촬영을 위해 카메라 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -568,6 +579,7 @@
 				DEVELOPMENT_TEAM = 8FKM9FB4PH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "DonDog-iOS/Info.plist";
 				INFOPLIST_KEY_NSCameraUsageDescription = "사진 촬영을 위해 카메라 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -11,8 +11,6 @@ import UIKit
 struct CameraView: UIViewControllerRepresentable {
     @StateObject var viewModel: CameraViewModel
     
-//    @Binding var frontImage: UIImage?
-//    @Binding var backImage: UIImage?
     @Environment(\.presentationMode) var presentationMode
     
     func makeUIViewController(context: Context) -> UIViewController {
@@ -45,6 +43,14 @@ struct CameraView: UIViewControllerRepresentable {
         }
         
         func didCompleteBothPhotos() {
+            // 촬영 완료 시 delegate 호출
+            if let frontImage = parent.viewModel.frontImage,
+               let backImage = parent.viewModel.backImage {
+                parent.viewModel.delegate?.didCaptureImages(
+                    frontImage: frontImage, 
+                    backImage: backImage
+                )
+            }
             parent.presentationMode.wrappedValue.dismiss()
         }
         

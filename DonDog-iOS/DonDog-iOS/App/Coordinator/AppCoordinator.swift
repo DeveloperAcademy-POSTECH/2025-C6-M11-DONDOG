@@ -41,7 +41,7 @@ final class AppCoordinator: ObservableObject {
         case .invite:
             factory.makeInviteView()
         case .camera:
-            factory.makeCameraView()
+            EmptyView()
         case .feed:
             factory.makeFeedView()
         }

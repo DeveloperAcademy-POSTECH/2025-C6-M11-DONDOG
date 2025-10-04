@@ -15,14 +15,12 @@ struct FeedView: View {
     @StateObject var viewModel: FeedViewModel
     
     @State var showCameraView: Bool = false
-    @State var selectedFrontImage: UIImage?
-    @State var selectedBackImage: UIImage?
     
     var body: some View {
         NavigationView {
             VStack(spacing: 30) {
                 // 이미지 표시 영역
-                if let frontImage = selectedFrontImage, let backImage = selectedBackImage {
+                if let frontImage = viewModel.selectedFrontImage, let backImage = viewModel.selectedBackImage {
                     ZStack{
                         Image(uiImage: backImage)
                             .resizable()
@@ -74,10 +72,10 @@ struct FeedView: View {
                 }
                 
                 // 이미지 삭제 버튼
-                if selectedFrontImage != nil || selectedBackImage != nil {
+                if viewModel.selectedFrontImage != nil || viewModel.selectedBackImage != nil {
                     Button{
-                        selectedFrontImage = nil
-                        selectedBackImage = nil
+                        viewModel.selectedFrontImage = nil
+                        viewModel.selectedBackImage = nil
                     }label: {
                         HStack {
                             Image(systemName: "trash")
@@ -98,7 +96,7 @@ struct FeedView: View {
             .navigationTitle("Boomoji")
         }
         .fullScreenCover(isPresented: $showCameraView) {
-            CameraView(viewModel: CameraViewModel())
+            ModuleFactory.shared.makeCameraView(with: viewModel)
                 .ignoresSafeArea()
         }
     }

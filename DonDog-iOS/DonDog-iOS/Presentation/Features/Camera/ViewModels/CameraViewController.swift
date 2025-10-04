@@ -276,7 +276,7 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
             delegate?.didCaptureFrontImage(image)
             
             // 1초 후 후면 카메라로 전환
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.switchToNextCamera()
             }
         } else {
@@ -285,7 +285,7 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
             delegate?.didCaptureBackImage(image)
             
             // 1초 후 메인 화면으로 돌아가기
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.delegate?.didCompleteBothPhotos()
             }
         }

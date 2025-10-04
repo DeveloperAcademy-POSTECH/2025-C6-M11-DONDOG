@@ -6,7 +6,10 @@
 //
 
 import Combine
+import UIKit
+import SwiftUI
 
 final class CameraViewModel: ObservableObject {
-    
+    var frontImage: UIImage?
+    var backImage: UIImage?
 }

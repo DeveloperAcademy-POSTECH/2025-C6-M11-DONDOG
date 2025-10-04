@@ -6,13 +6,24 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct FeedView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: FeedViewModel
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Feed View")
+            
+            Button("로그아웃") {
+                do {
+                    try Auth.auth().signOut()
+                } catch {
+                    print("로그아웃 실패: \(error.localizedDescription)")
+                }
+            }
+        }
     }
 }
 

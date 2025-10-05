@@ -35,19 +35,6 @@ struct AuthView: View {
             TextField("전화번호 (01012345678 형식)", text: $viewModel.userPhoneNumber)
                 .keyboardType(.numberPad)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-
-            // 디버깅 - 추후 삭제 예정
-            VStack(alignment: .leading, spacing: 6) {
-                Text("서버 전송 번호 (디버깅용)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                HStack {
-                    Text(viewModel.serverPhoneNumber.isEmpty ? "(미입력)" : viewModel.serverPhoneNumber)
-                        .font(.callout)
-                        .foregroundColor(viewModel.serverPhoneNumber.isEmpty ? .secondary : .blue)
-                    Spacer()
-                }
-            }
             
             if viewModel.isCodeSent {
                 TextField("SMS 인증번호", text: $viewModel.verificationCode)

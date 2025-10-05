@@ -104,8 +104,35 @@ class CustomCameraViewController: UIViewController {
     
     private func setupPreviewLayer() {
         videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        videoPreviewLayer.videoGravity = .resizeAspectFill
-        videoPreviewLayer.frame = view.bounds
+        videoPreviewLayer.videoGravity = .resizeAspect
+        
+        let screenBounds = view.bounds
+        let screenAspectRatio = screenBounds.width / screenBounds.height
+        let targetAspectRatio: CGFloat = 4.0 / 3.0
+        
+        var previewFrame: CGRect
+        
+        if screenAspectRatio > targetAspectRatio {
+            let height = screenBounds.height
+            let width = height * targetAspectRatio
+            previewFrame = CGRect(
+                x: (screenBounds.width - width) / 2,
+                y: 0,
+                width: width,
+                height: height
+            )
+        } else {
+            let width = screenBounds.width
+            let height = width / targetAspectRatio
+            previewFrame = CGRect(
+                x: 0,
+                y: (screenBounds.height - height) / 2,
+                width: width,
+                height: height
+            )
+        }
+        
+        videoPreviewLayer.frame = previewFrame
         view.layer.addSublayer(videoPreviewLayer)
     }
     

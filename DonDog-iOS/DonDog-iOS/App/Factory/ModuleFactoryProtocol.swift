@@ -12,7 +12,7 @@ protocol ModuleFactoryProtocol {
     func makeAuthView() -> AuthView
     func makeProfileSetupView() -> ProfileSetupView
     func makeInviteView() -> InviteView
-    func makeCameraView() -> CameraView
+    func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
     func makeFeedView() -> FeedView
 }
 
@@ -38,10 +38,10 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeCameraView() -> CameraView {
-        let viewModel = CameraViewModel()
-        let view = CameraView(viewModel: viewModel)
-        return view
+    func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView {
+        let cameraViewModel = CameraViewModel()
+        cameraViewModel.delegate = feedViewModel
+        return CameraView(viewModel: cameraViewModel)
     }
     
     func makeFeedView() -> FeedView {

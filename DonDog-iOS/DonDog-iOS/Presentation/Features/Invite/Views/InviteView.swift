@@ -12,7 +12,23 @@ struct InviteView: View {
     @StateObject var viewModel: InviteViewModel
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Invite View")
+                .font(.title)
+        
+            Text(viewModel.inviteText)
+                .font(.title2)
+                .padding()
+            
+            Text(viewModel.remainTimeText)
+                .foregroundColor(.secondary)
+            
+            Button("feed로 이동") {
+                coordinator.replaceRoot(.feed)
+            }
+            
+        }
+        .task { viewModel.fetchInviteCodeandExpireDate() }
     }
 }
 

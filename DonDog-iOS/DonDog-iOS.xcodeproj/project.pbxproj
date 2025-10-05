@@ -23,6 +23,7 @@
 		8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */; };
 		8B5F44D52E9111DB003137F2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B5F44D42E9111DB003137F2 /* GoogleService-Info.plist */; };
 		A1AEBED12E9110160006FBBA /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AEBED02E9110120006FBBA /* CameraViewController.swift */; };
+		8BA62EA42E9149A00054EB8F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA62EA32E9149A00054EB8F /* AppDelegate.swift */; };
 		CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */; };
 		CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */; };
 		CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */; };
@@ -45,6 +46,7 @@
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8B5F44D42E9111DB003137F2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A1AEBED02E9110120006FBBA /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		8BA62EA32E9149A00054EB8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CAA9AE802E8FBE250047A89A /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AEBD2E8FC15C0047A89A /* DonDog_iOSApp.swift */,
+				8BA62EA32E9149A00054EB8F /* AppDelegate.swift */,
 				CAA9AEBC2E8FC15C0047A89A /* Coordinator */,
 				CAA9AEEE2E8FE27B0047A89A /* Factory */,
 			);
@@ -399,6 +402,7 @@
 				CAA9AEDA2E8FC15C0047A89A /* AuthViewModel.swift in Sources */,
 				CAA9AEDB2E8FC15C0047A89A /* AuthView.swift in Sources */,
 				CAA9AEDC2E8FC15C0047A89A /* CameraViewModel.swift in Sources */,
+				8BA62EA42E9149A00054EB8F /* AppDelegate.swift in Sources */,
 				CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */,
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,

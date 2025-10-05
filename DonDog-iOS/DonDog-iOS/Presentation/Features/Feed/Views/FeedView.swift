@@ -47,6 +47,7 @@ struct FeedView: View {
                         Image(uiImage: frontImage)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
+                            .scaleEffect(x: -1, y:1)
                             .frame(maxHeight: 100)
                             .cornerRadius(15)
                             .shadow(radius: 10)

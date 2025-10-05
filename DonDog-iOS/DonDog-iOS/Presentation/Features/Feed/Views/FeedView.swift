@@ -16,6 +16,10 @@ struct FeedView: View {
         VStack {
             Text("Feed View")
             
+            Button("초대코드 뷰로 이동") {
+                coordinator.push(.invite)
+            }
+            
             Button("로그아웃") {
                 do {
                     try Auth.auth().signOut()

@@ -6,7 +6,15 @@
 //
 
 import Combine
+import UIKit
+import SwiftUI
+
+protocol CameraViewModelDelegate: AnyObject {
+    func didCaptureImages(frontImage: UIImage, backImage: UIImage)
+}
 
 final class CameraViewModel: ObservableObject {
-    
+    weak var delegate: CameraViewModelDelegate?
+    var frontImage: UIImage?
+    var backImage: UIImage?
 }

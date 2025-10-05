@@ -116,6 +116,7 @@ struct FeedView: View {
             ModuleFactory.shared.makeCameraView(with: viewModel)
                 .ignoresSafeArea()
         }
+        PostView()
     }
 }
 #Preview {

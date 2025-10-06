@@ -19,8 +19,8 @@ struct FeedView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 30) {
+            VStack(spacing: 30) {
+                ScrollView {
                     // 이미지 표시 영역
                     VStack {
                         Text("Feed View")
@@ -50,7 +50,6 @@ struct FeedView: View {
                                 .shadow(radius: 10)
                                 .padding()
                         }
-                        
                     } else {
                         RoundedRectangle(cornerRadius: 15)
                             .fill(Color.gray.opacity(0.3))
@@ -104,7 +103,6 @@ struct FeedView: View {
                             }
                         }
                     }
-                    
                     Spacer()
                 }
             }

@@ -26,7 +26,6 @@ struct InviteView: View {
                 .font(.title2)
             
             // MARK: - 다른 사람 초대코드 입력
-            //:: 사용자 문서에 roomId가 있는 경우 비활성화되도록 추가
             TextField("다른 사람의 초대코드", text: $viewModel.inputInviteCode)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled(true)

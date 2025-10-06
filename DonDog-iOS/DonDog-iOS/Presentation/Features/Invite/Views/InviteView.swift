@@ -17,8 +17,27 @@ struct InviteView: View {
                 .font(.title)
         
             // MARK: - 내 초대코드 띄우기
-            Text(viewModel.inviteText)
+            HStack {
+                HStack {
+                    Text("초대코드")
+                    Text(viewModel.inviteText)
+                }
                 .font(.title2)
+                
+                Button {
+                    UIPasteboard.general.string = viewModel.inviteText
+                } label: {
+                    Image(systemName: "document.on.document")
+                }
+                ShareLink(
+                    item: "https://앱스토어 링크",
+                    message: Text("초대코드 \(viewModel.inviteText)를 입력하고 부모지를 시작하세요!")
+                ) {
+                    Image(systemName: "square.and.arrow.up")
+                    Text("초대하기")
+                }
+            }
+            
             Text(viewModel.remainTimeText)
                 .foregroundColor(.secondary)
             

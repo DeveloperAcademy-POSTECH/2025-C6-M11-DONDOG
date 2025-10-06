@@ -76,6 +76,10 @@ final class AuthService {
                     return
                 }
                 
+                if userDoc.metadata.hasPendingWrites {
+                    return
+                }
+                
                 if userDoc.exists {
                     let roomId = (userDoc.get("roomId") as? String) ?? ""
                     if roomId.isEmpty {

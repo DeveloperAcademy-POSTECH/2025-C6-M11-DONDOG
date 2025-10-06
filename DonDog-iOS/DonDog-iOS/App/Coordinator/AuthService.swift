@@ -71,7 +71,7 @@ final class AuthService {
                     replaceRootinAuthService(.profileSetup, coordinator: coordinator)
                     return
                 }
-                
+            
                 if userDoc.metadata.hasPendingWrites {
                     return
                 }

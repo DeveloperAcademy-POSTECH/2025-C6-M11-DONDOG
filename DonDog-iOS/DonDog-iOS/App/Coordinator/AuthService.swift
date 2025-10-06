@@ -11,10 +11,14 @@ import FirebaseFirestore
 
 final class AuthService {
     private var authHandle: AuthStateDidChangeListenerHandle?
+    private var userDocListenr: ListenerRegistration?
     
     deinit {
         if let handle = authHandle {
             Auth.auth().removeStateDidChangeListener(handle)
+        }
+        if let listener = userDocListenr {
+            listener.remove()
         }
     }
     
@@ -36,6 +40,8 @@ final class AuthService {
         
         guard let user = Auth.auth().currentUser else {
             replaceRootinAuthService(.auth, coordinator: coordinator)
+            self.userDocListenr?.remove()
+            self.userDocListenr = nil
             return
         }
         
@@ -48,20 +54,25 @@ final class AuthService {
             let uid = refresehUser.uid
             let userDoc = Firestore.firestore().collection("Users").document(uid)
             
-            userDoc.getDocument(source: .server) { userDoc, error in
+            self.userDocListenr?.remove()
+            self.userDocListenr = userDoc.addSnapshotListener(includeMetadataChanges: true) { userDoc, error in
                 if let nsError = error as NSError? {
                     if nsError.domain == FirestoreErrorDomain,
                        nsError.code == FirestoreErrorCode.permissionDenied.rawValue {
-                        print("⚠️ permission-denied: 보안 규칙로 인해 읽기 불가 → profileSetup로 이동")
+                        print("⚠️ permission-denied: 보안 규칙로 인해 읽기 불가 → auth로 이동")
                     } else {
-                        print("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → profileSetup로 이동")
+                        print("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → auth로 이동")
                     }
-                    replaceRootinAuthService(.profileSetup, coordinator: coordinator)
+                    replaceRootinAuthService(.auth, coordinator: coordinator)
                     return
                 }
                 
                 guard let userDoc = userDoc else {
                     replaceRootinAuthService(.profileSetup, coordinator: coordinator)
+                    return
+                }
+                
+                if userDoc.metadata.hasPendingWrites {
                     return
                 }
                 

@@ -20,7 +20,6 @@ struct FeedView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 30) {
-                // 이미지 표시 영역
                 VStack {
                     Text("Feed View")
                     
@@ -71,7 +70,6 @@ struct FeedView: View {
                         .padding()
                 }
                 
-                // 촬영 버튼
                 Button{
                     showCameraView = true
                 }label: {
@@ -88,7 +86,6 @@ struct FeedView: View {
                     }
                 }
                 
-                // 이미지 삭제 버튼
                 if viewModel.selectedFrontImage != nil || viewModel.selectedBackImage != nil {
                     Button{
                         viewModel.selectedFrontImage = nil
@@ -116,7 +113,6 @@ struct FeedView: View {
             ModuleFactory.shared.makeCameraView(with: viewModel)
                 .ignoresSafeArea()
         }
-        PostView()
     }
 }
 #Preview {

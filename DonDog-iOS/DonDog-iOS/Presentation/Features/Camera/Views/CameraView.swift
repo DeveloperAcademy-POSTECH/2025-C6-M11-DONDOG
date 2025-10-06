@@ -43,13 +43,17 @@ struct CameraView: UIViewControllerRepresentable {
         }
         
         func didCompleteBothPhotos() {
-            // 촬영 완료 시 delegate 호출
+            print("📸 촬영 완료 - Firebase 업로드 시작")
+            
             if let frontImage = parent.viewModel.frontImage,
                let backImage = parent.viewModel.backImage {
                 parent.viewModel.delegate?.didCaptureImages(
                     frontImage: frontImage, 
                     backImage: backImage
                 )
+                
+                
+                parent.viewModel.uploadImagesToFirebase()
             }
             parent.presentationMode.wrappedValue.dismiss()
         }

@@ -13,6 +13,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
+        print("🔥 Firebase 초기화 완료")
         DispatchQueue.main.async {
             UIApplication.shared.registerForRemoteNotifications()
         }

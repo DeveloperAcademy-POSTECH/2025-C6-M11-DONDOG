@@ -16,19 +16,42 @@ struct InviteView: View {
             Text("Invite View")
                 .font(.title)
         
+            // MARK: - 내 초대코드 띄우기
             Text(viewModel.inviteText)
                 .font(.title2)
-                .padding()
-            
             Text(viewModel.remainTimeText)
                 .foregroundColor(.secondary)
             
+            Text("초대코드 입력")
+                .font(.title2)
+            
+            // MARK: - 다른 사람 초대코드 입력
+            //:: 사용자 문서에 roomId가 있는 경우 비활성화되도록 추가
+            TextField("다른 사람의 초대코드", text: $viewModel.inputInviteCode)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled(true)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.horizontal)
+
+            Button("확인") {
+                viewModel.connectWithInviteCode()
+            }
+
+            if !viewModel.connectMessage.isEmpty {
+                Text(viewModel.connectMessage)
+                    .foregroundStyle(viewModel.connectSucceeded ? .green : .red)
+            }
+            
+            // MARK: - 네비게이션
             Button("feed로 이동") {
                 coordinator.replaceRoot(.feed)
             }
             
         }
         .task { viewModel.fetchInviteCodeandExpireDate() }
+        .onChange(of: viewModel.connectSucceeded) {
+            coordinator.replaceRoot(.feed)
+        }
     }
 }
 

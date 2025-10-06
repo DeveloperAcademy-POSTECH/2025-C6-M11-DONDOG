@@ -11,13 +11,13 @@ import FirebaseFirestore
 
 final class AuthService {
     private var authHandle: AuthStateDidChangeListenerHandle?
-
+    
     deinit {
         if let handle = authHandle {
             Auth.auth().removeStateDidChangeListener(handle)
         }
     }
-
+    
     func configureAuthBasedRouting(coordinator: AppCoordinator) {
         applyRouteForUser(coordinator: coordinator)
         authHandle = Auth.auth().addStateDidChangeListener { [weak self] _, _ in
@@ -25,11 +25,11 @@ final class AuthService {
             self.applyRouteForUser(coordinator: coordinator)
         }
     }
-
+    
     private func applyRouteForUser(coordinator: AppCoordinator) {
         func replaceRootinAuthService(_ route: AppRoute, coordinator: AppCoordinator) {
             Task { @MainActor in
-                if coordinator.root == .profileSetup { return }
+                if coordinator.root == route { return }
                 coordinator.replaceRoot(route)
             }
         }
@@ -39,30 +39,42 @@ final class AuthService {
             return
         }
         
-        let uid = user.uid
-        let docRef = Firestore.firestore().collection("Users").document(uid)
-        
-        docRef.getDocument(source: .server) { userDoc, error in
-            if let nsError = error as NSError? {
-                if nsError.domain == FirestoreErrorDomain,
-                   nsError.code == FirestoreErrorCode.permissionDenied.rawValue {
-                    print("⚠️ permission-denied: 보안 규칙로 인해 읽기 불가 → profileSetup로 이동")
-                } else {
-                    print("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → profileSetup로 이동")
+        user.getIDTokenResult(forcingRefresh: true) { _, _ in
+            guard let refresehUser = Auth.auth().currentUser else {
+                replaceRootinAuthService(.auth, coordinator: coordinator)
+                return
+            }
+            
+            let uid = refresehUser.uid
+            let userDoc = Firestore.firestore().collection("Users").document(uid)
+            
+            userDoc.getDocument(source: .server) { userDoc, error in
+                if let nsError = error as NSError? {
+                    if nsError.domain == FirestoreErrorDomain,
+                       nsError.code == FirestoreErrorCode.permissionDenied.rawValue {
+                        print("⚠️ permission-denied: 보안 규칙로 인해 읽기 불가 → profileSetup로 이동")
+                    } else {
+                        print("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → profileSetup로 이동")
+                    }
+                    replaceRootinAuthService(.profileSetup, coordinator: coordinator)
+                    return
                 }
-                replaceRootinAuthService(.profileSetup, coordinator: coordinator)
-                return
-            }
-            
-            guard let userDoc = userDoc else {
-                replaceRootinAuthService(.profileSetup, coordinator: coordinator)
-                return
-            }
-            
-            if userDoc.exists {
-                replaceRootinAuthService(.feed, coordinator: coordinator)
-            } else {
-                replaceRootinAuthService(.profileSetup, coordinator: coordinator)
+                
+                guard let userDoc = userDoc else {
+                    replaceRootinAuthService(.profileSetup, coordinator: coordinator)
+                    return
+                }
+                
+                if userDoc.exists {
+                    let roomId = (userDoc.get("roomId") as? String) ?? ""
+                    if roomId.isEmpty {
+                        replaceRootinAuthService(.invite, coordinator: coordinator)
+                    } else {
+                        replaceRootinAuthService(.feed, coordinator: coordinator)
+                    }
+                } else {
+                    replaceRootinAuthService(.profileSetup, coordinator: coordinator)
+                }
             }
         }
     }

@@ -103,6 +103,10 @@
 			isa = PBXGroup;
 			children = (
 				8BA62EAC2E9185B70054EB8F /* AuthService.swift */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		8B7377E12E9546120001EFCD /* Services */ = {
 			isa = PBXGroup;
 			children = (

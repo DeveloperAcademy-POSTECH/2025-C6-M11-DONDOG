@@ -48,13 +48,10 @@
 		8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewModel.swift; sourceTree = "<group>"; };
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8B5F44D42E9111DB003137F2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		8BA62EA32E9149A00054EB8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8BA62EAC2E9185B70054EB8F /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthService.swift; path = "DonDog-iOS/App/Coordinator/AuthService.swift"; sourceTree = "<group>"; };
-		A1AEBED02E9110120006FBBA /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
-		CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DonDog-iOS.entitlements"; sourceTree = "<group>"; };
 		8B7377DF2E9546030001EFCD /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		8BA62EA32E9149A00054EB8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1AEBED02E9110120006FBBA /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DonDog-iOS.entitlements"; sourceTree = "<group>"; };
 		CAA9AE802E8FBE250047A89A /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
@@ -97,14 +94,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		CA957C5B2E94294300AEAB49 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				8BA62EAC2E9185B70054EB8F /* AuthService.swift */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		8B7377E12E9546120001EFCD /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -113,20 +102,11 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		8BAD834D2E93EFF6003235BD /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		CAA9AE772E8FBE250047A89A = {
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
 				CAA9AE812E8FBE250047A89A /* Products */,
-				CA957C5B2E94294300AEAB49 /* Recovered References */,
-				8BAD834D2E93EFF6003235BD /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -556,7 +536,6 @@
 				CODE_SIGN_ENTITLEMENTS = "DonDog-iOS/DonDog-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6TW9MCXPJD;
 				DEVELOPMENT_TEAM = 47UM88R722;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -593,7 +572,6 @@
 				CODE_SIGN_ENTITLEMENTS = "DonDog-iOS/DonDog-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6TW9MCXPJD;
 				DEVELOPMENT_TEAM = 47UM88R722;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

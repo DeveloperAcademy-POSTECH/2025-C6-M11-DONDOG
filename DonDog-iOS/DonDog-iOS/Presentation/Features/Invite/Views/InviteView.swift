@@ -16,7 +16,8 @@ struct InviteView: View {
             Text("Invite View")
                 .font(.title)
         
-            HStack {
+          // MARK: - 내 초대코드 띄우기  
+          HStack {
                 HStack {
                     Text("초대코드")
                     Text(viewModel.inviteText)
@@ -35,16 +36,38 @@ struct InviteView: View {
                     Text("초대하기")
                 }
             }
-            
             Text(viewModel.remainTimeText)
                 .foregroundColor(.secondary)
             
+            Text("초대코드 입력")
+                .font(.title2)
+            
+            // MARK: - 다른 사람 초대코드 입력
+            TextField("다른 사람의 초대코드", text: $viewModel.inputInviteCode)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled(true)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.horizontal)
+
+            Button("확인") {
+                viewModel.connectWithInviteCode()
+            }
+
+            if !viewModel.connectMessage.isEmpty {
+                Text(viewModel.connectMessage)
+                    .foregroundStyle(viewModel.connectSucceeded ? .green : .red)
+            }
+            
+            // MARK: - 네비게이션
             Button("feed로 이동") {
                 coordinator.replaceRoot(.feed)
             }
             
         }
         .task { viewModel.fetchInviteCodeandExpireDate() }
+        .onChange(of: viewModel.connectSucceeded) {
+            coordinator.replaceRoot(.feed)
+        }
     }
 }
 

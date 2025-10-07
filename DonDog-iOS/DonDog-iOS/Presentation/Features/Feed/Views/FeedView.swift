@@ -20,95 +20,91 @@ struct FeedView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 30) {
-                // 이미지 표시 영역
-                VStack {
-                    Text("Feed View")
-                    
-                    Button("초대코드 뷰로 이동") {
-                        coordinator.push(.invite)
-                    }
-                    
-                    Button("로그아웃") {
-                        do {
-                            try Auth.auth().signOut()
-                        } catch {
-                            print("로그아웃 실패: \(error.localizedDescription)")
+                ScrollView {
+                    // 이미지 표시 영역
+                    VStack {
+                        Text("Feed View")
+                        
+                        Button("로그아웃") {
+                            do {
+                                try Auth.auth().signOut()
+                            } catch {
+                                print("로그아웃 실패: \(error.localizedDescription)")
+                            }
                         }
                     }
-                }
-                if let frontImage = viewModel.selectedFrontImage, let backImage = viewModel.selectedBackImage {
-                    ZStack{
-                        Image(uiImage: backImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(maxHeight: 400)
-                            .cornerRadius(15)
-                            .shadow(radius: 10)
-                        Image(uiImage: frontImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .scaleEffect(x: -1, y:1)
-                            .frame(maxHeight: 100)
-                            .cornerRadius(15)
-                            .shadow(radius: 10)
+                    if let frontImage = viewModel.selectedFrontImage, let backImage = viewModel.selectedBackImage {
+                        ZStack{
+                            Image(uiImage: backImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxHeight: 400)
+                                .cornerRadius(15)
+                                .shadow(radius: 10)
+                            Image(uiImage: frontImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .scaleEffect(x: -1, y:1)
+                                .frame(maxHeight: 100)
+                                .cornerRadius(15)
+                                .shadow(radius: 10)
+                                .padding()
+                        }
+                    } else {
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(height: 300)
+                            .overlay(
+                                VStack {
+                                    Image(systemName: "camera")
+                                        .font(.system(size: 50))
+                                        .foregroundColor(.gray)
+                                    Text("커스텀 카메라로 사진을 촬영하세요")
+                                        .foregroundColor(.gray)
+                                        .font(.caption)
+                                }
+                            )
                             .padding()
                     }
                     
-                } else {
-                    RoundedRectangle(cornerRadius: 15)
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(height: 300)
-                        .overlay(
-                            VStack {
-                                Image(systemName: "camera")
-                                    .font(.system(size: 50))
-                                    .foregroundColor(.gray)
-                                Text("커스텀 카메라로 사진을 촬영하세요")
-                                    .foregroundColor(.gray)
-                                    .font(.caption)
-                            }
-                        )
-                        .padding()
-                }
-                
-                // 촬영 버튼
-                Button{
-                    showCameraView = true
-                }label: {
-                    HStack {
-                        Image(systemName: "camera")
-                        Text("커스텀 카메라로 촬영")
-                    }
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background{
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.blue)
-                    }
-                }
-                
-                // 이미지 삭제 버튼
-                if viewModel.selectedFrontImage != nil || viewModel.selectedBackImage != nil {
+                    // 촬영 버튼
                     Button{
-                        viewModel.selectedFrontImage = nil
-                        viewModel.selectedBackImage = nil
+                        showCameraView = true
                     }label: {
                         HStack {
-                            Image(systemName: "trash")
-                            Text("이미지 삭제")
+                            Image(systemName: "camera")
+                            Text("커스텀 카메라로 촬영")
                         }
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
                         .background{
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.red)
+                                .fill(Color.blue)
                         }
                     }
+                    
+                    // 이미지 삭제 버튼
+                    if viewModel.selectedFrontImage != nil || viewModel.selectedBackImage != nil {
+                        Button{
+                            viewModel.selectedFrontImage = nil
+                            viewModel.selectedBackImage = nil
+                        }label: {
+                            HStack {
+                                Image(systemName: "trash")
+                                Text("이미지 삭제")
+                            }
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background{
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(Color.red)
+                            }
+                        }
+                    }
+                    Spacer()
                 }
-                
-                Spacer()
             }
             .navigationTitle("Boomoji")
         }

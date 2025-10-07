@@ -36,7 +36,7 @@ final class InviteViewModel: ObservableObject {
                         self.expireDate = nil
                     }
                     
-                    self.inviteText = "초대코드: \(self.inviteCode ?? "")"
+                    self.inviteText = "\(self.inviteCode ?? "")"
                     self.startTimer()
                 } else {
                     self.inviteText = "초대코드를 불러오지 못했습니다."

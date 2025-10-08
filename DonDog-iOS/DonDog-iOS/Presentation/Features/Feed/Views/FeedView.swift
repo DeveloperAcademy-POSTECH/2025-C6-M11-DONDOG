@@ -18,12 +18,16 @@ struct FeedView: View {
     @State var showCameraView: Bool = false
     
     var body: some View {
-        NavigationView {
             VStack(spacing: 30) {
                 ScrollView {
                     // 이미지 표시 영역
                     VStack {
                         Text("Feed View")
+                            .onTapGesture {
+                                coordinator.push(.post)
+                            }
+                        
+                        Spacer()
                         
                         Button("로그아웃") {
                             do {
@@ -105,16 +109,16 @@ struct FeedView: View {
                     }
                     Spacer()
                 }
-            }
-            .navigationTitle("Boomoji")
         }
         .fullScreenCover(isPresented: $showCameraView) {
             ModuleFactory.shared.makeCameraView(with: viewModel)
                 .ignoresSafeArea()
         }
-        PostView()
     }
 }
+
 #Preview {
+    let coordinator = AppCoordinator(factory: ModuleFactory.shared)
     FeedView(viewModel: FeedViewModel())
+        .environmentObject(coordinator)
 }

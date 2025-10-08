@@ -61,6 +61,8 @@ final class AppCoordinator: ObservableObject {
             EmptyView()
         case .feed:
             factory.makeFeedView()
+        case .post:
+            factory.makePostView()
         }
     }
 }

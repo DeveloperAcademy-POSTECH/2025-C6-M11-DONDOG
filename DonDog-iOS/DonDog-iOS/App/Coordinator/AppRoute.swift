@@ -13,4 +13,5 @@ enum AppRoute: Hashable {
     case invite
     case camera
     case feed
+    case post
 }

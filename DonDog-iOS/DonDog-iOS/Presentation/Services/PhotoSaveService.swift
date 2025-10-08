@@ -6,27 +6,25 @@
 //
 
 import Combine
-import Foundation
-import Firebase
 import FirebaseFirestore
 import FirebaseStorage
+import FirebaseAuth
 import UIKit
 
-struct ImageData: Codable {
-    let id: String
+struct PostData: Codable {
+    let uid: String
     let frontImageURL: String
     let backImageURL: String
     let createdAt: Timestamp
-    let userId: String
     
-    init(frontImageURL: String, backImageURL: String, userId: String = "test_user") {
-        self.id = UUID().uuidString
+    init(uid: String, frontImageURL: String, backImageURL: String) {
+        self.uid = uid
         self.frontImageURL = frontImageURL
         self.backImageURL = backImageURL
         self.createdAt = Timestamp()
-        self.userId = userId
     }
 }
+
 
 
 final class PhotoSaveService: ObservableObject {
@@ -37,10 +35,67 @@ final class PhotoSaveService: ObservableObject {
     
     private init() {}
     
-    func uploadImages(frontImage: UIImage, backImage: UIImage, completion: @escaping (Result<ImageData, Error>) -> Void) {
-        print("🎯 uploadImages 시작")
-        let imageData = ImageData(frontImageURL: "", backImageURL: "", userId: "test_user")
-        print("📋 생성된 이미지 ID: \(imageData.id)")
+    // MARK: - : Room의 posts에 저장
+    func uploadImagesToRoomPosts(frontImage: UIImage, backImage: UIImage, completion: @escaping (Result<PostData, Error>) -> Void) {
+        print("🏠 Room의 posts에 전면/후면 이미지 업로드 시작")
+        
+        getCurrentUserRoomId { [weak self] result in
+            switch result {
+            case .success(let roomId):
+                print("✅ 사용자 roomId: \(roomId)")
+                
+                self?.uploadImagesAndSaveToRoom(frontImage: frontImage, backImage: backImage, roomId: roomId, completion: completion)
+            case .failure(let error):
+                print("❌ roomId 가져오기 실패: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func getCurrentUserRoomId(completion: @escaping (Result<String, Error>) -> Void) {
+        guard let currentUser = Auth.auth().currentUser else {
+            completion(.failure(FirebaseError.userNotAuthenticated))
+            return
+        }
+        
+        let uid = currentUser.uid
+        print("👤 현재 사용자 UID: \(uid)")
+        
+        db.collection("Users").document(uid).getDocument { document, error in
+            if let error = error {
+                print("❌ 사용자 문서 조회 실패: \(error.localizedDescription)")
+                completion(.failure(error))
+                return
+            }
+            
+            guard let document = document, document.exists else {
+                print("❌ 사용자 문서가 존재하지 않음")
+                completion(.failure(FirebaseError.userDocumentNotFound))
+                return
+            }
+            
+            let roomId = document.get("roomId") as? String ?? ""
+            if roomId.isEmpty {
+                print("❌ roomId가 비어있음")
+                completion(.failure(FirebaseError.roomIdNotFound))
+                return
+            }
+            
+            completion(.success(roomId))
+        }
+    }
+    
+    
+    private func uploadImagesAndSaveToRoom(frontImage: UIImage, backImage: UIImage, roomId: String, completion: @escaping (Result<PostData, Error>) -> Void) {
+        guard let currentUser = Auth.auth().currentUser else {
+            completion(.failure(FirebaseError.userNotAuthenticated))
+            return
+        }
+        
+        let uid = currentUser.uid
+        let postId = UUID().uuidString
+        
+        print("📸 전면/후면 이미지 업로드 시작 - Post ID: \(postId)")
         
         let group = DispatchGroup()
         var frontImageURL: String?
@@ -48,47 +103,98 @@ final class PhotoSaveService: ObservableObject {
         var uploadError: Error?
         
         group.enter()
-        uploadImage(image: frontImage, path: "images/\(imageData.id)/front.jpg") { result in
+        uploadImage(image: frontImage, path: "rooms/\(roomId)/posts/\(postId)/front.jpg") { result in
             switch result {
             case .success(let url):
                 frontImageURL = url
+                print("✅ 전면 이미지 업로드 성공")
             case .failure(let error):
                 uploadError = error
+                print("❌ 전면 이미지 업로드 실패: \(error.localizedDescription)")
             }
             group.leave()
         }
         
         group.enter()
-        uploadImage(image: backImage, path: "images/\(imageData.id)/back.jpg") { result in
+        uploadImage(image: backImage, path: "rooms/\(roomId)/posts/\(postId)/back.jpg") { result in
             switch result {
             case .success(let url):
                 backImageURL = url
+                print("✅ 후면 이미지 업로드 성공")
             case .failure(let error):
                 uploadError = error
+                print("❌ 후면 이미지 업로드 실패: \(error.localizedDescription)")
             }
             group.leave()
         }
         
         group.notify(queue: .main) {
             if let error = uploadError {
+                print("❌ 이미지 업로드 중 오류 발생: \(error.localizedDescription)")
                 completion(.failure(error))
                 return
             }
             
             guard let frontURL = frontImageURL, let backURL = backImageURL else {
+                print("❌ 이미지 URL이 없음")
                 completion(.failure(FirebaseError.uploadFailed))
                 return
             }
             
-            let finalImageData = ImageData(
-                frontImageURL: frontURL,
-                backImageURL: backURL,
-                userId: imageData.userId
-            )
+            print("✅ 전면/후면 이미지 업로드 모두 완료")
             
-            self.saveImageDataToFirestore(imageData: finalImageData, completion: completion)
+            let postData = PostData(uid: uid, frontImageURL: frontURL, backImageURL: backURL)
+            self.savePostToRoom(roomId: roomId, postId: postId, postData: postData, completion: completion)
         }
     }
+    
+    private func savePostToRoom(roomId: String, postId: String, postData: PostData, completion: @escaping (Result<PostData, Error>) -> Void) {
+        do {
+            try db.collection("Rooms").document(roomId).collection("posts").document(postId).setData(from: postData) { error in
+                if let error = error {
+                    print("❌ Room posts 저장 실패: \(error.localizedDescription)")
+                    completion(.failure(error))
+                    return
+                }
+                
+                print("✅ Room posts 저장 성공: \(roomId)/posts/\(postId)")
+                completion(.success(postData))
+            }
+        } catch {
+            print("❌ PostData 직렬화 실패: \(error.localizedDescription)")
+            completion(.failure(error))
+        }
+    }
+    
+    func fetchRoomPosts(roomId: String, completion: @escaping (Result<[PostData], Error>) -> Void) {
+        print("📥 Room posts 조회 시작: \(roomId)")
+        
+        db.collection("Rooms").document(roomId).collection("posts")
+            .order(by: "createdAt", descending: true)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("❌ Room posts 조회 실패: \(error.localizedDescription)")
+                    completion(.failure(error))
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else {
+                    print("📄 posts 문서가 없음")
+                    completion(.success([]))
+                    return
+                }
+                
+                print("📄 \(documents.count)개 posts 문서 발견")
+                
+                let postsList = documents.compactMap { document -> PostData? in
+                    try? document.data(as: PostData.self)
+                }
+                
+                print("✅ \(postsList.count)개 posts 데이터 파싱 완료")
+                completion(.success(postsList))
+            }
+    }
+    
     
     private func uploadImage(image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("🚀 이미지 업로드 시작 - 경로: \(path)")
@@ -136,54 +242,16 @@ final class PhotoSaveService: ObservableObject {
         }
     }
     
-    private func saveImageDataToFirestore(imageData: ImageData, completion: @escaping (Result<ImageData, Error>) -> Void) {
-        do {
-            try db.collection("images").document(imageData.id).setData(from: imageData) { error in
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-                
-                completion(.success(imageData))
-            }
-        } catch {
-            completion(.failure(error))
-        }
-    }
     
-    func fetchImageData(completion: @escaping (Result<[ImageData], Error>) -> Void) {
-        print("📥 Firebase에서 이미지 목록 가져오기 시작")
-        db.collection("images")
-            .order(by: "createdAt", descending: true)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    print("❌ Firestore 조회 실패: \(error.localizedDescription)")
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let documents = snapshot?.documents else {
-                    print("📄 문서가 없음")
-                    completion(.success([]))
-                    return
-                }
-                
-                print("📄 \(documents.count)개 문서 발견")
-                
-                let imageDataList = documents.compactMap { document -> ImageData? in
-                    try? document.data(as: ImageData.self)
-                }
-                
-                print("✅ \(imageDataList.count)개 이미지 데이터 파싱 완료")
-                completion(.success(imageDataList))
-            }
-    }
 }
 
 enum FirebaseError: LocalizedError {
     case uploadFailed
     case imageConversionFailed
     case downloadURLFailed
+    case userNotAuthenticated
+    case userDocumentNotFound
+    case roomIdNotFound
     
     var errorDescription: String? {
         switch self {
@@ -193,6 +261,12 @@ enum FirebaseError: LocalizedError {
             return "이미지 변환에 실패했습니다"
         case .downloadURLFailed:
             return "다운로드 URL 생성에 실패했습니다"
+        case .userNotAuthenticated:
+            return "사용자가 인증되지 않았습니다"
+        case .userDocumentNotFound:
+            return "사용자 문서를 찾을 수 없습니다"
+        case .roomIdNotFound:
+            return "roomId를 찾을 수 없습니다"
         }
     }
 }

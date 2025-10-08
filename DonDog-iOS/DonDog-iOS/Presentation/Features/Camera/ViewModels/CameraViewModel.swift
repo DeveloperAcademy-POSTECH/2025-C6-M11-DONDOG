@@ -11,7 +11,7 @@ import SwiftUI
 
 protocol CameraViewModelDelegate: AnyObject {
     func didCaptureImages(frontImage: UIImage, backImage: UIImage)
-    func didUploadToFirebase(imageData: ImageData)
+    func didUploadToRoomPosts(postData: PostData)
 }
 
 final class CameraViewModel: ObservableObject {
@@ -22,27 +22,27 @@ final class CameraViewModel: ObservableObject {
     
     private let photoSaveService = PhotoSaveService.shared
     
-    func uploadImagesToFirebase() {
-        print("📷 uploadImagesToFirebase 호출됨")
+    
+    func uploadImagesToRoomPosts() {
         
         guard let frontImage = frontImage, let backImage = backImage else {
-            print("❌ 이미지가 없습니다")
+            print("❌ 전면 또는 후면 이미지가 없습니다")
             return
         }
         
-        print("✅ 이미지 확인됨 - 전면: \(frontImage.size), 후면: \(backImage.size)")
+        print("✅ 전면 이미지: \(frontImage.size), 후면 이미지: \(backImage.size)")
         isUploading = true
         
-        photoSaveService.uploadImages(frontImage: frontImage, backImage: backImage) { [weak self] result in
+        photoSaveService.uploadImagesToRoomPosts(frontImage: frontImage, backImage: backImage) { [weak self] result in
             DispatchQueue.main.async {
                 self?.isUploading = false
                 
                 switch result {
-                case .success(let imageData):
-                    print("🎉 Firebase 업로드 성공: \(imageData.id)")
-                    self?.delegate?.didUploadToFirebase(imageData: imageData)
+                case .success(let postData):
+                    print("🎉 Room posts 업로드 성공: \(postData.uid)")
+                    self?.delegate?.didUploadToRoomPosts(postData: postData)
                 case .failure(let error):
-                    print("💥 Firebase 업로드 실패: \(error.localizedDescription)")
+                    print("💥 Room posts 업로드 실패: \(error.localizedDescription)")
                 }
             }
         }

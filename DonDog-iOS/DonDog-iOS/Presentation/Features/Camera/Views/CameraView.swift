@@ -52,8 +52,7 @@ struct CameraView: UIViewControllerRepresentable {
                     backImage: backImage
                 )
                 
-                
-                parent.viewModel.uploadImagesToFirebase()
+                parent.viewModel.uploadImagesToRoomPosts()
             }
             parent.presentationMode.wrappedValue.dismiss()
         }

@@ -5,11 +5,11 @@
 //  Created by 조유진 on 10/3/25.
 //
 
-import Foundation
+
+import FirebaseAuth
+import PhotosUI
 import SwiftUI
 import UIKit
-import PhotosUI
-import FirebaseAuth
 
 struct FeedView: View {
     @EnvironmentObject var coordinator: AppCoordinator

@@ -30,7 +30,7 @@ struct CameraViewContainer: View {
                 if let captionVM = captionViewModel {
                     CaptionView(viewModel: captionVM) {
                         withAnimation {
-                            cameraViewModel.showCaptionView = false
+                            shouldDismiss = true
                         }
                     }
                     .transition(.move(edge: .bottom))

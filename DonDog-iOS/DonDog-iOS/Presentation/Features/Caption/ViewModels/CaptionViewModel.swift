@@ -53,6 +53,8 @@ final class CaptionViewModel: ObservableObject {
                 case .failure(let error):
                     print("❌ 업로드 실패: \(error.localizedDescription)")
                 }
+                
+                
             }
         }
     }

@@ -116,6 +116,11 @@ struct CaptionView: View {
             .disabled(viewModel.isUploading)
             .padding(.horizontal)
             .padding(.bottom, 30)
+            .onChange(of: viewModel.isUploading) { newValue in
+                if newValue == false{
+                    onCancel()
+                }
+            }
         }
         .background(Color.white)
     }

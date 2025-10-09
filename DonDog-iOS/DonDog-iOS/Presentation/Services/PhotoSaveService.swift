@@ -195,6 +195,65 @@ final class PhotoSaveService: ObservableObject {
             }
     }
     
+    func fetchTodayRoomPosts(roomId: String, completion: @escaping (Result<[PostData], Error>) -> Void) {
+        print("📅 오늘 찍은 Room posts 조회 시작: \(roomId)")
+        
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let todayTimestamp = Timestamp(date: today)
+        
+        print("📅 오늘 날짜: \(today)")
+        
+        db.collection("Rooms").document(roomId).collection("posts")
+            .whereField("createdAt", isGreaterThanOrEqualTo: todayTimestamp)
+            .order(by: "createdAt", descending: true)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("❌ 오늘 posts 조회 실패: \(error.localizedDescription)")
+                    completion(.failure(error))
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else {
+                    print("📄 오늘 posts 문서가 없음")
+                    completion(.success([]))
+                    return
+                }
+                
+                print("📄 \(documents.count)개 오늘 posts 문서 발견")
+                
+                let postsList = documents.compactMap { document -> PostData? in
+                    try? document.data(as: PostData.self)
+                }
+                
+                print("✅ \(postsList.count)개 오늘 posts 데이터 파싱 완료")
+                completion(.success(postsList))
+            }
+    }
+    
+    func downloadImage(from urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(.failure(FirebaseError.invalidURL))
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data, let image = UIImage(data: data) else {
+                completion(.failure(FirebaseError.imageDownloadFailed))
+                return
+            }
+            
+            DispatchQueue.main.async {
+                completion(.success(image))
+            }
+        }.resume()
+    }
+    
     
     private func uploadImage(image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("🚀 이미지 업로드 시작 - 경로: \(path)")
@@ -252,6 +311,8 @@ enum FirebaseError: LocalizedError {
     case userNotAuthenticated
     case userDocumentNotFound
     case roomIdNotFound
+    case invalidURL
+    case imageDownloadFailed
     
     var errorDescription: String? {
         switch self {
@@ -267,6 +328,10 @@ enum FirebaseError: LocalizedError {
             return "사용자 문서를 찾을 수 없습니다"
         case .roomIdNotFound:
             return "roomId를 찾을 수 없습니다"
+        case .invalidURL:
+            return "유효하지 않은 URL입니다"
+        case .imageDownloadFailed:
+            return "이미지 다운로드에 실패했습니다"
         }
     }
 }

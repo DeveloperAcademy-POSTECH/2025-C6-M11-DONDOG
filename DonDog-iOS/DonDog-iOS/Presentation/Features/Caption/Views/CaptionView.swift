@@ -37,7 +37,6 @@ struct CaptionView: View {
             }
             .padding()
             
-            // 전면/후면 사진 미리보기
             HStack(spacing: 10) {
                 if let frontImage = viewModel.frontImage {
                     VStack {
@@ -47,6 +46,7 @@ struct CaptionView: View {
                         Image(uiImage: frontImage)
                             .resizable()
                             .scaledToFit()
+                            .scaleEffect(x: -1, y:1)
                             .frame(height: 200)
                             .cornerRadius(10)
                             .shadow(radius: 5)

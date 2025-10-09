@@ -17,6 +17,7 @@ struct FeedView: View {
     
     @State var showCameraView: Bool = false
     @State private var isRefreshing = false
+    @StateObject private var cameraViewModel = CameraViewModel()
     
     var body: some View {
         NavigationView {
@@ -59,21 +60,34 @@ struct FeedView: View {
                         .padding(.horizontal)
  
                         if let frontImage = viewModel.todayFrontImage, let backImage = viewModel.todayBackImage {
-                            ZStack{
-                                Image(uiImage: backImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(maxHeight: 400)
-                                    .cornerRadius(15)
-                                    .shadow(radius: 10)
-                                Image(uiImage: frontImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .scaleEffect(x: -1, y:1)
-                                    .frame(maxHeight: 100)
-                                    .cornerRadius(15)
-                                    .shadow(radius: 10)
-                                    .padding()
+                            VStack(spacing: 10) {
+                                ZStack{
+                                    Image(uiImage: backImage)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(maxHeight: 400)
+                                        .cornerRadius(15)
+                                        .shadow(radius: 10)
+                                    Image(uiImage: frontImage)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .scaleEffect(x: -1, y:1)
+                                        .frame(maxHeight: 100)
+                                        .cornerRadius(15)
+                                        .shadow(radius: 10)
+                                        .padding()
+                                }
+                                
+                                // 캡션 표시
+                                if let firstPost = viewModel.images.first, !firstPost.caption.isEmpty {
+                                    Text(firstPost.caption)
+                                        .font(.body)
+                                        .foregroundColor(.black)
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 8)
+                                        .background(Color.gray.opacity(0.1))
+                                        .cornerRadius(8)
+                                }
                             }
                         } else if viewModel.isLoading {
                             RoundedRectangle(cornerRadius: 15)
@@ -133,8 +147,11 @@ struct FeedView: View {
             .navigationTitle("Boomoji")
         }
         .fullScreenCover(isPresented: $showCameraView) {
-            ModuleFactory.shared.makeCameraView(with: viewModel)
-                .ignoresSafeArea()
+            CameraViewContainer(
+                cameraViewModel: cameraViewModel,
+                feedViewModel: viewModel,
+                isPresented: $showCameraView
+            )
         }
     }
 }

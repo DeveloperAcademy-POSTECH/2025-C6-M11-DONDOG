@@ -31,6 +31,7 @@ struct CameraViewContainer: View {
                     CaptionView(viewModel: captionVM) {
                         withAnimation {
                             shouldDismiss = true
+                            cameraViewModel.showCaptionView = false
                         }
                     }
                     .transition(.move(edge: .bottom))

@@ -61,8 +61,8 @@ final class AppCoordinator: ObservableObject {
             EmptyView()
         case .feed:
             factory.makeFeedView()
-        case .post:
-            factory.makePostView()
+        case .post(let postId, let roomId):
+            factory.makePostView(with: postId, in: roomId)
         }
     }
 }

@@ -12,8 +12,10 @@ struct PostView: View {
     @StateObject var viewModel: PostViewModel
     
     var body: some View {
-        VStack {
-            Text("Hello, World!")
+        VStack(alignment: .leading) {
+            Text(viewModel.authorName)
+                .font(.system(size: 20, weight: .semibold))
+                .padding(.bottom, 4)
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -29,8 +31,4 @@ struct PostView: View {
             }
         }
     }
-}
-
-#Preview {
-    PostView(viewModel: PostViewModel())
 }

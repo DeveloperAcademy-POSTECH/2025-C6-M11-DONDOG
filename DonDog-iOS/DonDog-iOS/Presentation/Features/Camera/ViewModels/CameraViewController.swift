@@ -5,8 +5,8 @@
 //  Created by 문창재 on 10/4/25.
 //
 
-import UIKit
 import AVFoundation
+import UIKit
 
 // 카메라 델리게이트 프로토콜
 protocol CustomCameraDelegate: AnyObject {
@@ -217,7 +217,7 @@ class CustomCameraViewController: UIViewController {
             // 전면 → 후면으로 전환
             switchToBackCamera()
         } else {
-            // 후면 촬영 완료 → 메인 화면으로 돌아가기
+            // 후면 촬영 완료 → CaptionView로 이동
             delegate?.didCompleteBothPhotos()
         }
     }

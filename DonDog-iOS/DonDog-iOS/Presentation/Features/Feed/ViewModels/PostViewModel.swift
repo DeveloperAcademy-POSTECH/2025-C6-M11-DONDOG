@@ -31,6 +31,7 @@ final class PostViewModel: ObservableObject {
 
         Task {
             await self.fetchPostData()
+            print(postId)
         }
     }
 
@@ -50,7 +51,6 @@ final class PostViewModel: ObservableObject {
                 self.frontURL = URL(string: urlString)
             }
 
-            // ✅ user 정보까지 가져온 뒤 stickerURL 설정
             if !self.uid.isEmpty {
                 let userRef = db.collection("Users").document(self.uid)
                 let userSnapshot = try await userRef.getDocument()
@@ -62,11 +62,10 @@ final class PostViewModel: ObservableObject {
                 }
             }
 
-            // ✅ 모든 URL 확보된 뒤에 한 번에 로딩
             await loadImages()
 
         } catch {
-            print("❌ Firestore fetch 실패:", error.localizedDescription)
+            print("Firestore fetch 실패:", error.localizedDescription)
         }
     }
 
@@ -87,7 +86,7 @@ final class PostViewModel: ObservableObject {
             let (data, _) = try await URLSession.shared.data(from: url)
             return UIImage(data: data)
         } catch {
-            print("❌ 이미지 로드 실패:", error.localizedDescription)
+            print("이미지 로드 실패:", error.localizedDescription)
             return nil
         }
     }

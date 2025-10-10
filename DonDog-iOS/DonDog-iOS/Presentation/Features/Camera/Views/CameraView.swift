@@ -43,15 +43,17 @@ struct CameraView: UIViewControllerRepresentable {
         }
         
         func didCompleteBothPhotos() {
-            // 촬영 완료 시 delegate 호출
             if let frontImage = parent.viewModel.frontImage,
                let backImage = parent.viewModel.backImage {
                 parent.viewModel.delegate?.didCaptureImages(
                     frontImage: frontImage, 
                     backImage: backImage
                 )
+
+                DispatchQueue.main.async {
+                    self.parent.viewModel.showCaptionView = true
+                }
             }
-            parent.presentationMode.wrappedValue.dismiss()
         }
         
         func didCancel() {

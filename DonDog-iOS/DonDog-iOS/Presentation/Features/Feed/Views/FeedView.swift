@@ -19,15 +19,16 @@ struct FeedView: View {
     @State private var isRefreshing = false
     
     var body: some View {
-        NavigationView {
             VStack(spacing: 30) {
                 ScrollView {
                     // 이미지 표시 영역
                     VStack {
                         HStack {
-                            Text("Feed View")
-                            
-                            Spacer()
+                        Text("Feed View")
+                            .onTapGesture {
+                                coordinator.push(.post)
+                            }
+                        Spacer()
                         
                             Button(action: {
                                 print("🔄 수동 새로고침 시작")
@@ -127,7 +128,6 @@ struct FeedView: View {
                             .fill(Color.blue)
                     }
                 }
-                
                 Spacer()
             }
             .navigationTitle("Boomoji")
@@ -138,6 +138,9 @@ struct FeedView: View {
         }
     }
 }
+
 #Preview {
+    let coordinator = AppCoordinator(factory: ModuleFactory.shared)
     FeedView(viewModel: FeedViewModel())
+        .environmentObject(coordinator)
 }

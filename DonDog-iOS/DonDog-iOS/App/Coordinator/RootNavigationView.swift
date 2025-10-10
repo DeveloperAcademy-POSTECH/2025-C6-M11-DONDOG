@@ -20,7 +20,7 @@ struct RootNavigationView: View {
                 .navigationDestination(for: AppRoute.self) { route in
                     coordinator.build(route)
                 }
-                .environmentObject(coordinator)
         }
+        .environmentObject(coordinator)
     }
 }

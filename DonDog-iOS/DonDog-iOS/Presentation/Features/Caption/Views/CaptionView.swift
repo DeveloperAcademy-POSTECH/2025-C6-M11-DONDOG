@@ -126,3 +126,6 @@ struct CaptionView: View {
     }
 }
 
+#Preview {
+    CaptionView(viewModel: CaptionViewModel(frontImage: <#T##UIImage?#>, backImage: <#T##UIImage?#>), onCancel: {})
+}

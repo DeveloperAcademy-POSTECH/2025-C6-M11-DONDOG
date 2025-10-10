@@ -10,6 +10,7 @@ import SwiftUI
 struct CaptionView: View {
     @ObservedObject var viewModel: CaptionViewModel
     var onCancel: () -> Void
+    @FocusState private var isCaptionFocused: Bool
     
     var body: some View {
         VStack(spacing: 20) {
@@ -69,16 +70,49 @@ struct CaptionView: View {
             }
             .padding(.horizontal)
             
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 15) {
                 Text("캡션 (최대 8자)")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 
-                TextField("오늘의 한마디를 입력하세요", text: $viewModel.caption)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(10)
+                // 글자별 박스 표시
+                HStack(spacing: 8) {
+                    ForEach(0..<8, id: \.self) { index in
+                        ZStack {
+                            // 박스 테두리
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(index < viewModel.caption.count ? Color.black : Color.gray.opacity(0.3), lineWidth: 2)
+                                .frame(width: 40, height: 50)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(index < viewModel.caption.count ? Color.white : Color.gray.opacity(0.05))
+                                )
+                            
+                            // 글자 표시
+                            if index < viewModel.caption.count {
+                                let character = Array(viewModel.caption)[index]
+                                Text(String(character))
+                                    .font(.system(size: 24, weight: .semibold))
+                                    .foregroundColor(.black)
+                            } else {
+                                // 빈 박스 placeholder
+                                Text("")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.gray.opacity(0.3))
+                            }
+                        }
+                        .onTapGesture {
+                            isCaptionFocused = true
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
+                
+                // 숨겨진 TextField (실제 입력받기 위함)
+                TextField("", text: $viewModel.caption)
+                    .frame(width: 0, height: 0)
+                    .opacity(0)
+                    .focused($isCaptionFocused)
                     .onChange(of: viewModel.caption) { newValue in
                         if newValue.count > 8 {
                             viewModel.caption = String(newValue.prefix(8))
@@ -127,5 +161,5 @@ struct CaptionView: View {
 }
 
 #Preview {
-    CaptionView(viewModel: CaptionViewModel(frontImage: <#T##UIImage?#>, backImage: <#T##UIImage?#>), onCancel: {})
+    CaptionView(viewModel: CaptionViewModel(frontImage: UIImage(named: "test1"), backImage: UIImage(named: "test2")), onCancel: {})
 }

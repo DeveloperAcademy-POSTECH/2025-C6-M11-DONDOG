@@ -21,6 +21,7 @@ extension Font {
     static var titleBold18: Font = .custom(FontName.pretendardBold.rawValue, size: 18)
 
     // MARK: - Subtitle
+    static var subtitleMedium20: Font = .custom(FontName.pretendardMedium.rawValue, size: 20)
     static var subtitleMedium18: Font = .custom(FontName.pretendardMedium.rawValue, size: 18)
     static var subtitleSemiBold16: Font = .custom(FontName.pretendardSemiBold.rawValue, size: 16)
 

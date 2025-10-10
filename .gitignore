@@ -4,6 +4,7 @@
 
 # Firebase config
 GoogleService-Info.plist
+DonDog-iOS/DonDog-iOS/GoogleService-Info.plist
 
 ### CocoaPods ###
 ## CocoaPods GitIgnore Template

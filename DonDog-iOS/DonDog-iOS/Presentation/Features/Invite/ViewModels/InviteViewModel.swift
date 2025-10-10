@@ -98,7 +98,6 @@ final class InviteViewModel: ObservableObject {
                 return
             }
             /// 찾은 후 문서 내 데이터를 딕셔너리 형태로 가져온 후, expireDate 확인
-            //:: 수정?
             let inviteData = doc.data() ?? [:]
             if let expireDateFromDoc = inviteData["expireDate"] as? Timestamp {
                 let expire = expireDateFromDoc.dateValue()

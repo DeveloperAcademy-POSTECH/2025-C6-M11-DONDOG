@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 import UIKit
 import PhotosUI
-import FirebaseAuth
 
 struct FeedView: View {
     @EnvironmentObject var coordinator: AppCoordinator
@@ -24,14 +23,6 @@ struct FeedView: View {
                     // 이미지 표시 영역
                     VStack {
                         Text("Feed View")
-                        
-                        Button("로그아웃") {
-                            do {
-                                try Auth.auth().signOut()
-                            } catch {
-                                print("로그아웃 실패: \(error.localizedDescription)")
-                            }
-                        }
                     }
                     if let frontImage = viewModel.selectedFrontImage, let backImage = viewModel.selectedBackImage {
                         ZStack{

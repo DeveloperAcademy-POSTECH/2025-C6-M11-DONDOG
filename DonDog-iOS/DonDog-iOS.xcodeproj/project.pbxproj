@@ -329,8 +329,8 @@
 		D24402A72E992CD800D837C8 /* Caption */ = {
 			isa = PBXGroup;
 			children = (
-				D24402A42E992CD800D837C8 /* ViewModels */,
 				D24402A62E992CD800D837C8 /* Views */,
+				D24402A42E992CD800D837C8 /* ViewModels */,
 			);
 			path = Caption;
 			sourceTree = "<group>";
@@ -592,7 +592,7 @@
 				CODE_SIGN_ENTITLEMENTS = "DonDog-iOS/DonDog-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = A65CGWHSL8;
+				DEVELOPMENT_TEAM = 8FKM9FB4PH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";
@@ -628,7 +628,7 @@
 				CODE_SIGN_ENTITLEMENTS = "DonDog-iOS/DonDog-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = A65CGWHSL8;
+				DEVELOPMENT_TEAM = 8FKM9FB4PH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";

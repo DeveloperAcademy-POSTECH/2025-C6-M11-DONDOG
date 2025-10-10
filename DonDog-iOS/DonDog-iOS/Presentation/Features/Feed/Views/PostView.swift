@@ -11,12 +11,39 @@ struct PostView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: PostViewModel
     
+    @State var text: String = ""
+    
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(viewModel.authorName)
-                .font(.system(size: 20, weight: .semibold))
-                .padding(.bottom, 4)
+        ZStack(alignment: .topTrailing) {
+            VStack(alignment: .leading) {
+                Text(viewModel.authorName)
+                    .font(.system(size: 20, weight: .semibold))
+                    .padding(.bottom, 4)
+                Text(DataUtils.formatDate(viewModel.createdAt, format: "HH:mm"))
+                    .font(.system(size: 16, weight: .regular))
+                    .padding(.bottom, 19)
+                
+                PostContentView(viewModel: viewModel)
+                    .padding(.horizontal, 2)
+                    .padding(.bottom, 16)
+                
+                TextField("댓글을 입력해 주세요", text: $text)
+                    .padding(.vertical, 14)
+                    .padding(.leading, 20)
+                    .cornerRadius(32)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 32)
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                    )
+            }
+            
+            Image(uiImage: viewModel.stickerImage)
+                .resizable()
+                .frame(width: 76, height: 94)
+                .padding(.top, 28)
         }
+        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {

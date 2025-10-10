@@ -29,6 +29,11 @@
 		A1F848EB2E98087E007F79BA /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F848EA2E98087E007F79BA /* CaptionView.swift */; };
 		A1F848ED2E980885007F79BA /* CaptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F848EC2E980885007F79BA /* CaptionViewModel.swift */; };
 		A1F848F12E9808DA007F79BA /* CameraViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F848F02E9808DA007F79BA /* CameraViewContainer.swift */; };
+		CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */; };
+		CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF52E98FCD700AEAB49 /* Pretendard-Medium.otf */; };
+		CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF72E98FCD700AEAB49 /* Pretendard-SemiBold.otf */; };
+		CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF62E98FCD700AEAB49 /* Pretendard-Regular.otf */; };
+		CA957D032E98FD0900AEAB49 /* Font+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA957D022E98FD0900AEAB49 /* Font+.swift */; };
 		CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */; };
 		CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */; };
 		CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */; };
@@ -60,6 +65,11 @@
 		A1F848EC2E980885007F79BA /* CaptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionViewModel.swift; sourceTree = "<group>"; };
 		A1F848F02E9808DA007F79BA /* CameraViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewContainer.swift; sourceTree = "<group>"; };
 		CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DonDog-iOS.entitlements"; sourceTree = "<group>"; };
+		CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Bold.otf"; sourceTree = "<group>"; };
+		CA957CF52E98FCD700AEAB49 /* Pretendard-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.otf"; sourceTree = "<group>"; };
+		CA957CF62E98FCD700AEAB49 /* Pretendard-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Regular.otf"; sourceTree = "<group>"; };
+		CA957CF72E98FCD700AEAB49 /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-SemiBold.otf"; sourceTree = "<group>"; };
+		CA957D022E98FD0900AEAB49 /* Font+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+.swift"; sourceTree = "<group>"; };
 		CAA9AE802E8FBE250047A89A /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
@@ -134,6 +144,50 @@
 				A1F848EC2E980885007F79BA /* CaptionViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		CA957CEB2E98FC3D00AEAB49 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				CA957CEC2E98FC4500AEAB49 /* Components */,
+				CA957CED2E98FC4C00AEAB49 /* Extensions */,
+				CAA9AED42E8FC15C0047A89A /* Resources */,
+				CA957CEE2E98FC5500AEAB49 /* Utils */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		CA957CEC2E98FC4500AEAB49 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		CA957CED2E98FC4C00AEAB49 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				CA957D022E98FD0900AEAB49 /* Font+.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		CA957CEE2E98FC5500AEAB49 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		CA957CEF2E98FC9F00AEAB49 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */,
+				CA957CF52E98FCD700AEAB49 /* Pretendard-Medium.otf */,
+				CA957CF62E98FCD700AEAB49 /* Pretendard-Regular.otf */,
+				CA957CF72E98FCD700AEAB49 /* Pretendard-SemiBold.otf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		CAA9AE772E8FBE250047A89A = {
@@ -266,6 +320,7 @@
 		CAA9AED42E8FC15C0047A89A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CA957CEF2E98FC9F00AEAB49 /* Fonts */,
 				CAA9AED32E8FC15C0047A89A /* Assets.xcassets */,
 			);
 			path = Resources;
@@ -278,8 +333,8 @@
 				8B5F44592E90FF95003137F2 /* Info.plist */,
 				8B5F44D42E9111DB003137F2 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
+				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
-				CAA9AED42E8FC15C0047A89A /* Resources */,
 			);
 			path = "DonDog-iOS";
 			sourceTree = "<group>";
@@ -405,6 +460,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
+				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
+				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
+				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
 				8B5F44D52E9111DB003137F2 /* GoogleService-Info.plist in Resources */,
 			);
@@ -433,6 +492,7 @@
 				8BA62EA42E9149A00054EB8F /* AppDelegate.swift in Sources */,
 				CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */,
 				D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */,
+				CA957D032E98FD0900AEAB49 /* Font+.swift in Sources */,
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
 				8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */,

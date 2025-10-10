@@ -151,19 +151,10 @@
 		CA957CEB2E98FC3D00AEAB49 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CA957CEC2E98FC4500AEAB49 /* Components */,
 				CA957CED2E98FC4C00AEAB49 /* Extensions */,
 				CAA9AED42E8FC15C0047A89A /* Resources */,
-				CA957CEE2E98FC5500AEAB49 /* Utils */,
 			);
 			path = Core;
-			sourceTree = "<group>";
-		};
-		CA957CEC2E98FC4500AEAB49 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Components;
 			sourceTree = "<group>";
 		};
 		CA957CED2E98FC4C00AEAB49 /* Extensions */ = {
@@ -172,13 +163,6 @@
 				CA957D022E98FD0900AEAB49 /* Font+.swift */,
 			);
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		CA957CEE2E98FC5500AEAB49 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Utils;
 			sourceTree = "<group>";
 		};
 		CA957CEF2E98FC9F00AEAB49 /* Fonts */ = {

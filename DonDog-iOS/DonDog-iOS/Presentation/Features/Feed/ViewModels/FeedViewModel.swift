@@ -18,11 +18,25 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var todayBackImage: UIImage?
     @Published var isLoading = false
     @Published var uploadStatus: String = ""
+    @Published var currentRoomId: String = ""
+    @Published var selectedPostId: String = ""
     
     private let photoSaveService = PhotoSaveService.shared
     
     init() {
         loadTodayPosts()
+        
+        photoSaveService.getCurrentUserRoomId { [weak self] result in
+            switch result {
+            case .success(let roomId):
+                DispatchQueue.main.async {
+                    self?.currentRoomId = roomId
+                    print("currentRoomId 초기화 완료: \(roomId)")
+                }
+            case .failure(let error):
+                print("roomId 가져오기 실패: \(error.localizedDescription)")
+            }
+        }
     }
     
     func didCaptureImages(frontImage: UIImage, backImage: UIImage) {
@@ -82,6 +96,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
   
                             if let firstPost = todayPosts.first {
+                                self?.selectedPostId = firstPost.postId
                                 self?.downloadTodayImages(from: firstPost)
                             } else {
                                 print("📭 오늘 찍은 게시물이 없습니다")

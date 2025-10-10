@@ -24,6 +24,7 @@ final class PostViewModel: ObservableObject {
 
     private var stickerURL: URL?
     private var frontURL: URL?
+    private var backURL: URL?
 
     init(postId: String, roomId: String) {
         self.postId = postId
@@ -51,6 +52,10 @@ final class PostViewModel: ObservableObject {
                 self.frontURL = URL(string: urlString)
             }
 
+            if let urlString = data["backImageURL"] as? String {
+                self.backURL = URL(string: urlString)
+            }
+
             if !self.uid.isEmpty {
                 let userRef = db.collection("Users").document(self.uid)
                 let userSnapshot = try await userRef.getDocument()
@@ -72,12 +77,14 @@ final class PostViewModel: ObservableObject {
     private func loadImages() async {
         async let sticker = stickerURL != nil ? loadImage(from: stickerURL!) : nil
         async let front = frontURL != nil ? loadImage(from: frontURL!) : nil
+        async let back = backURL != nil ? loadImage(from: backURL!) : nil
 
-        let (stickerImage, frontImage) = await (sticker, front)
+        let (stickerImage, frontImage, backImage) = await (sticker, front, back)
 
         await MainActor.run {
             if let stickerImage = stickerImage { self.stickerImage = stickerImage }
             if let frontImage = frontImage { self.frontImage = frontImage }
+            if let backImage = backImage { self.backImage = backImage }
         }
     }
 

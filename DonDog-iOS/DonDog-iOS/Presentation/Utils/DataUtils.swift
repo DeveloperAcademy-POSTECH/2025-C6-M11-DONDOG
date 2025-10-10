@@ -18,13 +18,4 @@ struct DataUtils {
         
         return formatter.string(from: date)
     }
-    static func loadImage(from url: URL) async -> UIImage? {
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            return UIImage(data: data)
-        } catch {
-            print("❌ 이미지 로드 실패:", error.localizedDescription)
-            return nil
-        }
-    }
 }

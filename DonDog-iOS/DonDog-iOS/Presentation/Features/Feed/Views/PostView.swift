@@ -12,6 +12,7 @@ struct PostView: View {
     @StateObject var viewModel: PostViewModel
     
     @State var text: String = ""
+    @State private var showDeleteAlert = false
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -48,7 +49,7 @@ struct PostView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button(role: .destructive) {
-                        print("게시물이 삭제되었습니다.")
+                        showDeleteAlert = true
                     } label: {
                         Label("삭제하기", systemImage: "trash")
                     }
@@ -56,6 +57,12 @@ struct PostView: View {
                     Image(systemName: "ellipsis")
                 }
             }
+        }
+        .alert("게시글을 삭제하시겠습니까?", isPresented: $showDeleteAlert) {
+            Button("삭제", role: .destructive) {
+                // deletePost()
+            }
+            Button("취소", role: .cancel) { }
         }
     }
 }

@@ -15,6 +15,7 @@ protocol ModuleFactoryProtocol {
     func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
     func makeFeedView() -> FeedView
     func makeSettingView() -> SettingView
+    func makeEditProfileView() -> EditProfileView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -54,6 +55,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makeSettingView() -> SettingView {
         let viewModel = SettingViewModel()
         let view = SettingView(viewModel: viewModel)
+        return view
+    }
+    
+    func makeEditProfileView() -> EditProfileView {
+        let viewModel = EditProfileViewModel()
+        let view = EditProfileView(viewModel: viewModel)
         return view
     }
 }

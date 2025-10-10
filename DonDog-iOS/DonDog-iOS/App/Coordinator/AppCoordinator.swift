@@ -63,6 +63,8 @@ final class AppCoordinator: ObservableObject {
             factory.makeFeedView()
         case .setting:
             factory.makeSettingView()
+        case .editprofile:
+            factory.makeEditProfileView()
         }
     }
 }

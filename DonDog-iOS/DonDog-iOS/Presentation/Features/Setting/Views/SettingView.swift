@@ -12,31 +12,31 @@ struct SettingView: View {
     @StateObject var viewModel: SettingViewModel
     
     var body: some View {
-        NavigationStack {
-            HStack {
-                VStack(alignment: .leading, spacing: 16) {
-                    NavigationLink(destination: ProfileEditView()) {
-                        Text("프로필 수정")
-                    }
-                    
-                    Button {
-                        viewModel.logout()
-                    } label: {
-                        Text("로그아웃")
-                    }
-                    
-                    Button {
-                        viewModel.showDeleteConfirm = true
-                    } label: {
-                        Text("회원탈퇴")
-                    }
-                    
-                    Spacer()
+        HStack {
+            VStack(alignment: .leading, spacing: 16) {
+                Button {
+                    coordinator.push(.editprofile)
+                } label: {
+                    Text("프로필 수정")
                 }
+                
+                Button {
+                    viewModel.logout()
+                } label: {
+                    Text("로그아웃")
+                }
+                
+                Button {
+                    viewModel.showDeleteConfirm = true
+                } label: {
+                    Text("회원탈퇴")
+                }
+                
                 Spacer()
             }
-            .padding(.horizontal, 20)
+            Spacer()
         }
+        .padding(.horizontal, 20)
         .alert("회원탈퇴", isPresented: $viewModel.showDeleteConfirm) {
             Button("취소", role: .cancel) {}
             Button("삭제", role: .destructive) {

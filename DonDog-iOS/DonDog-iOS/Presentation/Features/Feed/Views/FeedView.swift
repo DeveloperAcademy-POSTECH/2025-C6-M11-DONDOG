@@ -23,6 +23,9 @@ struct FeedView: View {
                     // 이미지 표시 영역
                     VStack {
                         Text("Feed View")
+                        Button("설정뷰로 이동") {
+                            coordinator.push(.setting)
+                        }
                     }
                     if let frontImage = viewModel.selectedFrontImage, let backImage = viewModel.selectedBackImage {
                         ZStack{

@@ -14,4 +14,5 @@ enum AppRoute: Hashable {
     case camera
     case feed
     case setting
+    case editprofile
 }

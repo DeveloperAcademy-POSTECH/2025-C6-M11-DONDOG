@@ -217,7 +217,7 @@ class CustomCameraViewController: UIViewController {
             // 전면 → 후면으로 전환
             switchToBackCamera()
         } else {
-            // 후면 촬영 완료 → 메인 화면으로 돌아가기
+            // 후면 촬영 완료 → CaptionView로 이동
             delegate?.didCompleteBothPhotos()
         }
     }

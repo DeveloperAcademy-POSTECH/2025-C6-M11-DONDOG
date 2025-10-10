@@ -12,13 +12,15 @@ import FirebaseAuth
 import UIKit
 
 struct PostData: Codable {
+    let postId: String
     let uid: String
     let frontImageURL: String
     let backImageURL: String
     let caption: String
     let createdAt: Timestamp
     
-    init(uid: String, frontImageURL: String, backImageURL: String, caption: String = "") {
+    init(postId: String, uid: String, frontImageURL: String, backImageURL: String, caption: String = "") {
+        self.postId = postId
         self.uid = uid
         self.frontImageURL = frontImageURL
         self.backImageURL = backImageURL
@@ -145,7 +147,7 @@ final class PhotoSaveService: ObservableObject {
             
             print("✅ 전면/후면 이미지 업로드 모두 완료")
             
-            let postData = PostData(uid: uid, frontImageURL: frontURL, backImageURL: backURL, caption: caption)
+            let postData = PostData(postId: postId, uid: uid, frontImageURL: frontURL, backImageURL: backURL, caption: caption)
             self.savePostToRoom(roomId: roomId, postId: postId, postData: postData, completion: completion)
         }
     }

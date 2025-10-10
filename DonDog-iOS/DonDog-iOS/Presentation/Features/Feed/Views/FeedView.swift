@@ -26,11 +26,7 @@ struct FeedView: View {
                 VStack {
                     HStack {
                         Text("Feed View")
-                            .onTapGesture {
-                                //coordinator.push(.post)
-                            }
                         Spacer()
-                        
                         Button(action: {
                             print("🔄 수동 새로고침 시작")
                             withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
@@ -77,6 +73,9 @@ struct FeedView: View {
                                     .cornerRadius(15)
                                     .shadow(radius: 10)
                                     .padding()
+                                    .onTapGesture {
+                                        coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
+                                    }
                             }
                             
                             // 캡션 표시
@@ -144,6 +143,7 @@ struct FeedView: View {
             }
             Spacer()
         }
+        .navigationTitle("Boomoji")
         .fullScreenCover(isPresented: $showCameraView) {
             CameraViewContainer(
                 cameraViewModel: cameraViewModel,

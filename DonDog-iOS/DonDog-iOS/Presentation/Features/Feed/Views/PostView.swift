@@ -8,25 +8,61 @@
 import SwiftUI
 
 struct PostView: View {
-    @StateObject var viewModel = PostViewModel()
+    @EnvironmentObject var coordinator: AppCoordinator
+    @StateObject var viewModel: PostViewModel
+    
+    @State var text: String = ""
+    @State private var showDeleteAlert = false
     
     var body: some View {
-        // 이미지 로드 실패 시 어떻게 할 건 지 논의 후 예외 처리 예정
-        Group {
-                    if let image = viewModel.image {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                    } else {
-                        Color.gray // 이미지가 없을 때 기본 배경
-                    }
-                }
-            .onAppear {
-                viewModel.makeSticker()
+        ZStack(alignment: .topTrailing) {
+            VStack(alignment: .leading) {
+                Text(viewModel.authorName)
+                    .font(.system(size: 20, weight: .semibold))
+                    .padding(.bottom, 4)
+                Text(DataUtils.formatDate(viewModel.createdAt, format: "HH:mm"))
+                    .font(.system(size: 16, weight: .regular))
+                    .padding(.bottom, 19)
+                
+                PostContentView(viewModel: viewModel)
+                    .padding(.horizontal, 2)
+                    .padding(.bottom, 16)
+                
+                TextField("댓글을 입력해 주세요", text: $text)
+                    .padding(.vertical, 14)
+                    .padding(.leading, 20)
+                    .cornerRadius(32)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 32)
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                    )
             }
+            
+            Image(uiImage: viewModel.stickerImage)
+                .resizable()
+                .frame(width: 76, height: 94)
+                .padding(.top, 28)
+        }
+        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button(role: .destructive) {
+                        showDeleteAlert = true
+                    } label: {
+                        Label("삭제하기", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                }
+            }
+        }
+        .alert("게시글을 삭제하시겠습니까?", isPresented: $showDeleteAlert) {
+            Button("삭제", role: .destructive) {
+                // deletePost()
+            }
+            Button("취소", role: .cancel) { }
+        }
     }
-}
-
-#Preview {
-    PostView()
 }

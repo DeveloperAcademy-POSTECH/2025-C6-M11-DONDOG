@@ -6,15 +6,19 @@
 //
 
 import Combine
-import UIKit
 import SwiftUI
+import UIKit
+
 
 protocol CameraViewModelDelegate: AnyObject {
     func didCaptureImages(frontImage: UIImage, backImage: UIImage)
+    func didUploadToRoomPosts(postData: PostData)
 }
 
 final class CameraViewModel: ObservableObject {
     weak var delegate: CameraViewModelDelegate?
     var frontImage: UIImage?
     var backImage: UIImage?
+    @Published var isUploading = false
+    @Published var showCaptionView = false
 }

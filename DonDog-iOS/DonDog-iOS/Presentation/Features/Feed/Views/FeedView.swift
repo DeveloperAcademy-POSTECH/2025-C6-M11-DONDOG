@@ -5,7 +5,9 @@
 //  Created by 조유진 on 10/3/25.
 //
 
-import Foundation
+
+import FirebaseAuth
+import PhotosUI
 import SwiftUI
 import UIKit
 import PhotosUI
@@ -15,35 +17,95 @@ struct FeedView: View {
     @StateObject var viewModel: FeedViewModel
     
     @State var showCameraView: Bool = false
+    @State private var isRefreshing = false
+    @StateObject private var cameraViewModel = CameraViewModel()
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 30) {
-                ScrollView {
-                    // 이미지 표시 영역
-                    VStack {
-                        Text("Feed View")
-                        Button("설정뷰로 이동") {
-                            coordinator.push(.setting)
+        VStack(spacing: 30) {
+            ScrollView {
+                Button("설정뷰로 이동") {
+                    coordinator.push(.setting)
+                }
+                // 이미지 표시 영역
+                VStack {
+                    HStack {
+                        Button(action: {
+                            print("🔄 수동 새로고침 시작")
+                            withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
+                                isRefreshing = true
+                            }
+                            viewModel.loadTodayPosts()
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                isRefreshing = false
+                            }
+                        }) {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.title2)
+                                .foregroundColor(.blue)
+                                .rotationEffect(.degrees(isRefreshing ? 360 : 0))
+                        }
+                        .disabled(viewModel.isLoading)
+                        .padding(.trailing, 10)
+                        
+                        Button("로그아웃") {
+                            do {
+                                try Auth.auth().signOut()
+                            } catch {
+                                print("로그아웃 실패: \(error.localizedDescription)")
+                            }
                         }
                     }
-                    if let frontImage = viewModel.selectedFrontImage, let backImage = viewModel.selectedBackImage {
-                        ZStack{
-                            Image(uiImage: backImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(maxHeight: 400)
-                                .cornerRadius(15)
-                                .shadow(radius: 10)
-                            Image(uiImage: frontImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .scaleEffect(x: -1, y:1)
-                                .frame(maxHeight: 100)
-                                .cornerRadius(15)
-                                .shadow(radius: 10)
-                                .padding()
+                    .padding(.horizontal)
+                    
+                    if let frontImage = viewModel.todayFrontImage, let backImage = viewModel.todayBackImage {
+                        VStack(spacing: 10) {
+                            ZStack{
+                                Image(uiImage: backImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(maxHeight: 400)
+                                    .cornerRadius(15)
+                                    .shadow(radius: 10)
+                                Image(uiImage: frontImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .scaleEffect(x: -1, y:1)
+                                    .frame(maxHeight: 100)
+                                    .cornerRadius(15)
+                                    .shadow(radius: 10)
+                                    .padding()
+                                    .onTapGesture {
+                                        coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
+                                    }
+                            }
+                            
+                            // 캡션 표시
+                            if let firstPost = viewModel.images.first, !firstPost.caption.isEmpty {
+                                Text(firstPost.caption)
+                                    .font(.body)
+                                    .foregroundColor(.black)
+                                    .padding(.horizontal)
+                                    .padding(.vertical, 8)
+                                    .background(Color.gray.opacity(0.1))
+                                    .cornerRadius(8)
+                            }
                         }
+                    } else if viewModel.isLoading {
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(height: 300)
+                            .overlay(
+                                VStack {
+                                    ProgressView()
+                                        .scaleEffect(1.5)
+                                    Text("로딩 중...")
+                                        .foregroundColor(.gray)
+                                        .font(.caption)
+                                        .padding(.top, 10)
+                                }
+                            )
+                            .padding()
                     } else {
                         RoundedRectangle(cornerRadius: 15)
                             .fill(Color.gray.opacity(0.3))
@@ -53,62 +115,49 @@ struct FeedView: View {
                                     Image(systemName: "camera")
                                         .font(.system(size: 50))
                                         .foregroundColor(.gray)
-                                    Text("커스텀 카메라로 사진을 촬영하세요")
+                                    Text("게시물을 올려주세요")
+                                        .foregroundColor(.gray)
+                                        .font(.headline)
+                                        .padding(.top, 10)
+                                    Text("오늘 찍은 사진이 없습니다")
                                         .foregroundColor(.gray)
                                         .font(.caption)
                                 }
                             )
                             .padding()
                     }
-                    
-                    // 촬영 버튼
-                    Button{
-                        showCameraView = true
-                    }label: {
-                        HStack {
-                            Image(systemName: "camera")
-                            Text("커스텀 카메라로 촬영")
-                        }
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background{
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.blue)
-                        }
-                    }
-                    
-                    // 이미지 삭제 버튼
-                    if viewModel.selectedFrontImage != nil || viewModel.selectedBackImage != nil {
-                        Button{
-                            viewModel.selectedFrontImage = nil
-                            viewModel.selectedBackImage = nil
-                        }label: {
-                            HStack {
-                                Image(systemName: "trash")
-                                Text("이미지 삭제")
-                            }
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background{
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(Color.red)
-                            }
-                        }
-                    }
-                    Spacer()
                 }
             }
-            .navigationTitle("Boomoji")
+            Button{
+                showCameraView = true
+            }label: {
+                HStack {
+                    Image(systemName: "camera")
+                    Text("커스텀 카메라로 촬영")
+                }
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding()
+                .background{
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.blue)
+                }
+            }
+            Spacer()
         }
+        .navigationTitle("Boomoji")
         .fullScreenCover(isPresented: $showCameraView) {
-            ModuleFactory.shared.makeCameraView(with: viewModel)
-                .ignoresSafeArea()
+            CameraViewContainer(
+                cameraViewModel: cameraViewModel,
+                feedViewModel: viewModel,
+                isPresented: $showCameraView
+            )
         }
-        PostView()
     }
 }
+
 #Preview {
+    let coordinator = AppCoordinator(factory: ModuleFactory.shared)
     FeedView(viewModel: FeedViewModel())
+        .environmentObject(coordinator)
 }

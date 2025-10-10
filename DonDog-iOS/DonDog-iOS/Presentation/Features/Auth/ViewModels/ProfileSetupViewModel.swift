@@ -24,7 +24,6 @@ final class ProfileSetupViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var didComplete: Bool = false
-    private let inviteCodeService = InviteCodeService()
 
     var isValid: Bool {
         !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -44,7 +43,7 @@ final class ProfileSetupViewModel: ObservableObject {
         isLoading = true
 
         // 1) 유니크 초대코드 생성 → 2) Users/{uid}, Invites/{inviteCode} 저장
-        inviteCodeService.generateUniqueInviteCode { [weak self] result in
+        generateUniqueInviteCode { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .failure(let err):
@@ -92,4 +91,27 @@ final class ProfileSetupViewModel: ObservableObject {
             }
         }
     }
+    
+    // Invites/{inviteCode} 중복 체크 포함 유니크 코드 생성
+    private func generateUniqueInviteCode(completion: @escaping (Result<String, Error>) -> Void) {
+        func attempt() {
+            let allowedCharacters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
+            let code = String((0..<6).map { _ in allowedCharacters.randomElement()! })
+            
+            db.collection("Invites").document(code).getDocument { document, error in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                // 중복 → 다시 시도
+                if let document = document, document.exists {
+                    attempt()
+                } else {
+                    completion(.success(code))
+                }
+            }
+        }
+        attempt()
+    }
+
 }

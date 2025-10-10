@@ -15,12 +15,14 @@ struct PostData: Codable {
     let uid: String
     let frontImageURL: String
     let backImageURL: String
+    let caption: String
     let createdAt: Timestamp
     
-    init(uid: String, frontImageURL: String, backImageURL: String) {
+    init(uid: String, frontImageURL: String, backImageURL: String, caption: String = "") {
         self.uid = uid
         self.frontImageURL = frontImageURL
         self.backImageURL = backImageURL
+        self.caption = caption
         self.createdAt = Timestamp()
     }
 }
@@ -36,7 +38,7 @@ final class PhotoSaveService: ObservableObject {
     private init() {}
     
     // MARK: - : Room의 posts에 저장
-    func uploadImagesToRoomPosts(frontImage: UIImage, backImage: UIImage, completion: @escaping (Result<PostData, Error>) -> Void) {
+    func uploadImagesToRoomPosts(frontImage: UIImage, backImage: UIImage, caption: String, completion: @escaping (Result<PostData, Error>) -> Void) {
         print("🏠 Room의 posts에 전면/후면 이미지 업로드 시작")
         
         getCurrentUserRoomId { [weak self] result in
@@ -44,7 +46,7 @@ final class PhotoSaveService: ObservableObject {
             case .success(let roomId):
                 print("✅ 사용자 roomId: \(roomId)")
                 
-                self?.uploadImagesAndSaveToRoom(frontImage: frontImage, backImage: backImage, roomId: roomId, completion: completion)
+                self?.uploadImagesAndSaveToRoom(frontImage: frontImage, backImage: backImage, caption: caption, roomId: roomId, completion: completion)
             case .failure(let error):
                 print("❌ roomId 가져오기 실패: \(error.localizedDescription)")
                 completion(.failure(error))
@@ -86,7 +88,7 @@ final class PhotoSaveService: ObservableObject {
     }
     
     
-    private func uploadImagesAndSaveToRoom(frontImage: UIImage, backImage: UIImage, roomId: String, completion: @escaping (Result<PostData, Error>) -> Void) {
+    private func uploadImagesAndSaveToRoom(frontImage: UIImage, backImage: UIImage, caption: String, roomId: String, completion: @escaping (Result<PostData, Error>) -> Void) {
         guard let currentUser = Auth.auth().currentUser else {
             completion(.failure(FirebaseError.userNotAuthenticated))
             return
@@ -143,7 +145,7 @@ final class PhotoSaveService: ObservableObject {
             
             print("✅ 전면/후면 이미지 업로드 모두 완료")
             
-            let postData = PostData(uid: uid, frontImageURL: frontURL, backImageURL: backURL)
+            let postData = PostData(uid: uid, frontImageURL: frontURL, backImageURL: backURL, caption: caption)
             self.savePostToRoom(roomId: roomId, postId: postId, postData: postData, completion: completion)
         }
     }

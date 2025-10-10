@@ -9,7 +9,7 @@ import Combine
 import UIKit
 
 
-final class FeedViewModel: ObservableObject, CameraViewModelDelegate {
+final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionViewModelDelegate {
     @Published var selectedFrontImage: UIImage?
     @Published var selectedBackImage: UIImage?
     @Published var postsList: [PostData] = []
@@ -38,6 +38,12 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             self.uploadStatus = ""
         }
+    }
+    
+    // MARK: - CaptionViewModelDelegate
+    func didUploadPost() {
+        print("✅ 게시물 업로드 완료 - FeedView 새로고침")
+        loadTodayPosts()
     }
     
     

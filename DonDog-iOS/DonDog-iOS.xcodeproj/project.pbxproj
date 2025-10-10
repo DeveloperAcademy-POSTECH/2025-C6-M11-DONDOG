@@ -34,6 +34,7 @@
 		CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF72E98FCD700AEAB49 /* Pretendard-SemiBold.otf */; };
 		CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF62E98FCD700AEAB49 /* Pretendard-Regular.otf */; };
 		CA957D032E98FD0900AEAB49 /* Font+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA957D022E98FD0900AEAB49 /* Font+.swift */; };
+		CA957D072E99017400AEAB49 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA957D062E99017400AEAB49 /* Colors.xcassets */; };
 		CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */; };
 		CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */; };
 		CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */; };
@@ -70,6 +71,7 @@
 		CA957CF62E98FCD700AEAB49 /* Pretendard-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Regular.otf"; sourceTree = "<group>"; };
 		CA957CF72E98FCD700AEAB49 /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-SemiBold.otf"; sourceTree = "<group>"; };
 		CA957D022E98FD0900AEAB49 /* Font+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+.swift"; sourceTree = "<group>"; };
+		CA957D062E99017400AEAB49 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		CAA9AE802E8FBE250047A89A /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 			children = (
 				CA957CEF2E98FC9F00AEAB49 /* Fonts */,
 				CAA9AED32E8FC15C0047A89A /* Assets.xcassets */,
+				CA957D062E99017400AEAB49 /* Colors.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -466,6 +469,7 @@
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
 				8B5F44D52E9111DB003137F2 /* GoogleService-Info.plist in Resources */,
+				CA957D072E99017400AEAB49 /* Colors.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

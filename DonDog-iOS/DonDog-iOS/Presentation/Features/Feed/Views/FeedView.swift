@@ -10,7 +10,6 @@ import FirebaseAuth
 import PhotosUI
 import SwiftUI
 import UIKit
-import PhotosUI
 
 struct FeedView: View {
     @EnvironmentObject var coordinator: AppCoordinator
@@ -23,11 +22,10 @@ struct FeedView: View {
     var body: some View {
         VStack(spacing: 30) {
             ScrollView {
-                Button("설정뷰로 이동") {
-                    coordinator.push(.setting)
-                }
                 // 이미지 표시 영역
                 VStack {
+                    Button("설정뷰로 이동") { coordinator.push(.setting) }
+                    
                     HStack {
                         Button(action: {
                             print("🔄 수동 새로고침 시작")

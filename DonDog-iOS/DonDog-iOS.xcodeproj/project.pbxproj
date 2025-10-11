@@ -23,12 +23,7 @@
 		8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */; };
 		8B7377E02E9546030001EFCD /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7377DF2E9546030001EFCD /* AuthService.swift */; };
 		8BA62EA42E9149A00054EB8F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA62EA32E9149A00054EB8F /* AppDelegate.swift */; };
-		8BD7C3382E99306800E0305D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8BD7C3372E99306800E0305D /* GoogleService-Info.plist */; };
 		A1AEBED12E9110160006FBBA /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AEBED02E9110120006FBBA /* CameraViewController.swift */; };
-		A1CBCA6B2E96439D000F01E2 /* PhotoSaveService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1CBCA6A2E96439D000F01E2 /* PhotoSaveService.swift */; };
-		A1F848EB2E98087E007F79BA /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F848EA2E98087E007F79BA /* CaptionView.swift */; };
-		A1F848ED2E980885007F79BA /* CaptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F848EC2E980885007F79BA /* CaptionViewModel.swift */; };
-		A1F848F12E9808DA007F79BA /* CameraViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F848F02E9808DA007F79BA /* CameraViewContainer.swift */; };
 		CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */; };
 		CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF52E98FCD700AEAB49 /* Pretendard-Medium.otf */; };
 		CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF72E98FCD700AEAB49 /* Pretendard-SemiBold.otf */; };
@@ -55,6 +50,7 @@
 		D24402AB2E992CE700D837C8 /* PostContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AA2E992CE700D837C8 /* PostContentView.swift */; };
 		D24402AD2E992CF000D837C8 /* PhotoSaveService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */; };
 		D24402B02E992E7200D837C8 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AE2E992E7200D837C8 /* DataUtils.swift */; };
+		D2A7F3852E99E39D005F5AF8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D2A7F3842E99E39D005F5AF8 /* GoogleService-Info.plist */; };
 		D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */; };
 		D2D16C022E9153BE008FB3E2 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16C012E9153BC008FB3E2 /* PostView.swift */; };
 /* End PBXBuildFile section */
@@ -65,7 +61,6 @@
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8B7377DF2E9546030001EFCD /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		8BA62EA32E9149A00054EB8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8BD7C3372E99306800E0305D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A1AEBED02E9110120006FBBA /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DonDog-iOS.entitlements"; sourceTree = "<group>"; };
 		CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Bold.otf"; sourceTree = "<group>"; };
@@ -95,6 +90,7 @@
 		D24402AA2E992CE700D837C8 /* PostContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentView.swift; sourceTree = "<group>"; };
 		D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSaveService.swift; sourceTree = "<group>"; };
 		D24402AE2E992E7200D837C8 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
+		D2A7F3842E99E39D005F5AF8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		D2D16C012E9153BC008FB3E2 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -129,31 +125,6 @@
 				D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */,
 			);
 			path = Services;
-			sourceTree = "<group>";
-		};
-		A1F848E72E9807B2007F79BA /* Caption */ = {
-			isa = PBXGroup;
-			children = (
-				A1F848E82E9807BB007F79BA /* Views */,
-				A1F848E92E9807C0007F79BA /* ViewModels */,
-			);
-			path = Caption;
-			sourceTree = "<group>";
-		};
-		A1F848E82E9807BB007F79BA /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				A1F848EA2E98087E007F79BA /* CaptionView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		A1F848E92E9807C0007F79BA /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				A1F848EC2E980885007F79BA /* CaptionViewModel.swift */,
-			);
-			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		CA957CEB2E98FC3D00AEAB49 /* Core */ = {
@@ -328,7 +299,7 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
-				8BD7C3372E99306800E0305D /* GoogleService-Info.plist */,
+				D2A7F3842E99E39D005F5AF8 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -491,11 +462,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
+				D2A7F3852E99E39D005F5AF8 /* GoogleService-Info.plist in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
-				8BD7C3382E99306800E0305D /* GoogleService-Info.plist in Resources */,
 				CA957D072E99017400AEAB49 /* Colors.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -670,7 +641,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A65CGWHSL8;
-				DEVELOPMENT_TEAM = 47UM88R722;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";
@@ -707,7 +677,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A65CGWHSL8;
-				DEVELOPMENT_TEAM = 47UM88R722;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";

@@ -17,7 +17,9 @@ struct FeedView: View {
     
     @State var showCameraView: Bool = false
     @State private var isRefreshing = false
+    @State private var isFrontImageOnTop = true
     @StateObject private var cameraViewModel = CameraViewModel()
+    
     
     var body: some View {
         VStack(spacing: 30) {
@@ -27,6 +29,8 @@ struct FeedView: View {
                     Button("설정뷰로 이동") { coordinator.push(.setting) }
                     
                     HStack {
+                        Text("Feed View")
+                        Spacer()
                         Button(action: {
                             print("🔄 수동 새로고침 시작")
                             withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
@@ -45,7 +49,11 @@ struct FeedView: View {
                         }
                         .disabled(viewModel.isLoading)
                         .padding(.trailing, 10)
-                        
+                        Button("사진 뒤집기"){
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                isFrontImageOnTop.toggle()
+                            }
+                        }
                         Button("로그아웃") {
                             do {
                                 try Auth.auth().signOut()
@@ -59,20 +67,22 @@ struct FeedView: View {
                     if let frontImage = viewModel.todayFrontImage, let backImage = viewModel.todayBackImage {
                         VStack(spacing: 10) {
                             ZStack{
-                                Image(uiImage: backImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(maxHeight: 400)
-                                    .cornerRadius(15)
-                                    .shadow(radius: 10)
-                                Image(uiImage: frontImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .scaleEffect(x: -1, y:1)
-                                    .frame(maxHeight: 100)
-                                    .cornerRadius(15)
-                                    .shadow(radius: 10)
-                                    .padding()
+                                polaroidView(
+                                    image: backImage,
+                                    label: "후면",
+                                    isFlipped: !isFrontImageOnTop
+                                )
+                                .rotationEffect(.degrees(-5))
+                                .offset(x: -20, y: -10)
+                                .zIndex(isFrontImageOnTop ? 0 : 1)
+                                polaroidView(
+                                    image: frontImage,
+                                    label: "전면",
+                                    isFlipped: isFrontImageOnTop
+                                )
+                                .rotationEffect(.degrees(5))
+                                .offset(x: 20, y: 10)
+                                .zIndex(isFrontImageOnTop ? 1 : 0)
                                     .onTapGesture {
                                         coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
                                     }
@@ -151,6 +161,28 @@ struct FeedView: View {
                 isPresented: $showCameraView
             )
         }
+        .navigationTitle("Boomoji")
+    }
+    
+    private func polaroidView(image: UIImage, label: String, isFlipped: Bool) -> some View {
+        VStack(spacing: 0) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 300)
+                .padding(12)
+                .background(Color.white)
+            VStack {
+                Text(label)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+            .frame(width: 204, height: 40)
+            .background(Color.white)
+        }
+        .background(Color.white)
+        .cornerRadius(4)
+        .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
     }
 }
 

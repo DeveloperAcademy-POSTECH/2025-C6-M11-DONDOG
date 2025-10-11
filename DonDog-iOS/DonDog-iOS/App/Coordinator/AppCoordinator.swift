@@ -63,6 +63,11 @@ final class AppCoordinator: ObservableObject {
             factory.makeFeedView()
         case .post(let postId, let roomId):
             factory.makePostView(with: postId, in: roomId)
+        case .setting:
+            factory.makeSettingView()
+        case .editprofile:
+            factory.makeEditProfileView()
+
         }
     }
 }

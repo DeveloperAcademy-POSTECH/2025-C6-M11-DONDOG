@@ -31,12 +31,17 @@ class CustomCameraViewController: UIViewController {
     private var isCapturingFront = true  // true: 전면 촬영, false: 후면 촬영
     private var frontImage: UIImage?
     private var backImage: UIImage?
+    private var isCaptureButtonEnabled = true
     
     // UI Elements
+    private let previewContainerView = UIView()
+    private let capturedImageView = UIImageView()
     private let captureButton = UIButton()
     private let cancelButton = UIButton()
     private let switchCameraButton = UIButton()
     private let flashButton = UIButton()
+    private let frontGuideMessageLabel = UILabel()
+    private let backGuideMessageLabel = UILabel()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -90,50 +95,57 @@ class CustomCameraViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .black
+        view.backgroundColor = .white
         
-        // 미리보기 레이어 설정
-        setupPreviewLayer()
-        
-        // UI 요소들 설정
-        setupCaptureButton()
+        // UI 요소들 설정 (순서중요)
         setupCancelButton()
-        setupSwitchCameraButton()
-        setupFlashButton()
+        //setupSwitchCameraButton()
+        //setupFlashButton()
+        setupGuideLabels()
+        setupPreviewLayer()
+        setupCaptureButton()
     }
     
     private func setupPreviewLayer() {
+        previewContainerView.backgroundColor = .clear
+        previewContainerView.layer.borderWidth = 2
+        previewContainerView.layer.borderColor = UIColor.black.cgColor
+        
+        view.addSubview(previewContainerView)
+        previewContainerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            previewContainerView.topAnchor.constraint(equalTo: frontGuideMessageLabel.bottomAnchor, constant: 20),
+            previewContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            previewContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            // 3:4 비율 유지
+            previewContainerView.heightAnchor.constraint(equalTo: previewContainerView.widthAnchor, multiplier: 4.0/3.0)
+        ])
+        
+        // 비디오 프리뷰 레이어 추가
         videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        videoPreviewLayer.videoGravity = .resizeAspect
+        videoPreviewLayer.videoGravity = .resizeAspectFill
+        videoPreviewLayer.frame = previewContainerView.bounds
+        previewContainerView.layer.addSublayer(videoPreviewLayer)
         
-        let screenBounds = view.bounds
-        let screenAspectRatio = screenBounds.width / screenBounds.height
-        let targetAspectRatio: CGFloat = 4.0 / 3.0
+        // 촬영된 이미지를 표시할 ImageView 추가
+        capturedImageView.contentMode = .scaleAspectFill
+        capturedImageView.clipsToBounds = true
+        capturedImageView.isHidden = true  // 초기에는 숨김
         
-        var previewFrame: CGRect
-        
-        if screenAspectRatio > targetAspectRatio {
-            let height = screenBounds.height
-            let width = height * targetAspectRatio
-            previewFrame = CGRect(
-                x: (screenBounds.width - width) / 2,
-                y: 0,
-                width: width,
-                height: height
-            )
-        } else {
-            let width = screenBounds.width
-            let height = width / targetAspectRatio
-            previewFrame = CGRect(
-                x: 0,
-                y: (screenBounds.height - height) / 2,
-                width: width,
-                height: height
-            )
-        }
-        
-        videoPreviewLayer.frame = previewFrame
-        view.layer.addSublayer(videoPreviewLayer)
+        previewContainerView.addSubview(capturedImageView)
+        capturedImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            capturedImageView.topAnchor.constraint(equalTo: previewContainerView.topAnchor),
+            capturedImageView.leadingAnchor.constraint(equalTo: previewContainerView.leadingAnchor),
+            capturedImageView.trailingAnchor.constraint(equalTo: previewContainerView.trailingAnchor),
+            capturedImageView.bottomAnchor.constraint(equalTo: previewContainerView.bottomAnchor)
+        ])
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        videoPreviewLayer?.frame = previewContainerView.bounds
     }
     
     private func setupCaptureButton() {
@@ -156,7 +168,7 @@ class CustomCameraViewController: UIViewController {
     
     private func setupCancelButton() {
         cancelButton.setTitle("취소", for: .normal)
-        cancelButton.setTitleColor(.white, for: .normal)
+        cancelButton.setTitleColor(.black, for: .normal)
         cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 18)
         
         cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside) //여기서 버튼 func 넣음
@@ -205,8 +217,53 @@ class CustomCameraViewController: UIViewController {
         ])
     }
     
+    private func setupGuideLabels() {
+        // 전면 촬영 안내 레이블
+        frontGuideMessageLabel.text = "STEP 1.\n현재 모습을 촬영해주세요!"
+        frontGuideMessageLabel.textColor = .black
+        frontGuideMessageLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        frontGuideMessageLabel.textAlignment = .center
+        frontGuideMessageLabel.numberOfLines = 0
+        
+        view.addSubview(frontGuideMessageLabel)
+        frontGuideMessageLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            frontGuideMessageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            frontGuideMessageLabel.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 30),
+            frontGuideMessageLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
+            frontGuideMessageLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
+            frontGuideMessageLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 50)
+        ])
+        
+        // 후면 촬영 안내 레이블
+        backGuideMessageLabel.text = "STEP 2.\n풍경을 촬영해주세요!"
+        backGuideMessageLabel.textColor = .black
+        backGuideMessageLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        backGuideMessageLabel.textAlignment = .center
+        backGuideMessageLabel.numberOfLines = 0
+        backGuideMessageLabel.isHidden = true  // 초기에는 숨김
+        
+        view.addSubview(backGuideMessageLabel)
+        backGuideMessageLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            backGuideMessageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            backGuideMessageLabel.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 30),
+            backGuideMessageLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
+            backGuideMessageLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
+            backGuideMessageLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 50)
+        ])
+    }
+    
     // MARK: - Actions
     @objc private func capturePhoto() {
+        guard isCaptureButtonEnabled else {
+            return
+        }
+        
+        isCaptureButtonEnabled = false
+        captureButton.isEnabled = false
+        captureButton.alpha = 0.5
+        
         let settings = AVCapturePhotoSettings()
         photoOutput.capturePhoto(with: settings, delegate: self)
     }
@@ -223,6 +280,10 @@ class CustomCameraViewController: UIViewController {
     }
     
     private func switchToBackCamera() {
+        // 촬영된 이미지 숨기고 프리뷰 다시 보이기
+        capturedImageView.isHidden = true
+        videoPreviewLayer.isHidden = false
+        
         // 기존 입력 제거
         if let currentInput = captureSession.inputs.first {
             captureSession.removeInput(currentInput)
@@ -247,6 +308,12 @@ class CustomCameraViewController: UIViewController {
         
         // 상태 업데이트
         isCapturingFront = false
+        
+        // 촬영 버튼 다시 활성화
+        isCaptureButtonEnabled = true
+        captureButton.isEnabled = true
+        captureButton.alpha = 1.0
+        
         updateUIForCurrentState()
     }
     
@@ -254,8 +321,14 @@ class CustomCameraViewController: UIViewController {
         DispatchQueue.main.async {
             if self.isCapturingFront {
                 self.captureButton.setTitle("전면 촬영", for: .normal)
+                // 전면 촬영 안내 표시
+                self.frontGuideMessageLabel.isHidden = false
+                self.backGuideMessageLabel.isHidden = true
             } else {
                 self.captureButton.setTitle("후면 촬영", for: .normal)
+                // 후면 촬영 안내 표시
+                self.frontGuideMessageLabel.isHidden = true
+                self.backGuideMessageLabel.isHidden = false
             }
         }
     }
@@ -292,18 +365,24 @@ class CustomCameraViewController: UIViewController {
 extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard let imageData = photo.fileDataRepresentation(),
-              let image = UIImage(data: imageData) else {
+              var image = UIImage(data: imageData) else {
             print("이미지 변환 실패")
             return
         }
         
         if isCapturingFront {
-            // 전면 촬영 완료
+            // 전면 촬영 완료 - 좌우 반전 (거울 모드)
+            image = flipImageHorizontally(image) ?? image
             frontImage = image
             delegate?.didCaptureFrontImage(image)
             
+            // 촬영된 이미지 표시
+            DispatchQueue.main.async {
+                self.showCapturedImage(image)
+            }
+            
             // 1초 후 후면 카메라로 전환
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.switchToNextCamera()
             }
         } else {
@@ -311,10 +390,59 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
             backImage = image
             delegate?.didCaptureBackImage(image)
             
-            // 1초 후 메인 화면으로 돌아가기
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // 촬영된 이미지 표시
+            DispatchQueue.main.async {
+                self.showCapturedImage(image)
+            }
+            
+            // 1초 후 CaptionView로 이동
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.delegate?.didCompleteBothPhotos()
             }
         }
     }
+    
+    // 촬영된 이미지를 화면에 표시하는 함수
+    private func showCapturedImage(_ image: UIImage) {
+        videoPreviewLayer.isHidden = true
+        capturedImageView.image = image
+        capturedImageView.isHidden = false
+    }
+    
+    // 이미지 좌우 반전 함수
+    private func flipImageHorizontally(_ image: UIImage) -> UIImage? {
+        guard let cgImage = image.cgImage else { return nil }
+        
+        let flippedImage = UIImage(
+            cgImage: cgImage,
+            scale: image.scale,
+            orientation: .leftMirrored
+        )
+        
+        return flippedImage
+    }
 }
+
+// MARK: - SwiftUI Preview
+#if DEBUG
+import SwiftUI
+
+@available(iOS 13.0, *)
+struct CameraViewControllerPreview: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> CustomCameraViewController {
+        return CustomCameraViewController()
+    }
+    
+    func updateUIViewController(_ uiViewController: CustomCameraViewController, context: Context) {
+        // 업데이트 로직 (필요시)
+    }
+}
+
+@available(iOS 13.0, *)
+struct CameraViewController_Previews: PreviewProvider {
+    static var previews: some View {
+        CameraViewControllerPreview()
+            .ignoresSafeArea()
+    }
+}
+#endif

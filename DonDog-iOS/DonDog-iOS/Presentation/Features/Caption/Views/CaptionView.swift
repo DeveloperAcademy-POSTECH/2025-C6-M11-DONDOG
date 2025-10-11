@@ -10,7 +10,8 @@ import SwiftUI
 struct CaptionView: View {
     @ObservedObject var viewModel: CaptionViewModel
     var onCancel: () -> Void
-    
+    @FocusState private var isCaptionFocused: Bool
+    @State private var isFrontImageOnTop = true 
     var body: some View {
         VStack(spacing: 20) {
             // 상단 타이틀
@@ -22,78 +23,92 @@ struct CaptionView: View {
                         .font(.title2)
                         .foregroundColor(.black)
                 }
-                
                 Spacer()
-                
-                Text("캡션 작성")
-                    .font(.headline)
-                
-                Spacer()
-                
-                // 빈 공간 (대칭을 위해)
-                Image(systemName: "xmark")
-                    .font(.title2)
-                    .opacity(0)
+            }
+            .padding()
+ 
+            ZStack {
+                if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
+                    polaroidView(
+                        image: backImage,
+                        label: "후면",
+                        isFlipped: !isFrontImageOnTop
+                    )
+                    .rotationEffect(.degrees(-5))
+                    .offset(x: -20, y: -10)
+                    .zIndex(isFrontImageOnTop ? 0 : 1)
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            isFrontImageOnTop.toggle()
+                        }
+                    }
+
+                    polaroidView(
+                        image: frontImage,
+                        label: "전면",
+                        isFlipped: isFrontImageOnTop
+                    )
+                    .rotationEffect(.degrees(5))
+                    .offset(x: 20, y: 10)
+                    .zIndex(isFrontImageOnTop ? 1 : 0)
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            isFrontImageOnTop.toggle()
+                        }
+                    }
+                }
             }
             .padding()
             
-            HStack(spacing: 10) {
-                if let frontImage = viewModel.frontImage {
-                    VStack {
-                        Text("전면")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        Image(uiImage: frontImage)
-                            .resizable()
-                            .scaledToFit()
-                            .scaleEffect(x: -1, y:1)
-                            .frame(height: 200)
-                            .cornerRadius(10)
-                            .shadow(radius: 5)
+            VStack(alignment: .leading, spacing: 15) {
+                // 글자별 박스 표시
+                HStack(spacing: 8) {
+                    ForEach(0..<8, id: \.self) { index in
+                        ZStack {
+                            // 박스 테두리
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(index < viewModel.caption.count ? Color.black : Color.gray.opacity(0.3), lineWidth: 2)
+                                .frame(width: 40, height: 50)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(index < viewModel.caption.count ? Color.white : Color.gray.opacity(0.05))
+                                )
+                            
+                            // 글자 표시
+                            if index < viewModel.caption.count {
+                                let character = Array(viewModel.caption)[index]
+                                Text(String(character))
+                                    .font(.system(size: 24, weight: .semibold))
+                                    .foregroundColor(.black)
+                            } else {
+                                // 빈 박스 placeholder
+                                Text("")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.gray.opacity(0.3))
+                            }
+                        }
+                        .onTapGesture {
+                            isCaptionFocused = true
+                        }
                     }
                 }
+                .padding(.vertical, 8)
                 
-                if let backImage = viewModel.backImage {
-                    VStack {
-                        Text("후면")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        Image(uiImage: backImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 200)
-                            .cornerRadius(10)
-                            .shadow(radius: 5)
-                    }
-                }
-            }
-            .padding(.horizontal)
-            
-            VStack(alignment: .leading, spacing: 5) {
-                Text("캡션 (최대 8자)")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                
-                TextField("오늘의 한마디를 입력하세요", text: $viewModel.caption)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(10)
+                // 숨겨진 TextField (실제 입력받기 위함)
+                TextField("", text: $viewModel.caption)
+                    .frame(width: 0, height: 0)
+                    .opacity(0)
+                    .focused($isCaptionFocused)
                     .onChange(of: viewModel.caption) { newValue in
                         if newValue.count > 8 {
                             viewModel.caption = String(newValue.prefix(8))
                         }
                     }
-                
-                Text("\(viewModel.caption.count)/8")
-                    .font(.caption)
-                    .foregroundColor(viewModel.caption.count >= 8 ? .red : .gray)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .padding(.horizontal)
             
             Spacer()
-
+            
             Button(action: {
                 print("📤 업로드 버튼 클릭")
                 viewModel.uploadPost()
@@ -124,5 +139,29 @@ struct CaptionView: View {
         }
         .background(Color.white)
     }
+
+    private func polaroidView(image: UIImage, label: String, isFlipped: Bool) -> some View {
+        VStack(spacing: 0) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 300)
+                .padding(12)
+                .background(Color.white)
+            VStack {
+                Text(label)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+            .frame(width: 204, height: 40)
+            .background(Color.white)
+        }
+        .background(Color.white)
+        .cornerRadius(4)
+        .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
+    }
 }
 
+#Preview {
+    CaptionView(viewModel: CaptionViewModel(frontImage: UIImage(named: "test1"), backImage: UIImage(named: "test2")), onCancel: {})
+}

@@ -31,9 +31,11 @@ class CustomCameraViewController: UIViewController {
     private var isCapturingFront = true  // true: 전면 촬영, false: 후면 촬영
     private var frontImage: UIImage?
     private var backImage: UIImage?
+    private var isCaptureButtonEnabled = true
     
     // UI Elements
-    private let previewContainerView = UIView()  // 카메라 프리뷰를 담을 컨테이너
+    private let previewContainerView = UIView()
+    private let capturedImageView = UIImageView()
     private let captureButton = UIButton()
     private let cancelButton = UIButton()
     private let switchCameraButton = UIButton()
@@ -120,11 +122,25 @@ class CustomCameraViewController: UIViewController {
             previewContainerView.heightAnchor.constraint(equalTo: previewContainerView.widthAnchor, multiplier: 4.0/3.0)
         ])
         
+        // 비디오 프리뷰 레이어 추가
         videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         videoPreviewLayer.videoGravity = .resizeAspectFill
         videoPreviewLayer.frame = previewContainerView.bounds
-        
         previewContainerView.layer.addSublayer(videoPreviewLayer)
+        
+        // 촬영된 이미지를 표시할 ImageView 추가
+        capturedImageView.contentMode = .scaleAspectFill
+        capturedImageView.clipsToBounds = true
+        capturedImageView.isHidden = true  // 초기에는 숨김
+        
+        previewContainerView.addSubview(capturedImageView)
+        capturedImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            capturedImageView.topAnchor.constraint(equalTo: previewContainerView.topAnchor),
+            capturedImageView.leadingAnchor.constraint(equalTo: previewContainerView.leadingAnchor),
+            capturedImageView.trailingAnchor.constraint(equalTo: previewContainerView.trailingAnchor),
+            capturedImageView.bottomAnchor.constraint(equalTo: previewContainerView.bottomAnchor)
+        ])
     }
     
     override func viewDidLayoutSubviews() {
@@ -240,6 +256,14 @@ class CustomCameraViewController: UIViewController {
     
     // MARK: - Actions
     @objc private func capturePhoto() {
+        guard isCaptureButtonEnabled else {
+            return
+        }
+        
+        isCaptureButtonEnabled = false
+        captureButton.isEnabled = false
+        captureButton.alpha = 0.5
+        
         let settings = AVCapturePhotoSettings()
         photoOutput.capturePhoto(with: settings, delegate: self)
     }
@@ -256,6 +280,10 @@ class CustomCameraViewController: UIViewController {
     }
     
     private func switchToBackCamera() {
+        // 촬영된 이미지 숨기고 프리뷰 다시 보이기
+        capturedImageView.isHidden = true
+        videoPreviewLayer.isHidden = false
+        
         // 기존 입력 제거
         if let currentInput = captureSession.inputs.first {
             captureSession.removeInput(currentInput)
@@ -280,6 +308,12 @@ class CustomCameraViewController: UIViewController {
         
         // 상태 업데이트
         isCapturingFront = false
+        
+        // 촬영 버튼 다시 활성화
+        isCaptureButtonEnabled = true
+        captureButton.isEnabled = true
+        captureButton.alpha = 1.0
+        
         updateUIForCurrentState()
     }
     
@@ -331,18 +365,24 @@ class CustomCameraViewController: UIViewController {
 extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard let imageData = photo.fileDataRepresentation(),
-              let image = UIImage(data: imageData) else {
+              var image = UIImage(data: imageData) else {
             print("이미지 변환 실패")
             return
         }
         
         if isCapturingFront {
-            // 전면 촬영 완료
+            // 전면 촬영 완료 - 좌우 반전 (거울 모드)
+            image = flipImageHorizontally(image) ?? image
             frontImage = image
             delegate?.didCaptureFrontImage(image)
             
+            // 촬영된 이미지 표시
+            DispatchQueue.main.async {
+                self.showCapturedImage(image)
+            }
+            
             // 1초 후 후면 카메라로 전환
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.switchToNextCamera()
             }
         } else {
@@ -350,11 +390,36 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
             backImage = image
             delegate?.didCaptureBackImage(image)
             
-            // 1초 후 메인 화면으로 돌아가기
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // 촬영된 이미지 표시
+            DispatchQueue.main.async {
+                self.showCapturedImage(image)
+            }
+            
+            // 1초 후 CaptionView로 이동
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.delegate?.didCompleteBothPhotos()
             }
         }
+    }
+    
+    // 촬영된 이미지를 화면에 표시하는 함수
+    private func showCapturedImage(_ image: UIImage) {
+        videoPreviewLayer.isHidden = true
+        capturedImageView.image = image
+        capturedImageView.isHidden = false
+    }
+    
+    // 이미지 좌우 반전 함수
+    private func flipImageHorizontally(_ image: UIImage) -> UIImage? {
+        guard let cgImage = image.cgImage else { return nil }
+        
+        let flippedImage = UIImage(
+            cgImage: cgImage,
+            scale: image.scale,
+            orientation: .leftMirrored
+        )
+        
+        return flippedImage
     }
 }
 

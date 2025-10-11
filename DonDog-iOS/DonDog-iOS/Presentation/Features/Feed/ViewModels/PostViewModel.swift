@@ -13,6 +13,7 @@ final class PostViewModel: ObservableObject {
     let postId: String
     let roomId: String
     private let db = Firestore.firestore()
+    private var postRef: DocumentReference
 
     private var uid: String = ""
     @Published var authorName: String = ""
@@ -29,33 +30,33 @@ final class PostViewModel: ObservableObject {
     init(postId: String, roomId: String) {
         self.postId = postId
         self.roomId = roomId
+        self.postRef = db.collection("Rooms").document(roomId)
+                         .collection("posts").document(postId)
 
         Task {
             await self.fetchPostData()
-            print(postId)
         }
     }
 
     func fetchPostData() async {
         guard !roomId.isEmpty, !postId.isEmpty else { return }
-
+        
         do {
-            let postRef = db.collection("Rooms").document(roomId).collection("posts").document(postId)
             let postSnapshot = try await postRef.getDocument()
-
+            
             guard let data = postSnapshot.data() else { return }
             self.uid = data["uid"] as? String ?? ""
             self.caption = data["caption"] as? String
             self.createdAt = (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
-
+            
             if let urlString = data["frontImageURL"] as? String {
                 self.frontURL = URL(string: urlString)
             }
-
+            
             if let urlString = data["backImageURL"] as? String {
                 self.backURL = URL(string: urlString)
             }
-
+            
             if !self.uid.isEmpty {
                 let userRef = db.collection("Users").document(self.uid)
                 let userSnapshot = try await userRef.getDocument()
@@ -66,11 +67,10 @@ final class PostViewModel: ObservableObject {
                     }
                 }
             }
-
+            
             await loadImages()
-
         } catch {
-            print("Firestore fetch 실패:", error.localizedDescription)
+            print("Firestore 데이터 로드 실패:", error.localizedDescription)
         }
     }
 
@@ -95,6 +95,27 @@ final class PostViewModel: ObservableObject {
         } catch {
             print("이미지 로드 실패:", error.localizedDescription)
             return nil
+        }
+    }
+    
+    func saveComment(of text: String) {
+        guard let currentUser = Auth.auth().currentUser else {
+            print("사용자 인증 정보 없음")
+            return
+        }
+        
+        let commentData: [String: Any] = [
+            "uid": currentUser.uid,
+            "content": text,
+            "timestamp": Timestamp(date: Date())
+        ]
+        
+        self.postRef.collection("comments").addDocument(data: commentData) { error in
+            if let error = error {
+                print("데이터 업로드 실패: \(error.localizedDescription)")
+            } else {
+                print("데이터 업로드 성공!")
+            }
         }
     }
 }

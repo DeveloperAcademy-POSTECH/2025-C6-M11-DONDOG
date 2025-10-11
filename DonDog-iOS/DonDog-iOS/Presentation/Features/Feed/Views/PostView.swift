@@ -11,7 +11,7 @@ struct PostView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: PostViewModel
     
-    @State var comment: String = ""
+    @State var content: String = ""
     @State private var showDeleteAlert = false
     @FocusState private var isTextFieldFocused: Bool
     
@@ -29,13 +29,13 @@ struct PostView: View {
                     .padding(.horizontal, 2)
                     .padding(.bottom, 16)
                 HStack {
-                    TextField("댓글을 입력해 주세요", text: $comment)
+                    TextField("댓글을 입력해 주세요", text: $content)
                         .padding(.leading, 20)
                         .focused($isTextFieldFocused)
-                    if !comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    if !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         Button {
-//                            action: sendMessage
-                            comment = ""
+                            viewModel.saveComment(of: content)
+                            content = ""
                             isTextFieldFocused = false
                         } label: {
                             Image(systemName: "arrow.up")
@@ -47,7 +47,7 @@ struct PostView: View {
                                 .clipShape(Circle())
                         }
                         .buttonStyle(PlainButtonStyle())
-                        .animation(.spring(), value: comment)
+                        .animation(.spring(), value: content)
                         .padding(.trailing, 11)
                     }
                 }

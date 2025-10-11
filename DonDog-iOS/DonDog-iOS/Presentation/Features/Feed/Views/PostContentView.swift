@@ -14,13 +14,12 @@ struct PostContentView: View {
 
     var body: some View {
         ScrollView {
-            VStack {
+            VStack(alignment: .leading, spacing: 23) {
                 ZStack(alignment: .bottom) {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
                         .frame(height: 465)
-                        .padding(.top, 23)
                         .onTapGesture {
                             showingFront.toggle()
                             image = showingFront ? (viewModel.frontImage) : (viewModel.backImage)
@@ -31,7 +30,7 @@ struct PostContentView: View {
                         .onReceive(viewModel.$backImage) { newBack in
                             if !showingFront { image = newBack }
                         }
-
+                    
                     HStack(spacing: 5) {
                         let caption = viewModel.caption ?? ""
                         ForEach(Array(caption.enumerated()), id: \.offset) { idx, char in
@@ -45,8 +44,24 @@ struct PostContentView: View {
                     }
                     .padding(.bottom, 38)
                 }
-
-                Text("test")
+                
+                ForEach(viewModel.comments) { comment in
+                    VStack(alignment: .leading, spacing: 7) {
+                        HStack(spacing: 20) {
+                            Text(comment.author)
+                                .font(.system(size: 18))
+                                .foregroundStyle(Color.gray)
+                            Text(DataUtils.formatDate(comment.timestamp, format: "HH:mm"))
+                                .font(.system(size: 18))
+                                .foregroundStyle(Color.gray)
+                        }
+                        
+                        Text(comment.text)
+                            .font(.system(size: 18))
+                            .foregroundStyle(Color.gray)
+                    }
+                    .padding(.bottom, 26)
+                }
             }
         }
     }

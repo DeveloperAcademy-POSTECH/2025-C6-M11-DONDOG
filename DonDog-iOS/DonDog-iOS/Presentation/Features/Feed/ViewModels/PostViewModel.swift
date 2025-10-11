@@ -12,6 +12,7 @@ import FirebaseFirestore
 final class PostViewModel: ObservableObject {
     let postId: String
     let roomId: String
+    
     private let db = Firestore.firestore()
     private var postRef: DocumentReference
 
@@ -22,6 +23,7 @@ final class PostViewModel: ObservableObject {
     @Published var backImage: UIImage = UIImage()
     @Published var caption: String?
     @Published var stickerImage: UIImage = UIImage()
+    @Published var comments: [Comment] = []
 
     private var stickerURL: URL?
     private var frontURL: URL?
@@ -35,6 +37,7 @@ final class PostViewModel: ObservableObject {
 
         Task {
             await self.fetchPostData()
+            await self.fetchComments()
         }
     }
 
@@ -98,24 +101,45 @@ final class PostViewModel: ObservableObject {
         }
     }
     
-    func saveComment(of text: String) {
+    func saveComment(of text: String) async {
         guard let currentUser = Auth.auth().currentUser else {
             print("사용자 인증 정보 없음")
             return
         }
         
-        let commentData: [String: Any] = [
-            "uid": currentUser.uid,
-            "content": text,
-            "timestamp": Timestamp(date: Date())
-        ]
-        
-        self.postRef.collection("comments").addDocument(data: commentData) { error in
-            if let error = error {
-                print("데이터 업로드 실패: \(error.localizedDescription)")
-            } else {
-                print("데이터 업로드 성공!")
+        do {
+            let userRef = db.collection("Users").document(currentUser.uid)
+            let userSnapshot = try await userRef.getDocument()
+            let authorName = userSnapshot.data()?["name"] as? String ?? "Unknown"
+
+            let commentData: [String: Any] = [
+                "uid": currentUser.uid,
+                "author": authorName,
+                "content": text,
+                "timestamp": Timestamp(date: Date())
+            ]
+
+            
+            try await postRef.collection("comments").addDocument(data: commentData)
+
+            await fetchComments()
+        } catch {
+            print("댓글 업로드 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    func fetchComments() async {
+        let commentsRef = postRef.collection("comments")
+        do {
+            let snapshot = try await commentsRef.getDocuments()
+            let fetchedComments = snapshot.documents.compactMap { doc -> Comment? in
+                return Comment(dict: doc.data())
             }
+            await MainActor.run {
+                self.comments = fetchedComments.sorted { $0.timestamp < $1.timestamp }
+            }
+        } catch {
+            print("댓글 로드 실패:", error.localizedDescription)
         }
     }
 }

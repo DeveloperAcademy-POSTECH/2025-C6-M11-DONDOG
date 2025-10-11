@@ -118,7 +118,6 @@ final class PostViewModel: ObservableObject {
                 "content": text,
                 "timestamp": Timestamp(date: Date())
             ]
-
             
             try await postRef.collection("comments").addDocument(data: commentData)
 
@@ -132,15 +131,17 @@ final class PostViewModel: ObservableObject {
         let commentsRef = postRef.collection("comments")
         do {
             let snapshot = try await commentsRef.getDocuments()
-            let fetchedComments = snapshot.documents.compactMap { doc -> Comment? in
-                return Comment(dict: doc.data())
-            }
+            let fetchedComments = snapshot.documents.compactMap { Comment(doc: $0) }
             await MainActor.run {
                 self.comments = fetchedComments.sorted { $0.timestamp < $1.timestamp }
             }
         } catch {
             print("댓글 로드 실패:", error.localizedDescription)
         }
+    }
+    
+    func deleteComment(of comment: Comment) {
+        postRef.collection("comments").document(comment.id).delete()
     }
 }
 

@@ -64,9 +64,8 @@ struct PostContentView: View {
                 }
                 .onDelete { indexSet in
                     for index in indexSet {
-                        // 삭제 로직
-                        //                            let comment = viewModel.comments[index]
-                        //                            viewModel.deleteComment(comment)
+                        let comment = viewModel.comments[index]
+                        viewModel.deleteComment(of: comment)
                     }
                 }
             }

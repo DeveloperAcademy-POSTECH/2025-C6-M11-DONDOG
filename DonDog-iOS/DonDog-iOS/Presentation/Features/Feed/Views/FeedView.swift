@@ -20,7 +20,7 @@ struct FeedView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var isSelectingSticker = false
     @State private var isStickerExist = false
-    @State private var reaction = ""
+    @State private var emotion = ""
     
     
     var body: some View {
@@ -114,7 +114,7 @@ struct FeedView: View {
                                                 .resizable()
                                                 .scaledToFit()
                                                 .frame(width: 61)
-                                            Image(systemName: reaction)
+                                            Image(systemName: emotion)
                                         }
                                         .zIndex(3)
                                         .offset(x: -200)
@@ -191,7 +191,7 @@ struct FeedView: View {
                                 Image(systemName: "heart.fill")
                             }
                             .onTapGesture {
-                                reaction = "heart.fill"
+                                emotion = "heart.fill"
                                 isStickerExist = true
                                 isSelectingSticker = false
                             }
@@ -210,7 +210,7 @@ struct FeedView: View {
                                 Image(systemName: "drop.fill")
                             }
                             .onTapGesture {
-                                reaction = "drop.fill"
+                                emotion = "drop.fill"
                                 isStickerExist = true
                                 isSelectingSticker = false
                             }
@@ -229,7 +229,7 @@ struct FeedView: View {
                                 Image(systemName: "heart.badge.bolt.fill")
                             }
                             .onTapGesture {
-                                reaction = "heart.badge.bolt.fill"
+                                emotion = "heart.badge.bolt.fill"
                                 isStickerExist = true
                                 isSelectingSticker = false
                             }
@@ -248,7 +248,7 @@ struct FeedView: View {
                                 Image(systemName: "eyes.inverse")
                             }
                             .onTapGesture {
-                                reaction = "eyes.inverse"
+                                emotion = "eyes.inverse"
                                 isStickerExist = true
                                 isSelectingSticker = false
                             }

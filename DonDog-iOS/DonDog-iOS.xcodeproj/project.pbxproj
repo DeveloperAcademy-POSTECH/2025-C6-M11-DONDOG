@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		61C9B19E2E9BEC130007C8F4 /* ArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B19D2E9BEC130007C8F4 /* ArchiveView.swift */; };
+		61C9B1A02E9BED150007C8F4 /* ArchiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */; };
+		61C9B1A42E9BFC830007C8F4 /* ArchiveDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A32E9BFC830007C8F4 /* ArchiveDay.swift */; };
+		61C9B1A62E9BFCBE0007C8F4 /* ArchiveMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
 		8B31826E2E90CE1B004505AE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826D2E90CE1B004505AE /* FirebaseAuthCombine-Community */; };
@@ -55,13 +59,16 @@
 		D24402AB2E992CE700D837C8 /* PostContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AA2E992CE700D837C8 /* PostContentView.swift */; };
 		D24402AD2E992CF000D837C8 /* PhotoSaveService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */; };
 		D24402B02E992E7200D837C8 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AE2E992E7200D837C8 /* DataUtils.swift */; };
-		D2A7F3852E99E39D005F5AF8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D2A7F3842E99E39D005F5AF8 /* GoogleService-Info.plist */; };
 		D2A7F38A2E9A28B8005F5AF8 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A7F3892E9A28B7005F5AF8 /* Comment.swift */; };
 		D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */; };
 		D2D16C022E9153BE008FB3E2 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16C012E9153BC008FB3E2 /* PostView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		61C9B19D2E9BEC130007C8F4 /* ArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveView.swift; sourceTree = "<group>"; };
+		61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveViewModel.swift; sourceTree = "<group>"; };
+		61C9B1A32E9BFC830007C8F4 /* ArchiveDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDay.swift; sourceTree = "<group>"; };
+		61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveMonth.swift; sourceTree = "<group>"; };
 		8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewModel.swift; sourceTree = "<group>"; };
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -130,6 +137,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		61C9B1992E9BEBC80007C8F4 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				D2A7F3842E99E39D005F5AF8 /* GoogleService-Info.plist */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		61C9B19A2E9BEBEB0007C8F4 /* Archive */ = {
+			isa = PBXGroup;
+			children = (
+				61C9B1A22E9BFC5D0007C8F4 /* Models */,
+				61C9B19C2E9BEC010007C8F4 /* Views */,
+				61C9B19B2E9BEBF90007C8F4 /* ViewModels */,
+			);
+			path = Archive;
+			sourceTree = "<group>";
+		};
+		61C9B19B2E9BEBF90007C8F4 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		61C9B19C2E9BEC010007C8F4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				61C9B19D2E9BEC130007C8F4 /* ArchiveView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		61C9B1A22E9BFC5D0007C8F4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				61C9B1A32E9BFC830007C8F4 /* ArchiveDay.swift */,
+				61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		8B6E118B2E976F2C0082B24C /* Setting */ = {
 			isa = PBXGroup;
 			children = (
@@ -199,6 +249,7 @@
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
 				CAA9AE812E8FBE250047A89A /* Products */,
+				61C9B1992E9BEBC80007C8F4 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -381,6 +432,7 @@
 				CAA9AED12E8FC15C0047A89A /* Feed */,
 				8B6E118B2E976F2C0082B24C /* Setting */,
 				D24402A72E992CD800D837C8 /* Caption */,
+				61C9B19A2E9BEBEB0007C8F4 /* Archive */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -511,7 +563,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
-				D2A7F3852E99E39D005F5AF8 /* GoogleService-Info.plist in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
@@ -529,6 +580,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */,
+				61C9B1A62E9BFCBE0007C8F4 /* ArchiveMonth.swift in Sources */,
 				CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */,
 				8B5F44562E90FA74003137F2 /* ProfileSetupView.swift in Sources */,
 				D2A7F38A2E9A28B8005F5AF8 /* Comment.swift in Sources */,
@@ -541,12 +593,15 @@
 				8B7377E02E9546030001EFCD /* AuthService.swift in Sources */,
 				8B6E118D2E976F380082B24C /* EditProfileView.swift in Sources */,
 				D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */,
+				61C9B1A02E9BED150007C8F4 /* ArchiveViewModel.swift in Sources */,
 				CAA9AEDC2E8FC15C0047A89A /* CameraViewModel.swift in Sources */,
 				8BA62EA42E9149A00054EB8F /* AppDelegate.swift in Sources */,
 				CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */,
 				D24402AB2E992CE700D837C8 /* PostContentView.swift in Sources */,
 				D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */,
 				CA957D032E98FD0900AEAB49 /* Font+.swift in Sources */,
+				61C9B19E2E9BEC130007C8F4 /* ArchiveView.swift in Sources */,
+				61C9B1A42E9BFC830007C8F4 /* ArchiveDay.swift in Sources */,
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
 				8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */,
@@ -695,7 +750,7 @@
 				CODE_SIGN_ENTITLEMENTS = "DonDog-iOS/DonDog-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8FKM9FB4PH;
+				DEVELOPMENT_TEAM = 6TW9MCXPJD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";
@@ -731,7 +786,7 @@
 				CODE_SIGN_ENTITLEMENTS = "DonDog-iOS/DonDog-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8FKM9FB4PH;
+				DEVELOPMENT_TEAM = 6TW9MCXPJD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";

@@ -55,6 +55,7 @@
 		D24402AB2E992CE700D837C8 /* PostContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AA2E992CE700D837C8 /* PostContentView.swift */; };
 		D24402AD2E992CF000D837C8 /* PhotoSaveService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */; };
 		D24402B02E992E7200D837C8 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AE2E992E7200D837C8 /* DataUtils.swift */; };
+		D2A7F38C2E9BA88F005F5AF8 /* StickerUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A7F38B2E9BA88A005F5AF8 /* StickerUtils.swift */; };
 		D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */; };
 		D2D16C022E9153BE008FB3E2 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16C012E9153BC008FB3E2 /* PostView.swift */; };
 /* End PBXBuildFile section */
@@ -99,6 +100,7 @@
 		D24402AA2E992CE700D837C8 /* PostContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentView.swift; sourceTree = "<group>"; };
 		D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSaveService.swift; sourceTree = "<group>"; };
 		D24402AE2E992E7200D837C8 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
+		D2A7F38B2E9BA88A005F5AF8 /* StickerUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerUtils.swift; sourceTree = "<group>"; };
 		D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		D2D16C012E9153BC008FB3E2 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -416,6 +418,7 @@
 		D24402AF2E992E7200D837C8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				D2A7F38B2E9BA88A005F5AF8 /* StickerUtils.swift */,
 				D24402AE2E992E7200D837C8 /* DataUtils.swift */,
 			);
 			path = Utils;
@@ -533,6 +536,7 @@
 				D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */,
 				CA957D032E98FD0900AEAB49 /* Font+.swift in Sources */,
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
+				D2A7F38C2E9BA88F005F5AF8 /* StickerUtils.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
 				8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */,
 				D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */,

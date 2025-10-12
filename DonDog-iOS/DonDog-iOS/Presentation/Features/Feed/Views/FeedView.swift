@@ -5,7 +5,6 @@
 //  Created by 조유진 on 10/3/25.
 //
 
-
 import FirebaseAuth
 import PhotosUI
 import SwiftUI
@@ -19,6 +18,9 @@ struct FeedView: View {
     @State private var isRefreshing = false
     @State private var isFrontImageOnTop = true
     @StateObject private var cameraViewModel = CameraViewModel()
+    @State private var isSelectingSticker = false
+    @State private var isStickerExist = false
+    @State private var reaction = ""
     
     
     var body: some View {
@@ -66,7 +68,7 @@ struct FeedView: View {
                     
                     if let frontImage = viewModel.todayFrontImage, let backImage = viewModel.todayBackImage {
                         VStack(spacing: 10) {
-                            ZStack{
+                            ZStack(alignment: .bottomTrailing) {
                                 polaroidView(
                                     image: backImage,
                                     label: "후면",
@@ -83,9 +85,47 @@ struct FeedView: View {
                                 .rotationEffect(.degrees(5))
                                 .offset(x: 20, y: 10)
                                 .zIndex(isFrontImageOnTop ? 1 : 0)
-                                    .onTapGesture {
-                                        coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
+                                .onTapGesture {
+                                    coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
+                                }
+                                
+                                if !isStickerExist {
+                                    Image(systemName: "face.smiling")
+                                        .font(.system(size: 45))
+                                        .zIndex(2)
+                                        .onTapGesture {
+                                            isSelectingSticker = true
+                                        }
+                                } else {
+                                    Image(systemName: "face.smiling")
+                                        .font(.system(size: 45))
+                                        .foregroundStyle(Color.pink)
+                                        .zIndex(2)
+                                        .onTapGesture {
+                                            isSelectingSticker = false
+                                            isStickerExist = false
+                                        }
+                                }
+                                
+                                if isStickerExist {
+                                    if let sticker = viewModel.sticker {
+                                        ZStack(alignment: .topTrailing) {
+                                            Image(uiImage: sticker)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 61)
+                                            Image(systemName: reaction)
+                                        }
+                                        .zIndex(3)
+                                        .offset(x: -200)
+                                    } else {
+                                        Image(systemName: "smiley")
+                                            .font(.system(size: 40))
+                                            .foregroundColor(.gray)
+                                            .zIndex(3)
+                                            .offset(x: -200)
                                     }
+                                }
                             }
                             
                             // 캡션 표시
@@ -133,6 +173,86 @@ struct FeedView: View {
                                 }
                             )
                             .padding()
+                    }
+                    
+                    if isSelectingSticker {
+                        HStack(spacing: 29) {
+                            ZStack(alignment: .topTrailing) {
+                                if let sticker = viewModel.sticker {
+                                    Image(uiImage: sticker)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 37)
+                                } else {
+                                    Image(systemName: "smiley")
+                                        .font(.system(size: 40))
+                                        .foregroundColor(.gray)
+                                }
+                                Image(systemName: "heart.fill")
+                            }
+                            .onTapGesture {
+                                reaction = "heart.fill"
+                                isStickerExist = true
+                                isSelectingSticker = false
+                            }
+                            
+                            ZStack(alignment: .topTrailing) {
+                                if let sticker = viewModel.sticker {
+                                    Image(uiImage: sticker)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 37)
+                                } else {
+                                    Image(systemName: "smiley")
+                                        .font(.system(size: 40))
+                                        .foregroundColor(.gray)
+                                }
+                                Image(systemName: "drop.fill")
+                            }
+                            .onTapGesture {
+                                reaction = "drop.fill"
+                                isStickerExist = true
+                                isSelectingSticker = false
+                            }
+                            
+                            ZStack(alignment: .topTrailing) {
+                                if let sticker = viewModel.sticker {
+                                    Image(uiImage: sticker)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 37)
+                                } else {
+                                    Image(systemName: "smiley")
+                                        .font(.system(size: 40))
+                                        .foregroundColor(.gray)
+                                }
+                                Image(systemName: "heart.badge.bolt.fill")
+                            }
+                            .onTapGesture {
+                                reaction = "heart.badge.bolt.fill"
+                                isStickerExist = true
+                                isSelectingSticker = false
+                            }
+                            
+                            ZStack(alignment: .topTrailing) {
+                                if let sticker = viewModel.sticker {
+                                    Image(uiImage: sticker)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 37)
+                                } else {
+                                    Image(systemName: "smiley")
+                                        .font(.system(size: 40))
+                                        .foregroundColor(.gray)
+                                }
+                                Image(systemName: "eyes.inverse")
+                            }
+                            .onTapGesture {
+                                reaction = "eyes.inverse"
+                                isStickerExist = true
+                                isSelectingSticker = false
+                            }
+                        }
                     }
                 }
             }

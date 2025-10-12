@@ -13,6 +13,7 @@ struct PostView: View {
     
     @State var text: String = ""
     @State private var showDeleteAlert = false
+    @FocusState private var isTextFieldFocused: Bool
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -27,15 +28,38 @@ struct PostView: View {
                 PostContentView(viewModel: viewModel)
                     .padding(.horizontal, 2)
                     .padding(.bottom, 16)
-                
-                TextField("댓글을 입력해 주세요", text: $text)
-                    .padding(.vertical, 14)
-                    .padding(.leading, 20)
-                    .cornerRadius(32)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 32)
-                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                    )
+                HStack {
+                    TextField("댓글을 입력해 주세요", text: $text)
+                        .padding(.leading, 20)
+                        .focused($isTextFieldFocused)
+                    if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        Button {
+                            Task {
+                                await viewModel.saveComment(of: text)
+                                text = ""
+                                isTextFieldFocused = false
+                            }
+                        } label: {
+                            Image(systemName: "arrow.up")
+                                .font(.system(size: 20))
+                                .foregroundStyle(Color.white)
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 8)
+                                .background(Color.black)
+                                .clipShape(Circle())
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .animation(.spring(), value: text)
+                        .padding(.trailing, 11)
+                    }
+                }
+                .frame(height: 52)
+                .cornerRadius(32)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 32)
+                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                )
+                .padding(.bottom, 12)
             }
             
             Image(uiImage: viewModel.stickerImage)

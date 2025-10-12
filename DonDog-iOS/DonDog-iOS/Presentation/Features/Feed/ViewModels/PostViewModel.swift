@@ -12,7 +12,9 @@ import FirebaseFirestore
 final class PostViewModel: ObservableObject {
     let postId: String
     let roomId: String
+    
     private let db = Firestore.firestore()
+    private var postRef: DocumentReference
 
     private var uid: String = ""
     @Published var authorName: String = ""
@@ -21,6 +23,7 @@ final class PostViewModel: ObservableObject {
     @Published var backImage: UIImage = UIImage()
     @Published var caption: String?
     @Published var stickerImage: UIImage = UIImage()
+    @Published var comments: [Comment] = []
 
     private var stickerURL: URL?
     private var frontURL: URL?
@@ -29,33 +32,34 @@ final class PostViewModel: ObservableObject {
     init(postId: String, roomId: String) {
         self.postId = postId
         self.roomId = roomId
+        self.postRef = db.collection("Rooms").document(roomId)
+                         .collection("posts").document(postId)
 
         Task {
             await self.fetchPostData()
-            print(postId)
+            await self.fetchComments()
         }
     }
 
     func fetchPostData() async {
         guard !roomId.isEmpty, !postId.isEmpty else { return }
-
+        
         do {
-            let postRef = db.collection("Rooms").document(roomId).collection("posts").document(postId)
             let postSnapshot = try await postRef.getDocument()
-
+            
             guard let data = postSnapshot.data() else { return }
             self.uid = data["uid"] as? String ?? ""
             self.caption = data["caption"] as? String
             self.createdAt = (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
-
+            
             if let urlString = data["frontImageURL"] as? String {
                 self.frontURL = URL(string: urlString)
             }
-
+            
             if let urlString = data["backImageURL"] as? String {
                 self.backURL = URL(string: urlString)
             }
-
+            
             if !self.uid.isEmpty {
                 let userRef = db.collection("Users").document(self.uid)
                 let userSnapshot = try await userRef.getDocument()
@@ -66,11 +70,10 @@ final class PostViewModel: ObservableObject {
                     }
                 }
             }
-
+            
             await loadImages()
-
         } catch {
-            print("Firestore fetch 실패:", error.localizedDescription)
+            print("Firestore 데이터 로드 실패:", error.localizedDescription)
         }
     }
 
@@ -96,6 +99,49 @@ final class PostViewModel: ObservableObject {
             print("이미지 로드 실패:", error.localizedDescription)
             return nil
         }
+    }
+    
+    func saveComment(of text: String) async {
+        guard let currentUser = Auth.auth().currentUser else {
+            print("사용자 인증 정보 없음")
+            return
+        }
+        
+        do {
+            let userRef = db.collection("Users").document(currentUser.uid)
+            let userSnapshot = try await userRef.getDocument()
+            let authorName = userSnapshot.data()?["name"] as? String ?? "Unknown"
+
+            let commentData: [String: Any] = [
+                "uid": currentUser.uid,
+                "author": authorName,
+                "content": text,
+                "timestamp": Timestamp(date: Date())
+            ]
+            
+            try await postRef.collection("comments").addDocument(data: commentData)
+
+            await fetchComments()
+        } catch {
+            print("댓글 업로드 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    func fetchComments() async {
+        let commentsRef = postRef.collection("comments")
+        do {
+            let snapshot = try await commentsRef.getDocuments()
+            let fetchedComments = snapshot.documents.compactMap { Comment(doc: $0) }
+            await MainActor.run {
+                self.comments = fetchedComments.sorted { $0.timestamp < $1.timestamp }
+            }
+        } catch {
+            print("댓글 로드 실패:", error.localizedDescription)
+        }
+    }
+    
+    func deleteComment(of comment: Comment) {
+        postRef.collection("comments").document(comment.id).delete()
     }
 }
 

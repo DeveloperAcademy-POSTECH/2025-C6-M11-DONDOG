@@ -55,6 +55,8 @@
 		D24402AB2E992CE700D837C8 /* PostContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AA2E992CE700D837C8 /* PostContentView.swift */; };
 		D24402AD2E992CF000D837C8 /* PhotoSaveService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */; };
 		D24402B02E992E7200D837C8 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AE2E992E7200D837C8 /* DataUtils.swift */; };
+		D2A7F3852E99E39D005F5AF8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D2A7F3842E99E39D005F5AF8 /* GoogleService-Info.plist */; };
+		D2A7F38A2E9A28B8005F5AF8 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A7F3892E9A28B7005F5AF8 /* Comment.swift */; };
 		D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */; };
 		D2D16C022E9153BE008FB3E2 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16C012E9153BC008FB3E2 /* PostView.swift */; };
 /* End PBXBuildFile section */
@@ -99,6 +101,8 @@
 		D24402AA2E992CE700D837C8 /* PostContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentView.swift; sourceTree = "<group>"; };
 		D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSaveService.swift; sourceTree = "<group>"; };
 		D24402AE2E992E7200D837C8 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
+		D2A7F3842E99E39D005F5AF8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D2A7F3892E9A28B7005F5AF8 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		D2D16C012E9153BC008FB3E2 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -303,6 +307,7 @@
 		CAA9AED12E8FC15C0047A89A /* Feed */ = {
 			isa = PBXGroup;
 			children = (
+				D2A7F3882E9A28A9005F5AF8 /* Models */,
 				CAA9AECD2E8FC15C0047A89A /* Views */,
 				CAA9AECF2E8FC15C0047A89A /* ViewModels */,
 			);
@@ -421,6 +426,14 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		D2A7F3882E9A28A9005F5AF8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D2A7F3892E9A28B7005F5AF8 /* Comment.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -498,6 +511,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
+				D2A7F3852E99E39D005F5AF8 /* GoogleService-Info.plist in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
@@ -517,6 +531,7 @@
 				CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */,
 				CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */,
 				8B5F44562E90FA74003137F2 /* ProfileSetupView.swift in Sources */,
+				D2A7F38A2E9A28B8005F5AF8 /* Comment.swift in Sources */,
 				D24402AD2E992CF000D837C8 /* PhotoSaveService.swift in Sources */,
 				CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */,
 				CAA9AED92E8FC15C0047A89A /* DonDog_iOSApp.swift in Sources */,

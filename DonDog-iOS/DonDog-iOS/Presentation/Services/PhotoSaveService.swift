@@ -49,6 +49,7 @@ final class PhotoSaveService: ObservableObject {
                 print("✅ 사용자 roomId: \(roomId)")
                 
                 self?.uploadImagesAndSaveToRoom(frontImage: frontImage, backImage: backImage, caption: caption, roomId: roomId, completion: completion)
+                self?.updateUserStickerImage(of: Auth.auth().currentUser!.uid, with: frontImage)
             case .failure(let error):
                 print("❌ roomId 가져오기 실패: \(error.localizedDescription)")
                 completion(.failure(error))
@@ -305,7 +306,42 @@ final class PhotoSaveService: ObservableObject {
         }
     }
     
-    
+    func updateUserStickerImage(of currentUser: String, with image: UIImage) {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            print("이미지 변환 실패")
+            return
+        }
+
+        let storageRef = storage.reference().child("users/\(currentUser)/recentSticker.jpg")
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+
+        storageRef.putData(imageData, metadata: metadata) { [weak self] _, error in
+            if let error = error {
+                return
+            }
+
+            storageRef.downloadURL { url, error in
+                if let error = error {
+                    print("다운로드 URL 가져오기 실패: \(error.localizedDescription)")
+                    return
+                }
+
+                guard let downloadURL = url else {
+                    print("다운로드 URL이 nil")
+                    return
+                }
+
+                self?.db.collection("Users").document(currentUser).updateData([
+                    "recentSticker": downloadURL.absoluteString
+                ]) { error in
+                    if let error = error {
+                        print("recentSticker 업데이트 실패: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
 }
 
 enum FirebaseError: LocalizedError {

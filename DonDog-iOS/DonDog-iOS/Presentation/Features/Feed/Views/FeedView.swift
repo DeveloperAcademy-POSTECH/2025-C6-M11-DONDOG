@@ -139,9 +139,24 @@ struct FeedView: View {
             Button{
                 showCameraView = true
             }label: {
+                    HStack {
+                        Image(systemName: "camera")
+                        Text("커스텀 카메라로 촬영")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background{
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.blue)
+                    }
+            }
+            
+            Button{
+                coordinator.push(.archive(roomId: viewModel.currentRoomId))
+            }label: {
                 HStack {
-                    Image(systemName: "camera")
-                    Text("커스텀 카메라로 촬영")
+                    Text("아카이브")
                 }
                 .font(.headline)
                 .foregroundColor(.white)

@@ -24,6 +24,7 @@ struct FeedView: View {
             ScrollView {
                 // 이미지 표시 영역
                 VStack {
+                    Button("연결뷰로 이동") { coordinator.push(.invite) }
                     Button("설정뷰로 이동") { coordinator.push(.setting) }
                     
                     HStack {

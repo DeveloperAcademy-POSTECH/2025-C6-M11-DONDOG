@@ -72,6 +72,11 @@ final class AuthService {
                     return
                 }
                 
+                if userDoc == nil || userDoc.exists == false {
+                    replaceRootinAuthService(.profileSetup, coordinator: coordinator)
+                    return
+                }
+                
                 if userDoc.metadata.hasPendingWrites {
                     return
                 }

@@ -9,7 +9,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>app-1-435563175709-ios-8ad147a9779eff603e0bf4</string>
+				<string>app-1-435563175709-ios-0f1cb48081f57aca3e0bf4</string>
 			</array>
 		</dict>
 	</array>
@@ -23,6 +23,8 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
+		<string>fetch</string>
+		<string>processing</string>
 	</array>
 </dict>
 </plist>

@@ -37,6 +37,9 @@ final class PhotoSaveService: ObservableObject {
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
     
+    
+    @Published var sticker: UIImage = UIImage()
+    
     private init() {}
     
     // MARK: - : Room의 posts에 저장
@@ -49,6 +52,7 @@ final class PhotoSaveService: ObservableObject {
                 print("✅ 사용자 roomId: \(roomId)")
                 
                 self?.uploadImagesAndSaveToRoom(frontImage: frontImage, backImage: backImage, caption: caption, roomId: roomId, completion: completion)
+                self?.updateUserStickerImage(of: Auth.auth().currentUser!.uid, with: frontImage)
             case .failure(let error):
                 print("❌ roomId 가져오기 실패: \(error.localizedDescription)")
                 completion(.failure(error))
@@ -261,7 +265,7 @@ final class PhotoSaveService: ObservableObject {
     
     private func uploadImage(image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("🚀 이미지 업로드 시작 - 경로: \(path)")
-
+        
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
             print("❌ 이미지 변환 실패")
             completion(.failure(FirebaseError.imageConversionFailed))
@@ -276,7 +280,7 @@ final class PhotoSaveService: ObservableObject {
         
         print("📤 Firebase Storage에 업로드 시작...")
         
-
+        
         storageRef.putData(imageData, metadata: metadata) { metadata, error in
             if let error = error {
                 print("❌ Storage 업로드 실패: \(error.localizedDescription)")
@@ -305,7 +309,54 @@ final class PhotoSaveService: ObservableObject {
         }
     }
     
-    
+    func updateUserStickerImage(of currentUser: String, with image: UIImage) {
+        guard let stickerImage = StickerUtils.makeSticker(with: image) else {
+            print("스티커 생성 실패")
+            return
+        }
+        
+        self.sticker = stickerImage
+        
+        guard stickerImage.pngData() != nil else {
+                print("PNG 이미지 변환 실패")
+                return
+            }
+        
+        guard let imageData = stickerImage.pngData() else {
+            print("PNG 이미지 변환 실패")
+            return
+        }
+        let storageRef = storage.reference().child("users/\(currentUser)/recentSticker.png")
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/png"
+        
+        storageRef.putData(imageData, metadata: metadata) { [weak self] _, error in
+            if let error = error {
+                print("스티커 업로드 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            storageRef.downloadURL { url, error in
+                if let error = error {
+                    print("다운로드 URL 가져오기 실패: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let downloadURL = url else {
+                    print("다운로드 URL이 nil")
+                    return
+                }
+                
+                self?.db.collection("Users").document(currentUser).updateData([
+                    "recentSticker": downloadURL.absoluteString
+                ]) { error in
+                    if let error = error {
+                        print("Firestore 업데이트 실패: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
 }
 
 enum FirebaseError: LocalizedError {

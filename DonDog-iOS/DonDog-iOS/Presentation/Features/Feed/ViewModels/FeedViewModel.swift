@@ -7,7 +7,8 @@
 
 import Combine
 import UIKit
-
+import FirebaseAuth
+import FirebaseFirestore
 
 final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionViewModelDelegate {
     @Published var selectedFrontImage: UIImage?
@@ -20,8 +21,10 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var uploadStatus: String = ""
     @Published var currentRoomId: String = ""
     @Published var selectedPostId: String = ""
+    @Published var sticker: UIImage?
     
     private let photoSaveService = PhotoSaveService.shared
+    private let db = Firestore.firestore()
     
     init() {
         loadTodayPosts()
@@ -35,6 +38,37 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 }
             case .failure(let error):
                 print("roomId 가져오기 실패: \(error.localizedDescription)")
+            }
+        }
+        
+        self.getStickerImage()
+    }
+    
+    func getStickerImage() {
+        if let uid = Auth.auth().currentUser?.uid {
+            db.collection("Users").document(uid).getDocument { snapshot, error in
+                if let error = error {
+                    print("recentSticker 불러오기 실패: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let data = snapshot?.data(),
+                      let stickerURLString = data["recentSticker"] as? String,
+                      let url = URL(string: stickerURLString) else {
+                    print("recentSticker 필드 없음 또는 형식 불일치")
+                    return
+                }
+
+                PhotoSaveService.shared.downloadImage(from: url.absoluteString) { [weak self] result in
+                    switch result {
+                    case .success(let image):
+                        DispatchQueue.main.async {
+                            self?.sticker = image
+                        }
+                    case .failure(let error):
+                        print("recentSticker 다운로드 실패: \(error.localizedDescription)")
+                    }
+                }
             }
         }
     }

@@ -72,19 +72,13 @@ final class AuthService {
                     return
                 }
                 
-                if userDoc.metadata.hasPendingWrites {
+                if userDoc == nil || userDoc.exists == false {
+                    replaceRootinAuthService(.profileSetup, coordinator: coordinator)
                     return
                 }
                 
-                if userDoc.exists {
-                    let roomId = (userDoc.get("roomId") as? String) ?? ""
-                    if roomId.isEmpty {
-                        replaceRootinAuthService(.invite, coordinator: coordinator)
-                    } else {
-                        replaceRootinAuthService(.feed, coordinator: coordinator)
-                    }
-                } else {
-                    replaceRootinAuthService(.profileSetup, coordinator: coordinator)
+                if userDoc.metadata.hasPendingWrites {
+                    return
                 }
             }
         }

@@ -12,7 +12,87 @@ struct EditProfileView: View {
     @StateObject var viewModel: EditProfileViewModel
     
     var body: some View {
-        Text("Profile Edit View")
+        VStack(spacing: 24) {
+            Text("프로필 수정")
+                .font(.title)
+            
+            // 역할
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 24) {
+                    ForEach(ProfileSetupViewModel.Role.allCases, id: \.self) { role in
+                        RoleCircleOption(
+                            title: role.displayName,
+                            isSelected: viewModel.selectedRole == role
+                        ) {
+                            viewModel.selectedRole = role
+                            viewModel.checkIfModified()
+                        }
+                        .accessibilityLabel(Text(role.displayName))
+                        .accessibilityAddTraits(viewModel.selectedRole == role ? .isSelected : [])
+                    }
+                }
+            }
+            
+            // 닉네임
+            VStack(alignment: .leading, spacing: 12) {
+                Text("이름/닉네임")
+                    .font(.headline)
+                TextField("이름/닉네임을 입력하세요", text: $viewModel.name)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.3))
+                    )
+                    .onChange(of: viewModel.name) {
+                        viewModel.checkIfModified()
+                    }
+            }
+            
+            // 에러 메시지
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .font(.footnote)
+            }
+            
+            // 저장 버튼
+            Button(action: {
+                viewModel.saveChanges()
+            }) {
+                Text("저장 (Save)")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!viewModel.isValid || !viewModel.didChangeFromInitial)
+        }
+        .padding(20)
+        .onAppear {
+            viewModel.fetchCurrentProfile()
+        }
+        .onChange(of: viewModel.saveCompleted) { _, newValue in
+            if newValue {
+                coordinator.pop()
+            }
+        }
+    }
+}
+
+struct RoleCircleOption: View {
+    let title: String
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .strokeBorder(isSelected ? Color.black : Color.gray.opacity(0.35), lineWidth: isSelected ? 4 : 2)
+                    .frame(width: 80, height: 80)
+
+                Text(title)
+            }
+            .contentShape(Circle())
+            .onTapGesture { onTap() }
+        }
     }
 }
 

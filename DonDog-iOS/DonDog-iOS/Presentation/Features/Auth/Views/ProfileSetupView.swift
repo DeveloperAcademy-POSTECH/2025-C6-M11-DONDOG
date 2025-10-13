@@ -15,6 +15,19 @@ struct ProfileSetupView: View {
         VStack(spacing: 24) {
             Text("Profile Setup View")
                 .font(.title)
+            
+            HStack(spacing: 24) {
+                ForEach(ProfileSetupViewModel.Role.allCases, id: \.self) { role in
+                    RoleCircleOption(
+                        title: role.displayName,
+                        isSelected: viewModel.selectedRole == role
+                    ) {
+                        viewModel.selectedRole = role
+                    }
+                    .accessibilityLabel(Text(role.displayName))
+                    .accessibilityAddTraits(viewModel.selectedRole == role ? .isSelected : [])
+                }
+            }
 
             VStack(alignment: .leading, spacing: 12) {
                 Text("이름/닉네임")
@@ -27,17 +40,6 @@ struct ProfileSetupView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.gray.opacity(0.3))
                     )
-            }
-
-            VStack(alignment: .leading, spacing: 12) {
-                Text("역할 (role)")
-                    .font(.headline)
-                Picker("역할", selection: $viewModel.selectedRole) {
-                    ForEach(ProfileSetupViewModel.Role.allCases, id: \.self) { role in
-                        Text(role.displayName).tag(role)
-                    }
-                }
-                .pickerStyle(.segmented)
             }
 
             if let error = viewModel.errorMessage {
@@ -69,5 +71,4 @@ struct ProfileSetupView: View {
         }
     }
 }
-
 

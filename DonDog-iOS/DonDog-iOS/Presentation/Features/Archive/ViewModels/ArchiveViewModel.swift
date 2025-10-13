@@ -11,13 +11,6 @@ import FirebaseAuth
 import FirebaseFirestore
 import UIKit
 
-struct ArchiveMonth: Identifiable, Hashable {
-    let id: String
-    let year: Int
-    let month: Int
-    var days: [ArchiveDay]
-}
-
 final class ArchiveViewModel: ObservableObject {
     @Published var archiveMonths: [ArchiveMonth] = []
     @Published var totalPostCount: Int = 0

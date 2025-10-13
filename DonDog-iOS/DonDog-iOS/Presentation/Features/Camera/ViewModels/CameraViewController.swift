@@ -167,17 +167,18 @@ class CustomCameraViewController: UIViewController {
     }
     
     private func setupCancelButton() {
-        cancelButton.setTitle("취소", for: .normal)
-        cancelButton.setTitleColor(.black, for: .normal)
-        cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 18)
+        cancelButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        cancelButton.tintColor = .black
         
-        cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside) //여기서 버튼 func 넣음
+        cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
         
         view.addSubview(cancelButton)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20)
+            cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            cancelButton.widthAnchor.constraint(equalToConstant: 30),
+            cancelButton.heightAnchor.constraint(equalToConstant: 30)
         ])
     }
     
@@ -317,6 +318,40 @@ class CustomCameraViewController: UIViewController {
         updateUIForCurrentState()
     }
     
+    private func switchToFrontCamera() {
+        capturedImageView.isHidden = true
+        videoPreviewLayer.isHidden = false
+        
+        if let currentInput = captureSession.inputs.first {
+            captureSession.removeInput(currentInput)
+        }
+        
+        guard let frontCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
+            print("전면 카메라를 찾을 수 없습니다")
+            return
+        }
+        
+        currentCamera = frontCamera
+        
+        do {
+            let input = try AVCaptureDeviceInput(device: frontCamera)
+            if captureSession.canAddInput(input) {
+                captureSession.addInput(input)
+            }
+        } catch {
+            print("전면 카메라 설정 오류: \(error)")
+        }
+        
+        isCapturingFront = true
+        frontImage = nil
+        
+        isCaptureButtonEnabled = true
+        captureButton.isEnabled = true
+        captureButton.alpha = 1.0
+        
+        updateUIForCurrentState()
+    }
+    
     private func updateUIForCurrentState() {
         DispatchQueue.main.async {
             if self.isCapturingFront {
@@ -334,7 +369,11 @@ class CustomCameraViewController: UIViewController {
     }
     
     @objc private func cancelTapped() {
-        delegate?.didCancel()
+        if isCapturingFront {
+            delegate?.didCancel()
+        } else {
+            switchToFrontCamera()
+        }
     }
     
     @objc private func switchCamera() {

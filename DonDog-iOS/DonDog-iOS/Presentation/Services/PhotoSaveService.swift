@@ -158,7 +158,12 @@ final class PhotoSaveService: ObservableObject {
     
     private func savePostToRoom(roomId: String, postId: String, postData: PostData, completion: @escaping (Result<PostData, Error>) -> Void) {
         do {
-            try db.collection("Rooms").document(roomId).collection("posts").document(postId).setData(from: postData) { error in
+            var dict = try Firestore.Encoder().encode(postData)
+            dict["uid"] = postData.uid
+            dict["createdAt"] = FieldValue.serverTimestamp()
+            
+            db.collection("Rooms").document(roomId).collection("posts").document(postId)
+                .setData(dict) { error in
                 if let error = error {
                     print("❌ Room posts 저장 실패: \(error.localizedDescription)")
                     completion(.failure(error))

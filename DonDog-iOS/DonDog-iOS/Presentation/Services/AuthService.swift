@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseMessaging
 
 final class AuthService {
     private var authHandle: AuthStateDidChangeListenerHandle?
@@ -26,6 +27,9 @@ final class AuthService {
         applyRouteForUser(coordinator: coordinator)
         authHandle = Auth.auth().addStateDidChangeListener { [weak self] _, _ in
             guard let self = self else { return }
+            if Auth.auth().currentUser != nil, let token = Messaging.messaging().fcmToken {
+                NotificationService.shared.uploadFCMToken(token)
+            }
             self.applyRouteForUser(coordinator: coordinator)
         }
     }

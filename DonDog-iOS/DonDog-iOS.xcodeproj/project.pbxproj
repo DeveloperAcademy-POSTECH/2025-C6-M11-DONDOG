@@ -27,7 +27,6 @@
 		8B6E11912E9771EA0082B24C /* SettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E11902E9771EA0082B24C /* SettingViewModel.swift */; };
 		8B7377E02E9546030001EFCD /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7377DF2E9546030001EFCD /* AuthService.swift */; };
 		8BA62EA42E9149A00054EB8F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA62EA32E9149A00054EB8F /* AppDelegate.swift */; };
-		A103A33B2E9D1BC000321712 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A103A33A2E9D1BC000321712 /* GoogleService-Info.plist */; };
 		A1AEBED12E9110160006FBBA /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AEBED02E9110120006FBBA /* CameraViewController.swift */; };
 		CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */; };
 		CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF52E98FCD700AEAB49 /* Pretendard-Medium.otf */; };
@@ -71,8 +70,7 @@
 		8B6E11902E9771EA0082B24C /* SettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewModel.swift; sourceTree = "<group>"; };
 		8B7377DF2E9546030001EFCD /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		8BA62EA32E9149A00054EB8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A103A3392E9D1A9300321712 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A103A33A2E9D1BC000321712 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A103A3392E9D1A9300321712 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/munchangjae/Desktop/Developer/Project/Challenge6/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		A1AEBED02E9110120006FBBA /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DonDog-iOS.entitlements"; sourceTree = "<group>"; };
 		CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Bold.otf"; sourceTree = "<group>"; };
@@ -198,7 +196,6 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
-				A103A3392E9D1A9300321712 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -331,7 +328,6 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
-				A103A33A2E9D1BC000321712 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -509,7 +505,6 @@
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
 				CA957D072E99017400AEAB49 /* Colors.xcassets in Resources */,
-				A103A33B2E9D1BC000321712 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

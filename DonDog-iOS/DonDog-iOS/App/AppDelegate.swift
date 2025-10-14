@@ -112,7 +112,12 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
-        print("🟢 tapped notification: \(response.notification.request.content.userInfo)")
+
+        let userInfo = response.notification.request.content.userInfo
+        print("🟢 tapped notification: \(userInfo)")
+        if let deeplink = userInfo["deeplink"] as? String {
+            NotificationCenter.default.post(name: .openDeepLink, object: deeplink)
+        }
         completionHandler()
     }
 }

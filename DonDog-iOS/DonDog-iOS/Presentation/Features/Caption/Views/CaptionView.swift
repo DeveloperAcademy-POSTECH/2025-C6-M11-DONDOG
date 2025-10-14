@@ -10,6 +10,7 @@ import SwiftUI
 struct CaptionView: View {
     @ObservedObject var viewModel: CaptionViewModel
     var onCancel: () -> Void
+    var onUploadComplete: () -> Void
     @State private var isShowCaptionEditor: Bool = false
     @FocusState private var isCaptionFocused: Bool
     @State private var isFrontImageOnTop = true
@@ -116,7 +117,7 @@ struct CaptionView: View {
                 .padding(.bottom, 30)
                 .onChange(of: viewModel.isUploading) { newValue in
                     if newValue == false{
-                        onCancel()
+                        onUploadComplete()
                     }
                 }
             }
@@ -168,5 +169,5 @@ struct CaptionView: View {
 }
 
 #Preview {
-    CaptionView(viewModel: CaptionViewModel(frontImage: UIImage(named: "test1"), backImage: UIImage(named: "test2")), onCancel: {})
+    CaptionView(viewModel: CaptionViewModel(frontImage: UIImage(named: "test1"), backImage: UIImage(named: "test2")), onCancel: {}, onUploadComplete: {})
 }

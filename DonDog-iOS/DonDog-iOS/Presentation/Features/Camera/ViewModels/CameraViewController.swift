@@ -104,6 +104,7 @@ class CustomCameraViewController: UIViewController {
         
         // UI 요소들 설정 (순서중요)
         setupCancelButton()
+        setupBackground()
         //setupSwitchCameraButton()
         //setupFlashButton()
         setupGuideLabels()
@@ -113,8 +114,6 @@ class CustomCameraViewController: UIViewController {
     
     private func setupPreviewLayer() {
         previewContainerView.backgroundColor = .clear
-        previewContainerView.layer.borderWidth = 2
-        previewContainerView.layer.borderColor = UIColor.black.cgColor
         
         view.addSubview(previewContainerView)
         previewContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -151,6 +150,22 @@ class CustomCameraViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         videoPreviewLayer?.frame = previewContainerView.bounds
+    }
+    
+    private func setupBackground() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            UIColor.ddWhite.cgColor,
+            UIColor.ddSecondaryBlue.cgColor
+        ]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        gradientLayer.opacity = 0.35
+        
+        view.layer.insertSublayer(gradientLayer, at: 0)
+        
+        // 레이아웃이 변경될 때 그라디언트 크기 업데이트
+        gradientLayer.frame = view.bounds
     }
     
     private func setupCaptureButton() {

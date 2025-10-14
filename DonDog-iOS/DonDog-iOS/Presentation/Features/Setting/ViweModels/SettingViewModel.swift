@@ -142,21 +142,22 @@ final class SettingViewModel: ObservableObject {
 
             // 2) Firebase Auth 사용자 삭제
             do {
+                print("유저 삭제 시도")
                 try await user.delete()
             } catch {
                 let nsError = error as NSError
                 if nsError.code == AuthErrorCode.requiresRecentLogin.rawValue {
                     print("[회원탈퇴] requiresRecentLogin: 최근 로그인 후 다시 시도 필요")
-                    // 다시 로그인하라는 안내 필요..
+                    // 유저 안내 필요 (다시 로그인 시도)
                 } else {
                     print("[회원탈퇴] Auth 삭제 중 오류: \(nsError.localizedDescription)")
-                    // 유저에게 보일 코드 필요
+                    // 유저 안내 필요
                 }
             }
         } catch {
             let nsError = error as NSError
             print("[회원탈퇴] 오류: \(nsError.localizedDescription)")
-            // 유저에게 보일 코드 필요
+            // 유저 안내 필요
         }
 
         await MainActor.run {

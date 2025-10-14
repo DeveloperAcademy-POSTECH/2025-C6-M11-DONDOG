@@ -114,10 +114,8 @@ class CustomCameraViewController: UIViewController {
     
     private func setupPreviewLayer() {
         previewContainerView.backgroundColor = .clear
-        previewContainerView.layer.borderWidth = 2
-        previewContainerView.layer.borderColor = UIColor.black.cgColor
-
-        
+        previewContainerView.layer.cornerRadius = 12
+        previewContainerView.clipsToBounds = true
         
         view.addSubview(previewContainerView)
         previewContainerView.translatesAutoresizingMaskIntoConstraints = false

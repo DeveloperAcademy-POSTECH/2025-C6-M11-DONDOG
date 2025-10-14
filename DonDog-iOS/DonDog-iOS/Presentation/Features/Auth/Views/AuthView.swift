@@ -11,30 +11,57 @@ struct AuthView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: AuthViewModel
     
+    @StateObject private var keyboard = KeyboardResponder()
+    
     var body: some View {
-        VStack(spacing: 20) {
-            Text("익명 로그인(개발자용)")
-                .font(.title)
-                .padding(.top, 40)
+        VStack {
+            Text("본인인증")
+                .font(.titleBold18)
             
-            Button(action: viewModel.signInAnonymously) {
-                Text("익명 로그인 시작")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+            Spacer()
+                .frame(height: 104)
+            
+            if viewModel.isCodeSent {
+                HStack {
+                    Text("문자")
+                        .font(.titleBold20)
+                    +
+                    Text("로 받은\n")
+                    +
+                    Text("인증번호")
+                        .font(.titleBold20)
+                    +
+                    Text("를 입력해 주세요")
+                    
+                    Spacer()
+                }
+                .font(.subtitleMedium20)
+            } else {
+                HStack {
+                    Text("윙키")
+                        .font(.titleBold20)
+                    +
+                    Text("를 이용하기 위해\n")
+                    +
+                    Text("전화번호")
+                        .font(.titleBold20)
+                    +
+                    Text("를 이용한 인증이 필요해요")
+                    
+                    Spacer()
+                }
+                .lineSpacing(4)
+                .font(.subtitleMedium20)
             }
-            .padding(.horizontal, 32)
             
-            Text("전화번호 로그인")
-                .font(.title)
-                .padding(.top, 40)
-
-            TextField("전화번호 (01012345678 형식)", text: $viewModel.userPhoneNumber)
-                .keyboardType(.numberPad)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+            CustomTextField(
+                title: nil,
+                prefix: "+82",
+                placeholder: "10-1234-5678",
+                text: $viewModel.userPhoneNumber,
+                keyboard: .numberPad,
+                contentType: .telephoneNumber
+            )
             
             if viewModel.isCodeSent {
                 TextField("SMS 인증번호", text: $viewModel.verificationCode)
@@ -42,9 +69,19 @@ struct AuthView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
             }
             
-            if !viewModel.isCodeSent {
-                Button(action: viewModel.sendCode) {
-                    Text("인증번호 요청")
+            //:: 나중에 처리
+            Text(viewModel.message)
+                .foregroundColor(.red)
+                .padding()
+            
+            Spacer()
+            
+            VStack {
+                Text("익명 로그인(개발자용)")
+                    .font(.title)
+                
+                Button(action: viewModel.signInAnonymously) {
+                    Text("익명 로그인 시작")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -52,41 +89,31 @@ struct AuthView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
-            } else {
-                Button(action: viewModel.logIn) {
-                    Text("로그인")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-                .padding(.horizontal, 32)
             }
-            
-            if viewModel.isLoading {
-                ProgressView()
-            }
-            
-            Text(viewModel.message)
-                .foregroundColor(.red)
-                .padding()
-            
-            if viewModel.isLoggedIn {
-                Text("로그인 성공! 🎉").foregroundColor(.green)
-            }
+            .padding()
+            .border(Color.red, width: 3)
             
             Spacer()
+            
+            Group {
+                if viewModel.isCodeSent {
+                    CustomButton(title: "인증하기", isDisabled: !viewModel.verificationCode.isEmpty && !viewModel.isLoading, action: viewModel.logIn)
+                } else {
+                    CustomButton(title: "다음", isDisabled: !viewModel.userPhoneNumber.isEmpty && !viewModel.isLoading, action: viewModel.sendCode)
+                }
+            }
+            .padding(.bottom, keyboard.keyboardHeight == 0 ? 0 : 10)
+
         }
-        .padding(.horizontal, 32)
-        .padding(.bottom, 20)
+        .padding(.horizontal, 20)
+        .dismissKeyboard()
         .task {
             viewModel.attach(coordinator: coordinator)
         }
     }
 }
 
-#Preview {
+#Preview("AuthView Preview") {
     AuthView(viewModel: AuthViewModel())
+        .environmentObject(AppCoordinator(factory: ModuleFactory()))
 }

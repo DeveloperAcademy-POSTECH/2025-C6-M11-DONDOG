@@ -16,6 +16,10 @@ struct CameraView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let customCameraVC = CustomCameraViewController()
         customCameraVC.delegate = context.coordinator
+        
+        // 카메라 컨트롤러 참조를 ViewModel에 저장 (리셋 기능을 위해)
+        viewModel.cameraController = customCameraVC
+        viewModel.showCaptionView = false
         return customCameraVC
     }
     

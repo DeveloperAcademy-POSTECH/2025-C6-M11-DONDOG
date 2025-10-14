@@ -21,8 +21,9 @@ protocol ModuleFactoryProtocol {
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
+    //:: 추후 private 붙이기
     static let shared = ModuleFactory()
-    private init() {}
+    init() {}
     
     func makeAuthView() -> AuthView {
         let viewModel = AuthViewModel()

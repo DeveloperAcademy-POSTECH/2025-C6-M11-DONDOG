@@ -172,9 +172,9 @@ class CustomCameraViewController: UIViewController {
     
     private func setupCaptureButton() {
         captureButton.backgroundColor = .white
-        captureButton.layer.cornerRadius = 35
+        captureButton.layer.cornerRadius = 36 
         captureButton.layer.borderWidth = 5
-        captureButton.layer.borderColor = UIColor.lightGray.cgColor
+        captureButton.layer.borderColor = Color.ddPrimaryBlue.uiColor.cgColor
         
         captureButton.addTarget(self, action: #selector(capturePhoto), for: .touchUpInside)
         
@@ -183,8 +183,8 @@ class CustomCameraViewController: UIViewController {
         NSLayoutConstraint.activate([
             captureButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             captureButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
-            captureButton.widthAnchor.constraint(equalToConstant: 70),
-            captureButton.heightAnchor.constraint(equalToConstant: 70)
+            captureButton.widthAnchor.constraint(equalToConstant: 72),
+            captureButton.heightAnchor.constraint(equalToConstant: 72)
         ])
     }
     

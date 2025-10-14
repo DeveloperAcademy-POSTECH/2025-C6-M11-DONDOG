@@ -89,6 +89,11 @@ class CustomCameraViewController: UIViewController {
                 captureSession.addOutput(photoOutput)
             }
             
+            // 전면 카메라 줌 배율 세팅
+            try camera.lockForConfiguration()
+            camera.videoZoomFactor = 1.3
+            camera.unlockForConfiguration()
+            
         } catch {
             print("카메라 설정 오류: \(error)")
         }
@@ -338,6 +343,11 @@ class CustomCameraViewController: UIViewController {
             if captureSession.canAddInput(input) {
                 captureSession.addInput(input)
             }
+            
+            // 전면 카메라 줌 배율 1.0으로 고정
+            try frontCamera.lockForConfiguration()
+            frontCamera.videoZoomFactor = 1.0
+            frontCamera.unlockForConfiguration()
         } catch {
             print("전면 카메라 설정 오류: \(error)")
         }

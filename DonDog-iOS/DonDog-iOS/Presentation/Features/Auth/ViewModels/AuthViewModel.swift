@@ -28,7 +28,7 @@ final class AuthViewModel: ObservableObject {
     @Published var message: String = ""
     @Published var isCodeSent: Bool = false
     @Published var isLoading: Bool = false
-    @Published var isLoggedIn: Bool = false
+    @Published var isLoggedIn: Bool = false // 로그인 잘되면 삭제
     @Published var shouldCloseMenu: Bool = false
     
     func signInAnonymously() {
@@ -57,9 +57,9 @@ final class AuthViewModel: ObservableObject {
     func sendCode() {
         // 기본 검증: 한국 휴대폰 010으로 시작 + 총 11자리(뒤 8자리 숫자)
         let digits = userPhoneNumber.filter { $0.isNumber }
-        let isValidKRMobile = NSPredicate(format: "SELF MATCHES %@", "^010\\d{8}$").evaluate(with: digits)
+        let isValidKRMobile = NSPredicate(format: "SELF MATCHES %@", "^10\\d{8}$").evaluate(with: digits)
         guard isValidKRMobile else {
-            self.message = "전화번호는 010으로 시작하는 11자리여야 해요."
+            self.message = "전화번호는 10으로 시작하는 10자리여야 해요."
             return
         }
         // 앞의 0 제거 후 +82 붙이기 → +8210xxxx....
@@ -79,7 +79,7 @@ final class AuthViewModel: ObservableObject {
                    let code = AuthErrorCode(rawValue: nsError.code) {
                     switch code {
                     case .invalidPhoneNumber:
-                        self.message = "전화번호 형식이 맞지 않아요. 010-0000-0000 형식으로 입력해 주세요."
+                        self.message = "전화번호 형식이 맞지 않아요. 10-0000-0000 형식으로 입력해 주세요."
                     case .sessionExpired:
                         self.message = "인증 시간이 만료되었어요. 다시 시도해 주세요."
                     case .quotaExceeded, .tooManyRequests:

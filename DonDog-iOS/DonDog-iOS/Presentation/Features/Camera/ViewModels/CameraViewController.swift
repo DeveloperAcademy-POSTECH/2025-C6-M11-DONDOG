@@ -191,18 +191,20 @@ class CustomCameraViewController: UIViewController {
     }
     
     private func setupCancelButton() {
-        cancelButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        cancelButton.tintColor = .black
+        let chevronImage = UIImage(systemName: "chevron.left")
+        let resizedImage = chevronImage?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .regular))
+        cancelButton.setImage(resizedImage, for: .normal)
+        cancelButton.tintColor = Color.ddBlack.uiColor
         
         cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
         
         view.addSubview(cancelButton)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            cancelButton.widthAnchor.constraint(equalToConstant: 20),
-            cancelButton.heightAnchor.constraint(equalToConstant: 20)
+            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
+            cancelButton.widthAnchor.constraint(equalToConstant: 16),
+            cancelButton.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
     

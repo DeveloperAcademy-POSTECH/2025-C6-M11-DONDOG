@@ -128,6 +128,9 @@ struct CaptionView: View {
                         Spacer()
                         Text(viewModel.caption.isEmpty ? "눌러서 캡션 작성하기" : viewModel.caption)
                             .foregroundStyle(viewModel.caption.isEmpty ? Color.gray : Color.white)
+                        if !viewModel.caption.isEmpty {
+                            Text("\(viewModel.caption.count)/8")
+                        }
                         Spacer()
                     }
                 }.ignoresSafeArea()

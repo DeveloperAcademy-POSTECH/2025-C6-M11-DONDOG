@@ -18,6 +18,7 @@ final class AppCoordinator: ObservableObject {
     
     // 기본뷰
     @Published var root: AppRoute = .feed
+    @Published var inviteShowSentHint: Bool = false
     
     init(factory: ModuleFactoryProtocol, authService: AuthService = AuthService()) {
         self.factory = factory
@@ -56,7 +57,7 @@ final class AppCoordinator: ObservableObject {
         case .profileSetup:
             factory.makeProfileSetupView()
         case .invite:
-            factory.makeInviteView()
+            factory.makeInviteView(showSentHint: inviteShowSentHint)
         case .camera:
             EmptyView()
         case .feed:

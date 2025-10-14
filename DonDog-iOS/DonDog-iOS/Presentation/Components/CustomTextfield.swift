@@ -15,6 +15,11 @@ struct CustomTextField: View {
     var keyboard: UIKeyboardType = .default
     var contentType: UITextContentType? = nil
     var onCommit: (() -> Void)? = nil
+    var errorMessage: String? = nil
+    
+    private var hasError: Bool {
+        errorMessage != nil && !errorMessage!.isEmpty
+    }
 
     @FocusState private var isFocused: Bool
 
@@ -53,10 +58,23 @@ struct CustomTextField: View {
                                 isFocused = false
                             }
                             .onChange(of: text) { newValue in
-                                guard keyboard == .numberPad else { return }
-                                let filtered = newValue.filter { "0123456789".contains($0) }
-                                if filtered != newValue {
-                                    text = filtered
+                                var value = newValue.filter { !$0.isWhitespace }
+                                
+                                if contentType == .telephoneNumber {
+                                    let digits = value.filter { $0.isNumber }
+                                    let limited = String(digits.prefix(10))
+                                    var formatted = ""
+                                    for (i, ch) in limited.enumerated() {
+                                        if i == 2 || i == 6 { formatted.append("-") }
+                                        formatted.append(ch)
+                                    }
+                                    value = formatted
+                                } else if keyboard == .numberPad {
+                                    value = value.filter { $0.isNumber }
+                                }
+
+                                if value != text {
+                                    text = value
                                 }
                             }
                             .onChange(of: isFocused) { focused in
@@ -71,9 +89,22 @@ struct CustomTextField: View {
                 Rectangle()
                     .frame(height: 2)
                     .foregroundColor(
-                        isFocused ? Color.ddPrimaryBlue :
-                        Color.ddSecondaryBlue
+                        hasError ? Color.ddAlert : (isFocused ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
                     )
+                
+                if hasError, let message = errorMessage {
+                    HStack(spacing: 0) {
+                        Image(systemName: "exclamationmark.circle")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 14)
+                            .padding(.trailing, 4)
+                        Text(message)
+                            .font(.captionRegular13)
+                        Spacer()
+                    }
+                    .foregroundColor(Color.ddAlert)
+                }
             }
         }
         .contentShape(Rectangle())
@@ -90,6 +121,14 @@ struct Preview_UnderlineTextFieldWrapper: View {
     
     var body: some View {
         VStack(spacing: 24) {
+            CustomTextField(
+                title: "휴대폰 번호",
+                placeholder: "휴대폰 번호를 입력해 주세요",
+                text: $phone,
+                keyboard: .numberPad,
+                contentType: .telephoneNumber,
+                errorMessage: "형식이 올바르지 않습니다."
+            )
             CustomTextField(
                 title: "휴대폰 번호",
                 placeholder: "휴대폰 번호를 입력해 주세요",

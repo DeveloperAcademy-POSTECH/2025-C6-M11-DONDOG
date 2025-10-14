@@ -13,13 +13,13 @@ import FirebaseFirestore
 final class AuthViewModel: ObservableObject {
     private weak var coordinator: AppCoordinator?
 
-        init(coordinator: AppCoordinator? = nil) {
-            self.coordinator = coordinator
-        }
+    init(coordinator: AppCoordinator? = nil) {
+        self.coordinator = coordinator
+    }
 
-        func attach(coordinator: AppCoordinator) {
-            self.coordinator = coordinator
-        }
+    func attach(coordinator: AppCoordinator) {
+        self.coordinator = coordinator
+    }
     
     @Published var userPhoneNumber: String = ""
     @Published var verificationCode: String = ""
@@ -30,6 +30,9 @@ final class AuthViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var isLoggedIn: Bool = false // 로그인 잘되면 삭제
     @Published var shouldCloseMenu: Bool = false
+    
+    @Published var phoneError: String? = nil
+    @Published var codeError: String? = nil
     
     func signInAnonymously() {
         self.isLoading = true
@@ -59,15 +62,15 @@ final class AuthViewModel: ObservableObject {
         let digits = userPhoneNumber.filter { $0.isNumber }
         let isValidKRMobile = NSPredicate(format: "SELF MATCHES %@", "^10\\d{8}$").evaluate(with: digits)
         guard isValidKRMobile else {
-            self.message = "전화번호는 10으로 시작하는 10자리여야 해요."
+            self.phoneError = "전화번호는 10으로 시작하는 10자리 숫자예요"
             return
         }
-        // 앞의 0 제거 후 +82 붙이기 → +8210xxxx....
-        let withoutLeadingZero = String(digits.dropFirst())
-        let number = "+82" + withoutLeadingZero
+        let number = "+82" + digits
         print("서버로 보내는 전화번호: \(number)")
         self.isLoading = true
         self.message = ""
+        self.phoneError = nil
+        self.codeError = nil
         
         // Firebase Phone Auth: reCAPTCHA/기기 검증 플로우는 내부에서 처리됨
         PhoneAuthProvider.provider().verifyPhoneNumber(number, uiDelegate: nil) { [weak self] verificationID, error in
@@ -77,24 +80,11 @@ final class AuthViewModel: ObservableObject {
                 
                 if let nsError = error as NSError?,
                    let code = AuthErrorCode(rawValue: nsError.code) {
-                    switch code {
-                    case .invalidPhoneNumber:
-                        self.message = "전화번호 형식이 맞지 않아요. 10-0000-0000 형식으로 입력해 주세요."
-                    case .sessionExpired:
-                        self.message = "인증 시간이 만료되었어요. 다시 시도해 주세요."
-                    case .quotaExceeded, .tooManyRequests:
-                        self.message = "요청이 많아요. 1~2분 후에 다시 시도해 주세요."
-                    case .captchaCheckFailed:
-                        self.message = "인증을 확인하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요."
-                    default:
-                        print("[Auth][verifyPhoneNumber] error: code=\(code), desc=\(nsError.localizedDescription)")
-                        self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요."
+                    if code == .invalidPhoneNumber {
+                        self.phoneError = "전화번호는 10으로 시작하는 10자리 숫자예요"
+                    } else {
+                        self.phoneError = "문제가 생겼어요. 잠시 후 다시 시도해 주세요"
                     }
-                    self.isCodeSent = false
-                    return
-                } else if let error = error {
-                    print("[Auth][verifyPhoneNumber] error: \(error.localizedDescription)")
-                    self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요."
                     self.isCodeSent = false
                     return
                 }
@@ -104,7 +94,7 @@ final class AuthViewModel: ObservableObject {
                     UserDefaults.standard.set(id, forKey: "authVerificationID")
                 }
                 self.isCodeSent = true
-                self.message = "인증번호가 전송되었어요."
+                self.phoneError = nil
             }
         }
     }
@@ -114,12 +104,14 @@ final class AuthViewModel: ObservableObject {
         // verifyPhoneNumber로 받은 verificationID 확보
         let storedID = UserDefaults.standard.string(forKey: "authVerificationID")
         guard let verificationID = self.verificationID ?? storedID else {
-            self.message = "인증을 다시 요청해주세요."
+            self.codeError = "문제가 생겼어요. 잠시 후 다시 시도해 주세요."
             return
         }
         
         self.isLoading = true
         self.message = ""
+        self.phoneError = nil
+        self.codeError = nil
         
         let credential = PhoneAuthProvider.provider().credential(
             withVerificationID: verificationID,
@@ -132,10 +124,38 @@ final class AuthViewModel: ObservableObject {
                 self.isLoading = false
                 
                 if let error = error {
-                    self.message = "로그인 실패: \(error.localizedDescription)"
+                    print("[Auth][signIn] error: \(error.localizedDescription)")
+                    self.codeError = "인증번호를 다시 확인해주세요."
                 } else {
+                    self.codeError = nil
                     self.isLoggedIn = true
-                    self.message = "로그인 성공!"
+                    self.routeAfterSignIn()
+                }
+            }
+        }
+    }
+    
+    private func routeAfterSignIn() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let docRef = Firestore.firestore().collection("Users").document(uid)
+
+        docRef.getDocument { [weak self] snapshot, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("[Auth][routeAfterSignIn] fetch user doc error: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.coordinator?.push(.profileSetup)
+                }
+                return
+            }
+
+            let exists = (snapshot?.exists == true)
+            DispatchQueue.main.async {
+                if exists {
+                    self.coordinator?.replaceRoot(.feed)
+                } else {
+                    self.coordinator?.replaceRoot(.profileSetup)
                 }
             }
         }

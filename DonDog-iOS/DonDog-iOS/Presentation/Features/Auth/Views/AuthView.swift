@@ -14,65 +14,70 @@ struct AuthView: View {
     @StateObject private var keyboard = KeyboardResponder()
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Text("본인인증")
                 .font(.titleBold18)
             
             Spacer()
                 .frame(height: 104)
             
-            if viewModel.isCodeSent {
-                HStack {
-                    Text("문자")
-                        .font(.titleBold20)
-                    +
-                    Text("로 받은\n")
-                    +
-                    Text("인증번호")
-                        .font(.titleBold20)
-                    +
-                    Text("를 입력해 주세요")
-                    
-                    Spacer()
+            Group {
+                if viewModel.isCodeSent {
+                    HStack {
+                        Text("문자")
+                            .font(.titleBold20)
+                        +
+                        Text("로 받은\n")
+                        +
+                        Text("인증번호")
+                            .font(.titleBold20)
+                        +
+                        Text("를 입력해 주세요")
+                        
+                        Spacer()
+                    }
+                } else {
+                    HStack {
+                        Text("윙키")
+                            .font(.titleBold20)
+                        +
+                        Text("를 이용하기 위해\n")
+                        +
+                        Text("전화번호")
+                            .font(.titleBold20)
+                        +
+                        Text("를 이용한 인증이 필요해요")
+                        
+                        Spacer()
+                    }
                 }
-                .font(.subtitleMedium20)
-            } else {
-                HStack {
-                    Text("윙키")
-                        .font(.titleBold20)
-                    +
-                    Text("를 이용하기 위해\n")
-                    +
-                    Text("전화번호")
-                        .font(.titleBold20)
-                    +
-                    Text("를 이용한 인증이 필요해요")
-                    
-                    Spacer()
-                }
-                .lineSpacing(4)
-                .font(.subtitleMedium20)
             }
-            
+            .lineSpacing(4)
+            .font(.subtitleMedium20)
+            .padding(.bottom, 32)
+
             CustomTextField(
                 title: nil,
                 prefix: "+82",
                 placeholder: "10-1234-5678",
                 text: $viewModel.userPhoneNumber,
                 keyboard: .numberPad,
-                contentType: .telephoneNumber
+                contentType: .telephoneNumber,
+                errorMessage: viewModel.phoneError
             )
+            .padding(.bottom, 32)
             
             if viewModel.isCodeSent {
-                TextField("SMS 인증번호", text: $viewModel.verificationCode)
-                    .keyboardType(.numberPad)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                CustomTextField(
+                    title: nil,
+                    prefix: nil,
+                    placeholder: "인증번호를 입력해 주세요",
+                    text: $viewModel.verificationCode,
+                    keyboard: .numberPad,
+                    errorMessage: viewModel.codeError
+                )
+                .padding(.bottom, 32)
             }
-            
-            //:: 나중에 처리
-            Text(viewModel.message)
-                .foregroundColor(.red)
-                .padding()
             
             Spacer()
             
@@ -113,7 +118,7 @@ struct AuthView: View {
     }
 }
 
-#Preview("AuthView Preview") {
+#Preview {
     AuthView(viewModel: AuthViewModel())
         .environmentObject(AppCoordinator(factory: ModuleFactory()))
 }

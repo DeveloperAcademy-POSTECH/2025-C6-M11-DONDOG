@@ -27,36 +27,38 @@ struct FeedView: View {
         VStack(spacing: 0){
             HStack{
                 DisclosureGroup("디버깅 용") {
-                    Button("연결뷰로 이동") { coordinator.push(.invite) }
-                    Button("설정뷰로 이동") { coordinator.push(.setting) }
-                    Button("로그아웃") {
-                        do {
-                            try Auth.auth().signOut()
-                        } catch {
-                            print("로그아웃 실패: \(error.localizedDescription)")
+                    HStack{
+                        Button("연결뷰로 이동") { coordinator.push(.invite) }
+                        Button("설정뷰로 이동") { coordinator.push(.setting) }
+                        Button("로그아웃") {
+                            do {
+                                try Auth.auth().signOut()
+                            } catch {
+                                print("로그아웃 실패: \(error.localizedDescription)")
+                            }
                         }
-                    }
-                    Button(action: {
-                        print("🔄 수동 새로고침 시작")
-                        withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
-                            isRefreshing = true
+                        Button(action: {
+                            print("🔄 수동 새로고침 시작")
+                            withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
+                                isRefreshing = true
+                            }
+                            viewModel.loadTodayPosts()
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                isRefreshing = false
+                            }
+                        }) {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.title2)
+                                .foregroundColor(.blue)
+                                .rotationEffect(.degrees(isRefreshing ? 360 : 0))
                         }
-                        viewModel.loadTodayPosts()
+                        .disabled(viewModel.isLoading)
                         
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            isRefreshing = false
-                        }
-                    }) {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.title2)
-                            .foregroundColor(.blue)
-                            .rotationEffect(.degrees(isRefreshing ? 360 : 0))
-                    }
-                    .disabled(viewModel.isLoading)
-                    
-                    Button("사진 뒤집기"){
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            isFrontImageOnTop.toggle()
+                        Button("사진 뒤집기"){
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                isFrontImageOnTop.toggle()
+                            }
                         }
                     }
                 }.padding(.horizontal)

@@ -70,15 +70,17 @@ struct PostView: View {
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button(role: .destructive) {
-                        showDeleteAlert = true
+            if viewModel.uid == viewModel.currentUser {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button(role: .destructive) {
+                            showDeleteAlert = true
+                        } label: {
+                            Label("삭제하기", systemImage: "trash")
+                        }
                     } label: {
-                        Label("삭제하기", systemImage: "trash")
+                        Image(systemName: "ellipsis")
                     }
-                } label: {
-                    Image(systemName: "ellipsis")
                 }
             }
         }

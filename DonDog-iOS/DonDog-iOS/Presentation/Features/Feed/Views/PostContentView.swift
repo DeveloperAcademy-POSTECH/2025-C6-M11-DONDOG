@@ -45,7 +45,7 @@ struct PostContentView: View {
             }
             
             List {
-                ForEach(viewModel.comments) { comment in
+                ForEach(viewModel.comments.filter { $0.uid == viewModel.currentUser }) { comment in
                     VStack(alignment: .leading, spacing: 7) {
                         HStack(spacing: 20) {
                             Text(comment.author)
@@ -64,9 +64,27 @@ struct PostContentView: View {
                 }
                 .onDelete { indexSet in
                     for index in indexSet {
-                        let comment = viewModel.comments[index]
+                        let comment = viewModel.comments.filter { $0.uid == viewModel.currentUser }[index]
                         viewModel.deleteComment(of: comment)
                     }
+                }
+                
+                ForEach(viewModel.comments.filter { $0.uid != viewModel.currentUser }) { comment in
+                    VStack(alignment: .leading, spacing: 7) {
+                        HStack(spacing: 20) {
+                            Text(comment.author)
+                                .font(.system(size: 18))
+                                .foregroundStyle(.gray)
+                            Text(DataUtils.formatDate(comment.timestamp, format: "HH:mm"))
+                                .font(.system(size: 18))
+                                .foregroundStyle(.gray)
+                        }
+                        
+                        Text(comment.text)
+                            .font(.system(size: 18))
+                            .foregroundStyle(.gray)
+                    }
+                    .padding(.vertical, 5)
                 }
             }
             .listStyle(.plain)

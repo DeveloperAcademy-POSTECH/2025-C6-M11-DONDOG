@@ -89,6 +89,11 @@ class CustomCameraViewController: UIViewController {
                 captureSession.addOutput(photoOutput)
             }
             
+            // 전면 카메라 줌 배율 세팅
+            try camera.lockForConfiguration()
+            camera.videoZoomFactor = 1.3
+            camera.unlockForConfiguration()
+            
         } catch {
             print("카메라 설정 오류: \(error)")
         }
@@ -338,6 +343,10 @@ class CustomCameraViewController: UIViewController {
             if captureSession.canAddInput(input) {
                 captureSession.addInput(input)
             }
+            
+            try frontCamera.lockForConfiguration()
+            frontCamera.videoZoomFactor = 1.3
+            frontCamera.unlockForConfiguration()
         } catch {
             print("전면 카메라 설정 오류: \(error)")
         }
@@ -396,6 +405,60 @@ class CustomCameraViewController: UIViewController {
     private func stopSession() {
         DispatchQueue.global(qos: .userInitiated).async {
             self.captureSession.stopRunning()
+        }
+    }
+    
+    /// 촬영 상태를 완전히 초기화하여 전면 촬영부터 다시 시작할 수 있도록 함
+    func resetCameraState() {
+        DispatchQueue.main.async {
+            // 1. 먼저 모든 상태를 전면 촬영 모드로 즉시 설정
+            self.isCapturingFront = true
+            self.frontImage = nil
+            self.backImage = nil
+            
+            // 2. UI 상태를 즉시 전면 촬영 모드로 변경 (깜빡임 방지)
+            self.capturedImageView.isHidden = true
+            self.videoPreviewLayer.isHidden = false
+            self.isCaptureButtonEnabled = true
+            self.captureButton.isEnabled = true
+            self.captureButton.alpha = 1.0
+            
+            // 3. UI를 즉시 업데이트 (Step1으로 표시)
+            self.updateUIForCurrentState()
+            
+            // 4. 카메라 하드웨어 전환을 별도 스레드에서 처리 (UI 블로킹 방지)
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.performCameraSwitchToFront()
+            }
+        }
+    }
+    
+    /// 카메라 하드웨어만 전면으로 전환하는 메서드 (UI와 분리)
+    private func performCameraSwitchToFront() {
+        // 기존 입력 제거
+        if let currentInput = captureSession.inputs.first {
+            captureSession.removeInput(currentInput)
+        }
+        
+        // 전면 카메라 설정
+        guard let frontCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
+            print("전면 카메라를 찾을 수 없습니다")
+            return
+        }
+        
+        currentCamera = frontCamera
+        
+        do {
+            let input = try AVCaptureDeviceInput(device: frontCamera)
+            if captureSession.canAddInput(input) {
+                captureSession.addInput(input)
+            }
+            
+            try frontCamera.lockForConfiguration()
+            frontCamera.videoZoomFactor = 1.3
+            frontCamera.unlockForConfiguration()
+        } catch {
+            print("전면 카메라 설정 오류: \(error)")
         }
     }
 }

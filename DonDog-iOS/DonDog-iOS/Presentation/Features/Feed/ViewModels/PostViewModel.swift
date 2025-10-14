@@ -16,7 +16,8 @@ final class PostViewModel: ObservableObject {
     private let db = Firestore.firestore()
     private var postRef: DocumentReference
 
-    private var uid: String = ""
+    @Published var uid: String = ""
+    @Published var currentUser: String = ""
     @Published var authorName: String = ""
     @Published var createdAt: Date = Date()
     @Published var frontImage: UIImage = UIImage()
@@ -28,12 +29,13 @@ final class PostViewModel: ObservableObject {
     private var stickerURL: URL?
     private var frontURL: URL?
     private var backURL: URL?
-
+    
     init(postId: String, roomId: String) {
         self.postId = postId
         self.roomId = roomId
         self.postRef = db.collection("Rooms").document(roomId)
                          .collection("posts").document(postId)
+        self.currentUser = Auth.auth().currentUser?.uid ?? ""
 
         Task {
             await self.fetchPostData()
@@ -102,18 +104,13 @@ final class PostViewModel: ObservableObject {
     }
     
     func saveComment(of text: String) async {
-        guard let currentUser = Auth.auth().currentUser else {
-            print("사용자 인증 정보 없음")
-            return
-        }
-        
         do {
-            let userRef = db.collection("Users").document(currentUser.uid)
+            let userRef = db.collection("Users").document(currentUser)
             let userSnapshot = try await userRef.getDocument()
             let authorName = userSnapshot.data()?["name"] as? String ?? "Unknown"
 
             let commentData: [String: Any] = [
-                "uid": currentUser.uid,
+                "uid": currentUser,
                 "author": authorName,
                 "content": text,
                 "timestamp": Timestamp(date: Date())

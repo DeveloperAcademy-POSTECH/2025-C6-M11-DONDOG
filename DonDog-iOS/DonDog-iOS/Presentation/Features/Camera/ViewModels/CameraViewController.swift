@@ -201,8 +201,8 @@ class CustomCameraViewController: UIViewController {
         NSLayoutConstraint.activate([
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            cancelButton.widthAnchor.constraint(equalToConstant: 30),
-            cancelButton.heightAnchor.constraint(equalToConstant: 30)
+            cancelButton.widthAnchor.constraint(equalToConstant: 20),
+            cancelButton.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
     
@@ -284,9 +284,33 @@ class CustomCameraViewController: UIViewController {
         ])
         
         // 후면 촬영 안내 레이블
-        backGuideMessageLabel.text = "STEP 2.\n풍경을 촬영해주세요!"
-        backGuideMessageLabel.textColor = .black
-        backGuideMessageLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        let backAttributedText = NSMutableAttributedString()
+        let backParagraphStyle = NSMutableParagraphStyle()
+        backParagraphStyle.lineSpacing = 4  // 줄 간격
+        backParagraphStyle.alignment = .center
+        
+        let backFirstLine = NSAttributedString(
+            string: "STEP 2. 배경 찍기\n",
+            attributes: [
+                .font: UIFont(name: FontName.pretendardBold.rawValue, size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .bold),
+                .foregroundColor: Color.ddPrimaryBlue.uiColor,
+                .paragraphStyle: backParagraphStyle
+            ]
+        )
+        
+        let backSecondLine = NSAttributedString(
+            string: "후면 카메라로 풍경이 잘 보이게 찍어주세요",
+            attributes: [
+                .font: UIFont(name: FontName.pretendardRegular.rawValue, size: 13) ?? UIFont.systemFont(ofSize: 13, weight: .regular),
+                .foregroundColor: Color.ddGray600.uiColor,
+                .paragraphStyle: backParagraphStyle
+            ]
+        )
+        
+        backAttributedText.append(backFirstLine)
+        backAttributedText.append(backSecondLine)
+        
+        backGuideMessageLabel.attributedText = backAttributedText
         backGuideMessageLabel.textAlignment = .center
         backGuideMessageLabel.numberOfLines = 0
         backGuideMessageLabel.isHidden = true  // 초기에는 숨김
@@ -295,7 +319,7 @@ class CustomCameraViewController: UIViewController {
         backGuideMessageLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             backGuideMessageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            backGuideMessageLabel.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 30),
+            backGuideMessageLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 64),
             backGuideMessageLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
             backGuideMessageLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
             backGuideMessageLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 50)

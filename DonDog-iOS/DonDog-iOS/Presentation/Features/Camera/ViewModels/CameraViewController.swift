@@ -114,6 +114,10 @@ class CustomCameraViewController: UIViewController {
     
     private func setupPreviewLayer() {
         previewContainerView.backgroundColor = .clear
+        previewContainerView.layer.borderWidth = 2
+        previewContainerView.layer.borderColor = UIColor.black.cgColor
+
+        
         
         view.addSubview(previewContainerView)
         previewContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -239,10 +243,33 @@ class CustomCameraViewController: UIViewController {
     }
     
     private func setupGuideLabels() {
-        // 전면 촬영 안내 레이블
-        frontGuideMessageLabel.text = "STEP 1.\n현재 모습을 촬영해주세요!"
-        frontGuideMessageLabel.textColor = .black
-        frontGuideMessageLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        let attributedText = NSMutableAttributedString()
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4  // 줄 간격
+        paragraphStyle.alignment = .center
+        
+        let firstLine = NSAttributedString(
+            string: "STEP 1. 셀카 찍기\n",
+            attributes: [
+                .font: UIFont(name: FontName.pretendardBold.rawValue, size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .bold),
+                .foregroundColor: Color.ddPrimaryBlue.uiColor,
+                .paragraphStyle: paragraphStyle
+            ]
+        )
+        
+        let secondLine = NSAttributedString(
+            string: "전면 카메라로 얼굴이 잘 보이게 찍어주세요",
+            attributes: [
+                .font: UIFont(name: FontName.pretendardRegular.rawValue, size: 13) ?? UIFont.systemFont(ofSize: 13, weight: .regular),
+                .foregroundColor: Color.ddGray600.uiColor,
+                .paragraphStyle: paragraphStyle
+            ]
+        )
+        
+        attributedText.append(firstLine)
+        attributedText.append(secondLine)
+        
+        frontGuideMessageLabel.attributedText = attributedText
         frontGuideMessageLabel.textAlignment = .center
         frontGuideMessageLabel.numberOfLines = 0
         
@@ -250,7 +277,7 @@ class CustomCameraViewController: UIViewController {
         frontGuideMessageLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             frontGuideMessageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            frontGuideMessageLabel.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 30),
+            frontGuideMessageLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 64),
             frontGuideMessageLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
             frontGuideMessageLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
             frontGuideMessageLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 50)

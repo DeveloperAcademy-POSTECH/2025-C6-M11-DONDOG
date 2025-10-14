@@ -28,13 +28,25 @@ struct CameraViewContainer: View {
             
             if cameraViewModel.showCaptionView {
                 if let captionVM = captionViewModel {
-                    CaptionView(viewModel: captionVM) {
-                        withAnimation {
-                            shouldDismiss = true
-                            cameraViewModel.showCaptionView = false
+                    CaptionView(
+                        viewModel: captionVM,
+                        onCancel: {
+                            // xmark 버튼 클릭 시 촬영 상태를 초기화하여 다시 전면 촬영부터 시작
+                            cameraViewModel.resetCameraState()
+                        },
+                        onUploadComplete: {
+                            // 업로드 완료 시 기존 로직 실행
+                            feedViewModel.didUploadPost()
+                            
+                            // CameraViewModel 상태 초기화
+                            cameraViewModel.frontImage = nil
+                            cameraViewModel.backImage = nil
+                            
+                            
+                            // 화면 닫기
+                                isPresented = false
                         }
-                    }
-                    .transition(.move(edge: .bottom))
+                    )
                 }
             }
         }
@@ -43,12 +55,6 @@ struct CameraViewContainer: View {
                 let newCaptionVM = CaptionViewModel(
                     frontImage: cameraViewModel.frontImage,
                     backImage: cameraViewModel.backImage
-                )
-                
-                newCaptionVM.delegate = ContainerDelegate(
-                    onUploadComplete: { [self] in
-                        handleUploadComplete()
-                    }
                 )
                 
                 captionViewModel = newCaptionVM
@@ -61,29 +67,5 @@ struct CameraViewContainer: View {
         }
     }
     
-    private func handleUploadComplete() {
-        
-        feedViewModel.didUploadPost()
-        
-        cameraViewModel.frontImage = nil
-        cameraViewModel.backImage = nil
-        cameraViewModel.showCaptionView = false
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.shouldDismiss = true
-        }
-    }
-    
-    class ContainerDelegate: CaptionViewModelDelegate {
-        let onUploadComplete: () -> Void
-        
-        init(onUploadComplete: @escaping () -> Void) {
-            self.onUploadComplete = onUploadComplete
-        }
-        
-        func didUploadPost() {
-            onUploadComplete()
-        }
-    }
 }
 

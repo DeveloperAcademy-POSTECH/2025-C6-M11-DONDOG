@@ -1,7 +1,7 @@
 name: 🐛 버그 수정
 description: 테스트 중 발생한 문제를 추적하기 위해 사용합니다.
-title: "bug: "
-labels: ["Bug", "QA"]
+title: "fix: "
+labels: ["Fix", "QA"]
 body:
   - type: textarea
     id: symptom

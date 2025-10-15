@@ -18,6 +18,7 @@ protocol ModuleFactoryProtocol {
     func makePostView(with postId: String, in roomId: String) -> PostView
     func makeSettingView() -> SettingView
     func makeEditProfileView() -> EditProfileView
+    func makeArchiveView(in roomId: String) -> ArchiveView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -75,6 +76,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makeEditProfileView() -> EditProfileView {
         let viewModel = EditProfileViewModel()
         let view = EditProfileView(viewModel: viewModel)
+        return view
+    }
+    
+    func makeArchiveView(in roomId: String) -> ArchiveView {
+        let viewModel = ArchiveViewModel(roomId: roomId)
+        let view = ArchiveView(viewModel: viewModel)
         return view
     }
 }

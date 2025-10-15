@@ -20,6 +20,7 @@ enum CustomNavigationBarCenterType {
 enum CustomNavigationBarTrailingType {
     case close(action: () -> Void)
     case option(action: () -> Void)
+    case setting(action: () -> Void)
     case none
 }
 
@@ -122,6 +123,13 @@ struct CustomNavigationBar: View {
                     .font(.body)
                     .frame(width: 24, height: 24)
             }
+            
+        case .setting(let action):
+            Button(action: action) {
+                Image(systemName: "gear")
+                    .font(.body)
+            }
+            .frame(width: 24, height: 24)
             
         case .none:
             Spacer().frame(width: 24).opacity(0)

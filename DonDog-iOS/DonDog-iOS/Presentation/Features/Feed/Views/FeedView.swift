@@ -28,7 +28,9 @@ struct FeedView: View {
             HStack{
                 DisclosureGroup("디버깅 용") {
                     HStack{
-                        Button("연결뷰로 이동") { coordinator.push(.invite) }
+                        Button("연결뷰로 이동") {
+                            coordinator.inviteShowSentHint = false
+                            coordinator.push(.invite) }
                         Button("설정뷰로 이동") { coordinator.push(.setting) }
                         Button("로그아웃") {
                             do {

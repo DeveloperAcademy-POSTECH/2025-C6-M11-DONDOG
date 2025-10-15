@@ -32,6 +32,8 @@
 		8BA7184B2E9DD7EC001F7857 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */; };
 		8BA7184D2E9DE2C3001F7857 /* CustomTextfield.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */; };
 		8BA7184F2E9E1942001F7857 /* KeyboardUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184E2E9E1942001F7857 /* KeyboardUtils.swift */; };
+		8BDF76892E9F3FD6007F12BB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8BDF76882E9F3FD6007F12BB /* GoogleService-Info.plist */; };
+		8BDF768B2E9F4086007F12BB /* CustomRoleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */; };
 		A192F2B12E9E45AC00995DCC /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2B02E9E45A800995DCC /* Color+.swift */; };
 		A1AEBED12E9110160006FBBA /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AEBED02E9110120006FBBA /* CameraViewController.swift */; };
 		CA2A58302E9E38C700AC3500 /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */; };
@@ -82,8 +84,10 @@
 		8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextfield.swift; sourceTree = "<group>"; };
 		8BA7184E2E9E1942001F7857 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
+		8BDF76872E9F3F4F007F12BB /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8BDF76882E9F3FD6007F12BB /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRoleButton.swift; sourceTree = "<group>"; };
 		A192F2B02E9E45A800995DCC /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
-		A192F2B22E9EA3AC00995DCC /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/munchangjae/Desktop/Developer/Project/Challenge6/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		A1AEBED02E9110120006FBBA /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DonDog-iOS.entitlements"; sourceTree = "<group>"; };
@@ -184,6 +188,7 @@
 			children = (
 				8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */,
 				8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */,
+				8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */,
 				CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */,
 			);
 			path = Components;
@@ -223,6 +228,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
+				8BDF76872E9F3F4F007F12BB /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -356,6 +362,7 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
+				8BDF76882E9F3FD6007F12BB /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -483,7 +490,7 @@
 				8B31827F2E90CE1B004505AE /* FirebaseStorageCombine-Community */,
 			);
 			productName = "DonDog-iOS";
-			productReference = A192F2B22E9EA3AC00995DCC /* DonDog-iOS.app */;
+			productReference = 8BDF76872E9F3F4F007F12BB /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -534,6 +541,7 @@
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
 				CA957D072E99017400AEAB49 /* Colors.xcassets in Resources */,
+				8BDF76892E9F3FD6007F12BB /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -569,6 +577,7 @@
 				CA957D032E98FD0900AEAB49 /* Font+.swift in Sources */,
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				D2A7F38C2E9BA88F005F5AF8 /* StickerUtils.swift in Sources */,
+				8BDF768B2E9F4086007F12BB /* CustomRoleButton.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
 				8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */,
 				D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */,

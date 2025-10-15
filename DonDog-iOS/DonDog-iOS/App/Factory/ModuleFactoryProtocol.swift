@@ -9,20 +9,27 @@ import SwiftUI
 import Combine
 
 protocol ModuleFactoryProtocol {
+    func makeWelcomeView() -> WelcomeView
     func makeAuthView() -> AuthView
     func makeProfileSetupView() -> ProfileSetupView
-    func makeInviteView() -> InviteView
+    func makeInviteView(showSentHint: Bool) -> InviteView
     func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
     func makeFeedView() -> FeedView
     func makePostView(with postId: String, in roomId: String) -> PostView
     func makeSettingView() -> SettingView
     func makeEditProfileView() -> EditProfileView
+    func makeArchiveView(in roomId: String) -> ArchiveView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
-    //:: 추후 private 붙이기
     static let shared = ModuleFactory()
+    //:: 추후 private 붙이기
     init() {}
+    
+    func makeWelcomeView() -> WelcomeView {
+        let view = WelcomeView()
+        return view
+    }
     
     func makeAuthView() -> AuthView {
         let viewModel = AuthViewModel()
@@ -36,8 +43,8 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeInviteView() -> InviteView {
-        let viewModel = InviteViewModel()
+    func makeInviteView(showSentHint: Bool) -> InviteView {
+        let viewModel = InviteViewModel(showSentHint: showSentHint)
         let view = InviteView(viewModel: viewModel)
         return view
     }
@@ -69,6 +76,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makeEditProfileView() -> EditProfileView {
         let viewModel = EditProfileViewModel()
         let view = EditProfileView(viewModel: viewModel)
+        return view
+    }
+    
+    func makeArchiveView(in roomId: String) -> ArchiveView {
+        let viewModel = ArchiveViewModel(roomId: roomId)
+        let view = ArchiveView(viewModel: viewModel)
         return view
     }
 }

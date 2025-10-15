@@ -30,15 +30,10 @@ struct FeedView: View {
             HStack{
                 DisclosureGroup("디버깅 용") {
                     HStack{
-                        Button("연결뷰로 이동") { coordinator.push(.invite) }
+                        Button("연결뷰로 이동") {
+                            coordinator.inviteShowSentHint = false
+                            coordinator.push(.invite) }
                         Button("설정뷰로 이동") { coordinator.push(.setting) }
-                        Button("로그아웃") {
-                            do {
-                                try Auth.auth().signOut()
-                            } catch {
-                                print("로그아웃 실패: \(error.localizedDescription)")
-                            }
-                        }
                         Button(action: {
                             print("🔄 수동 새로고침 시작")
                             withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
@@ -66,7 +61,7 @@ struct FeedView: View {
                 }.padding(.horizontal)
                 Spacer()
                 Button{
-                    //아카이브 뷰로 이동
+                    coordinator.push(.archive(roomId: viewModel.currentRoomId))
                 }label: {
                     Image(systemName: "photo.circle.fill")
                         .resizable()

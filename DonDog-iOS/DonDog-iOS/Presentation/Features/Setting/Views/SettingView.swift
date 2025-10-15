@@ -12,42 +12,53 @@ struct SettingView: View {
     @StateObject var viewModel: SettingViewModel
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 16) {
-                Button {
-                    coordinator.push(.editprofile)
-                } label: {
-                    Text("프로필 수정")
-                }
+        ZStack {
+            LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
+                .opacity(0.35)
+            
+            VStack(spacing: 0) {
+                CustomNavigationBar(leadingType: .back(action: { coordinator.pop() }), centerType: .title(title: "설정"), trailingType: .none, navigationColor: .black)
                 
-                Button {
-                    viewModel.logout()
-                } label: {
-                    Text("로그아웃")
+                HStack {
+                    VStack(alignment: .leading, spacing: 24) {
+                        Button { coordinator.push(.editprofile) }    label: { Text("프로필 수정") }
+                        Button { viewModel.showLogoutConfirm = true } label: { Text("로그아웃") }
+                        Button { viewModel.showDeleteConfirm = true } label: { Text("회원탈퇴") }
+                    }
+                    .font(.subtitleMedium18)
+                    .foregroundStyle(Color.ddGray1000)
+        
+                    Spacer()
                 }
-                
-                Button {
-                    viewModel.showDeleteConfirm = true
-                } label: {
-                    Text("회원탈퇴")
-                }
-                
+                .padding(.horizontal, 4)
+                .padding(.vertical, 35)
                 Spacer()
             }
-            Spacer()
-        }
-        .padding(.horizontal, 20)
-        .alert("회원탈퇴", isPresented: $viewModel.showDeleteConfirm) {
-            Button("취소", role: .cancel) {}
-            Button("삭제", role: .destructive) {
-                viewModel.performAccountDeletion()
+            .padding(.horizontal, 20)
+            .navigationBarBackButtonHidden(true)
+            .alert("", isPresented: $viewModel.showLogoutConfirm) {
+                Button("취소", role: .cancel) {}
+                Button("로그아웃", role: .destructive) {
+                    viewModel.logout()
+                }
+            } message: {
+                Text("로그아웃 하시겠습니까?")
             }
-        } message: {
-            Text("정말로 계정을 완전히 삭제할까요? 이 작업은 되돌릴 수 없습니다.")
+            .alert("윙키를 탈퇴하시겠습니까?", isPresented: $viewModel.showDeleteConfirm) {
+                Button("취소", role: .cancel) {}
+                Button("확인", role: .destructive) {
+                    viewModel.performAccountDeletion()
+                }
+            } message: {
+                Text("탈퇴하면 모든 기록이 사라져요")
+            }
         }
+
     }
 }
 
 #Preview {
     SettingView(viewModel: SettingViewModel())
+        .environmentObject(AppCoordinator(factory: ModuleFactory()))
 }

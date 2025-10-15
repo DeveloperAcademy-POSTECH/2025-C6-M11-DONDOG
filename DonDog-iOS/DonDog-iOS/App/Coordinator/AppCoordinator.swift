@@ -18,6 +18,7 @@ final class AppCoordinator: ObservableObject {
     
     // 기본뷰
     @Published var root: AppRoute = .feed
+    @Published var inviteShowSentHint: Bool = false
     
     private var lastHandledDeepLink: String?
     private var lastHandledAt: Date?
@@ -74,12 +75,14 @@ final class AppCoordinator: ObservableObject {
     @ViewBuilder
     func build(_ route: AppRoute) -> some View {
         switch route {
+        case .welcome:
+            factory.makeWelcomeView()
         case .auth:
             factory.makeAuthView()
         case .profileSetup:
             factory.makeProfileSetupView()
         case .invite:
-            factory.makeInviteView()
+            factory.makeInviteView(showSentHint: inviteShowSentHint)
         case .camera:
             EmptyView()
         case .feed:
@@ -90,7 +93,8 @@ final class AppCoordinator: ObservableObject {
             factory.makeSettingView()
         case .editprofile:
             factory.makeEditProfileView()
-
+        case .archive(let roomId):
+            factory.makeArchiveView(in: roomId)
         }
     }
     

@@ -15,18 +15,20 @@ final class ProfileSetupViewModel: ObservableObject {
         case parent
         case child
 
-        var displayName: String { self == .parent ? "부모" : "자녀" }
+        var displayIcon: String { self == .parent ? "👵🏻" : "👧🏻" }
+        var displayName: String { self == .parent ? "부모님" : "자녀" }
         var rawForDB: String { self.rawValue }
     }
 
     @Published var name: String = ""
-    @Published var selectedRole: Role = .parent
+    @Published var selectedRole: Role? = nil
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var didComplete: Bool = false
 
     var isValid: Bool {
-        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !trimmed.isEmpty && selectedRole != nil && !isLoading
     }
 
     
@@ -65,7 +67,7 @@ final class ProfileSetupViewModel: ObservableObject {
         // 사용자 정보 (Users/{uid})
         saveTogether.setData([
             "name": self.name,
-            "role": self.selectedRole.rawForDB,
+            "role": (self.selectedRole?.rawForDB ?? ""),
             "createdAt": FieldValue.serverTimestamp(),
             "updatedAt": FieldValue.serverTimestamp(),
             "recentSticker": ""

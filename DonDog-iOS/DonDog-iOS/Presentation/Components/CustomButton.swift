@@ -22,8 +22,9 @@ struct CustomButton: View {
                 .foregroundStyle(Color.ddWhite)
         }
         .frame(height: 52)
+        .padding(.vertical, 8)
         .onTapGesture {
-            if !isDisabled {
+            if isDisabled {
                 action?()
             }
         }

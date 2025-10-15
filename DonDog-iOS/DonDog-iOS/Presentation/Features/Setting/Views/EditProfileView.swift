@@ -12,59 +12,41 @@ struct EditProfileView: View {
     @StateObject var viewModel: EditProfileViewModel
     
     var body: some View {
-        VStack(spacing: 24) {
-            Text("프로필 수정")
-                .font(.title)
+        VStack(spacing: 0) {
+            CustomNavigationBar(leadingType: .back(action: {coordinator.pop()}), centerType: .title(title: "프로필 수정"), trailingType: .none, navigationColor: .black)
             
-            // 역할
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 24) {
-                    ForEach(ProfileSetupViewModel.Role.allCases, id: \.self) { role in
-                        RoleCircleOption(
-                            title: role.displayName,
-                            isSelected: viewModel.selectedRole == role
-                        ) {
-                            viewModel.selectedRole = role
-                            viewModel.checkIfModified()
-                        }
-                        .accessibilityLabel(Text(role.displayName))
-                        .accessibilityAddTraits(viewModel.selectedRole == role ? .isSelected : [])
-                    }
-                }
+            HStack {
+                Text("부모님과 자녀 ")
+                + Text("둘만의 소통")
+                    .font(.titleBold20)
+                + Text("을 위해\n")
+                + Text("별명과 역할")
+                    .font(.titleBold20)
+                + Text("을 설정해 주세요")
+                
+                Spacer()
             }
+            .font(.subtitleMedium20)
+            .padding(.vertical, 32)
             
-            // 닉네임
-            VStack(alignment: .leading, spacing: 12) {
-                Text("이름/닉네임")
-                    .font(.headline)
-                TextField("이름/닉네임을 입력하세요", text: $viewModel.name)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.3))
-                    )
-                    .onChange(of: viewModel.name) {
-                        viewModel.checkIfModified()
-                    }
-            }
+            CustomRolePicker(selection: $viewModel.selectedRole)
+                .padding(.bottom, 26)
             
-            // 에러 메시지
-            if let error = viewModel.errorMessage {
-                Text(error)
-                    .foregroundColor(.red)
-                    .font(.footnote)
-            }
+            CustomTextField(
+                title: nil,
+                placeholder: "불리고 싶은 별명을 입력해 주세요",
+                text: $viewModel.name,
+                keyboard: .default,
+                contentType: nil,
+                errorMessage: viewModel.errorMessage
+            )
             
-            // 저장 버튼
-            Button(action: {
-                viewModel.saveChanges()
-            }) {
-                Text("저장 (Save)")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(!viewModel.isValid || !viewModel.didChangeFromInitial)
+            Spacer()
+            
+            CustomButton(title: "저장", isDisabled: viewModel.isValid || viewModel.didChangeFromInitial, action: viewModel.saveChanges)
         }
         .padding(20)
+        .navigationBarBackButtonHidden(true)
         .onAppear {
             viewModel.fetchCurrentProfile()
         }
@@ -72,26 +54,6 @@ struct EditProfileView: View {
             if newValue {
                 coordinator.pop()
             }
-        }
-    }
-}
-
-struct RoleCircleOption: View {
-    let title: String
-    let isSelected: Bool
-    let onTap: () -> Void
-
-    var body: some View {
-        VStack(spacing: 8) {
-            ZStack {
-                Circle()
-                    .strokeBorder(isSelected ? Color.black : Color.gray.opacity(0.35), lineWidth: isSelected ? 4 : 2)
-                    .frame(width: 80, height: 80)
-
-                Text(title)
-            }
-            .contentShape(Circle())
-            .onTapGesture { onTap() }
         }
     }
 }

@@ -161,7 +161,11 @@ struct FeedView: View {
                         Image(systemName: "heart.fill")
                     }
                     .onTapGesture {
-                        emotion = "heart.fill"
+                        if emotion != "heart.fill" {
+                            emotion = "heart.fill"
+                        } else {
+                            emotion = "null"
+                        }
                         isSelectingSticker = false
                     }
                     
@@ -179,7 +183,11 @@ struct FeedView: View {
                         Image(systemName: "drop.fill")
                     }
                     .onTapGesture {
-                        emotion = "drop.fill"
+                        if emotion != "drop.fill" {
+                            emotion = "drop.fill"
+                        } else {
+                            emotion = "null"
+                        }
                         isSelectingSticker = false
                     }
                     
@@ -197,7 +205,11 @@ struct FeedView: View {
                         Image(systemName: "heart.badge.bolt.fill")
                     }
                     .onTapGesture {
-                        emotion = "heart.badge.bolt.fill"
+                        if emotion != "heart.badge.bolt.fill" {
+                            emotion = "heart.badge.bolt.fill"
+                        } else {
+                            emotion = "null"
+                        }
                         isSelectingSticker = false
                     }
                     
@@ -215,7 +227,11 @@ struct FeedView: View {
                         Image(systemName: "eyes.inverse")
                     }
                     .onTapGesture {
-                        emotion = "eyes.inverse"
+                        if emotion != "eyes.inverse" {
+                            emotion = "eyes.inverse"
+                        } else {
+                            emotion = "null"
+                        }
                         isSelectingSticker = false
                     }
                 }

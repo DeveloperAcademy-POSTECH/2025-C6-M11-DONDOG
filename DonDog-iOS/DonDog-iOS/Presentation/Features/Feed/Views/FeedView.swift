@@ -51,12 +51,6 @@ struct FeedView: View {
                                 .rotationEffect(.degrees(isRefreshing ? 360 : 0))
                         }
                         .disabled(viewModel.isLoading)
-                        
-                        Button("사진 뒤집기"){
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                isFrontImageOnTop.toggle()
-                            }
-                        }
                     }
                 }.padding(.horizontal)
                 Spacer()

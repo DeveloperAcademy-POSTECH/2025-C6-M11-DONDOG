@@ -65,13 +65,14 @@ struct CaptionView: View {
                 .padding()
                 
                 VStack(alignment: .leading, spacing: 15) {
-                    Text(viewModel.caption.isEmpty ? "눌러서 캡션 작성하기" : viewModel.caption)
+                    Text(viewModel.caption.isEmpty ? "눌러서 캡션 남기기..." : viewModel.caption)
                         .onTapGesture {
                             isShowCaptionEditor = true
                             isCaptionFocused = true
                         }
                     .padding(.vertical, 8)
-                    .foregroundStyle(viewModel.caption.isEmpty ? Color.gray : Color.black)
+                    .font(.subtitleMedium20)
+                    .foregroundStyle(viewModel.caption.isEmpty ? .ddGray600 : .ddBlack)
                     .opacity(isShowCaptionEditor ? 0 : 1)
                     
                     TextField("", text: $viewModel.caption)
@@ -124,11 +125,12 @@ struct CaptionView: View {
             if isShowCaptionEditor {
                 ZStack{
                     Color.black
-                        .opacity(0.3)
+                        .opacity(0.75)
                     VStack{
                         Spacer()
-                        Text(viewModel.caption.isEmpty ? "눌러서 캡션 작성하기" : viewModel.caption)
-                            .foregroundStyle(viewModel.caption.isEmpty ? Color.gray : Color.white)
+                        Text(viewModel.caption.isEmpty ? "눌러서 캡션 남기기..." : viewModel.caption)
+                            .font(.subtitleMedium20)
+                            .foregroundStyle(viewModel.caption.isEmpty ? .ddGray600 : .ddWhite)
                         if !viewModel.caption.isEmpty {
                             Text("\(viewModel.caption.count)/8")
                         }
@@ -143,7 +145,11 @@ struct CaptionView: View {
             }
         }
         
-        .background(Color.white)
+        .background{
+            LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
+                            .ignoresSafeArea()
+                            .opacity(0.35)
+        }
     }
 
     private func polaroidView(image: UIImage, label: String, isFlipped: Bool) -> some View {

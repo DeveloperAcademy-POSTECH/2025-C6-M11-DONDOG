@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 
 protocol ModuleFactoryProtocol {
+    func makeWelcomeView() -> WelcomeView
     func makeAuthView() -> AuthView
     func makeProfileSetupView() -> ProfileSetupView
     func makeInviteView(showSentHint: Bool) -> InviteView
@@ -17,12 +18,18 @@ protocol ModuleFactoryProtocol {
     func makePostView(with postId: String, in roomId: String) -> PostView
     func makeSettingView() -> SettingView
     func makeEditProfileView() -> EditProfileView
+    func makeArchiveView(in roomId: String) -> ArchiveView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
     static let shared = ModuleFactory()
     //:: 추후 private 붙이기
     init() {}
+    
+    func makeWelcomeView() -> WelcomeView {
+        let view = WelcomeView()
+        return view
+    }
     
     func makeAuthView() -> AuthView {
         let viewModel = AuthViewModel()
@@ -69,6 +76,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makeEditProfileView() -> EditProfileView {
         let viewModel = EditProfileViewModel()
         let view = EditProfileView(viewModel: viewModel)
+        return view
+    }
+    
+    func makeArchiveView(in roomId: String) -> ArchiveView {
+        let viewModel = ArchiveViewModel(roomId: roomId)
+        let view = ArchiveView(viewModel: viewModel)
         return view
     }
 }

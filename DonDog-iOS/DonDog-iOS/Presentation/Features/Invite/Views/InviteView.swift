@@ -13,8 +13,7 @@ struct InviteView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Text("가족 연결")
-                .font(.titleBold18)
+            CustomNavigationBar(leadingType: viewModel.showSentHint ? .none : .back(action: coordinator.pop), centerType: .title(title: "가족 연결"), trailingType: .none, navigationColor: .black)
             
             HStack {
                 Text("\(viewModel.userName ?? "") ")
@@ -111,6 +110,7 @@ struct InviteView: View {
             }
         }
         .padding(.horizontal, 20)
+        .navigationBarBackButtonHidden(true)
         .task { viewModel.fetchInviteCodeandExpireDate() }
         .onChange(of: viewModel.connectSucceeded) {
             coordinator.replaceRoot(.feed)

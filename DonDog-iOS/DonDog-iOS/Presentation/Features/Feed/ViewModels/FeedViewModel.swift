@@ -21,10 +21,14 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var uploadStatus: String = ""
     @Published var currentRoomId: String = ""
     @Published var selectedPostId: String = ""
+    
     @Published var stickerImage: UIImage?
+    @Published var sticker: UIImage?
+    @Published var frame: UIImage?
     
     private let photoSaveService = PhotoSaveService.shared
     private let db = Firestore.firestore()
+    private let imageUtils = ImageUtils()
     
     init() {
         loadTodayPosts()
@@ -83,13 +87,14 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             return
                         }
                         
-                        // 3️⃣ 이미지 다운로드
                         PhotoSaveService.shared.downloadImage(from: imageUrlString) { [weak self] result in
                             switch result {
                             case .success(let image):
                                 DispatchQueue.main.async {
                                     self?.stickerImage = image
                                     print("recentSticker 이미지 로드 성공")
+                                    
+                                    self?.makeStickerAndMask(with: image)
                                 }
                             case .failure(let error):
                                 print("이미지 다운로드 실패: \(error.localizedDescription)")
@@ -102,6 +107,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 }
             }
         }
+    }
+    
+    func makeStickerAndMask(with stickerImage: UIImage) {
+        self.frame = imageUtils.makeMask(from: stickerImage)
+        self.sticker = imageUtils.makeSticker(with: stickerImage)
     }
     
     func didCaptureImages(frontImage: UIImage, backImage: UIImage) {

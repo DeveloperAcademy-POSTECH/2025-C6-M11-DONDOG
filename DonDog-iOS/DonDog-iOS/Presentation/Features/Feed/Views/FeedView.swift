@@ -22,7 +22,6 @@ struct FeedView: View {
     @State private var isStickerExist = false
     @State private var emotion = ""
     
-    
     var body: some View {
         VStack(spacing: 0){
             HStack{
@@ -128,7 +127,7 @@ struct FeedView: View {
                         }
                         
                         if isStickerExist {
-                            if let sticker = viewModel.stickerImage {
+                            if let sticker = viewModel.sticker {
                                 ZStack(alignment: .topTrailing) {
                                     Image(uiImage: sticker)
                                         .resizable()
@@ -166,7 +165,7 @@ struct FeedView: View {
             if isSelectingSticker {
                 HStack(spacing: 29) {
                     ZStack(alignment: .topTrailing) {
-                        if let sticker = viewModel.stickerImage {
+                        if let sticker = viewModel.sticker {
                             Image(uiImage: sticker)
                                 .resizable()
                                 .scaledToFit()
@@ -185,7 +184,7 @@ struct FeedView: View {
                     }
                     
                     ZStack(alignment: .topTrailing) {
-                        if let sticker = viewModel.stickerImage {
+                        if let sticker = viewModel.sticker {
                             Image(uiImage: sticker)
                                 .resizable()
                                 .scaledToFit()
@@ -204,7 +203,7 @@ struct FeedView: View {
                     }
                     
                     ZStack(alignment: .topTrailing) {
-                        if let sticker = viewModel.stickerImage {
+                        if let sticker = viewModel.sticker {
                             Image(uiImage: sticker)
                                 .resizable()
                                 .scaledToFit()
@@ -223,7 +222,7 @@ struct FeedView: View {
                     }
                     
                     ZStack(alignment: .topTrailing) {
-                        if let sticker = viewModel.stickerImage {
+                        if let sticker = viewModel.sticker {
                             Image(uiImage: sticker)
                                 .resizable()
                                 .scaledToFit()

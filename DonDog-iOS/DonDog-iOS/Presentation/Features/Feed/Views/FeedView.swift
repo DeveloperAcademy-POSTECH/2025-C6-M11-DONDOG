@@ -124,7 +124,7 @@ struct FeedView: View {
                                 .foregroundColor(.gray)
                                 .zIndex(2)
                                 .onTapGesture {
-                                    isSelectingSticker = true
+                                    isSelectingSticker.toggle()
                                 }
                         }
                     }
@@ -162,11 +162,11 @@ struct FeedView: View {
                     .onTapGesture {
                         if viewModel.emotion != "heart.fill" {
                             viewModel.emotion = "heart.fill"
-                            viewModel.updateStickerData()
                         } else {
                             viewModel.emotion = "null"
                         }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                     
                     ZStack(alignment: .topTrailing) {
@@ -185,11 +185,11 @@ struct FeedView: View {
                     .onTapGesture {
                         if viewModel.emotion != "drop.fill" {
                             viewModel.emotion = "drop.fill"
-                            viewModel.updateStickerData()
                         } else {
                             viewModel.emotion = "null"
                         }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                     
                     ZStack(alignment: .topTrailing) {
@@ -208,11 +208,11 @@ struct FeedView: View {
                     .onTapGesture {
                         if viewModel.emotion != "heart.badge.bolt.fill" {
                             viewModel.emotion = "heart.badge.bolt.fill"
-                            viewModel.updateStickerData()
                         } else {
                             viewModel.emotion = "null"
                         }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                     
                     ZStack(alignment: .topTrailing) {
@@ -231,11 +231,11 @@ struct FeedView: View {
                     .onTapGesture {
                         if viewModel.emotion != "eyes.inverse" {
                             viewModel.emotion = "eyes.inverse"
-                            viewModel.updateStickerData()
                         } else {
                             viewModel.emotion = "null"
                         }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                 }
             }

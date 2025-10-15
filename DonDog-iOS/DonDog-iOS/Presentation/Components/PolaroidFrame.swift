@@ -11,7 +11,6 @@ struct PolaroidFrame: View {
     let image: UIImage
     let nickname: String
     let createdAt: String
-    let caption: String
     let isFlipped: Bool //zIndex로 위치 변환을 위한 변수
     
     var body: some View {
@@ -26,31 +25,21 @@ struct PolaroidFrame: View {
             VStack{
                 Spacer()
                 HStack{
-                    Text(caption)
-                        .font(.subtitleMedium18)
-                        .foregroundColor(.ddBlack)
-                    Spacer()
-                }
-                .frame(width: 230)
-                .padding(.leading, 4)
-                .padding(.bottom, 4)
-                
-                HStack(spacing: 4){
                     Text(nickname)
                         .font(.captionRegular11)
                         .foregroundColor(.ddGray500)
-                    Text(createdAt)
+                        .padding(.leading, 4)
+                    Text("\(DataUtils.formatDate(.now, format: "hh:mm"))")
                         .font(.captionRegular11)
                         .foregroundColor(.ddGray500)
+                        .padding(.leading, 4)
                     Spacer()
                 }.frame(width: 230)
-                    .padding(.leading, 4)
                     .padding(.bottom, 16)
             }
             .frame(height: 63)
             .background(.ddWhite)
         }
-        .frame(width: 264, height: 415)
         .background(.ddWhite)
         .cornerRadius(6)
         .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
@@ -61,31 +50,28 @@ struct PolaroidFrame: View {
 struct PolaroidSetView: View {
     @State var isTopImage = true
     
-    let frontImage: UIImage
-    let backImage: UIImage
-    let nickname: String
-    let createdAt: String
-    let caption: String
+    let frontImage: UIImage = UIImage(named: "test1")!
+    let backImage: UIImage = UIImage(named: "test2")!
+    let nickname: String = "자고싶다"
+    let createdAt: String = ""
     
     var body: some View {
-        ZStack {
-            PolaroidFrame(image: backImage, nickname: "", createdAt: "", caption: "", isFlipped: isTopImage)
+        ZStack{
+            PolaroidFrame(image: backImage, nickname: "뒷장", createdAt: createdAt, isFlipped: isTopImage)
                 .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isTopImage.toggle()
-                    }
+                    isTopImage.toggle()
                 }
                 .zIndex(isTopImage ? 0 : 1)
-                .rotationEffect(.degrees(8))
-                .offset(x: -50 ,y: -57)
             
-            PolaroidFrame(image: frontImage, nickname: nickname, createdAt: createdAt, caption: caption, isFlipped: !isTopImage)
+            PolaroidFrame(image: frontImage, nickname: nickname, createdAt: createdAt, isFlipped: !isTopImage)
                 .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isTopImage.toggle()
-                    }
+                    isTopImage.toggle()
                 }
                 .zIndex(isTopImage ? 1 : 0)
         }
     }
+}
+
+#Preview {
+    PolaroidSetView()
 }

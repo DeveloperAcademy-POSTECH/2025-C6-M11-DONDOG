@@ -9,6 +9,7 @@ import FirebaseAuth
 import PhotosUI
 import SwiftUI
 import UIKit
+import FirebaseCore
 
 struct FeedView: View {
     @EnvironmentObject var coordinator: AppCoordinator
@@ -85,11 +86,19 @@ struct FeedView: View {
             }
             .padding(.top, 24)
             //피드
-            if let frontImage = viewModel.todayFrontImage, let backImage = viewModel.todayBackImage {
+            if let frontImage = viewModel.todayFrontImage, 
+               let backImage = viewModel.todayBackImage,
+               let currentPost = viewModel.currentPost {
                 HStack{
                     Spacer()
-                    PolaroidSetView(frontImage: frontImage, backImage: backImage)
-                        .allowsHitTesting(true)
+                    PolaroidSetView(
+                        frontImage: frontImage, 
+                        backImage: backImage,
+                        nickname: viewModel.currentNickname,
+                        createdAt: DataUtils.formatDate(currentPost.createdAt.dateValue(), format: "a hh:mm"),
+                        caption: currentPost.caption
+                    )
+                    .allowsHitTesting(true)
                 }.padding(.top, 103)
                 .padding(.trailing, 26)
             } else { // 오늘 찍은 사진이 없을 때

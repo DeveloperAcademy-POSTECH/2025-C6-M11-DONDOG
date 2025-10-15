@@ -33,7 +33,7 @@ struct CaptionView: View {
                     if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
                         HStack{
                             Spacer()
-                            PolaroidSetView(frontImage: frontImage, backImage: backImage)
+                            PolaroidSetView(frontImage: frontImage, backImage: backImage, nickname: "", createdAt: "", caption: "")
                                 .allowsHitTesting(true)
                                 .padding(.trailing, 30)
                         }

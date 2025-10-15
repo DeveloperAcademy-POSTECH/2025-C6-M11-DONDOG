@@ -19,17 +19,17 @@ struct EditProfileView: View {
             // 역할
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 24) {
-                    ForEach(ProfileSetupViewModel.Role.allCases, id: \.self) { role in
-                        RoleCircleOption(
-                            title: role.displayName,
-                            isSelected: viewModel.selectedRole == role
-                        ) {
-                            viewModel.selectedRole = role
-                            viewModel.checkIfModified()
-                        }
-                        .accessibilityLabel(Text(role.displayName))
-                        .accessibilityAddTraits(viewModel.selectedRole == role ? .isSelected : [])
-                    }
+                    CustomRolePicker(
+                        selection: Binding<ProfileSetupViewModel.Role?>(
+                            get: { viewModel.selectedRole },
+                            set: { newValue in
+                                if let role = newValue {
+                                    viewModel.selectedRole = role
+                                    viewModel.checkIfModified()
+                                }
+                            }
+                        )
+                    )
                 }
             }
             
@@ -72,26 +72,6 @@ struct EditProfileView: View {
             if newValue {
                 coordinator.pop()
             }
-        }
-    }
-}
-
-struct RoleCircleOption: View {
-    let title: String
-    let isSelected: Bool
-    let onTap: () -> Void
-
-    var body: some View {
-        VStack(spacing: 8) {
-            ZStack {
-                Circle()
-                    .strokeBorder(isSelected ? Color.black : Color.gray.opacity(0.35), lineWidth: isSelected ? 4 : 2)
-                    .frame(width: 80, height: 80)
-
-                Text(title)
-            }
-            .contentShape(Circle())
-            .onTapGesture { onTap() }
         }
     }
 }

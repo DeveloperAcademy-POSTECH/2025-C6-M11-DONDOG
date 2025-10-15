@@ -10,13 +10,20 @@ import FirebaseAuth
 import FirebaseFirestore
 
 final class InviteViewModel: ObservableObject {
+    @Published var userName: String?
     @Published var inviteCode: String?
     @Published var expireDate: Date?
     @Published var inviteText: String = ""
     @Published var remainTimeText: String = ""
     @Published var inputInviteCode: String = ""
     @Published var connectSucceeded: Bool = false
-    @Published var connectMessage: String = ""
+    @Published var message: String = ""
+    @Published var isLoading: Bool = false
+    
+    @Published var showSentHint: Bool = false
+    init(showSentHint: Bool = false) {
+        self.showSentHint = showSentHint
+    }
     
     private let db = Firestore.firestore()
     private var timerCancellable: AnyCancellable?
@@ -24,6 +31,18 @@ final class InviteViewModel: ObservableObject {
     // MARK: - 내 초대코드 띄우기
     func fetchInviteCodeandExpireDate() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
+        self.isLoading = true
+
+        db.collection("Users").document(uid).getDocument { [weak self] snap, err in
+            guard self != nil else { return }
+            guard let data = snap?.data(), let snap = snap, snap.exists else {
+                return
+            }
+            DispatchQueue.main.async {
+                self?.userName = (data["name"] as? String) ?? ""
+            }
+        }
+        
         db.collection("Invites").whereField("inviterUid", isEqualTo: uid).getDocuments { [weak self] result, error in
             guard let self = self else { return }
             DispatchQueue.main.async {
@@ -41,6 +60,7 @@ final class InviteViewModel: ObservableObject {
                 } else {
                     self.inviteText = "초대코드를 불러오지 못했습니다."
                 }
+                self.isLoading = false
             }
         }
     }
@@ -57,9 +77,9 @@ final class InviteViewModel: ObservableObject {
                 guard let self = self else { return }
                 let remaining = expireDate.timeIntervalSinceNow
                 if remaining > 0 {
-                    self.remainTimeText = "잔여 시간 \(InviteViewModel.timeFormat(remaining))"
+                    self.remainTimeText = "\(InviteViewModel.timeFormat(remaining))"
                 } else {
-                    self.remainTimeText = "만료됨"
+                    self.remainTimeText = "00:00"
                     self.timerCancellable?.cancel()
                 }
             }
@@ -69,19 +89,19 @@ final class InviteViewModel: ObservableObject {
         let total = Int(interval)
         let h = total / 3600
         let m = (total % 3600) / 60
-        let s = total % 60
-        if h > 0 { return String(format: "%02d:%02d:%02d", h, m, s) }
-        return String(format: "%02d:%02d", m, s)
+        return String(format: "%02d:%02d", h, m)
     }
     
     // MARK: - 다른 사람 초대코드 입력
     func connectWithInviteCode() {
-        connectMessage = ""
+        message = ""
         connectSucceeded = false
+        isLoading = true
         
         let inputcode = inputInviteCode.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !inputcode.isEmpty else {
-            connectMessage = "초대코드를 입력해 주세요."
+            message = "초대 코드를 입력해 주세요."
+            isLoading = false
             return
         }
 
@@ -90,11 +110,17 @@ final class InviteViewModel: ObservableObject {
             guard let self = self else { return }
             /// 초대코드가 db에 있는지 찾음
             if let error = error {
-                DispatchQueue.main.async { self.connectMessage = "초대코드 조회 실패: \(error.localizedDescription)" }
+                DispatchQueue.main.async {
+                    self.message = "초대 코드를 다시 확인해 주세요. \(error.localizedDescription)"
+                    self.isLoading = false
+                }
                 return
             }
             guard let doc = result, doc.exists else {
-                DispatchQueue.main.async { self.connectMessage = "유효하지 않은 초대코드입니다." }
+                DispatchQueue.main.async {
+                    self.message = "유효하지 않은 초대코드입니다."
+                    self.isLoading = false
+                }
                 return
             }
             /// 찾은 후 문서 내 데이터를 딕셔너리 형태로 가져온 후, expireDate 확인
@@ -102,20 +128,29 @@ final class InviteViewModel: ObservableObject {
             if let expireDateFromDoc = inviteData["expireDate"] as? Timestamp {
                 let expire = expireDateFromDoc.dateValue()
                 if expire < Date() {
-                    DispatchQueue.main.async { self.connectMessage = "초대코드가 만료되었습니다." }
+                    DispatchQueue.main.async {
+                        self.message = "유효하지 않은 초대코드입니다."
+                        self.isLoading = false
+                    }
                     return
                 }
             }
             /// 초대자의 Uid 확인
             guard let inviterUid = inviteData["inviterUid"] as? String, !inviterUid.isEmpty else {
-                DispatchQueue.main.async { self.connectMessage = "초대코드 데이터가 올바르지 않습니다." }
+                DispatchQueue.main.async {
+                    self.message = "유효하지 않은 초대코드입니다."
+                    self.isLoading = false
+                }
                 return
             }
             /// 초대자의 roomId 확인
             let inviterUserDoc = self.db.collection("Users").document(inviterUid)
             inviterUserDoc.getDocument { inviterDoc, inviterErr in
                 if let inviterErr = inviterErr {
-                    DispatchQueue.main.async { self.connectMessage = "초대자 정보 조회 실패: \(inviterErr.localizedDescription)" }
+                    DispatchQueue.main.async {
+                        self.message = "유효하지 않은 초대코드입니다. \(inviterErr.localizedDescription)"
+                        self.isLoading = false
+                    }
                     return
                 }
 
@@ -125,25 +160,30 @@ final class InviteViewModel: ObservableObject {
                     let roomDoc = self.db.collection("Rooms").document(existingRoomId)
                     
                     guard let myUid = Auth.auth().currentUser?.uid else {
-                        self.connectMessage = "로그인이 필요합니다"
+                        self.message = "로그인이 필요합니다"
+                        self.isLoading = false
                         return
                     }
                     let myUserDoc = self.db.collection("Users").document(myUid)
                     
                     self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: nil, roomId: existingRoomId, participantUids: [myUid]) { err in
                         if let err = err {
-                            DispatchQueue.main.async { self.connectMessage = "방 연결 실패: \(err.localizedDescription)" }
+                            DispatchQueue.main.async {
+                                self.message = "유효하지 않은 초대코드입니다. \(err.localizedDescription)"
+                                self.isLoading = false
+                            }
                             return
                         }
                         DispatchQueue.main.async {
-                            self.connectMessage = "방 연결에 성공했습니다."
+                            self.isLoading = false
                             self.connectSucceeded = true
                         }
                     }
                 } else {
                     // B) 초대자의 유저 문서에 roomId가 없는 경우 → 고유 roomId 생성 → Rooms 생성 → participants에 초대자/나 모두 추가 → 두 사용자 문서에 roomId/createdAt 저장
                     guard let myUid = Auth.auth().currentUser?.uid else {
-                        self.connectMessage = "로그인이 필요합니다"
+                        self.message = "로그인이 필요합니다"
+                        self.isLoading = false
                         return
                     }
 
@@ -153,7 +193,10 @@ final class InviteViewModel: ObservableObject {
                         
                         roomDoc.getDocument { doc, err in
                             if let err = err {
-                                DispatchQueue.main.async { self.connectMessage = "roomId 생성 실패: \(err.localizedDescription)" }
+                                DispatchQueue.main.async {
+                                    self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(err.localizedDescription)"
+                                    self.isLoading = false
+                                }
                                 return
                             }
                             if let s = doc, s.exists {
@@ -164,11 +207,14 @@ final class InviteViewModel: ObservableObject {
                             let myUserDoc = self.db.collection("Users").document(myUid)
                             self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: inviterUserDoc, roomId: candidate, participantUids: [inviterUid, myUid]) { err in
                                 if let err = err {
-                                    DispatchQueue.main.async { self.connectMessage = "방 연결 실패: \(err.localizedDescription)" }
+                                    DispatchQueue.main.async {
+                                        self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(err.localizedDescription)"
+                                        self.isLoading = false
+                                    }
                                     return
                                 }
                                 DispatchQueue.main.async {
-                                    self.connectMessage = "방 연결에 성공했습니다."
+                                    self.isLoading = false
                                     self.connectSucceeded = true
                                 }
                             }
@@ -201,6 +247,10 @@ final class InviteViewModel: ObservableObject {
             ], forDocument: inviterUserDoc, merge: true)
         }
         saveTgt.commit(completion: completion)
+    }
+    
+    func refreshInviteCode() {
+        //:: 추후 PR
     }
     
 }

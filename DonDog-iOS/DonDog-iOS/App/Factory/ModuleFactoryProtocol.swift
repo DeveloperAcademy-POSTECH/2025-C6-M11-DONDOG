@@ -11,7 +11,7 @@ import Combine
 protocol ModuleFactoryProtocol {
     func makeAuthView() -> AuthView
     func makeProfileSetupView() -> ProfileSetupView
-    func makeInviteView() -> InviteView
+    func makeInviteView(showSentHint: Bool) -> InviteView
     func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
     func makeFeedView() -> FeedView
     func makePostView(with postId: String, in roomId: String) -> PostView
@@ -20,8 +20,8 @@ protocol ModuleFactoryProtocol {
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
-    //:: 추후 private 붙이기
     static let shared = ModuleFactory()
+    //:: 추후 private 붙이기
     init() {}
     
     func makeAuthView() -> AuthView {
@@ -36,8 +36,8 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeInviteView() -> InviteView {
-        let viewModel = InviteViewModel()
+    func makeInviteView(showSentHint: Bool) -> InviteView {
+        let viewModel = InviteViewModel(showSentHint: showSentHint)
         let view = InviteView(viewModel: viewModel)
         return view
     }

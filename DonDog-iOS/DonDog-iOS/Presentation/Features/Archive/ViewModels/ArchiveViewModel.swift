@@ -25,13 +25,13 @@ final class ArchiveViewModel: ObservableObject {
     init(roomId: String) {
         self.roomId = roomId
         Task {
-            await loadMonthlyArchives()
-            await loadPartnerNicknames()
+            await fetchMonthlyArchives()
+            await fetchPartnerNicknames()
         }
     }
     
     // 전체 기록 가져오기
-    func loadMonthlyArchives() async {
+    func fetchMonthlyArchives() async {
         await MainActor.run { isLoading = true }
         
         async let posts = fetchAllPosts()
@@ -44,7 +44,7 @@ final class ArchiveViewModel: ObservableObject {
             self.isLoading = false }
     }
     
-    @MainActor func loadPartnerNicknames() async {
+    @MainActor func fetchPartnerNicknames() async {
         guard let result = await fetchPartnerNickname() else { return }
         self.myNickname = result.myNickname
         self.partnerNickname = result.partnerNickname

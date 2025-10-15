@@ -15,6 +15,7 @@ struct WelcomeView: View {
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
                 .opacity(0.35)
+            
             VStack {
                 Spacer()
                 Text("Winky")
@@ -27,6 +28,7 @@ struct WelcomeView: View {
             }
             .padding(.horizontal, 20)
             .navigationBarBackButtonHidden(true)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

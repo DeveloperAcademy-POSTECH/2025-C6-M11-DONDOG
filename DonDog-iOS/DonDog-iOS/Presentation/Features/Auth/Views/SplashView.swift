@@ -16,6 +16,7 @@ struct SplashView: View {
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
                 .opacity(0.35)
+            
             VStack {
                 Spacer()
                 Text("Winky")
@@ -27,4 +28,5 @@ struct SplashView: View {
 
 #Preview {
     SplashView()
+        .environmentObject(AppCoordinator(factory: ModuleFactory()))
 }

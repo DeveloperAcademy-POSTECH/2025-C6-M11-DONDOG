@@ -13,7 +13,7 @@ import FirebaseFirestore
 final class EditProfileViewModel: ObservableObject {
     typealias Role = ProfileSetupViewModel.Role
     @Published var name: String = ""
-    @Published var selectedRole: Role = .parent
+    @Published var selectedRole: Role? = nil
 
     @Published var errorMessage: String?
     @Published var saveCompleted: Bool = false    // 저장 완료 플래그
@@ -21,7 +21,7 @@ final class EditProfileViewModel: ObservableObject {
 
     private let db = Firestore.firestore()
     private var initialName: String = ""
-    private var initialRole: Role = .parent
+    private var initialRole: Role? = nil
 
     // 유효성 검사: 공백/개행 제거 후 비어있지 않아야 함
     var isValid: Bool {
@@ -79,7 +79,7 @@ final class EditProfileViewModel: ObservableObject {
         let userDoc = db.collection("Users").document(uid)
         userDoc.setData([
             "name": name,
-            "role": selectedRole.rawForDB,
+            "role": (selectedRole?.rawForDB ?? ""),
             "updatedAt": FieldValue.serverTimestamp()
         ], merge: true) { [weak self] err in
             guard let self = self else { return }
@@ -90,7 +90,7 @@ final class EditProfileViewModel: ObservableObject {
                 }
 
                 self.initialName = self.name
-                self.initialRole = self.selectedRole
+                self.initialRole = self.selectedRole ?? nil
                 self.checkIfModified()
 
                 self.saveCompleted = true

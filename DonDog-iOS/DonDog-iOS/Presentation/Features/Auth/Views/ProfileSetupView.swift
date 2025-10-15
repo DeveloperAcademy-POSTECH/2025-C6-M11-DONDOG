@@ -13,8 +13,7 @@ struct ProfileSetupView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Text("프로필 수정")
-                .font(.titleBold18)
+            CustomNavigationBar(leadingType: .none, centerType: .title(title: "프로필 설정"), trailingType: .none, navigationColor: .black)
             
             HStack {
                 Text("부모님과 자녀 ")
@@ -47,6 +46,7 @@ struct ProfileSetupView: View {
             CustomButton(title: "다음", isDisabled: viewModel.isValid, action: viewModel.saveUserProfile)
         }
         .padding(20)
+        .navigationBarBackButtonHidden(true)
         .onChange(of: viewModel.didComplete, initial: true) { _, newValue in
             if newValue {
                 coordinator.inviteShowSentHint = true

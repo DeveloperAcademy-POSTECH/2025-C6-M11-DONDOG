@@ -15,8 +15,7 @@ struct AuthView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Text("본인인증")
-                .font(.titleBold18)
+            CustomNavigationBar(leadingType: .back(action: { coordinator.pop() }), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
             
             Spacer()
                 .frame(height: 104)
@@ -111,6 +110,7 @@ struct AuthView: View {
 
         }
         .padding(.horizontal, 20)
+        .navigationBarBackButtonHidden(true)
         .dismissKeyboard()
         .task {
             viewModel.attach(coordinator: coordinator)

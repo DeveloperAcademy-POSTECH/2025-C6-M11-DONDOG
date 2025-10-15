@@ -30,7 +30,7 @@ struct CaptionView: View {
                     }
                 }
                 .padding()
-     
+                
                 ZStack {
                     if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
                         polaroidView(
@@ -46,7 +46,7 @@ struct CaptionView: View {
                                 isFrontImageOnTop.toggle()
                             }
                         }
-
+                        
                         polaroidView(
                             image: frontImage,
                             label: "전면",
@@ -70,10 +70,10 @@ struct CaptionView: View {
                             isShowCaptionEditor = true
                             isCaptionFocused = true
                         }
-                    .padding(.vertical, 8)
-                    .font(.subtitleMedium20)
-                    .foregroundStyle(viewModel.caption.isEmpty ? .ddGray600 : .ddBlack)
-                    .opacity(isShowCaptionEditor ? 0 : 1)
+                        .padding(.vertical, 8)
+                        .font(.subtitleMedium20)
+                        .foregroundStyle(viewModel.caption.isEmpty ? .ddGray600 : .ddBlack)
+                        .opacity(isShowCaptionEditor ? 0 : 1)
                     
                     TextField("", text: $viewModel.caption)
                         .frame(width: 0, height: 0)
@@ -86,42 +86,42 @@ struct CaptionView: View {
                             }
                         }
                         .onSubmit {
-                                isShowCaptionEditor = false
-                                isCaptionFocused = false
-                            }
+                            isShowCaptionEditor = false
+                            isCaptionFocused = false
+                        }
                 }
                 .padding(.horizontal)
                 
                 Spacer()
                 
-                Button(action: {
-                    print("📤 업로드 버튼 클릭")
+                Button{
                     viewModel.uploadPost()
-                }) {
+                }label: {
                     if viewModel.isUploading {
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
                     } else {
-                        Text("업로드하기")
-                            .font(.headline)
-                            .foregroundColor(.white)
+                        Text("업로드")
+                            .font(.bodyRegular18)
+                            .foregroundColor(.ddWhite)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 50)
+                            .frame(height: 52)
                     }
                 }
-                .background(viewModel.isUploading ? Color.gray : Color.blue)
-                .cornerRadius(10)
+                .background(viewModel.isUploading ? .ddGray600 : .ddPrimaryBlue)
+                .cornerRadius(12)
                 .disabled(viewModel.isUploading)
-                .padding(.horizontal)
-                .padding(.bottom, 30)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 8)
                 .onChange(of: viewModel.isUploading) { newValue in
                     if newValue == false{
                         onUploadComplete()
                     }
                 }
             }
+            //MARK: -- 캡션 남길 때
             if isShowCaptionEditor {
                 ZStack{
                     Color.black
@@ -146,12 +146,14 @@ struct CaptionView: View {
         }
         
         .background{
-            LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
-                            .ignoresSafeArea()
-                            .opacity(0.35)
+            ZStack{
+                Color.ddWhite
+                LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
+                    .opacity(0.35)
+            }.ignoresSafeArea()
         }
     }
-
+    
     private func polaroidView(image: UIImage, label: String, isFlipped: Bool) -> some View {
         VStack(spacing: 0) {
             Image(uiImage: image)

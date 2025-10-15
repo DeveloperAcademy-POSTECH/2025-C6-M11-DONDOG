@@ -25,6 +25,9 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var sticker: UIImage?
     @Published var currentPost: PostData?
     @Published var currentNickname: String = ""
+    @Published var currentPostIndex: Int = 0
+    @Published var allTodayPosts: [PostData] = []
+    @Published var allTodayImages: [(front: UIImage, back: UIImage, nickname: String)] = []
     
     
     private let photoSaveService = PhotoSaveService.shared
@@ -131,15 +134,17 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                         switch result {
                         case .success(let todayPosts):
                             self?.images = todayPosts
+                            self?.allTodayPosts = todayPosts
                             print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
   
                             if let firstPost = todayPosts.first {
                                 self?.selectedPostId = firstPost.postId
                                 self?.currentPost = firstPost
-                                self?.downloadTodayImages(from: firstPost)
-                                self?.getUserName(uid: firstPost.uid)
+                                self?.currentPostIndex = 0
+                                self?.downloadAllTodayImages(posts: todayPosts)
                             } else {
                                 print("📭 오늘 찍은 게시물이 없습니다")
+                                self?.allTodayImages = []
                             }
                         case .failure(let error):
                             print("오늘 posts 로드 실패: \(error.localizedDescription)")
@@ -193,6 +198,93 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
+    private func downloadAllTodayImages(posts: [PostData]) {
+        print("🖼️ 모든 게시물 이미지 다운로드 시작")
+        allTodayImages = []
+        
+        let group = DispatchGroup()
+        var downloadedImages: [(front: UIImage, back: UIImage, nickname: String)] = []
+        
+        for (index, post) in posts.enumerated() {
+            group.enter()
+            
+            let imageGroup = DispatchGroup()
+            var frontImage: UIImage?
+            var backImage: UIImage?
+            var nickname: String = "익명"
+            
+            // 전면 이미지 다운로드
+            imageGroup.enter()
+            photoSaveService.downloadImage(from: post.frontImageURL) { result in
+                switch result {
+                case .success(let image):
+                    frontImage = image
+                case .failure(let error):
+                    print("❌ 전면 이미지 다운로드 실패: \(error.localizedDescription)")
+                }
+                imageGroup.leave()
+            }
+            
+            // 후면 이미지 다운로드
+            imageGroup.enter()
+            photoSaveService.downloadImage(from: post.backImageURL) { result in
+                switch result {
+                case .success(let image):
+                    backImage = image
+                case .failure(let error):
+                    print("❌ 후면 이미지 다운로드 실패: \(error.localizedDescription)")
+                }
+                imageGroup.leave()
+            }
+            
+            // 사용자 이름 가져오기
+            imageGroup.enter()
+            getUserName(uid: post.uid) { name in
+                nickname = name
+                imageGroup.leave()
+            }
+            
+            imageGroup.notify(queue: .main) {
+                if let front = frontImage, let back = backImage {
+                    downloadedImages.append((front: front, back: back, nickname: nickname))
+                    print("✅ 게시물 \(index + 1) 이미지 다운로드 완료")
+                }
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            self.allTodayImages = downloadedImages
+            print("🎉 모든 게시물 이미지 다운로드 완료: \(downloadedImages.count)개")
+            
+            // 첫 번째 게시물을 현재 게시물로 설정
+            if let firstPost = posts.first, let firstImage = downloadedImages.first {
+                self.todayFrontImage = firstImage.front
+                self.todayBackImage = firstImage.back
+                self.currentNickname = firstImage.nickname
+            }
+        }
+    }
+    
+    private func getUserName(uid: String, completion: @escaping (String) -> Void) {
+        db.collection("Users").document(uid).getDocument { snapshot, error in
+            if let error = error {
+                print("사용자 이름 가져오기 실패: \(error.localizedDescription)")
+                completion("익명")
+                return
+            }
+            
+            guard let data = snapshot?.data(),
+                  let name = data["name"] as? String else {
+                print("사용자 이름 필드 없음")
+                completion("익명")
+                return
+            }
+            
+            completion(name)
+        }
+    }
+    
     // 사용자 이름 가져오는 함수
     func getUserName(uid: String) {
         db.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
@@ -218,5 +310,20 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 print("✅ 사용자 이름 가져오기 성공: \(name)")
             }
         }
+    }
+    
+    // 캐러셀에서 현재 선택된 게시물 업데이트
+    func updateCurrentPost(at index: Int) {
+        guard index >= 0 && index < allTodayPosts.count && index < allTodayImages.count else { return }
+        
+        currentPostIndex = index
+        currentPost = allTodayPosts[index]
+        selectedPostId = allTodayPosts[index].postId
+        
+        let imageData = allTodayImages[index]
+        todayFrontImage = imageData.front
+        todayBackImage = imageData.back
+        currentNickname = imageData.nickname
+        
     }
 }

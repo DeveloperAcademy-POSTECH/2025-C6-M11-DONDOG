@@ -74,22 +74,63 @@ struct FeedView: View {
                 Spacer()
             }
             .padding(.top, 24)
-            //피드
-            if let frontImage = viewModel.todayFrontImage, 
-               let backImage = viewModel.todayBackImage,
-               let currentPost = viewModel.currentPost {
-                HStack{
-                    Spacer()
-                    PolaroidSetView(
-                        frontImage: frontImage, 
-                        backImage: backImage,
-                        nickname: viewModel.currentNickname,
-                        createdAt: DataUtils.formatDate(currentPost.createdAt.dateValue(), format: "a hh:mm"),
-                        caption: currentPost.caption
-                    )
-                    .allowsHitTesting(true)
-                }.padding(.top, 103)
-                .padding(.trailing, 26)
+            
+            if viewModel.isLoading {
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .scaleEffect(1.2)
+                        .tint(.ddPrimaryBlue)
+                    Text("게시물을 불러오는 중...")
+                        .font(.bodyMedium16)
+                        .foregroundStyle(.ddGray600)
+                }
+                .padding(.top, 220)
+            } else if !viewModel.allTodayPosts.isEmpty && !viewModel.allTodayImages.isEmpty {
+                VStack(spacing: 0){
+                    TabView(selection: $viewModel.currentPostIndex) {
+                        ForEach(Array(viewModel.allTodayPosts.enumerated()), id: \.element.postId) { index, post in
+                            if index < viewModel.allTodayImages.count {
+                                let imageData = viewModel.allTodayImages[index]
+                                HStack {
+                                    Spacer()
+                                    PolaroidSetView(
+                                        frontImage: imageData.front,
+                                        backImage: imageData.back,
+                                        nickname: imageData.nickname,
+                                        createdAt: DataUtils.formatDate(post.createdAt.dateValue(), format: "a hh:mm"),
+                                        caption: post.caption
+                                    )
+                                    .allowsHitTesting(true)
+                                    .scaleEffect(index == viewModel.currentPostIndex ? 1.0 : 0.95)
+                                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.currentPostIndex)
+                                }
+                                .padding(.top, 93)
+                                .padding(.trailing, 26)
+                                .tag(index)
+                            }
+                        }
+                    }
+                    .frame(height: 520)
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
+                    .onChange(of: viewModel.currentPostIndex) { newIndex in
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            viewModel.updateCurrentPost(at: newIndex)
+                        }
+                    }
+                    if viewModel.allTodayPosts.count > 1 {
+                        HStack(spacing: 8) {
+                            ForEach(0..<viewModel.allTodayPosts.count, id: \.self) { index in
+                                Circle()
+                                    .fill(index == viewModel.currentPostIndex ? Color.ddPrimaryBlue : Color.ddGray300)
+                                    .frame(width: 8, height: 8)
+                                    .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
+                            }
+                        }
+                        .padding(.top, 16)
+                    }
+                }
+                
             } else { // 오늘 찍은 사진이 없을 때
                 VStack(spacing: 10){
                     Image(systemName: "photo.on.rectangle.angled")
@@ -105,97 +146,18 @@ struct FeedView: View {
                 .padding(.top, 220)
             }
             
-            if isSelectingSticker {
-                HStack(spacing: 29) {
-                    ZStack(alignment: .topTrailing) {
-                        if let sticker = viewModel.sticker {
-                            Image(uiImage: sticker)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 37)
-                        } else {
-                            Image(systemName: "smiley")
-                                .font(.system(size: 40))
-                                .foregroundColor(.gray)
-                        }
-                        Image(systemName: "heart.fill")
-                    }
-                    .onTapGesture {
-                        emotion = "heart.fill"
-                        isStickerExist = true
-                        isSelectingSticker = false
-                    }
-                    
-                    ZStack(alignment: .topTrailing) {
-                        if let sticker = viewModel.sticker {
-                            Image(uiImage: sticker)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 37)
-                        } else {
-                            Image(systemName: "smiley")
-                                .font(.system(size: 40))
-                                .foregroundColor(.gray)
-                        }
-                        Image(systemName: "drop.fill")
-                    }
-                    .onTapGesture {
-                        emotion = "drop.fill"
-                        isStickerExist = true
-                        isSelectingSticker = false
-                    }
-                    
-                    ZStack(alignment: .topTrailing) {
-                        if let sticker = viewModel.sticker {
-                            Image(uiImage: sticker)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 37)
-                        } else {
-                            Image(systemName: "smiley")
-                                .font(.system(size: 40))
-                                .foregroundColor(.gray)
-                        }
-                        Image(systemName: "heart.badge.bolt.fill")
-                    }
-                    .onTapGesture {
-                        emotion = "heart.badge.bolt.fill"
-                        isStickerExist = true
-                        isSelectingSticker = false
-                    }
-                    
-                    ZStack(alignment: .topTrailing) {
-                        if let sticker = viewModel.sticker {
-                            Image(uiImage: sticker)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 37)
-                        } else {
-                            Image(systemName: "smiley")
-                                .font(.system(size: 40))
-                                .foregroundColor(.gray)
-                        }
-                        Image(systemName: "eyes.inverse")
-                    }
-                    .onTapGesture {
-                        emotion = "eyes.inverse"
-                        isStickerExist = true
-                        isSelectingSticker = false
-                    }
-                }
-            }
             Spacer()
             Button{
                 showCameraView = true
             }label: {
                 Circle()
-                .foregroundColor(.ddWhite)
-                .frame(width: 50, height: 50)
-                .background{
-                    Circle()
-                        .foregroundColor(.ddPrimaryBlue)
-                        .frame(width: 60, height: 60)
-                }
+                    .foregroundColor(.ddWhite)
+                    .frame(width: 64, height: 64)
+                    .background{
+                        Circle()
+                            .foregroundColor(.ddPrimaryBlue)
+                            .frame(width: 72, height: 72)
+                    }
             }
             .padding(.bottom, 22)
         }
@@ -211,27 +173,6 @@ struct FeedView: View {
                 isPresented: $showCameraView
             )
         }
-    }
-    
-    private func polaroidView(image: UIImage, label: String, isFlipped: Bool) -> some View {
-        VStack(spacing: 0) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .frame(height: 300)
-                .padding(12)
-                .background(Color.white)
-            VStack {
-                Text(label)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-            .frame(width: 204, height: 40)
-            .background(Color.white)
-        }
-        .background(Color.white)
-        .cornerRadius(4)
-        .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
     }
 }
 

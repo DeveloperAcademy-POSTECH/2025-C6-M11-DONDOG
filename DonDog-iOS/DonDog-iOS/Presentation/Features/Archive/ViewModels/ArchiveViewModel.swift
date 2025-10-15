@@ -56,48 +56,68 @@ final class ArchiveViewModel: ObservableObject {
             let snapshot = try await db.collection("Rooms")
                 .document(roomId)
                 .collection("posts")
-                .order(by: "createdAt", descending: true)
+                .order(by: "createdAt", descending: false) // 오래된 것부터
                 .getDocuments()
             
-            var monthDict: [String: [ArchiveDay]] = [:]
+            var monthDict: [String: [Int: ArchiveDay]] = [:]
+            
+            // 디버깅용 날짜 포매팅
+            let fmt = DateFormatter()
+            fmt.calendar = calendar
+            fmt.timeZone = timezone
+            fmt.locale = Locale(identifier: "ko_KR")
+            fmt.dateFormat = "yyyy-MM-dd HH:mm:ss"
             
             for doc in snapshot.documents {
                 let data = doc.data()
-                guard
-                    let timeStamp = data["createdAt"] as? Timestamp,
-                    let frontURLStr = data["frontImageURL"] as? String,
-                    let frontURL = URL(string: frontURLStr)
-                else { continue }
+                guard let ts = data["createdAt"] as? Timestamp else { continue }
                 
-                let date = timeStamp.dateValue()
+                let urlString = (data["frontImageURL"] as? String)
+                ?? (data["backImageURL"] as? String) // front 없으면 back 폴백
+                guard let urlString, let url = URL(string: urlString) else { continue }
+                
+                let date = ts.dateValue()
                 let comps = calendar.dateComponents(in: timezone, from: date)
-                
-                guard
-                    let y = comps.year,
-                    let m = comps.month,
-                    let d = comps.day
-                else { continue }
+                guard let y = comps.year, let m = comps.month, let d = comps.day else { continue }
                 
                 let key = "\(y)-\(m)"
-                let day = ArchiveDay(id: doc.documentID, day: d, thumbnailURL: frontURL, postId: doc.documentID)
-                monthDict[key, default: []].append(day)
+                if monthDict[key] == nil { monthDict[key] = [:] }
+                
+                // 해당 날짜에 찍은 첫 사진을 썸네일로 채택
+                if monthDict[key]?[d] == nil {
+                    monthDict[key]?[d] = ArchiveDay(
+                        id: doc.documentID,
+                        day: d,
+                        thumbnailURL: url,
+                        postId: doc.documentID
+                    )
+                    
+#if DEBUG
+                    print("""
+                    썸네일
+                    - 날짜: \(fmt.string(from: date)) (\(y)-\(m)-\(d))
+                    - id: \(doc.documentID)
+                    - url: \(url.absoluteString)
+                    """)
+#endif
+                } else {
+#if DEBUG
+                    print("사진들 \(fmt.string(from: date)) docId=\(doc.documentID)")
+#endif
+                }
             }
             
-            let months = monthDict.compactMap { key, days -> ArchiveMonth? in
-                guard !days.isEmpty else { return nil }
-                let comps = key.split(separator: "-")
-                guard let y = Int(comps[0]), let m = Int(comps[1]) else { return nil }
-                return ArchiveMonth(id: key, year: y, month: m, days: days.sorted { $0.day < $1.day })
+            let result: [ArchiveMonth] = monthDict.compactMap { key, dayMap in
+                let parts = key.split(separator: "-")
+                guard let y = Int(parts[0]), let m = Int(parts[1]) else { return nil }
+                let days = dayMap.keys.sorted().reversed().compactMap { dayMap[$0] } // 일 내림차순
+                return ArchiveMonth(id: key, year: y, month: m, days: days)
             }
                 .sorted {
-                    if $0.year == $1.year {
-                        return $0.month > $1.month
-                    } else {
-                        return $0.year > $1.year
-                    }
+                    if $0.year == $1.year { return $0.month > $1.month } // 최신 달이 위로
+                    return $0.year > $1.year
                 }
-            
-            return months
+            return result
         } catch {
             print("Firestore 데이터 불러오기 실패: \(error.localizedDescription)")
             return []

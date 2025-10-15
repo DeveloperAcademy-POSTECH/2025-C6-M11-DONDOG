@@ -32,6 +32,7 @@ extension Font {
 
     // MARK: - Caption
     static var captionMedium14: Font = .custom(FontName.pretendardMedium.rawValue, size: 14)
+    static var captionRegular11: Font = .custom(FontName.pretendardRegular.rawValue, size: 11)
     static var captionRegular14: Font = .custom(FontName.pretendardRegular.rawValue, size: 14)
     static var captionRegular13: Font = .custom(FontName.pretendardRegular.rawValue, size: 13)
 }

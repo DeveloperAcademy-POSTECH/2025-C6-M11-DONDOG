@@ -25,6 +25,7 @@ struct FeedView: View {
     
     var body: some View {
         VStack(spacing: 0){
+            //네비게이션 바
             HStack{
                 DisclosureGroup("디버깅 용") {
                     HStack{
@@ -74,7 +75,7 @@ struct FeedView: View {
                         .padding(.trailing, 20)
                 }
             }
-            
+            //날짜표시
             HStack {
                 Spacer()
                 Text(DataUtils.formatDate(.now, format: "MM월 dd일 E요일"))
@@ -83,70 +84,15 @@ struct FeedView: View {
                 Spacer()
             }
             .padding(.top, 24)
-            
+            //피드
             if let frontImage = viewModel.todayFrontImage, let backImage = viewModel.todayBackImage {
-                VStack(spacing: 10) {
-                    ZStack(alignment: .bottomTrailing) {
-                        polaroidView(
-                            image: backImage,
-                            label: "후면",
-                            isFlipped: !isFrontImageOnTop
-                        )
-                        .rotationEffect(.degrees(-5))
-                        .offset(x: -20, y: -10)
-                        .zIndex(isFrontImageOnTop ? 0 : 1)
-                        polaroidView(
-                            image: frontImage,
-                            label: "전면",
-                            isFlipped: isFrontImageOnTop
-                        )
-                        .rotationEffect(.degrees(5))
-                        .offset(x: 20, y: 10)
-                        .zIndex(isFrontImageOnTop ? 1 : 0)
-                        .onTapGesture {
-                            coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
-                        }
-                        
-                        if !isStickerExist {
-                            Image(systemName: "face.smiling")
-                                .font(.system(size: 45))
-                                .zIndex(2)
-                                .onTapGesture {
-                                    isSelectingSticker = true
-                                }
-                        } else {
-                            Image(systemName: "face.smiling")
-                                .font(.system(size: 45))
-                                .foregroundStyle(Color.pink)
-                                .zIndex(2)
-                                .onTapGesture {
-                                    isSelectingSticker = false
-                                    isStickerExist = false
-                                }
-                        }
-                        
-                        if isStickerExist {
-                            if let sticker = viewModel.sticker {
-                                ZStack(alignment: .topTrailing) {
-                                    Image(uiImage: sticker)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 61)
-                                    Image(systemName: emotion)
-                                }
-                                .zIndex(3)
-                                .offset(x: -200)
-                            } else {
-                                Image(systemName: "smiley")
-                                    .font(.system(size: 40))
-                                    .foregroundColor(.gray)
-                                    .zIndex(3)
-                                    .offset(x: -200)
-                            }
-                        }
-                    }
-                }
-            } else {
+                HStack{
+                    Spacer()
+                    PolaroidSetView(frontImage: frontImage, backImage: backImage)
+                        .allowsHitTesting(true)
+                }.padding(.top, 103)
+                .padding(.trailing, 26)
+            } else { // 오늘 찍은 사진이 없을 때
                 VStack(spacing: 10){
                     Image(systemName: "photo.on.rectangle.angled")
                         .resizable()
@@ -157,8 +103,8 @@ struct FeedView: View {
                         .multilineTextAlignment(.center)
                         .font(.bodyMedium16)
                         .foregroundStyle(.ddSecondaryBlue)
-                }.padding(.top, 220)
-                    
+                }
+                .padding(.top, 220)
             }
             
             if isSelectingSticker {
@@ -240,6 +186,7 @@ struct FeedView: View {
                     }
                 }
             }
+            Spacer()
             Button{
                 showCameraView = true
             }label: {
@@ -251,9 +198,8 @@ struct FeedView: View {
                         .foregroundColor(.ddPrimaryBlue)
                         .frame(width: 60, height: 60)
                 }
-            }.padding(.top, 278)
-            
-            Spacer()
+            }
+            .padding(.bottom, 22)
         }
         .background{
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)

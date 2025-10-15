@@ -9,75 +9,159 @@ import SwiftUI
 struct ArchiveView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: ArchiveViewModel
-    private let grid = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    private let grid = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    
+    private struct ArchivePostContainer: View {
+        let url: URL
+        let day: Int
+        
+        var body: some View {
+            ZStack(alignment: .center) {
+                AsyncImage(url: url) { state in
+                    switch state {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 75, height: 100)
+                            .clipped()
+                            .transition(.opacity)
+                            .cornerRadius(8)
+                            .overlay(
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .fill(.ddGray1000.opacity(0.3))
+                                    
+                                    Text("\(day)일")
+                                        .font(.subtitleSemiBold16)
+                                        .foregroundStyle(.ddWhite)
+                                }
+                            )
+                        
+                    case .failure:
+                        Rectangle()
+                            .fill(.ddGray600)
+                            .cornerRadius(8)
+                            .overlay(Image(systemName: "photo").opacity(0.7))
+                            .frame(width: 75, height: 100)
+                        
+                    case .empty:
+                        Rectangle()
+                            .fill(.gray.opacity(0.08))
+                            .cornerRadius(8)
+                            .overlay(ProgressView())
+                            .frame(width: 75, height: 100)
+                        
+                    @unknown default:
+                        Color.clear.frame(width: 75, height: 100)
+                    }
+                }
+                
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func archivePlaceholder(height: CGFloat = 100) -> some View {
+        Rectangle()
+            .fill(Color.gray.opacity(0.3))
+            .frame(height: height)
+            .cornerRadius(8)
+            .overlay(
+                Image(systemName: "photo")
+                    .foregroundStyle(.ddWhite.opacity(0.7))
+            )
+    }
+    
+    private func monthTitle(year: Int, month: Int) -> String {
+        "\(year)년 \(month)월"
+    }
     
     var body: some View {
-        ScrollView {
-            // CustomNavigationBar
+        VStack(spacing: 0) {
+            CustomNavigationBar(
+                leadingType:
+                        .back(
+                            action: {
+                                coordinator.pop()
+                            }
+                        ),
+                centerType:
+                        .title(title: "아카이브"),
+                trailingType:
+                        .setting(
+                            action: {
+                                coordinator.push(.setting)
+                            }
+                        ),
+                navigationColor: .black
+            )
             
-            // Header
-            VStack { VStack(alignment: .leading, spacing: 6) {
-                Text("폴라로이드 \(viewModel.totalPostCount)장 속에\n")
-                + Text("\(viewModel.partnerNickname) 님과 \(viewModel.myNickname) 님").bold()
-                + Text("의 추억이 담겨있어요")
-            }
-            .font(.subheadline)
-            .padding(.vertical, 8)
-                
-                Divider().padding(.top, 6)
-            }
-            
-            // Monthly Archive
-            ForEach(viewModel.archiveMonths) { month in
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("\(String(format: "%d", month.year))년 \(month.month)월")
-                        .font(.headline)
-                        .padding(.horizontal, 4)
+            ScrollView {
+                VStack {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("\(viewModel.partnerNickname)").bold()
+                            + Text("님과 ")
+                            + Text("\(viewModel.myNickname)").bold()
+                            + Text("님만의 윙크가\n")
+                            + Text("\(viewModel.totalPostCount)장").bold()
+                            + Text(" 모였어요")
+                        }
+                        .font(.bodyRegular18)
+                        .padding(.vertical, 8)
+                        
+                        Spacer()
+                    }
                     
-                    LazyVGrid(columns: grid, spacing: 12) {
-                        ForEach(month.days) { day in
-                            Button {
-                                print("\(month.year).\(month.month).\(day.day) 디테일 뷰 / postId: \(day.postId)")
-                            } label: {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    AsyncImage(url: day.thumbnailURL) { phase in
-                                        switch phase {
-                                        case .success(let image):
-                                            image
-                                                .resizable()
-                                                .aspectRatio(1, contentMode: .fill)
-                                                .frame(height: 100)
-                                                .clipped()
-                                                .cornerRadius(8)
-                                            
-                                        case .failure:
-                                            Rectangle()
-                                                .fill(Color.gray.opacity(0.3))
-                                                .frame(height: 100)
-                                                .cornerRadius(8)
-                                                .overlay(
-                                                    Image(systemName: "photo") .foregroundColor(.white.opacity(0.7))
-                                                )
-                                            
-                                        case .empty:
-                                            ProgressView()
-                                                .frame(height: 100)
-                                            
-                                        @unknown default:
-                                            EmptyView()
+                    Divider().padding(.vertical, 8)
+                    
+                    ForEach(viewModel.archiveMonths) { month in
+                        VStack(alignment: .leading) {
+                            Text(monthTitle(year: month.year, month: month.month))
+                                .font(.subtitleSemiBold16)
+                                .padding(.vertical, 8)
+                            
+                            LazyVGrid(columns: grid, spacing: 8) {
+                                ForEach(month.days) { day in
+                                    Button {
+                                        print("\(month.year).\(month.month).\(day.day) 디테일 뷰 / postId: \(day.postId)")
+                                    } label: {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            AsyncImage(url: day.thumbnailURL) { state in
+                                                switch state {
+                                                case .success:
+                                                    ArchivePostContainer(url: day.thumbnailURL, day: day.day)
+                                                    
+                                                case .failure:
+                                                    archivePlaceholder()
+                                                    
+                                                case .empty:
+                                                    ProgressView()
+                                                        .frame(height: 100)
+                                                    
+                                                @unknown default:
+                                                    EmptyView()
+                                                }
+                                            }
                                         }
                                     }
-                                    
-                                    Text("\(day.day)일")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
                                 }
                             }
                         }
+                        .padding(.vertical, 8)
                     }
                 }
+                .padding(.horizontal, 20)
             }
-        } .task {
+        }
+        .background(
+            LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
+                .opacity(0.35)
+        )
+        .navigationBarBackButtonHidden(true)
+        .task {
             await viewModel.loadMonthlyArchives()
             await viewModel.loadPartnerNicknames()
         }

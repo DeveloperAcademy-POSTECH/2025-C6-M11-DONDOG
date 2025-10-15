@@ -11,6 +11,7 @@ import FirebaseFirestore
 import FirebaseStorage
 
 final class SettingViewModel: ObservableObject {
+    @Published var showLogoutConfirm = false
     @Published var showDeleteConfirm = false
     @Published var isDeleting = false
     
@@ -142,7 +143,8 @@ final class SettingViewModel: ObservableObject {
 
             // 2) Firebase Auth 사용자 삭제
             do {
-                print("유저 삭제 시도")
+                print("유저 삭제를 위해 다시 전화번호 인증")
+                // 다시 인증받기
                 try await user.delete()
             } catch {
                 let nsError = error as NSError

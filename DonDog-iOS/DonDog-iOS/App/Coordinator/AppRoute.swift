@@ -8,6 +8,7 @@
 import Foundation
 
 enum AppRoute: Hashable {
+    case welcome
     case auth
     case profileSetup
     case invite

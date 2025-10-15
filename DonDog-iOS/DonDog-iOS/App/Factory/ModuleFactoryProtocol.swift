@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 
 protocol ModuleFactoryProtocol {
+    func makeWelcomeView() -> WelcomeView
     func makeAuthView() -> AuthView
     func makeProfileSetupView() -> ProfileSetupView
     func makeInviteView(showSentHint: Bool) -> InviteView
@@ -23,6 +24,11 @@ final class ModuleFactory: ModuleFactoryProtocol {
     static let shared = ModuleFactory()
     //:: 추후 private 붙이기
     init() {}
+    
+    func makeWelcomeView() -> WelcomeView {
+        let view = WelcomeView()
+        return view
+    }
     
     func makeAuthView() -> AuthView {
         let viewModel = AuthViewModel()

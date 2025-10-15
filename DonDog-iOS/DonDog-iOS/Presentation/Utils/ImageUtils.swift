@@ -1,5 +1,5 @@
 //
-//  StickerUtils.swift
+//  ImageUtils.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/12/25.
@@ -10,7 +10,7 @@ import SwiftUI
 import Vision
 import CoreImage.CIFilterBuiltins
 
-final class StickerUtils: ObservableObject {
+final class ImageUtils: ObservableObject {
     private let ciContext = CIContext(options: [.useSoftwareRenderer: false])
 
     private func renderToCIImage(image: UIImage) -> CIImage? {
@@ -62,18 +62,17 @@ final class StickerUtils: ObservableObject {
             print("Failed to render CGImage")
             return nil
         }
-        // ✅ alpha 채널 유지
         return UIImage(cgImage: cgImage, scale: original.scale, orientation: original.imageOrientation)
     }
 
     static func makeSticker(with image: UIImage) -> UIImage? {
-        let utils = StickerUtils()
+        let utils = ImageUtils()
         
         guard let originalCIImage = utils.renderToCIImage(image: image),
               let mask = utils.makeMask(image: originalCIImage),
               let clippedCIImage = utils.applyingMask(mask: mask, to: originalCIImage),
               let finalImage = utils.renderToUIImage(ciImage: clippedCIImage, original: image) else {
-            print("❌ 이미지 처리 실패")
+            print("이미지 처리 실패")
             return nil
         }
         return finalImage

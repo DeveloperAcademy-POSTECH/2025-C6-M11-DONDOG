@@ -10,65 +10,53 @@ import SwiftUI
 struct ProfileSetupView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: ProfileSetupViewModel
-
+    
     var body: some View {
-        VStack(spacing: 24) {
-            Text("Profile Setup View")
-                .font(.title)
+        VStack(spacing: 0) {
+            Text("프로필 수정")
+                .font(.titleBold18)
             
-            HStack(spacing: 24) {
-                ForEach(ProfileSetupViewModel.Role.allCases, id: \.self) { role in
-                    RoleCircleOption(
-                        title: role.displayName,
-                        isSelected: viewModel.selectedRole == role
-                    ) {
-                        viewModel.selectedRole = role
-                    }
-                    .accessibilityLabel(Text(role.displayName))
-                    .accessibilityAddTraits(viewModel.selectedRole == role ? .isSelected : [])
-                }
+            HStack {
+                Text("부모님과 자녀 ")
+                + Text("둘만의 소통")
+                    .font(.titleBold20)
+                + Text("을 위해\n")
+                + Text("별명과 역할")
+                    .font(.titleBold20)
+                + Text("을 설정해 주세요")
+                
+                Spacer()
             }
-
-            VStack(alignment: .leading, spacing: 12) {
-                Text("이름/닉네임")
-                    .font(.headline)
-                TextField("이름/닉네임을 입력하세요", text: $viewModel.name)
-                    .textInputAutocapitalization(.never)
-                    .disableAutocorrection(true)
-                    .padding(12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.3))
-                    )
-            }
-
-            if let error = viewModel.errorMessage {
-                Text(error)
-                    .foregroundColor(.red)
-                    .font(.footnote)
-            }
-
-            Button(action: {
-                viewModel.saveUserProfile()
-            }) {
-                if viewModel.isLoading {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .frame(maxWidth: .infinity)
-                } else {
-                    Text("확인 (Confirm)")
-                        .frame(maxWidth: .infinity)
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(!viewModel.isValid || viewModel.isLoading)
+            .font(.subtitleMedium20)
+            .padding(.vertical, 32)
+            
+            CustomRolePicker(selection: $viewModel.selectedRole)
+                .padding(.bottom, 26)
+            
+            CustomTextField(
+                title: nil,
+                placeholder: "불리고 싶은 별명을 입력해 주세요",
+                text: $viewModel.name,
+                keyboard: .default,
+                contentType: nil,
+                errorMessage: viewModel.errorMessage
+            )
+            
+            Spacer()
+            
+            CustomButton(title: "다음", isDisabled: viewModel.isValid, action: viewModel.saveUserProfile)
         }
         .padding(20)
-        .onChange(of: viewModel.didComplete, initial: true) { oldValue, newValue in
+        .onChange(of: viewModel.didComplete, initial: true) { _, newValue in
             if newValue {
+                coordinator.inviteShowSentHint = true
                 coordinator.replaceRoot(.invite)
             }
         }
     }
 }
 
+#Preview {
+    ProfileSetupView(viewModel: ProfileSetupViewModel())
+        .environmentObject(AppCoordinator(factory: ModuleFactory()))
+}

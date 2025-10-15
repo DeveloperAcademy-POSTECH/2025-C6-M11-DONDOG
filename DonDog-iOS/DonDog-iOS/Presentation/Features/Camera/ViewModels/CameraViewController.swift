@@ -104,6 +104,7 @@ class CustomCameraViewController: UIViewController {
         
         // UI 요소들 설정 (순서중요)
         setupCancelButton()
+        setupBackground()
         //setupSwitchCameraButton()
         //setupFlashButton()
         setupGuideLabels()
@@ -113,8 +114,8 @@ class CustomCameraViewController: UIViewController {
     
     private func setupPreviewLayer() {
         previewContainerView.backgroundColor = .clear
-        previewContainerView.layer.borderWidth = 2
-        previewContainerView.layer.borderColor = UIColor.black.cgColor
+        previewContainerView.layer.cornerRadius = 12
+        previewContainerView.clipsToBounds = true
         
         view.addSubview(previewContainerView)
         previewContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -153,11 +154,27 @@ class CustomCameraViewController: UIViewController {
         videoPreviewLayer?.frame = previewContainerView.bounds
     }
     
+    private func setupBackground() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [
+            UIColor.ddWhite.cgColor,
+            UIColor.ddSecondaryBlue.cgColor
+        ]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        gradientLayer.opacity = 0.35
+        
+        view.layer.insertSublayer(gradientLayer, at: 0)
+        
+        // 레이아웃이 변경될 때 그라디언트 크기 업데이트
+        gradientLayer.frame = view.bounds
+    }
+    
     private func setupCaptureButton() {
         captureButton.backgroundColor = .white
-        captureButton.layer.cornerRadius = 35
+        captureButton.layer.cornerRadius = 36 
         captureButton.layer.borderWidth = 5
-        captureButton.layer.borderColor = UIColor.lightGray.cgColor
+        captureButton.layer.borderColor = Color.ddPrimaryBlue.uiColor.cgColor
         
         captureButton.addTarget(self, action: #selector(capturePhoto), for: .touchUpInside)
         
@@ -166,24 +183,26 @@ class CustomCameraViewController: UIViewController {
         NSLayoutConstraint.activate([
             captureButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             captureButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
-            captureButton.widthAnchor.constraint(equalToConstant: 70),
-            captureButton.heightAnchor.constraint(equalToConstant: 70)
+            captureButton.widthAnchor.constraint(equalToConstant: 72),
+            captureButton.heightAnchor.constraint(equalToConstant: 72)
         ])
     }
     
     private func setupCancelButton() {
-        cancelButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        cancelButton.tintColor = .black
+        let chevronImage = UIImage(systemName: "chevron.left")
+        let resizedImage = chevronImage?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .regular))
+        cancelButton.setImage(resizedImage, for: .normal)
+        cancelButton.tintColor = Color.ddBlack.uiColor
         
         cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
         
         view.addSubview(cancelButton)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            cancelButton.widthAnchor.constraint(equalToConstant: 30),
-            cancelButton.heightAnchor.constraint(equalToConstant: 30)
+            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
+            cancelButton.widthAnchor.constraint(equalToConstant: 16),
+            cancelButton.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
     
@@ -224,10 +243,33 @@ class CustomCameraViewController: UIViewController {
     }
     
     private func setupGuideLabels() {
-        // 전면 촬영 안내 레이블
-        frontGuideMessageLabel.text = "STEP 1.\n현재 모습을 촬영해주세요!"
-        frontGuideMessageLabel.textColor = .black
-        frontGuideMessageLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        let attributedText = NSMutableAttributedString()
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4  // 줄 간격
+        paragraphStyle.alignment = .center
+        
+        let firstLine = NSAttributedString(
+            string: "STEP 1. 셀카 찍기\n",
+            attributes: [
+                .font: UIFont(name: FontName.pretendardBold.rawValue, size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .bold),
+                .foregroundColor: Color.ddPrimaryBlue.uiColor,
+                .paragraphStyle: paragraphStyle
+            ]
+        )
+        
+        let secondLine = NSAttributedString(
+            string: "전면 카메라로 얼굴이 잘 보이게 찍어주세요",
+            attributes: [
+                .font: UIFont(name: FontName.pretendardRegular.rawValue, size: 13) ?? UIFont.systemFont(ofSize: 13, weight: .regular),
+                .foregroundColor: Color.ddGray600.uiColor,
+                .paragraphStyle: paragraphStyle
+            ]
+        )
+        
+        attributedText.append(firstLine)
+        attributedText.append(secondLine)
+        
+        frontGuideMessageLabel.attributedText = attributedText
         frontGuideMessageLabel.textAlignment = .center
         frontGuideMessageLabel.numberOfLines = 0
         
@@ -235,16 +277,40 @@ class CustomCameraViewController: UIViewController {
         frontGuideMessageLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             frontGuideMessageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            frontGuideMessageLabel.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 30),
+            frontGuideMessageLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 64),
             frontGuideMessageLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
             frontGuideMessageLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
             frontGuideMessageLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 50)
         ])
         
         // 후면 촬영 안내 레이블
-        backGuideMessageLabel.text = "STEP 2.\n풍경을 촬영해주세요!"
-        backGuideMessageLabel.textColor = .black
-        backGuideMessageLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        let backAttributedText = NSMutableAttributedString()
+        let backParagraphStyle = NSMutableParagraphStyle()
+        backParagraphStyle.lineSpacing = 4  // 줄 간격
+        backParagraphStyle.alignment = .center
+        
+        let backFirstLine = NSAttributedString(
+            string: "STEP 2. 배경 찍기\n",
+            attributes: [
+                .font: UIFont(name: FontName.pretendardBold.rawValue, size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .bold),
+                .foregroundColor: Color.ddPrimaryBlue.uiColor,
+                .paragraphStyle: backParagraphStyle
+            ]
+        )
+        
+        let backSecondLine = NSAttributedString(
+            string: "후면 카메라로 풍경이 잘 보이게 찍어주세요",
+            attributes: [
+                .font: UIFont(name: FontName.pretendardRegular.rawValue, size: 13) ?? UIFont.systemFont(ofSize: 13, weight: .regular),
+                .foregroundColor: Color.ddGray600.uiColor,
+                .paragraphStyle: backParagraphStyle
+            ]
+        )
+        
+        backAttributedText.append(backFirstLine)
+        backAttributedText.append(backSecondLine)
+        
+        backGuideMessageLabel.attributedText = backAttributedText
         backGuideMessageLabel.textAlignment = .center
         backGuideMessageLabel.numberOfLines = 0
         backGuideMessageLabel.isHidden = true  // 초기에는 숨김
@@ -253,7 +319,7 @@ class CustomCameraViewController: UIViewController {
         backGuideMessageLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             backGuideMessageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            backGuideMessageLabel.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 30),
+            backGuideMessageLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 64),
             backGuideMessageLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
             backGuideMessageLabel.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
             backGuideMessageLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 50)

@@ -8,7 +8,6 @@
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
-import FirebaseMessaging
 
 final class AuthService {
     private var authHandle: AuthStateDidChangeListenerHandle?
@@ -27,9 +26,6 @@ final class AuthService {
         applyRouteForUser(coordinator: coordinator)
         authHandle = Auth.auth().addStateDidChangeListener { [weak self] _, _ in
             guard let self = self else { return }
-            if Auth.auth().currentUser != nil, let token = Messaging.messaging().fcmToken {
-                NotificationService.shared.uploadFCMToken(token)
-            }
             self.applyRouteForUser(coordinator: coordinator)
         }
     }
@@ -39,6 +35,8 @@ final class AuthService {
             Task { @MainActor in
                 if coordinator.root == route { return }
                 coordinator.replaceRoot(route)
+                
+                print("[AuthService replaceRootinAuthService함수] 🔄 \(coordinator.root) → \(route)")
             }
         }
         
@@ -46,12 +44,14 @@ final class AuthService {
             replaceRootinAuthService(.auth, coordinator: coordinator)
             self.userDocListenr?.remove()
             self.userDocListenr = nil
+            print("[AuthService] currentUser 없음 → auth 화면으로 이동")
             return
         }
         
         user.getIDTokenResult(forcingRefresh: true) { _, _ in
             guard let refresehUser = Auth.auth().currentUser else {
                 replaceRootinAuthService(.auth, coordinator: coordinator)
+                print("[AuthService] IDToken 분실로 current User 찾을 수 없음 → auth 화면으로 이동")
                 return
             }
             

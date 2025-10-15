@@ -142,7 +142,7 @@ final class ArchiveViewModel: ObservableObject {
                 let participants = roomData["participants"] as? [String]
             else { return nil }
             
-            // 3. 현재 닉네임과 다른 참여자를 상대방으로 지정
+            // 3. 현재 uid와 다른 참여자를 상대방으로 지정
             let partnerUid = participants.first(where: { $0 != uid })
             guard
                 let partnerUid = partnerUid, partnerUid != uid

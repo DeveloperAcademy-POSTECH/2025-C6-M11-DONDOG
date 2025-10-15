@@ -20,12 +20,17 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var isLoading = false
     @Published var uploadStatus: String = ""
     @Published var currentRoomId: String = ""
-    @Published var selectedPostId: String = ""
+    @Published var selectedPostId: String = "" {
+        didSet {
+            checkIsNotMyPost()
+        }
+    }
     
     @Published var stickerImage: UIImage?
     @Published var sticker: UIImage?
     @Published var frame: UIImage?
     @Published var emotion: String = "null"
+    @Published var isNotMyPost = false
     
     private let photoSaveService = PhotoSaveService.shared
     private let db = Firestore.firestore()
@@ -49,10 +54,9 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         self.getStickerData()
     }
     
-    func checkIsNotMyPost(completion: @escaping (Bool) -> Void) {
+    func checkIsNotMyPost() {
         guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있음")
-            completion(false)
             return
         }
         
@@ -64,18 +68,16 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         postRef.getDocument { snapshot, error in
             if let error = error {
                 print("문서 조회 실패: \(error.localizedDescription)")
-                completion(false)
                 return
             }
 
             guard let data = snapshot?.data(),
                   let uid = data["uid"] as? String,
                   let currentUid = Auth.auth().currentUser?.uid else {
-                completion(false)
                 return
             }
 
-            completion(uid != currentUid)
+            self.isNotMyPost = uid != currentUid
         }
     }
     
@@ -168,8 +170,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         batch.commit { error in
             if let error = error {
                 print("업데이트 실패: \(error.localizedDescription)")
-            } else {
-                print("업데이트 성공!")
             }
         }
     }

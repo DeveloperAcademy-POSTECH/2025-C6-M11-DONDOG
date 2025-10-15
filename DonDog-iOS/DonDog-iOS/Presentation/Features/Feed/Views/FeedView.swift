@@ -19,7 +19,6 @@ struct FeedView: View {
     @State private var isFrontImageOnTop = true
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var isSelectingSticker = false
-    @State private var isNotMyPost = false
     
     var body: some View {
         VStack(spacing: 0){
@@ -37,6 +36,7 @@ struct FeedView: View {
                                 print("로그아웃 실패: \(error.localizedDescription)")
                             }
                         }
+                        Spacer()
                         Button(action: {
                             print("🔄 수동 새로고침 시작")
                             withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
@@ -107,20 +107,22 @@ struct FeedView: View {
                             coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
                         }
                         
-                        if isNotMyPost {
-                            if viewModel.emotion != "null" {
-                                ZStack(alignment: .topTrailing) {
-                                    Image(uiImage: viewModel.sticker ?? UIImage())
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 61)
-                                    Image(systemName: viewModel.emotion)
+                        if viewModel.emotion != "null" {
+                            ZStack(alignment: .topTrailing) {
+                                Image(uiImage: viewModel.sticker ?? UIImage())
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 61)
+                                Image(systemName: viewModel.emotion)
+                            }
+                            .onTapGesture {
+                                if viewModel.isNotMyPost {
+                                    isSelectingSticker.toggle()
                                 }
-                                .onTapGesture {
-                                    isSelectingSticker = true
-                                }
-                                .zIndex(2)
-                            } else {
+                            }
+                            .zIndex(2)
+                        } else {
+                            if viewModel.isNotMyPost {
                                 Image(systemName: "smiley")
                                     .font(.system(size: 40))
                                     .foregroundColor(.gray)
@@ -256,11 +258,6 @@ struct FeedView: View {
             }.padding(.top, 278)
             
             Spacer()
-        }
-        .onAppear {
-            viewModel.checkIsNotMyPost { result in
-                self.isNotMyPost = result
-            }
         }
         .background{
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)

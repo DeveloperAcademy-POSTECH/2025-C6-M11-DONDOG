@@ -66,7 +66,7 @@ struct FeedView: View {
                 }.padding(.horizontal)
                 Spacer()
                 Button{
-                    //아카이브 뷰로 이동
+                    coordinator.push(.archive(roomId: viewModel.currentRoomId))
                 }label: {
                     Image(systemName: "photo.circle.fill")
                         .resizable()

@@ -91,7 +91,8 @@ final class AppCoordinator: ObservableObject {
             factory.makeSettingView()
         case .editprofile:
             factory.makeEditProfileView()
-
+        case .archive(let roomId):
+            factory.makeArchiveView(in: roomId)
         }
     }
     

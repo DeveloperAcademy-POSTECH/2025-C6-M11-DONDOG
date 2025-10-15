@@ -49,6 +49,36 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         self.getStickerData()
     }
     
+    func checkIsNotMyPost(completion: @escaping (Bool) -> Void) {
+        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+            print("currentRoomId 또는 selectedPostId가 비어 있음")
+            completion(false)
+            return
+        }
+        
+        let postRef = db.collection("Rooms")
+            .document(currentRoomId)
+            .collection("posts")
+            .document(selectedPostId)
+
+        postRef.getDocument { snapshot, error in
+            if let error = error {
+                print("문서 조회 실패: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+
+            guard let data = snapshot?.data(),
+                  let uid = data["uid"] as? String,
+                  let currentUid = Auth.auth().currentUser?.uid else {
+                completion(false)
+                return
+            }
+
+            completion(uid != currentUid)
+        }
+    }
+    
     func getStickerData() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
@@ -118,10 +148,17 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func updateStickerData() {
+        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+            print("currentRoomId 또는 selectedPostId가 비어 있어 업데이트 불가")
+            return
+        }
+
+        let postRef = db.collection("Rooms")
+            .document(currentRoomId)
+            .collection("posts")
+            .document(selectedPostId)
+
         let batch = db.batch()
-
-        let postRef = db.collection("Rooms").document(currentRoomId).collection("posts").document(selectedPostId)
-
         batch.updateData([
             "stickerPostId": selectedPostId,
             "stickerType": emotion,

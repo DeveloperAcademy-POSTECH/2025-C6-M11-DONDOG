@@ -19,6 +19,7 @@ struct FeedView: View {
     @State private var isFrontImageOnTop = true
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var isSelectingSticker = false
+    @State private var isNotMyPost = false
     
     var body: some View {
         VStack(spacing: 0){
@@ -106,26 +107,28 @@ struct FeedView: View {
                             coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
                         }
                         
-                        if viewModel.emotion != "null" {
-                            ZStack(alignment: .topTrailing) {
-                                Image(uiImage: viewModel.sticker ?? UIImage())
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 61)
-                                Image(systemName: viewModel.emotion)
-                            }
-                            .onTapGesture {
-                                isSelectingSticker = true
-                            }
-                            .zIndex(2)
-                        } else {
-                            Image(systemName: "smiley")
-                                .font(.system(size: 40))
-                                .foregroundColor(.gray)
-                                .zIndex(2)
-                                .onTapGesture {
-                                    isSelectingSticker.toggle()
+                        if isNotMyPost {
+                            if viewModel.emotion != "null" {
+                                ZStack(alignment: .topTrailing) {
+                                    Image(uiImage: viewModel.sticker ?? UIImage())
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 61)
+                                    Image(systemName: viewModel.emotion)
                                 }
+                                .onTapGesture {
+                                    isSelectingSticker = true
+                                }
+                                .zIndex(2)
+                            } else {
+                                Image(systemName: "smiley")
+                                    .font(.system(size: 40))
+                                    .foregroundColor(.gray)
+                                    .zIndex(2)
+                                    .onTapGesture {
+                                        isSelectingSticker.toggle()
+                                    }
+                            }
                         }
                     }
                 }
@@ -253,6 +256,11 @@ struct FeedView: View {
             }.padding(.top, 278)
             
             Spacer()
+        }
+        .onAppear {
+            viewModel.checkIsNotMyPost { result in
+                self.isNotMyPost = result
+            }
         }
         .background{
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)

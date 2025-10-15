@@ -127,24 +127,7 @@ struct ArchiveView: View {
                                     Button {
                                         print("\(month.year).\(month.month).\(day.day) 디테일 뷰 / postId: \(day.postId)")
                                     } label: {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            AsyncImage(url: day.thumbnailURL) { state in
-                                                switch state {
-                                                case .success:
-                                                    ArchivePostContainer(url: day.thumbnailURL, day: day.day)
-                                                    
-                                                case .failure:
-                                                    archivePlaceholder()
-                                                    
-                                                case .empty:
-                                                    ProgressView()
-                                                        .frame(height: 100)
-                                                    
-                                                @unknown default:
-                                                    EmptyView()
-                                                }
-                                            }
-                                        }
+                                        ArchivePostContainer(url: day.thumbnailURL, day: day.day)
                                     }
                                 }
                             }
@@ -161,9 +144,5 @@ struct ArchiveView: View {
                 .opacity(0.35)
         )
         .navigationBarBackButtonHidden(true)
-        .task {
-            await viewModel.loadMonthlyArchives()
-            await viewModel.loadPartnerNicknames()
-        }
     }
 }

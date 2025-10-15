@@ -21,7 +21,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var uploadStatus: String = ""
     @Published var currentRoomId: String = ""
     @Published var selectedPostId: String = ""
-    @Published var sticker: UIImage?
+    @Published var stickerImage: UIImage?
     
     private let photoSaveService = PhotoSaveService.shared
     private let db = Firestore.firestore()
@@ -45,29 +45,60 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func getStickerImage() {
-        if let uid = Auth.auth().currentUser?.uid {
-            db.collection("Users").document(uid).getDocument { snapshot, error in
-                if let error = error {
-                    print("recentSticker 불러오기 실패: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let data = snapshot?.data(),
-                      let stickerURLString = data["recentSticker"] as? String,
-                      let url = URL(string: stickerURLString) else {
-                    print("recentSticker 필드 없음 또는 형식 불일치")
-                    return
-                }
-
-                PhotoSaveService.shared.downloadImage(from: url.absoluteString) { [weak self] result in
-                    switch result {
-                    case .success(let image):
-                        DispatchQueue.main.async {
-                            self?.sticker = image
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        db.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
+            if let error = error {
+                print("recentPostId 불러오기 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            guard
+                let self = self,
+                let data = snapshot?.data(),
+                let recentPostId = data["recentPostId"] as? String,
+                !recentPostId.isEmpty
+            else {
+                print("recentPostId 없음")
+                return
+            }
+            
+            self.photoSaveService.getCurrentUserRoomId { result in
+                switch result {
+                case .success(let roomId):
+                    let postRef = self.db.collection("Rooms").document(roomId)
+                        .collection("posts").document(recentPostId)
+                    
+                    postRef.getDocument { snapshot, error in
+                        if let error = error {
+                            print("recentPostId 문서 조회 실패: \(error.localizedDescription)")
+                            return
                         }
-                    case .failure(let error):
-                        print("recentSticker 다운로드 실패: \(error.localizedDescription)")
+                        
+                        guard
+                            let postData = snapshot?.data(),
+                            let imageUrlString = postData["frontImageURL"] as? String
+                        else {
+                            print("frontImageURL 없음")
+                            return
+                        }
+                        
+                        // 3️⃣ 이미지 다운로드
+                        PhotoSaveService.shared.downloadImage(from: imageUrlString) { [weak self] result in
+                            switch result {
+                            case .success(let image):
+                                DispatchQueue.main.async {
+                                    self?.stickerImage = image
+                                    print("recentSticker 이미지 로드 성공")
+                                }
+                            case .failure(let error):
+                                print("이미지 다운로드 실패: \(error.localizedDescription)")
+                            }
+                        }
                     }
+                    
+                case .failure(let error):
+                    print("roomId 불러오기 실패: \(error.localizedDescription)")
                 }
             }
         }

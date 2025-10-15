@@ -19,8 +19,7 @@ struct FeedView: View {
     @State private var isFrontImageOnTop = true
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var isSelectingSticker = false
-    @State private var isStickerExist = false
-    @State private var emotion = ""
+    @State private var emotion = "null"
     
     var body: some View {
         VStack(spacing: 0){
@@ -108,42 +107,26 @@ struct FeedView: View {
                             coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
                         }
                         
-                        if !isStickerExist {
-                            Image(systemName: "face.smiling")
-                                .font(.system(size: 45))
+                        if emotion != "null" {
+                            ZStack(alignment: .topTrailing) {
+                                Image(uiImage: viewModel.sticker ?? UIImage())
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 61)
+                                Image(systemName: emotion)
+                            }
+                            .onTapGesture {
+                                isSelectingSticker = true
+                            }
+                            .zIndex(2)
+                        } else {
+                            Image(systemName: "smiley")
+                                .font(.system(size: 40))
+                                .foregroundColor(.gray)
                                 .zIndex(2)
                                 .onTapGesture {
                                     isSelectingSticker = true
                                 }
-                        } else {
-                            Image(systemName: "face.smiling")
-                                .font(.system(size: 45))
-                                .foregroundStyle(Color.pink)
-                                .zIndex(2)
-                                .onTapGesture {
-                                    isSelectingSticker = false
-                                    isStickerExist = false
-                                }
-                        }
-                        
-                        if isStickerExist {
-                            if let sticker = viewModel.sticker {
-                                ZStack(alignment: .topTrailing) {
-                                    Image(uiImage: sticker)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 61)
-                                    Image(systemName: emotion)
-                                }
-                                .zIndex(3)
-                                .offset(x: -200)
-                            } else {
-                                Image(systemName: "smiley")
-                                    .font(.system(size: 40))
-                                    .foregroundColor(.gray)
-                                    .zIndex(3)
-                                    .offset(x: -200)
-                            }
                         }
                     }
                 }
@@ -179,7 +162,6 @@ struct FeedView: View {
                     }
                     .onTapGesture {
                         emotion = "heart.fill"
-                        isStickerExist = true
                         isSelectingSticker = false
                     }
                     
@@ -198,7 +180,6 @@ struct FeedView: View {
                     }
                     .onTapGesture {
                         emotion = "drop.fill"
-                        isStickerExist = true
                         isSelectingSticker = false
                     }
                     
@@ -217,7 +198,6 @@ struct FeedView: View {
                     }
                     .onTapGesture {
                         emotion = "heart.badge.bolt.fill"
-                        isStickerExist = true
                         isSelectingSticker = false
                     }
                     
@@ -236,7 +216,6 @@ struct FeedView: View {
                     }
                     .onTapGesture {
                         emotion = "eyes.inverse"
-                        isStickerExist = true
                         isSelectingSticker = false
                     }
                 }

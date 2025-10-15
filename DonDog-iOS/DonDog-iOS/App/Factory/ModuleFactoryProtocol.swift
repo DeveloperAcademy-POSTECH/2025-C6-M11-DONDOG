@@ -23,8 +23,7 @@ protocol ModuleFactoryProtocol {
 
 final class ModuleFactory: ModuleFactoryProtocol {
     static let shared = ModuleFactory()
-    //:: 추후 private 붙이기
-    init() {}
+    private init() {}
     
     func makeWelcomeView() -> WelcomeView {
         let view = WelcomeView()

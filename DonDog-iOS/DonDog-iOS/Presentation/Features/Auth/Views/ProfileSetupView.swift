@@ -58,5 +58,4 @@ struct ProfileSetupView: View {
 
 #Preview {
     ProfileSetupView(viewModel: ProfileSetupViewModel())
-        .environmentObject(AppCoordinator(factory: ModuleFactory()))
 }

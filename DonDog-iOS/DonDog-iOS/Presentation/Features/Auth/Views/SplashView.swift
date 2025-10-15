@@ -28,5 +28,4 @@ struct SplashView: View {
 
 #Preview {
     SplashView()
-        .environmentObject(AppCoordinator(factory: ModuleFactory()))
 }

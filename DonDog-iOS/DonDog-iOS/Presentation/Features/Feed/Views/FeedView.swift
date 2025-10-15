@@ -19,7 +19,6 @@ struct FeedView: View {
     @State private var isFrontImageOnTop = true
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var isSelectingSticker = false
-    @State private var emotion = "null"
     
     var body: some View {
         VStack(spacing: 0){
@@ -107,13 +106,13 @@ struct FeedView: View {
                             coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
                         }
                         
-                        if emotion != "null" {
+                        if viewModel.emotion != "null" {
                             ZStack(alignment: .topTrailing) {
                                 Image(uiImage: viewModel.sticker ?? UIImage())
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 61)
-                                Image(systemName: emotion)
+                                Image(systemName: viewModel.emotion)
                             }
                             .onTapGesture {
                                 isSelectingSticker = true
@@ -161,10 +160,11 @@ struct FeedView: View {
                         Image(systemName: "heart.fill")
                     }
                     .onTapGesture {
-                        if emotion != "heart.fill" {
-                            emotion = "heart.fill"
+                        if viewModel.emotion != "heart.fill" {
+                            viewModel.emotion = "heart.fill"
+                            viewModel.updateStickerData()
                         } else {
-                            emotion = "null"
+                            viewModel.emotion = "null"
                         }
                         isSelectingSticker = false
                     }
@@ -183,10 +183,11 @@ struct FeedView: View {
                         Image(systemName: "drop.fill")
                     }
                     .onTapGesture {
-                        if emotion != "drop.fill" {
-                            emotion = "drop.fill"
+                        if viewModel.emotion != "drop.fill" {
+                            viewModel.emotion = "drop.fill"
+                            viewModel.updateStickerData()
                         } else {
-                            emotion = "null"
+                            viewModel.emotion = "null"
                         }
                         isSelectingSticker = false
                     }
@@ -205,10 +206,11 @@ struct FeedView: View {
                         Image(systemName: "heart.badge.bolt.fill")
                     }
                     .onTapGesture {
-                        if emotion != "heart.badge.bolt.fill" {
-                            emotion = "heart.badge.bolt.fill"
+                        if viewModel.emotion != "heart.badge.bolt.fill" {
+                            viewModel.emotion = "heart.badge.bolt.fill"
+                            viewModel.updateStickerData()
                         } else {
-                            emotion = "null"
+                            viewModel.emotion = "null"
                         }
                         isSelectingSticker = false
                     }
@@ -227,10 +229,11 @@ struct FeedView: View {
                         Image(systemName: "eyes.inverse")
                     }
                     .onTapGesture {
-                        if emotion != "eyes.inverse" {
-                            emotion = "eyes.inverse"
+                        if viewModel.emotion != "eyes.inverse" {
+                            viewModel.emotion = "eyes.inverse"
+                            viewModel.updateStickerData()
                         } else {
-                            emotion = "null"
+                            viewModel.emotion = "null"
                         }
                         isSelectingSticker = false
                     }

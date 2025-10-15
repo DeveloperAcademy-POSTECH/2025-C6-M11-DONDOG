@@ -11,26 +11,6 @@ import FirebaseStorage
 import FirebaseAuth
 import UIKit
 
-struct PostData: Codable {
-    let postId: String
-    let uid: String
-    let frontImageURL: String
-    let backImageURL: String
-    let caption: String
-    let createdAt: Timestamp
-    
-    init(postId: String, uid: String, frontImageURL: String, backImageURL: String, caption: String = "") {
-        self.postId = postId
-        self.uid = uid
-        self.frontImageURL = frontImageURL
-        self.backImageURL = backImageURL
-        self.caption = caption
-        self.createdAt = Timestamp()
-    }
-}
-
-
-
 final class PhotoSaveService: ObservableObject {
     static let shared = PhotoSaveService()
     
@@ -150,7 +130,7 @@ final class PhotoSaveService: ObservableObject {
             
             print("✅ 전면/후면 이미지 업로드 모두 완료")
             
-            let postData = PostData(postId: postId, uid: uid, frontImageURL: frontURL, backImageURL: backURL, caption: caption)
+            let postData = PostData(postId: postId, uid: uid, frontImageURL: frontURL, backImageURL: backURL, caption: caption, stickerPostId: "", stickerType: "null")
             self.savePostToRoom(roomId: roomId, postId: postId, postData: postData, completion: completion)
         }
     }

@@ -25,6 +25,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var stickerImage: UIImage?
     @Published var sticker: UIImage?
     @Published var frame: UIImage?
+    @Published var emotion: String = "null"
     
     private let photoSaveService = PhotoSaveService.shared
     private let db = Firestore.firestore()
@@ -45,10 +46,10 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
         }
         
-        self.getStickerImage()
+        self.getStickerData()
     }
     
-    func getStickerImage() {
+    func getStickerData() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
         db.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
@@ -95,6 +96,8 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                                     print("recentSticker 이미지 로드 성공")
                                     
                                     self?.makeStickerAndMask(with: image)
+                                    
+                                    self?.emotion = postData["stickerType"] as? String ?? "null"
                                 }
                             case .failure(let error):
                                 print("이미지 다운로드 실패: \(error.localizedDescription)")
@@ -110,8 +113,28 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func makeStickerAndMask(with stickerImage: UIImage) {
-        self.frame = imageUtils.makeMask(from: stickerImage)
-        self.sticker = imageUtils.makeSticker(with: stickerImage)
+        frame = imageUtils.makeMask(from: stickerImage)
+        sticker = imageUtils.makeSticker(with: stickerImage)
+    }
+    
+    func updateStickerData() {
+        let batch = db.batch()
+
+        let postRef = db.collection("Rooms").document(currentRoomId).collection("posts").document(selectedPostId)
+
+        batch.updateData([
+            "stickerPostId": selectedPostId,
+            "stickerType": emotion,
+            "updatedAt": FieldValue.serverTimestamp()
+        ], forDocument: postRef)
+
+        batch.commit { error in
+            if let error = error {
+                print("업데이트 실패: \(error.localizedDescription)")
+            } else {
+                print("업데이트 성공!")
+            }
+        }
     }
     
     func didCaptureImages(frontImage: UIImage, backImage: UIImage) {

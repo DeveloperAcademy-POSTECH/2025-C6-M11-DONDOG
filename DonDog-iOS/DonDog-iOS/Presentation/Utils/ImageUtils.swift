@@ -1,5 +1,5 @@
 //
-//  StickerUtils.swift
+//  ImageUtils.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/12/25.
@@ -10,23 +10,36 @@ import SwiftUI
 import Vision
 import CoreImage.CIFilterBuiltins
 
-final class StickerUtils: ObservableObject {
+final class ImageUtils: ObservableObject {
     private let ciContext = CIContext(options: [.useSoftwareRenderer: false])
+    private var mask: CIImage?
 
     private func renderToCIImage(image: UIImage) -> CIImage? {
-        guard let ciImage = CIImage(image: image) else {
-            print("Failed to create CIImage")
+        if let ciImage = image.ciImage {
+            return ciImage
+        } else if let cgImage = image.cgImage {
+            return CIImage(cgImage: cgImage)
+        } else {
+            print("Failed to create CIImage - no underlying image data found")
             return nil
         }
-        return ciImage
+    }
+    
+    private func renderToUIImage(image: CIImage) -> UIImage? {
+        return UIImage(ciImage: image)
     }
 
-    private func makeMask(image: CIImage) -> CIImage? {
+    func makeMask(from image: UIImage) -> UIImage? {
         let request = VNGeneratePersonSegmentationRequest()
         request.qualityLevel = .balanced
         request.outputPixelFormat = kCVPixelFormatType_OneComponent8
         
-        let handler = VNImageRequestHandler(ciImage: image)
+        guard let ciImage = renderToCIImage(image: image) else {
+            print("Failed to convert UIImage to CIImage")
+            return nil
+        }
+        
+        let handler = VNImageRequestHandler(ciImage: ciImage)
         do {
             try handler.perform([request])
         } catch {
@@ -40,19 +53,23 @@ final class StickerUtils: ObservableObject {
         }
         
         let mask = CIImage(cvPixelBuffer: maskBuffer)
+        
         let resizedMask = mask.transformed(by: CGAffineTransform(
-            scaleX: image.extent.width / mask.extent.width,
-            y: image.extent.height / mask.extent.height
+            scaleX: ciImage.extent.width / mask.extent.width,
+            y: ciImage.extent.height / mask.extent.height
         ))
-        return resizedMask.cropped(to: image.extent)
+        
+        self.mask = resizedMask.cropped(to: ciImage.extent)
+        
+        return renderToUIImage(image: self.mask ?? CIImage())
     }
 
-    private func applyingMask(mask: CIImage, to image: CIImage) -> CIImage? {
+    private func applyingMask(to image: CIImage) -> CIImage? {
         let transparentBackground = CIImage(color: .clear).cropped(to: image.extent)
         
         let filter = CIFilter.blendWithMask()
         filter.inputImage = image
-        filter.maskImage = mask
+        filter.maskImage = self.mask
         filter.backgroundImage = transparentBackground
         return filter.outputImage
     }
@@ -62,18 +79,14 @@ final class StickerUtils: ObservableObject {
             print("Failed to render CGImage")
             return nil
         }
-        // ✅ alpha 채널 유지
         return UIImage(cgImage: cgImage, scale: original.scale, orientation: original.imageOrientation)
     }
 
-    static func makeSticker(with image: UIImage) -> UIImage? {
-        let utils = StickerUtils()
-        
-        guard let originalCIImage = utils.renderToCIImage(image: image),
-              let mask = utils.makeMask(image: originalCIImage),
-              let clippedCIImage = utils.applyingMask(mask: mask, to: originalCIImage),
-              let finalImage = utils.renderToUIImage(ciImage: clippedCIImage, original: image) else {
-            print("❌ 이미지 처리 실패")
+    func makeSticker(with image: UIImage) -> UIImage? {
+        guard let originalCIImage = renderToCIImage(image: image),
+              let clippedCIImage = applyingMask(to: originalCIImage),
+              let finalImage = renderToUIImage(ciImage: clippedCIImage, original: image) else {
+            print("이미지 처리 실패")
             return nil
         }
         return finalImage

@@ -48,7 +48,7 @@ struct InviteView: View {
                         HStack(spacing: 0) {
                             Text(viewModel.inviteText)
                                 .font(.bodyRegular18)
-                                .foregroundColor(Color.ddBlack)
+                                .foregroundColor(viewModel.remainTimeText == "00:00" ? Color.ddGray500 : Color.ddBlack)
                             
                             Spacer()
                             
@@ -65,7 +65,7 @@ struct InviteView: View {
                     if viewModel.remainTimeText == "00:00" {
                         ZStack {
                             RoundedRectangle(cornerRadius: 999)
-                                .foregroundStyle(Color.ddPrimaryBlue)
+                                .foregroundStyle(viewModel.isLoading ? Color.ddSecondaryBlue : Color.ddPrimaryBlue)
                                 .frame(width: 70, height: 28)
                             
                             HStack(spacing: 2) {
@@ -76,7 +76,9 @@ struct InviteView: View {
                             .foregroundStyle(Color.ddWhite)
                         }
                         .onTapGesture {
-                            viewModel.refreshInviteCode()
+                            if !viewModel.isLoading {
+                                viewModel.refreshInviteCode()
+                            }
                         }
                     } else {
                         ShareLink(
@@ -116,14 +118,4 @@ struct InviteView: View {
             coordinator.replaceRoot(.feed)
         }
     }
-}
-
-#Preview {
-    let previewVM = InviteViewModel(showSentHint: true)
-
-    previewVM.inviteText = "ABC123"
-    previewVM.remainTimeText = "00:00"
-
-    return InviteView(viewModel: previewVM)
-        .environmentObject(AppCoordinator(factory: ModuleFactory()))
 }

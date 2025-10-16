@@ -20,9 +20,6 @@ struct FeedView: View {
     @State private var isFrontImageOnTop = true
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var isSelectingSticker = false
-    @State private var isStickerExist = false
-    @State private var emotion = ""
-    
     
     var body: some View {
         VStack(spacing: 0){
@@ -34,6 +31,14 @@ struct FeedView: View {
                             coordinator.inviteShowSentHint = false
                             coordinator.push(.invite) }
                         Button("설정뷰로 이동") { coordinator.push(.setting) }
+                        Button("로그아웃") {
+                            do {
+                                try Auth.auth().signOut()
+                            } catch {
+                                print("로그아웃 실패: \(error.localizedDescription)")
+                            }
+                        }
+                        Spacer()
                         Button(action: {
                             print("🔄 수동 새로고침 시작")
                             withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
@@ -84,18 +89,46 @@ struct FeedView: View {
             if let frontImage = viewModel.todayFrontImage, 
                let backImage = viewModel.todayBackImage,
                let currentPost = viewModel.currentPost {
-                HStack{
-                    Spacer()
-                    PolaroidSetView(
-                        frontImage: frontImage, 
-                        backImage: backImage,
-                        nickname: viewModel.currentNickname,
-                        createdAt: DataUtils.formatDate(currentPost.createdAt.dateValue(), format: "a hh:mm"),
-                        caption: currentPost.caption
-                    )
-                    .allowsHitTesting(true)
-                }.padding(.top, 103)
-                .padding(.trailing, 26)
+                ZStack{
+                    HStack{
+                        Spacer()
+                        PolaroidSetView(
+                            frontImage: frontImage,
+                            backImage: backImage,
+                            nickname: viewModel.currentNickname,
+                            createdAt: DataUtils.formatDate(currentPost.createdAt.dateValue(), format: "a hh:mm"),
+                            caption: currentPost.caption
+                        )
+                        .allowsHitTesting(true)
+                    }.padding(.top, 103)
+                    .padding(.trailing, 26)
+                    if viewModel.emotion != "null" {
+                        ZStack(alignment: .topTrailing) {
+                            Image(uiImage: viewModel.sticker ?? UIImage())
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 61)
+                            Image(systemName: viewModel.emotion)
+                        }
+                        .onTapGesture {
+                            if viewModel.isNotMyPost {
+                                isSelectingSticker.toggle()
+                            }
+                        }
+                        .zIndex(2)
+                    } else {
+                        if viewModel.isNotMyPost {
+                            Image(systemName: "smiley")
+                                .font(.system(size: 40))
+                                .foregroundColor(.gray)
+                                .zIndex(2)
+                                .onTapGesture {
+                                    isSelectingSticker.toggle()
+                                }
+                        }
+                    }
+                }
+               
             } else { // 오늘 찍은 사진이 없을 때
                 VStack(spacing: 10){
                     Image(systemName: "photo.on.rectangle.angled")
@@ -127,9 +160,13 @@ struct FeedView: View {
                         Image(systemName: "heart.fill")
                     }
                     .onTapGesture {
-                        emotion = "heart.fill"
-                        isStickerExist = true
+                        if viewModel.emotion != "heart.fill" {
+                            viewModel.emotion = "heart.fill"
+                        } else {
+                            viewModel.emotion = "null"
+                        }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                     
                     ZStack(alignment: .topTrailing) {
@@ -146,9 +183,13 @@ struct FeedView: View {
                         Image(systemName: "drop.fill")
                     }
                     .onTapGesture {
-                        emotion = "drop.fill"
-                        isStickerExist = true
+                        if viewModel.emotion != "drop.fill" {
+                            viewModel.emotion = "drop.fill"
+                        } else {
+                            viewModel.emotion = "null"
+                        }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                     
                     ZStack(alignment: .topTrailing) {
@@ -165,9 +206,13 @@ struct FeedView: View {
                         Image(systemName: "heart.badge.bolt.fill")
                     }
                     .onTapGesture {
-                        emotion = "heart.badge.bolt.fill"
-                        isStickerExist = true
+                        if viewModel.emotion != "heart.badge.bolt.fill" {
+                            viewModel.emotion = "heart.badge.bolt.fill"
+                        } else {
+                            viewModel.emotion = "null"
+                        }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                     
                     ZStack(alignment: .topTrailing) {
@@ -184,9 +229,13 @@ struct FeedView: View {
                         Image(systemName: "eyes.inverse")
                     }
                     .onTapGesture {
-                        emotion = "eyes.inverse"
-                        isStickerExist = true
+                        if viewModel.emotion != "eyes.inverse" {
+                            viewModel.emotion = "eyes.inverse"
+                        } else {
+                            viewModel.emotion = "null"
+                        }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                 }
             }

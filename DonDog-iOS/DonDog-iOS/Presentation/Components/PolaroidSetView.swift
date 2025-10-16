@@ -12,7 +12,7 @@ struct PolaroidFrame: View {
     let nickname: String
     let createdAt: String
     let caption: String
-    let isFlipped: Bool //zIndex로 위치 변환을 위한 변수
+    let isTopImage: Bool //zIndex로 위치 변환을 위한 변수
     
     var body: some View {
         VStack(spacing: 0) {
@@ -23,31 +23,41 @@ struct PolaroidFrame: View {
                 .frame(width: 230)
                 .padding(16)
                 .background(.ddWhite)
-            VStack{
-                Spacer()
-                HStack{
-                    Text(caption)
-                        .font(.subtitleMedium18)
-                        .foregroundColor(.ddBlack)
-                    Spacer()
+            HStack{
+                VStack{
+                    HStack{
+                        Text(caption)
+                            .font(.subtitleMedium18)
+                            .foregroundColor(.ddBlack)
+                        Spacer()
+                    }
+                    .padding(.bottom, 4)
+                    
+                    HStack(spacing: 4){
+                        Text(nickname)
+                            .font(.captionRegular11)
+                            .foregroundColor(.ddGray500)
+                        Text(createdAt)
+                            .font(.captionRegular11)
+                            .foregroundColor(.ddGray500)
+                        Spacer()
+                    }
                 }
-                .frame(width: 230)
-                .padding(.leading, 4)
-                .padding(.bottom, 4)
-                
-                HStack(spacing: 4){
-                    Text(nickname)
-                        .font(.captionRegular11)
-                        .foregroundColor(.ddGray500)
-                    Text(createdAt)
-                        .font(.captionRegular11)
-                        .foregroundColor(.ddGray500)
-                    Spacer()
-                }.frame(width: 230)
-                    .padding(.leading, 4)
-                    .padding(.bottom, 16)
+                Spacer()
+                if caption != ""{
+                    Button{
+                        //스티커 로직
+                    }label: {
+                        Image(systemName: "face.dashed")
+                            .resizable()
+                            .frame(width: 32, height: 32)
+                            .foregroundStyle(.ddSecondaryBlue)
+                    }
+                }
             }
-            .frame(height: 63)
+            .frame(width: 230, height: 63)
+            .padding(.leading, 4)
+            .padding(.bottom, 16)
             .background(.ddWhite)
         }
         .frame(width: 264, height: 415)
@@ -69,7 +79,7 @@ struct PolaroidSetView: View {
     
     var body: some View {
         ZStack {
-            PolaroidFrame(image: backImage, nickname: "", createdAt: "", caption: "", isFlipped: isTopImage)
+            PolaroidFrame(image: backImage, nickname: "", createdAt: "", caption: "", isTopImage: !isTopImage)
                 .onTapGesture {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         isTopImage.toggle()
@@ -79,7 +89,7 @@ struct PolaroidSetView: View {
                 .rotationEffect(.degrees(8))
                 .offset(x: -50 ,y: -57)
             
-            PolaroidFrame(image: frontImage, nickname: nickname, createdAt: createdAt, caption: caption, isFlipped: !isTopImage)
+            PolaroidFrame(image: frontImage, nickname: nickname, createdAt: createdAt, caption: caption, isTopImage: isTopImage)
                 .onTapGesture {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         isTopImage.toggle()
@@ -89,3 +99,7 @@ struct PolaroidSetView: View {
         }
     }
 }
+
+#Preview(body: {
+    PolaroidSetView(frontImage: UIImage(named: "test1")!, backImage: UIImage(named: "test2")!, nickname: "이토", createdAt: "오전 04:45", caption: "하이디라오 짱맛")
+})

@@ -21,7 +21,7 @@ struct AuthView: View {
         VStack(spacing: 0) {
             CustomNavigationBar(leadingType: .back(action: {
                 
-                //:: 추후 수정
+                //:: 추후 수정 디자인피드백4
                 !viewModel.isCodeSent ? coordinator.pop() : print("백이 아니라 iscodesent 취소되도록 수정")
                 
             }), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
@@ -119,7 +119,7 @@ struct AuthView: View {
 
         }
         .padding(.horizontal, 20)
-        .navigationBarBackButtonHidden(true)
+        .backHiddenSwipeEnabled()
         .dismissKeyboard()
         .task {
             viewModel.attach(coordinator: coordinator)
@@ -131,6 +131,7 @@ struct AuthView: View {
                 }
             }
         }
+        
     }
 }
 

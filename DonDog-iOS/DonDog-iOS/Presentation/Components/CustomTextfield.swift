@@ -9,16 +9,18 @@ import SwiftUI
 
 struct CustomTextField: View {
     var title: String?
-    var prefix: String?
     var placeholder: String
     @Binding var text: String
     var keyboard: UIKeyboardType = .default
     var contentType: UITextContentType? = nil
     var onCommit: (() -> Void)? = nil
     var errorMessage: String? = nil
+    var errorText: Binding<String?>? = nil
        
     private var hasError: Bool {
-        errorMessage != nil && !errorMessage!.isEmpty
+        if let bound = errorText?.wrappedValue { return !bound.isEmpty }
+        if let msg = errorMessage { return !msg.isEmpty }
+        return false
     }
 
     @FocusState private var isFocused: Bool
@@ -31,15 +33,6 @@ struct CustomTextField: View {
             }
             VStack(spacing: 4) {
                 HStack(spacing: 0) {
-                    HStack {
-                        if let prefix = prefix {
-                            Text(prefix)
-                                .font(.titleBold18)
-                                .foregroundStyle(Color.ddPrimaryBlue)
-                                .padding(.trailing, 10)
-                        }
-                    }
-                    
                     ZStack(alignment: .leading) {
                         if text.isEmpty {
                             Text(placeholder)
@@ -58,14 +51,18 @@ struct CustomTextField: View {
                                 isFocused = false
                             }
                             .onChange(of: text) { _, newValue in
+                                // Clear error as soon as the user starts typing
+                                if hasError {
+                                    errorText?.wrappedValue = nil
+                                }
                                 var value = newValue.filter { !$0.isWhitespace }
                                                                
                                 if contentType == .telephoneNumber {
                                     let digits = value.filter { $0.isNumber }
-                                    let limited = String(digits.prefix(10))
+                                    let limited = String(digits.prefix(11))
                                     var formatted = ""
                                     for (i, ch) in limited.enumerated() {
-                                        if i == 2 || i == 6 { formatted.append("-") }
+                                        if i == 3 || i == 7 { formatted.append("-") }
                                         formatted.append(ch)
                                     }
                                     value = formatted
@@ -89,22 +86,23 @@ struct CustomTextField: View {
                 Rectangle()
                     .frame(height: 2)
                     .foregroundColor(
-                        hasError ? Color.ddAlert : (isFocused ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
+                        hasError
+                        ? Color.ddAlert : ((isFocused && !text.isEmpty) ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
                     )
                 
-                if hasError, let message = errorMessage {
-                                   HStack(spacing: 0) {
-                                       Image(systemName: "exclamationmark.circle")
-                                           .resizable()
-                                           .scaledToFit()
-                                           .frame(width: 14)
-                                           .padding(.trailing, 4)
-                                       Text(message)
-                                           .font(.captionRegular13)
-                                       Spacer()
-                                   }
-                                   .foregroundColor(Color.ddAlert)
-                               }
+                if hasError, let message = (errorText?.wrappedValue ?? errorMessage) {
+                    HStack(spacing: 0) {
+                        Image(systemName: "exclamationmark.circle")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 14)
+                            .padding(.trailing, 4)
+                        Text(message)
+                            .font(.captionRegular13)
+                        Spacer()
+                    }
+                    .foregroundColor(Color.ddAlert)
+                }
             }
         }
         .contentShape(Rectangle())
@@ -138,8 +136,7 @@ struct Preview_UnderlineTextFieldWrapper: View {
             )
             CustomTextField(
                 title: "인증번호를 입력해 주세요",
-                prefix: "+82",
-                placeholder: "10-1234-5678",
+                placeholder: "010-1234-5678",
                 text: $code,
                 keyboard: .default,
                 contentType: nil

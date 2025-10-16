@@ -11,15 +11,24 @@ struct CustomButton: View {
     var title: String
     var isDisabled: Bool = true
     var action: (() -> Void)?
+    var isProgressView: Bool = false
     
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
                 .foregroundStyle(isDisabled ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
             
-            Text(title)
-                .font(.subtitleMedium18)
-                .foregroundStyle(Color.ddWhite)
+            HStack(spacing: 8) {
+                Text(title)
+                    .font(.subtitleMedium18)
+                    .foregroundStyle(Color.ddWhite)
+                if isProgressView {
+                    ProgressView()
+                        .frame(width: 16, height: 16)
+                        .tint(Color.ddWhite50)
+                }
+            }
+            
         }
         .frame(height: 52)
         .padding(.vertical, 8)
@@ -33,5 +42,5 @@ struct CustomButton: View {
 
 #Preview {
     CustomButton(title: "Continue", isDisabled: true, action: { print("Disabled button tapped") })
-    CustomButton(title: "Submit", isDisabled: false, action: { print("Enabled button tapped") })
+    CustomButton(title: "Submit", isDisabled: false, action: { print("Enabled button tapped") }, isProgressView: true)
 }

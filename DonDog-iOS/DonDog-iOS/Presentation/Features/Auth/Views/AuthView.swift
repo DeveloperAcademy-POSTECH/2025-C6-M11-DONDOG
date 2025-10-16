@@ -11,11 +11,20 @@ struct AuthView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: AuthViewModel
     
+    enum FocusField {
+        case phone, verification
+    }
+    @FocusState private var focusedField: FocusField?
     @StateObject private var keyboard = KeyboardResponder()
     
     var body: some View {
         VStack(spacing: 0) {
-            CustomNavigationBar(leadingType: .back(action: { coordinator.pop() }), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
+            CustomNavigationBar(leadingType: .back(action: {
+                
+                //:: 추후 수정
+                !viewModel.isCodeSent ? coordinator.pop() : print("백이 아니라 iscodesent 취소되도록 수정")
+                
+            }), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
             
             Spacer()
                 .frame(height: 104)
@@ -57,24 +66,24 @@ struct AuthView: View {
 
             CustomTextField(
                 title: nil,
-                prefix: "+82",
-                placeholder: "10-1234-5678",
+                placeholder: "010-1234-5678",
                 text: $viewModel.userPhoneNumber,
                 keyboard: .numberPad,
                 contentType: .telephoneNumber,
-                errorMessage: viewModel.phoneError
+                errorText: $viewModel.phoneError
             )
+            .focused($focusedField, equals: .phone)
             .padding(.bottom, 32)
             
             if viewModel.isCodeSent {
                 CustomTextField(
                     title: nil,
-                    prefix: nil,
                     placeholder: "인증번호를 입력해 주세요",
                     text: $viewModel.verificationCode,
                     keyboard: .numberPad,
-                    errorMessage: viewModel.codeError
+                    errorText: $viewModel.codeError
                 )
+                .focused($focusedField, equals: .verification)
                 .padding(.bottom, 32)
             }
             
@@ -101,9 +110,9 @@ struct AuthView: View {
             
             Group {
                 if viewModel.isCodeSent {
-                    CustomButton(title: "인증하기", isDisabled: !viewModel.verificationCode.isEmpty && !viewModel.isLoading, action: viewModel.logIn)
+                    CustomButton(title: "인증하기", isDisabled: !viewModel.verificationCode.isEmpty && !viewModel.isLoading, action: viewModel.logIn, isProgressView: viewModel.isLoading)
                 } else {
-                    CustomButton(title: "다음", isDisabled: !viewModel.userPhoneNumber.isEmpty && !viewModel.isLoading, action: viewModel.sendCode)
+                    CustomButton(title: "다음", isDisabled: !viewModel.userPhoneNumber.isEmpty && !viewModel.isLoading, action: viewModel.sendCode, isProgressView: viewModel.isLoading)
                 }
             }
             .padding(.bottom, keyboard.keyboardHeight == 0 ? 0 : 10)
@@ -114,6 +123,13 @@ struct AuthView: View {
         .dismissKeyboard()
         .task {
             viewModel.attach(coordinator: coordinator)
+        }
+        .onChange(of: viewModel.isCodeSent) { _, newValue in
+            if newValue {
+                withAnimation {
+                    focusedField = .verification
+                }
+            }
         }
     }
 }

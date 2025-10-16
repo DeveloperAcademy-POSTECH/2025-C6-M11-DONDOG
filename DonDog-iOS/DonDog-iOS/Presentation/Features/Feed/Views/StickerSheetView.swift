@@ -68,7 +68,7 @@ struct StickerContainerView: View {
     
     var body: some View {
         VStack(spacing: 8) {
-            Image(uiImage: stickerImage)
+            Image(uiImage: stickerImage.addBorder(thickness: 8, color: .ddAlert)!)
             
             Text("하트")
                 .font(.captionRegular11)

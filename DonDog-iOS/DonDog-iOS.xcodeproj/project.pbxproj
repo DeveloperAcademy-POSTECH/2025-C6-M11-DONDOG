@@ -41,6 +41,7 @@
 		8BDF76982E9F72CE007F12BB /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF76972E9F72CE007F12BB /* SplashView.swift */; };
 		8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */; };
 		8CF9C7512EA129D600EB944A /* StickerSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7502EA129D400EB944A /* StickerSheetView.swift */; };
+		8CF9C7A32EA148C100EB944A /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7A22EA148BC00EB944A /* UIImage+.swift */; };
 		A192F2B12E9E45AC00995DCC /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2B02E9E45A800995DCC /* Color+.swift */; };
 		A192F2BF2E9F3ADA00995DCC /* PolaroidSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */; };
 		A192F2CC2EA009E100995DCC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A192F2CB2EA009E100995DCC /* GoogleService-Info.plist */; };
@@ -103,6 +104,7 @@
 		8BDF76972E9F72CE007F12BB /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeService.swift; sourceTree = "<group>"; };
 		8CF9C7502EA129D400EB944A /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
+		8CF9C7A22EA148BC00EB944A /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		A192F2B02E9E45A800995DCC /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
 		A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolaroidSetView.swift; sourceTree = "<group>"; };
 		A192F2CB2EA009E100995DCC /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 		CA957CED2E98FC4C00AEAB49 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				8CF9C7A22EA148BC00EB944A /* UIImage+.swift */,
 				A192F2B02E9E45A800995DCC /* Color+.swift */,
 				CA957D022E98FD0900AEAB49 /* Font+.swift */,
 				619343852E9D3FD6004B5F01 /* Notification+.swift */,
@@ -631,6 +634,7 @@
 				8B5F44562E90FA74003137F2 /* ProfileSetupView.swift in Sources */,
 				619343862E9D3FD6004B5F01 /* Notification+.swift in Sources */,
 				D2A7F38A2E9A28B8005F5AF8 /* Comment.swift in Sources */,
+				8CF9C7A32EA148C100EB944A /* UIImage+.swift in Sources */,
 				D24402AD2E992CF000D837C8 /* PhotoSaveService.swift in Sources */,
 				CA2A58302E9E38C700AC3500 /* CustomNavigationBar.swift in Sources */,
 				CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */,

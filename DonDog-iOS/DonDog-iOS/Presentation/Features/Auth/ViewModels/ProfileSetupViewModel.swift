@@ -71,9 +71,9 @@ final class ProfileSetupViewModel: ObservableObject {
         saveTogether.setData([
             "name": self.name,
             "role": (self.selectedRole?.rawForDB ?? ""),
+            "recentPostId": "",
             "createdAt": FieldValue.serverTimestamp(),
-            "updatedAt": FieldValue.serverTimestamp(),
-            "recentSticker": ""
+            "updatedAt": FieldValue.serverTimestamp()
         ], forDocument: userDocument, merge: true)
 
         // 초대코드 정보 (Invites/{inviteCode})

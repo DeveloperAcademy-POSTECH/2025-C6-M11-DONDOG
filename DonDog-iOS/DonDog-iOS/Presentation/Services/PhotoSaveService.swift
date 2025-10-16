@@ -11,26 +11,6 @@ import FirebaseStorage
 import FirebaseAuth
 import UIKit
 
-struct PostData: Codable {
-    let postId: String
-    let uid: String
-    let frontImageURL: String
-    let backImageURL: String
-    let caption: String
-    let createdAt: Timestamp
-    
-    init(postId: String, uid: String, frontImageURL: String, backImageURL: String, caption: String = "") {
-        self.postId = postId
-        self.uid = uid
-        self.frontImageURL = frontImageURL
-        self.backImageURL = backImageURL
-        self.caption = caption
-        self.createdAt = Timestamp()
-    }
-}
-
-
-
 final class PhotoSaveService: ObservableObject {
     static let shared = PhotoSaveService()
     
@@ -52,7 +32,6 @@ final class PhotoSaveService: ObservableObject {
                 print("✅ 사용자 roomId: \(roomId)")
                 
                 self?.uploadImagesAndSaveToRoom(frontImage: frontImage, backImage: backImage, caption: caption, roomId: roomId, completion: completion)
-                self?.updateUserStickerImage(of: Auth.auth().currentUser!.uid, with: frontImage)
             case .failure(let error):
                 print("❌ roomId 가져오기 실패: \(error.localizedDescription)")
                 completion(.failure(error))
@@ -151,30 +130,42 @@ final class PhotoSaveService: ObservableObject {
             
             print("✅ 전면/후면 이미지 업로드 모두 완료")
             
-            let postData = PostData(postId: postId, uid: uid, frontImageURL: frontURL, backImageURL: backURL, caption: caption)
+            let postData = PostData(postId: postId, uid: uid, frontImageURL: frontURL, backImageURL: backURL, caption: caption, stickerPostId: "", stickerType: "null")
             self.savePostToRoom(roomId: roomId, postId: postId, postData: postData, completion: completion)
         }
     }
     
     private func savePostToRoom(roomId: String, postId: String, postData: PostData, completion: @escaping (Result<PostData, Error>) -> Void) {
+        let batch = db.batch()
+        
         do {
             var dict = try Firestore.Encoder().encode(postData)
             dict["uid"] = postData.uid
             dict["createdAt"] = FieldValue.serverTimestamp()
+            dict["updatedAt"] = FieldValue.serverTimestamp()
             
-            db.collection("Rooms").document(roomId).collection("posts").document(postId)
-                .setData(dict) { error in
+            let postRef = db.collection("Rooms").document(roomId)
+                .collection("posts").document(postId)
+            
+            let userRef = db.collection("Users").document(postData.uid)
+            
+            batch.setData(dict, forDocument: postRef, merge: true)
+            batch.setData(["recentPostId": postId,
+                           "updatedAt": FieldValue.serverTimestamp()],
+                          forDocument: userRef,
+                          merge: true)
+            
+            batch.commit { error in
                 if let error = error {
-                    print("❌ Room posts 저장 실패: \(error.localizedDescription)")
+                    print("Room post 저장 실패: \(error.localizedDescription)")
                     completion(.failure(error))
-                    return
+                } else {
+                    print("Room post 저장 성공: \(roomId)/posts/\(postId)")
+                    completion(.success(postData))
                 }
-                
-                print("✅ Room posts 저장 성공: \(roomId)/posts/\(postId)")
-                completion(.success(postData))
             }
         } catch {
-            print("❌ PostData 직렬화 실패: \(error.localizedDescription)")
+            print("PostData 직렬화 실패: \(error.localizedDescription)")
             completion(.failure(error))
         }
     }
@@ -310,55 +301,6 @@ final class PhotoSaveService: ObservableObject {
                 
                 print("✅ 다운로드 URL 생성 성공: \(downloadURL.absoluteString)")
                 completion(.success(downloadURL.absoluteString))
-            }
-        }
-    }
-    
-    func updateUserStickerImage(of currentUser: String, with image: UIImage) {
-        guard let stickerImage = StickerUtils.makeSticker(with: image) else {
-            print("스티커 생성 실패")
-            return
-        }
-        
-        self.sticker = stickerImage
-        
-        guard stickerImage.pngData() != nil else {
-                print("PNG 이미지 변환 실패")
-                return
-            }
-        
-        guard let imageData = stickerImage.pngData() else {
-            print("PNG 이미지 변환 실패")
-            return
-        }
-        let storageRef = storage.reference().child("users/\(currentUser)/recentSticker.png")
-        let metadata = StorageMetadata()
-        metadata.contentType = "image/png"
-        
-        storageRef.putData(imageData, metadata: metadata) { [weak self] _, error in
-            if let error = error {
-                print("스티커 업로드 실패: \(error.localizedDescription)")
-                return
-            }
-            
-            storageRef.downloadURL { url, error in
-                if let error = error {
-                    print("다운로드 URL 가져오기 실패: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let downloadURL = url else {
-                    print("다운로드 URL이 nil")
-                    return
-                }
-                
-                self?.db.collection("Users").document(currentUser).updateData([
-                    "recentSticker": downloadURL.absoluteString
-                ]) { error in
-                    if let error = error {
-                        print("Firestore 업데이트 실패: \(error.localizedDescription)")
-                    }
-                }
             }
         }
     }

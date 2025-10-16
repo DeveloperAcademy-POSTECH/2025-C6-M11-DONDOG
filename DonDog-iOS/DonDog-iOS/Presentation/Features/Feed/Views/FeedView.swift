@@ -19,9 +19,6 @@ struct FeedView: View {
     @State private var isFrontImageOnTop = true
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var isSelectingSticker = false
-    @State private var isStickerExist = false
-    @State private var emotion = ""
-    
     
     var body: some View {
         VStack(spacing: 0){
@@ -32,6 +29,14 @@ struct FeedView: View {
                             coordinator.inviteShowSentHint = false
                             coordinator.push(.invite) }
                         Button("설정뷰로 이동") { coordinator.push(.setting) }
+                        Button("로그아웃") {
+                            do {
+                                try Auth.auth().signOut()
+                            } catch {
+                                print("로그아웃 실패: \(error.localizedDescription)")
+                            }
+                        }
+                        Spacer()
                         Button(action: {
                             print("🔄 수동 새로고침 시작")
                             withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
@@ -102,41 +107,29 @@ struct FeedView: View {
                             coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
                         }
                         
-                        if !isStickerExist {
-                            Image(systemName: "face.smiling")
-                                .font(.system(size: 45))
-                                .zIndex(2)
-                                .onTapGesture {
-                                    isSelectingSticker = true
+                        if viewModel.emotion != "null" {
+                            ZStack(alignment: .topTrailing) {
+                                Image(uiImage: viewModel.sticker ?? UIImage())
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 61)
+                                Image(systemName: viewModel.emotion)
+                            }
+                            .onTapGesture {
+                                if viewModel.isNotMyPost {
+                                    isSelectingSticker.toggle()
                                 }
+                            }
+                            .zIndex(2)
                         } else {
-                            Image(systemName: "face.smiling")
-                                .font(.system(size: 45))
-                                .foregroundStyle(Color.pink)
-                                .zIndex(2)
-                                .onTapGesture {
-                                    isSelectingSticker = false
-                                    isStickerExist = false
-                                }
-                        }
-                        
-                        if isStickerExist {
-                            if let sticker = viewModel.sticker {
-                                ZStack(alignment: .topTrailing) {
-                                    Image(uiImage: sticker)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 61)
-                                    Image(systemName: emotion)
-                                }
-                                .zIndex(3)
-                                .offset(x: -200)
-                            } else {
+                            if viewModel.isNotMyPost {
                                 Image(systemName: "smiley")
                                     .font(.system(size: 40))
                                     .foregroundColor(.gray)
-                                    .zIndex(3)
-                                    .offset(x: -200)
+                                    .zIndex(2)
+                                    .onTapGesture {
+                                        isSelectingSticker.toggle()
+                                    }
                             }
                         }
                     }
@@ -172,9 +165,13 @@ struct FeedView: View {
                         Image(systemName: "heart.fill")
                     }
                     .onTapGesture {
-                        emotion = "heart.fill"
-                        isStickerExist = true
+                        if viewModel.emotion != "heart.fill" {
+                            viewModel.emotion = "heart.fill"
+                        } else {
+                            viewModel.emotion = "null"
+                        }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                     
                     ZStack(alignment: .topTrailing) {
@@ -191,9 +188,13 @@ struct FeedView: View {
                         Image(systemName: "drop.fill")
                     }
                     .onTapGesture {
-                        emotion = "drop.fill"
-                        isStickerExist = true
+                        if viewModel.emotion != "drop.fill" {
+                            viewModel.emotion = "drop.fill"
+                        } else {
+                            viewModel.emotion = "null"
+                        }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                     
                     ZStack(alignment: .topTrailing) {
@@ -210,9 +211,13 @@ struct FeedView: View {
                         Image(systemName: "heart.badge.bolt.fill")
                     }
                     .onTapGesture {
-                        emotion = "heart.badge.bolt.fill"
-                        isStickerExist = true
+                        if viewModel.emotion != "heart.badge.bolt.fill" {
+                            viewModel.emotion = "heart.badge.bolt.fill"
+                        } else {
+                            viewModel.emotion = "null"
+                        }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                     
                     ZStack(alignment: .topTrailing) {
@@ -229,9 +234,13 @@ struct FeedView: View {
                         Image(systemName: "eyes.inverse")
                     }
                     .onTapGesture {
-                        emotion = "eyes.inverse"
-                        isStickerExist = true
+                        if viewModel.emotion != "eyes.inverse" {
+                            viewModel.emotion = "eyes.inverse"
+                        } else {
+                            viewModel.emotion = "null"
+                        }
                         isSelectingSticker = false
+                        viewModel.updateStickerData()
                     }
                 }
             }

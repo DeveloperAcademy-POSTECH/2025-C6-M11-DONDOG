@@ -19,12 +19,7 @@ struct AuthView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            CustomNavigationBar(leadingType: .back(action: {
-                
-                //:: 추후 수정 디자인피드백4
-                !viewModel.isCodeSent ? coordinator.pop() : print("백이 아니라 iscodesent 취소되도록 수정")
-                
-            }), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
+            CustomNavigationBar(leadingType: .back(action: { coordinator.pop() }), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
             
             Spacer()
                 .frame(height: 104)

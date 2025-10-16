@@ -16,7 +16,7 @@ struct CaptionView: View {
     @State private var isFrontImageOnTop = true
     
     var body: some View {
-        ZStack{
+        ZStack(alignment: .center){
             VStack(spacing: 20) {
                 // 상단 타이틀
                 HStack {
@@ -29,50 +29,27 @@ struct CaptionView: View {
                             .foregroundColor(.black)
                     }
                 }
-                .padding()
-     
-                ZStack {
+                .padding(20)
                     if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
-                        polaroidView(
-                            image: backImage,
-                            label: "후면",
-                            isFlipped: !isFrontImageOnTop
-                        )
-                        .rotationEffect(.degrees(-5))
-                        .offset(x: -20, y: -10)
-                        .zIndex(isFrontImageOnTop ? 0 : 1)
-                        .onTapGesture {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                isFrontImageOnTop.toggle()
-                            }
+                        HStack{
+                            Spacer()
+                            PolaroidSetView(frontImage: frontImage, backImage: backImage, nickname: "", createdAt: "", caption: "")
+                                .allowsHitTesting(true)
+                                .padding(.trailing, 30)
                         }
-
-                        polaroidView(
-                            image: frontImage,
-                            label: "전면",
-                            isFlipped: isFrontImageOnTop
-                        )
-                        .rotationEffect(.degrees(5))
-                        .offset(x: 20, y: 10)
-                        .zIndex(isFrontImageOnTop ? 1 : 0)
-                        .onTapGesture {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                isFrontImageOnTop.toggle()
-                            }
-                        }
+                        .padding(.top, 103)
                     }
-                }
-                .padding()
                 
                 VStack(alignment: .leading, spacing: 15) {
-                    Text(viewModel.caption.isEmpty ? "눌러서 캡션 작성하기" : viewModel.caption)
+                    Text(viewModel.caption.isEmpty ? "눌러서 캡션 남기기..." : viewModel.caption)
                         .onTapGesture {
                             isShowCaptionEditor = true
                             isCaptionFocused = true
                         }
-                    .padding(.vertical, 8)
-                    .foregroundStyle(viewModel.caption.isEmpty ? Color.gray : Color.black)
-                    .opacity(isShowCaptionEditor ? 0 : 1)
+                        .padding(.vertical, 8)
+                        .font(.subtitleMedium20)
+                        .foregroundStyle(viewModel.caption.isEmpty ? .ddGray600 : .ddBlack)
+                        .opacity(isShowCaptionEditor ? 0 : 1)
                     
                     TextField("", text: $viewModel.caption)
                         .frame(width: 0, height: 0)
@@ -85,50 +62,52 @@ struct CaptionView: View {
                             }
                         }
                         .onSubmit {
-                                isShowCaptionEditor = false
-                                isCaptionFocused = false
-                            }
+                            isShowCaptionEditor = false
+                            isCaptionFocused = false
+                        }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 20)
                 
                 Spacer()
+                    .frame(height: 20)
                 
-                Button(action: {
-                    print("📤 업로드 버튼 클릭")
+                Button{
                     viewModel.uploadPost()
-                }) {
+                }label: {
                     if viewModel.isUploading {
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
                     } else {
-                        Text("업로드하기")
-                            .font(.headline)
-                            .foregroundColor(.white)
+                        Text("업로드")
+                            .font(.bodyRegular18)
+                            .foregroundColor(.ddWhite)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 50)
+                            .frame(height: 52)
                     }
                 }
-                .background(viewModel.isUploading ? Color.gray : Color.blue)
-                .cornerRadius(10)
+                .background(viewModel.isUploading ? .ddGray600 : .ddPrimaryBlue)
+                .cornerRadius(12)
                 .disabled(viewModel.isUploading)
-                .padding(.horizontal)
-                .padding(.bottom, 30)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 8)
                 .onChange(of: viewModel.isUploading) { newValue in
                     if newValue == false{
                         onUploadComplete()
                     }
                 }
             }
+            //MARK: -- 캡션 남길 때
             if isShowCaptionEditor {
                 ZStack{
                     Color.black
-                        .opacity(0.3)
+                        .opacity(0.75)
                     VStack{
                         Spacer()
-                        Text(viewModel.caption.isEmpty ? "눌러서 캡션 작성하기" : viewModel.caption)
-                            .foregroundStyle(viewModel.caption.isEmpty ? Color.gray : Color.white)
+                        Text(viewModel.caption.isEmpty ? "눌러서 캡션 남기기..." : viewModel.caption)
+                            .font(.subtitleMedium20)
+                            .foregroundStyle(viewModel.caption.isEmpty ? .ddGray600 : .ddWhite)
                         if !viewModel.caption.isEmpty {
                             Text("\(viewModel.caption.count)/8")
                         }
@@ -142,10 +121,15 @@ struct CaptionView: View {
                     }
             }
         }
-        
-        .background(Color.white)
+        .background{
+            ZStack{
+                Color.ddWhite
+                LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
+                    .opacity(0.35)
+            }.ignoresSafeArea()
+        }
     }
-
+    
     private func polaroidView(image: UIImage, label: String, isFlipped: Bool) -> some View {
         VStack(spacing: 0) {
             Image(uiImage: image)
@@ -162,12 +146,10 @@ struct CaptionView: View {
             .frame(width: 204, height: 40)
             .background(Color.white)
         }
-        .background(Color.white)
-        .cornerRadius(4)
-        .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
     }
 }
 
 #Preview {
     CaptionView(viewModel: CaptionViewModel(frontImage: UIImage(named: "test1"), backImage: UIImage(named: "test2")), onCancel: {}, onUploadComplete: {})
+        .ignoresSafeArea(.keyboard)
 }

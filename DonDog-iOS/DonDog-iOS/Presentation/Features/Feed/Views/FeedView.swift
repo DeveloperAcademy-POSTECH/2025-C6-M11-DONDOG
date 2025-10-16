@@ -9,6 +9,7 @@ import FirebaseAuth
 import PhotosUI
 import SwiftUI
 import UIKit
+import FirebaseCore
 
 struct FeedView: View {
     @EnvironmentObject var coordinator: AppCoordinator
@@ -22,6 +23,7 @@ struct FeedView: View {
     
     var body: some View {
         VStack(spacing: 0){
+            //네비게이션 바
             HStack{
                 DisclosureGroup("디버깅 용") {
                     HStack{
@@ -74,7 +76,7 @@ struct FeedView: View {
                         .padding(.trailing, 20)
                 }
             }
-            
+            //날짜표시
             HStack {
                 Spacer()
                 Text(DataUtils.formatDate(.now, format: "MM월 dd일 E요일"))
@@ -83,58 +85,51 @@ struct FeedView: View {
                 Spacer()
             }
             .padding(.top, 24)
-            
-            if let frontImage = viewModel.todayFrontImage, let backImage = viewModel.todayBackImage {
-                VStack(spacing: 10) {
-                    ZStack(alignment: .bottomTrailing) {
-                        polaroidView(
-                            image: backImage,
-                            label: "후면",
-                            isFlipped: !isFrontImageOnTop
+            //피드
+            if let frontImage = viewModel.todayFrontImage, 
+               let backImage = viewModel.todayBackImage,
+               let currentPost = viewModel.currentPost {
+                ZStack{
+                    HStack{
+                        Spacer()
+                        PolaroidSetView(
+                            frontImage: frontImage,
+                            backImage: backImage,
+                            nickname: viewModel.currentNickname,
+                            createdAt: DataUtils.formatDate(currentPost.createdAt.dateValue(), format: "a hh:mm"),
+                            caption: currentPost.caption
                         )
-                        .rotationEffect(.degrees(-5))
-                        .offset(x: -20, y: -10)
-                        .zIndex(isFrontImageOnTop ? 0 : 1)
-                        polaroidView(
-                            image: frontImage,
-                            label: "전면",
-                            isFlipped: isFrontImageOnTop
-                        )
-                        .rotationEffect(.degrees(5))
-                        .offset(x: 20, y: 10)
-                        .zIndex(isFrontImageOnTop ? 1 : 0)
-                        .onTapGesture {
-                            coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
+                        .allowsHitTesting(true)
+                    }.padding(.top, 103)
+                    .padding(.trailing, 26)
+                    if viewModel.emotion != "null" {
+                        ZStack(alignment: .topTrailing) {
+                            Image(uiImage: viewModel.sticker ?? UIImage())
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 61)
+                            Image(systemName: viewModel.emotion)
                         }
-                        
-                        if viewModel.emotion != "null" {
-                            ZStack(alignment: .topTrailing) {
-                                Image(uiImage: viewModel.sticker ?? UIImage())
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 61)
-                                Image(systemName: viewModel.emotion)
+                        .onTapGesture {
+                            if viewModel.isNotMyPost {
+                                isSelectingSticker.toggle()
                             }
-                            .onTapGesture {
-                                if viewModel.isNotMyPost {
+                        }
+                        .zIndex(2)
+                    } else {
+                        if viewModel.isNotMyPost {
+                            Image(systemName: "smiley")
+                                .font(.system(size: 40))
+                                .foregroundColor(.gray)
+                                .zIndex(2)
+                                .onTapGesture {
                                     isSelectingSticker.toggle()
                                 }
-                            }
-                            .zIndex(2)
-                        } else {
-                            if viewModel.isNotMyPost {
-                                Image(systemName: "smiley")
-                                    .font(.system(size: 40))
-                                    .foregroundColor(.gray)
-                                    .zIndex(2)
-                                    .onTapGesture {
-                                        isSelectingSticker.toggle()
-                                    }
-                            }
                         }
                     }
                 }
-            } else {
+               
+            } else { // 오늘 찍은 사진이 없을 때
                 VStack(spacing: 10){
                     Image(systemName: "photo.on.rectangle.angled")
                         .resizable()
@@ -145,8 +140,8 @@ struct FeedView: View {
                         .multilineTextAlignment(.center)
                         .font(.bodyMedium16)
                         .foregroundStyle(.ddSecondaryBlue)
-                }.padding(.top, 220)
-                    
+                }
+                .padding(.top, 220)
             }
             
             if isSelectingSticker {
@@ -244,6 +239,7 @@ struct FeedView: View {
                     }
                 }
             }
+            Spacer()
             Button{
                 showCameraView = true
             }label: {
@@ -255,9 +251,8 @@ struct FeedView: View {
                         .foregroundColor(.ddPrimaryBlue)
                         .frame(width: 60, height: 60)
                 }
-            }.padding(.top, 278)
-            
-            Spacer()
+            }
+            .padding(.bottom, 22)
         }
         .background{
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)

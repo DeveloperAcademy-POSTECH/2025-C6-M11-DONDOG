@@ -15,6 +15,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var selectedBackImage: UIImage?
     @Published var postsList: [PostData] = []
     @Published var images: [PostData] = []
+    @Published var todayPost: PostData?
     @Published var todayFrontImage: UIImage?
     @Published var todayBackImage: UIImage?
     @Published var isLoading = false
@@ -28,6 +29,8 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     
     @Published var stickerImage: UIImage?
     @Published var sticker: UIImage?
+    @Published var currentPost: PostData?
+    @Published var currentNickname: String = ""
     @Published var frame: UIImage?
     @Published var emotion: String = "null"
     @Published var isNotMyPost = false
@@ -232,7 +235,9 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
   
                             if let firstPost = todayPosts.first {
                                 self?.selectedPostId = firstPost.postId
+                                self?.currentPost = firstPost
                                 self?.downloadTodayImages(from: firstPost)
+                                self?.getUserName(uid: firstPost.uid)
                             } else {
                                 print("📭 오늘 찍은 게시물이 없습니다")
                             }
@@ -285,6 +290,33 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         group.notify(queue: .main) {
             print("🎉 오늘 이미지 다운로드 완료")
+        }
+    }
+    
+    // 사용자 이름 가져오는 함수
+    func getUserName(uid: String) {
+        db.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
+            if let error = error {
+                print("사용자 이름 가져오기 실패: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self?.currentNickname = "익명"
+                }
+                return
+            }
+            
+            guard let data = snapshot?.data(),
+                  let name = data["name"] as? String else {
+                print("사용자 이름 필드 없음")
+                DispatchQueue.main.async {
+                    self?.currentNickname = "익명"
+                }
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self?.currentNickname = name
+                print("✅ 사용자 이름 가져오기 성공: \(name)")
+            }
         }
     }
 }

@@ -57,27 +57,27 @@ struct CustomTextField: View {
                                 onCommit?()
                                 isFocused = false
                             }
-                            .onChange(of: text) { newValue in
+                            .onChange(of: text) { _, newValue in
                                 var value = newValue.filter { !$0.isWhitespace }
                                                                
-                                                               if contentType == .telephoneNumber {
-                                                                   let digits = value.filter { $0.isNumber }
-                                                                   let limited = String(digits.prefix(10))
-                                                                   var formatted = ""
-                                                                   for (i, ch) in limited.enumerated() {
-                                                                       if i == 2 || i == 6 { formatted.append("-") }
-                                                                       formatted.append(ch)
-                                                                   }
-                                                                   value = formatted
-                                                               } else if keyboard == .numberPad {
-                                                                   value = value.filter { $0.isNumber }
-                                                               }
+                                if contentType == .telephoneNumber {
+                                    let digits = value.filter { $0.isNumber }
+                                    let limited = String(digits.prefix(10))
+                                    var formatted = ""
+                                    for (i, ch) in limited.enumerated() {
+                                        if i == 2 || i == 6 { formatted.append("-") }
+                                        formatted.append(ch)
+                                    }
+                                    value = formatted
+                                } else if keyboard == .numberPad {
+                                    value = value.filter { $0.isNumber }
+                                }
 
                                 if value != text {
                                     text = value
                                 }
                             }
-                            .onChange(of: isFocused) { focused in
+                            .onChange(of: isFocused) { _, focused in
                                 if !focused {
                                     onCommit?()
                                 }

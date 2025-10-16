@@ -60,5 +60,4 @@ struct SettingView: View {
 
 #Preview {
     SettingView(viewModel: SettingViewModel())
-        .environmentObject(AppCoordinator(factory: ModuleFactory()))
 }

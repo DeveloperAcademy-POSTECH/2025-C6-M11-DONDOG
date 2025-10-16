@@ -120,5 +120,4 @@ struct AuthView: View {
 
 #Preview {
     AuthView(viewModel: AuthViewModel())
-        .environmentObject(AppCoordinator(factory: ModuleFactory()))
 }

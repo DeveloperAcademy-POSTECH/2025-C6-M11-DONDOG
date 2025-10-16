@@ -21,14 +21,23 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var isLoading = false
     @Published var uploadStatus: String = ""
     @Published var currentRoomId: String = ""
-    @Published var selectedPostId: String = ""
+    @Published var selectedPostId: String = "" {
+        didSet {
+            checkIsNotMyPost()
+        }
+    }
+    
+    @Published var stickerImage: UIImage?
     @Published var sticker: UIImage?
     @Published var currentPost: PostData?
     @Published var currentNickname: String = ""
-    
+    @Published var frame: UIImage?
+    @Published var emotion: String = "null"
+    @Published var isNotMyPost = false
     
     private let photoSaveService = PhotoSaveService.shared
     private let db = Firestore.firestore()
+    private let imageUtils = ImageUtils()
     
     init() {
         loadTodayPosts()
@@ -45,34 +54,125 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
         }
         
-        self.getStickerImage()
+        self.getStickerData()
     }
     
-    func getStickerImage() {
-        if let uid = Auth.auth().currentUser?.uid {
-            db.collection("Users").document(uid).getDocument { snapshot, error in
-                if let error = error {
-                    print("recentSticker 불러오기 실패: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let data = snapshot?.data(),
-                      let stickerURLString = data["recentSticker"] as? String,
-                      let url = URL(string: stickerURLString) else {
-                    print("recentSticker 필드 없음 또는 형식 불일치")
-                    return
-                }
+    func checkIsNotMyPost() {
+        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+            print("currentRoomId 또는 selectedPostId가 비어 있음")
+            return
+        }
+        
+        let postRef = db.collection("Rooms")
+            .document(currentRoomId)
+            .collection("posts")
+            .document(selectedPostId)
 
-                PhotoSaveService.shared.downloadImage(from: url.absoluteString) { [weak self] result in
-                    switch result {
-                    case .success(let image):
-                        DispatchQueue.main.async {
-                            self?.sticker = image
+        postRef.getDocument { snapshot, error in
+            if let error = error {
+                print("문서 조회 실패: \(error.localizedDescription)")
+                return
+            }
+
+            guard let data = snapshot?.data(),
+                  let uid = data["uid"] as? String,
+                  let currentUid = Auth.auth().currentUser?.uid else {
+                return
+            }
+
+            self.isNotMyPost = uid != currentUid
+        }
+    }
+    
+    func getStickerData() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        db.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
+            if let error = error {
+                print("recentPostId 불러오기 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            guard
+                let self = self,
+                let data = snapshot?.data(),
+                let recentPostId = data["recentPostId"] as? String,
+                !recentPostId.isEmpty
+            else {
+                print("recentPostId 없음")
+                return
+            }
+            
+            self.photoSaveService.getCurrentUserRoomId { result in
+                switch result {
+                case .success(let roomId):
+                    let postRef = self.db.collection("Rooms").document(roomId)
+                        .collection("posts").document(recentPostId)
+                    
+                    postRef.getDocument { snapshot, error in
+                        if let error = error {
+                            print("recentPostId 문서 조회 실패: \(error.localizedDescription)")
+                            return
                         }
-                    case .failure(let error):
-                        print("recentSticker 다운로드 실패: \(error.localizedDescription)")
+                        
+                        guard
+                            let postData = snapshot?.data(),
+                            let imageUrlString = postData["frontImageURL"] as? String
+                        else {
+                            print("frontImageURL 없음")
+                            return
+                        }
+                        
+                        PhotoSaveService.shared.downloadImage(from: imageUrlString) { [weak self] result in
+                            switch result {
+                            case .success(let image):
+                                DispatchQueue.main.async {
+                                    self?.stickerImage = image
+                                    print("recentSticker 이미지 로드 성공")
+                                    
+                                    self?.makeStickerAndMask(with: image)
+                                    
+                                    self?.emotion = postData["stickerType"] as? String ?? "null"
+                                }
+                            case .failure(let error):
+                                print("이미지 다운로드 실패: \(error.localizedDescription)")
+                            }
+                        }
                     }
+                    
+                case .failure(let error):
+                    print("roomId 불러오기 실패: \(error.localizedDescription)")
                 }
+            }
+        }
+    }
+    
+    func makeStickerAndMask(with stickerImage: UIImage) {
+        frame = imageUtils.makeMask(from: stickerImage)
+        sticker = imageUtils.makeSticker(with: stickerImage)
+    }
+    
+    func updateStickerData() {
+        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+            print("currentRoomId 또는 selectedPostId가 비어 있어 업데이트 불가")
+            return
+        }
+
+        let postRef = db.collection("Rooms")
+            .document(currentRoomId)
+            .collection("posts")
+            .document(selectedPostId)
+
+        let batch = db.batch()
+        batch.updateData([
+            "stickerPostId": selectedPostId,
+            "stickerType": emotion,
+            "updatedAt": FieldValue.serverTimestamp()
+        ], forDocument: postRef)
+
+        batch.commit { error in
+            if let error = error {
+                print("업데이트 실패: \(error.localizedDescription)")
             }
         }
     }

@@ -5,16 +5,30 @@
 //  Created by 이주현 on 10/4/25.
 //
 
+import FirebaseAppCheck
 import FirebaseAuth
 import FirebaseCore
 import FirebaseMessaging
 import SwiftUI
 import UserNotifications
 
+class YourAppCheckProviderFactory: NSObject, AppCheckProviderFactory {
+    func createProvider(with app: FirebaseApp) -> AppCheckProvider? {
+        if #available(iOS 14.0, *) {
+            return AppAttestProvider(app: app)
+        } else {
+            return DeviceCheckProvider(app: app)
+        }
+    }
+}
+
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        let providerFactory = YourAppCheckProviderFactory()
+        AppCheck.setAppCheckProviderFactory(providerFactory)
+        
         FirebaseApp.configure()
         // 알림 권한 요청
         UNUserNotificationCenter.current().delegate = self

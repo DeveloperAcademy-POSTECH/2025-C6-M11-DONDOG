@@ -13,6 +13,7 @@ struct PolaroidFrame: View {
     let createdAt: String
     let caption: String
     let isTopImage: Bool //zIndex로 위치 변환을 위한 변수
+    let onStickerButtonTapped: (() -> Void)?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -46,7 +47,7 @@ struct PolaroidFrame: View {
                 Spacer()
                 if caption != ""{
                     Button{
-                        //스티커 로직
+                        onStickerButtonTapped?()
                     }label: {
                         Image(systemName: "face.dashed")
                             .resizable()
@@ -76,10 +77,11 @@ struct PolaroidSetView: View {
     let nickname: String
     let createdAt: String
     let caption: String
+    let onStickerButtonTapped: (() -> Void)?
     
     var body: some View {
         ZStack {
-            PolaroidFrame(image: backImage, nickname: "", createdAt: "", caption: "", isTopImage: !isTopImage)
+            PolaroidFrame(image: backImage, nickname: "", createdAt: "", caption: "", isTopImage: !isTopImage, onStickerButtonTapped: nil)
                 .onTapGesture {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         isTopImage.toggle()
@@ -89,7 +91,7 @@ struct PolaroidSetView: View {
                 .rotationEffect(.degrees(8))
                 .offset(x: -50 ,y: -57)
             
-            PolaroidFrame(image: frontImage, nickname: nickname, createdAt: createdAt, caption: caption, isTopImage: isTopImage)
+            PolaroidFrame(image: frontImage, nickname: nickname, createdAt: createdAt, caption: caption, isTopImage: isTopImage, onStickerButtonTapped: onStickerButtonTapped)
                 .onTapGesture {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         isTopImage.toggle()
@@ -101,5 +103,5 @@ struct PolaroidSetView: View {
 }
 
 #Preview(body: {
-    PolaroidSetView(frontImage: UIImage(named: "test1")!, backImage: UIImage(named: "test2")!, nickname: "이토", createdAt: "오전 04:45", caption: "하이디라오 짱맛")
+    PolaroidSetView(frontImage: UIImage(named: "test1")!, backImage: UIImage(named: "test2")!, nickname: "이토", createdAt: "오전 04:45", caption: "하이디라오 짱맛", onStickerButtonTapped: nil)
 })

@@ -19,6 +19,7 @@ protocol ModuleFactoryProtocol {
     func makeSettingView() -> SettingView
     func makeEditProfileView() -> EditProfileView
     func makeArchiveView(in roomId: String) -> ArchiveView
+    func makeArchiveDetailView(in roomId: String, date: Date) -> ArchiveDetailView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -81,6 +82,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makeArchiveView(in roomId: String) -> ArchiveView {
         let viewModel = ArchiveViewModel(roomId: roomId)
         let view = ArchiveView(viewModel: viewModel)
+        return view
+    }
+    
+    func makeArchiveDetailView(in roomId: String, date: Date) -> ArchiveDetailView {
+        let viewModel = ArchiveDetailViewModel(roomId: roomId, date: date)
+        let view = ArchiveDetailView(viewModel: viewModel)
         return view
     }
 }

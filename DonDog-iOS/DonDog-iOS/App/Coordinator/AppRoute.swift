@@ -18,4 +18,5 @@ enum AppRoute: Hashable {
     case setting
     case editprofile
     case archive(roomId: String)
+    case archiveDetail(roomId: String, date: Date)
 }

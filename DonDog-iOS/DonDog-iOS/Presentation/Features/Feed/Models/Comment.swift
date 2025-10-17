@@ -10,30 +10,26 @@ import FirebaseFirestore
 struct Comment: Identifiable {
     var id: String
     var uid: String
-    var author: String
     var text: String
-    var timestamp: Date
+    var createdAt: Date
 
     init?(doc: QueryDocumentSnapshot) {
         let data = doc.data()
         guard let uid = data["uid"] as? String,
-              let author = data["author"] as? String,
-              let content = data["content"] as? String,
-              let timestamp = data["timestamp"] as? Timestamp else {
+              let text = data["text"] as? String,
+              let createdAt = data["createdAt"] as? Timestamp else {
             return nil
         }
         self.id = doc.documentID
         self.uid = uid
-        self.author = author
-        self.text = content
-        self.timestamp = timestamp.dateValue()
+        self.text = text
+        self.createdAt = createdAt.dateValue()
     }
 
-    init(uid: String, author: String, content: String, timestamp: Timestamp) {
-        self.id = ""
+    init(uid: String, text: String, createdAt: Date = Date()) {
+        self.id = UUID().uuidString
         self.uid = uid
-        self.author = author
-        self.text = content
-        self.timestamp = timestamp.dateValue()
+        self.text = text
+        self.createdAt = createdAt
     }
 }

@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import FirebaseCore
 
 struct PostContentView: View {
     @StateObject var viewModel: PostViewModel
     @State private var image: UIImage = UIImage()
     @State private var showingFront = true
+    @State private var authorName:String = "익명"
     
     var body: some View {
         VStack(alignment: .leading, spacing: 23) {
@@ -44,50 +46,9 @@ struct PostContentView: View {
                 .padding(.bottom, 38)
             }
             
-            List {
-                ForEach(viewModel.comments.filter { $0.uid == viewModel.currentUser }) { comment in
-                    VStack(alignment: .leading, spacing: 7) {
-                        HStack(spacing: 20) {
-                            Text(comment.author)
-                                .font(.system(size: 18))
-                                .foregroundStyle(.gray)
-                            Text(DataUtils.formatDate(comment.timestamp, format: "HH:mm"))
-                                .font(.system(size: 18))
-                                .foregroundStyle(.gray)
-                        }
-                        
-                        Text(comment.text)
-                            .font(.system(size: 18))
-                            .foregroundStyle(.gray)
-                    }
-                    .padding(.vertical, 5)
-                }
-                .onDelete { indexSet in
-                    for index in indexSet {
-                        let comment = viewModel.comments.filter { $0.uid == viewModel.currentUser }[index]
-                        viewModel.deleteComment(of: comment)
-                    }
-                }
-                
-                ForEach(viewModel.comments.filter { $0.uid != viewModel.currentUser }) { comment in
-                    VStack(alignment: .leading, spacing: 7) {
-                        HStack(spacing: 20) {
-                            Text(comment.author)
-                                .font(.system(size: 18))
-                                .foregroundStyle(.gray)
-                            Text(DataUtils.formatDate(comment.timestamp, format: "HH:mm"))
-                                .font(.system(size: 18))
-                                .foregroundStyle(.gray)
-                        }
-                        
-                        Text(comment.text)
-                            .font(.system(size: 18))
-                            .foregroundStyle(.gray)
-                    }
-                    .padding(.vertical, 5)
-                }
+            ForEach(viewModel.comments) { comment in
+                CommentView(comment: comment, viewModel: viewModel)
             }
-            .listStyle(.plain)
         }
     }
 }

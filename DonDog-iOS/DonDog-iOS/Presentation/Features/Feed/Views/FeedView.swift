@@ -106,7 +106,9 @@ struct FeedView: View {
                                         caption: post.caption,
                                         onStickerButtonTapped: {
                                             showStickerSheet = true
-                                        }
+                                        },
+                                        selectedStickerEmotion: viewModel.selectedStickerEmotion,
+                                        stickerImage: viewModel.sticker
                                     )
                                     .allowsHitTesting(true)
                                     .scaleEffect(index == viewModel.currentPostIndex ? 1.0 : 0.95)
@@ -126,31 +128,6 @@ struct FeedView: View {
                             viewModel.updateCurrentPost(at: newIndex)
                         }
                     }
-//                    if viewModel.emotion != "null" {
-//                        ZStack(alignment: .topTrailing) {
-//                            Image(uiImage: viewModel.sticker ?? UIImage())
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(width: 61)
-//                            Image(systemName: viewModel.emotion)
-//                        }
-//                        .onTapGesture {
-//                            if viewModel.isNotMyPost {
-//                                isSelectingSticker.toggle()
-//                            }
-//                        }
-//                        .zIndex(2)
-//                    } else {
-//                        if viewModel.isNotMyPost {
-//                            Image(systemName: "smiley")
-//                                .font(.system(size: 40))
-//                                .foregroundColor(.gray)
-//                                .zIndex(2)
-//                                .onTapGesture {
-//                                    isSelectingSticker.toggle()
-//                                }
-//                        }
-//                    }
                     if viewModel.allTodayPosts.count > 1 {
                         HStack(spacing: 8) {
                             ForEach(0..<viewModel.allTodayPosts.count, id: \.self) { index in
@@ -177,101 +154,6 @@ struct FeedView: View {
                 }
                 .padding(.top, 220)
             }
-//            if isSelectingSticker {
-//                HStack(spacing: 29) {
-//                    ZStack(alignment: .topTrailing) {
-//                        if let sticker = viewModel.sticker {
-//                            Image(uiImage: sticker)
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(width: 37)
-//                        } else {
-//                            Image(systemName: "smiley")
-//                                .font(.system(size: 40))
-//                                .foregroundColor(.gray)
-//                        }
-//                        Image(systemName: "heart.fill")
-//                    }
-//                    .onTapGesture {
-//                        if viewModel.emotion != "heart.fill" {
-//                            viewModel.emotion = "heart.fill"
-//                        } else {
-//                            viewModel.emotion = "null"
-//                        }
-//                        isSelectingSticker = false
-//                        viewModel.updateStickerData()
-//                    }
-//                    
-//                    ZStack(alignment: .topTrailing) {
-//                        if let sticker = viewModel.sticker {
-//                            Image(uiImage: sticker)
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(width: 37)
-//                        } else {
-//                            Image(systemName: "smiley")
-//                                .font(.system(size: 40))
-//                                .foregroundColor(.gray)
-//                        }
-//                        Image(systemName: "drop.fill")
-//                    }
-//                    .onTapGesture {
-//                        if viewModel.emotion != "drop.fill" {
-//                            viewModel.emotion = "drop.fill"
-//                        } else {
-//                            viewModel.emotion = "null"
-//                        }
-//                        isSelectingSticker = false
-//                        viewModel.updateStickerData()
-//                    }
-//                    
-//                    ZStack(alignment: .topTrailing) {
-//                        if let sticker = viewModel.sticker {
-//                            Image(uiImage: sticker)
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(width: 37)
-//                        } else {
-//                            Image(systemName: "smiley")
-//                                .font(.system(size: 40))
-//                                .foregroundColor(.gray)
-//                        }
-//                        Image(systemName: "heart.badge.bolt.fill")
-//                    }
-//                    .onTapGesture {
-//                        if viewModel.emotion != "heart.badge.bolt.fill" {
-//                            viewModel.emotion = "heart.badge.bolt.fill"
-//                        } else {
-//                            viewModel.emotion = "null"
-//                        }
-//                        isSelectingSticker = false
-//                        viewModel.updateStickerData()
-//                    }
-//                    
-//                    ZStack(alignment: .topTrailing) {
-//                        if let sticker = viewModel.sticker {
-//                            Image(uiImage: sticker)
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(width: 37)
-//                        } else {
-//                            Image(systemName: "smiley")
-//                                .font(.system(size: 40))
-//                                .foregroundColor(.gray)
-//                        }
-//                        Image(systemName: "eyes.inverse")
-//                    }
-//                    .onTapGesture {
-//                        if viewModel.emotion != "eyes.inverse" {
-//                            viewModel.emotion = "eyes.inverse"
-//                        } else {
-//                            viewModel.emotion = "null"
-//                        }
-//                        isSelectingSticker = false
-//                        viewModel.updateStickerData()
-//                    }
-//                }
-//            }
             Spacer()
             Button{
                 showCameraView = true
@@ -301,11 +183,17 @@ struct FeedView: View {
         }
         .sheet(isPresented: $showStickerSheet) {
             if let sticker = viewModel.sticker {
-                StickerSheetView(stickerImage:  UIImage(named: "stickerTest")!)
-                    .presentationDetents([.height(400)])
-                    .presentationDragIndicator(.visible)
-                    .background(Color.ddWhite)
-            }else{
+                StickerSheetView(
+                    stickerImage: UIImage(named: "stickerTest")!,
+                    currentSelectedEmotion: viewModel.selectedStickerEmotion,
+                    onStickerSelected: { emotion in
+                        viewModel.selectedStickerEmotion = emotion
+                    }
+                )
+                .presentationDetents([.height(400)])
+                .presentationDragIndicator(.visible)
+                .background(Color.ddWhite)
+            } else {
                 Text("스티커를 만들 사진이 없어요")
             }
         }

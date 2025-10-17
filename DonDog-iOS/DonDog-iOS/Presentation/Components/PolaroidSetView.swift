@@ -14,6 +14,25 @@ struct PolaroidFrame: View {
     let caption: String
     let isTopImage: Bool //zIndex로 위치 변환을 위한 변수
     let onStickerButtonTapped: (() -> Void)?
+    let selectedStickerEmotion: String?
+    let stickerImage: UIImage?
+    
+    private func borderColor(for emotion: String) -> UIColor {
+        switch emotion {
+        case "사랑해":
+            return .ddFeelingPink
+        case "멋지다":
+            return .ddFeelingYellow
+        case "뭐야?":
+            return .ddFeelingGreen
+        case "화나":
+            return .ddFeelingOrange
+        case "슬퍼":
+            return .ddFeelingBlue
+        default:
+            return .ddGray700
+        }
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -49,10 +68,19 @@ struct PolaroidFrame: View {
                     Button{
                         onStickerButtonTapped?()
                     }label: {
-                        Image(systemName: "face.dashed")
-                            .resizable()
-                            .frame(width: 32, height: 32)
-                            .foregroundStyle(.ddSecondaryBlue)
+                        if let emotion = selectedStickerEmotion, let sticker = stickerImage {
+                            // 선택된 스티커 표시
+                            Image(uiImage: sticker.addBorder(thickness: 2, color: borderColor(for: emotion))!)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 32, height: 32)
+                        } else {
+                            // 기본 face.dashed 아이콘
+                            Image(systemName: "face.dashed")
+                                .resizable()
+                                .frame(width: 32, height: 32)
+                                .foregroundStyle(.ddSecondaryBlue)
+                        }
                     }
                 }
             }
@@ -78,30 +106,59 @@ struct PolaroidSetView: View {
     let createdAt: String
     let caption: String
     let onStickerButtonTapped: (() -> Void)?
+    let selectedStickerEmotion: String?
+    let stickerImage: UIImage?
     
     var body: some View {
         ZStack {
-            PolaroidFrame(image: backImage, nickname: "", createdAt: "", caption: "", isTopImage: !isTopImage, onStickerButtonTapped: nil)
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isTopImage.toggle()
-                    }
+            PolaroidFrame(
+                image: backImage,
+                nickname: "",
+                createdAt: "",
+                caption: "",
+                isTopImage: !isTopImage,
+                onStickerButtonTapped: nil,
+                selectedStickerEmotion: nil,
+                stickerImage: nil
+            )
+            .onTapGesture {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    isTopImage.toggle()
                 }
-                .zIndex(isTopImage ? 0 : 1)
-                .rotationEffect(.degrees(8))
-                .offset(x: -50 ,y: -57)
+            }
+            .zIndex(isTopImage ? 0 : 1)
+            .rotationEffect(.degrees(8))
+            .offset(x: -50 ,y: -57)
             
-            PolaroidFrame(image: frontImage, nickname: nickname, createdAt: createdAt, caption: caption, isTopImage: isTopImage, onStickerButtonTapped: onStickerButtonTapped)
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isTopImage.toggle()
-                    }
+            PolaroidFrame(
+                image: frontImage,
+                nickname: nickname,
+                createdAt: createdAt,
+                caption: caption,
+                isTopImage: isTopImage,
+                onStickerButtonTapped: onStickerButtonTapped,
+                selectedStickerEmotion: selectedStickerEmotion,
+                stickerImage: stickerImage
+            )
+            .onTapGesture {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    isTopImage.toggle()
                 }
-                .zIndex(isTopImage ? 1 : 0)
+            }
+            .zIndex(isTopImage ? 1 : 0)
         }
     }
 }
 
 #Preview(body: {
-    PolaroidSetView(frontImage: UIImage(named: "test1")!, backImage: UIImage(named: "test2")!, nickname: "이토", createdAt: "오전 04:45", caption: "하이디라오 짱맛", onStickerButtonTapped: nil)
+    PolaroidSetView(
+        frontImage: UIImage(named: "test1")!,
+        backImage: UIImage(named: "test2")!,
+        nickname: "이토",
+        createdAt: "오전 04:45",
+        caption: "하이디라오 짱맛",
+        onStickerButtonTapped: nil,
+        selectedStickerEmotion: "사랑해",
+        stickerImage: UIImage(named: "stickerTest")!
+    )
 })

@@ -26,7 +26,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             checkIsNotMyPost()
         }
     }
-    
     @Published var stickerImage: UIImage?
     @Published var sticker: UIImage?
     @Published var currentPost: PostData?
@@ -37,6 +36,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var frame: UIImage?
     @Published var emotion: String = "null"
     @Published var isNotMyPost = false
+    @Published var selectedStickerEmotion: String? = nil
     
     private let photoSaveService = PhotoSaveService.shared
     private let db = Firestore.firestore()

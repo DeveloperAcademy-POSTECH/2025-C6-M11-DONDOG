@@ -54,6 +54,7 @@
 		CAA62D022EA1E3FD00C60E05 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */; };
 		CAA62D032EA1E3FD00C60E05 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */; };
 		CAA62D042EA1E3FD00C60E05 /* KeyboardUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFE2EA1E3FD00C60E05 /* KeyboardUtils.swift */; };
+		CAA62D062EA1E57200C60E05 /* CustomPageIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62D052EA1E57200C60E05 /* CustomPageIndicator.swift */; };
 		CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */; };
 		CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */; };
 		CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */; };
@@ -120,6 +121,7 @@
 		CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		CAA62CFE2EA1E3FD00C60E05 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
 		CAA62CFF2EA1E3FD00C60E05 /* SwipeBackUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeBackUtils.swift; sourceTree = "<group>"; };
+		CAA62D052EA1E57200C60E05 /* CustomPageIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPageIndicator.swift; sourceTree = "<group>"; };
 		CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
 		CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootNavigationView.swift; sourceTree = "<group>"; };
@@ -254,6 +256,7 @@
 				8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */,
 				8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */,
 				CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */,
+				CAA62D052EA1E57200C60E05 /* CustomPageIndicator.swift */,
 				A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */,
 			);
 			path = Components;
@@ -664,6 +667,7 @@
 				61C9B19E2E9BEC130007C8F4 /* ArchiveView.swift in Sources */,
 				61C9B1A42E9BFC830007C8F4 /* ArchiveDay.swift in Sources */,
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
+				CAA62D062EA1E57200C60E05 /* CustomPageIndicator.swift in Sources */,
 				8BDF768B2E9F4086007F12BB /* CustomRoleButton.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
 				CAACD36C2EA0C1120057827D /* ArchiveDetailViewModel.swift in Sources */,

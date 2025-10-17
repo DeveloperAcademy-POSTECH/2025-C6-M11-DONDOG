@@ -89,6 +89,12 @@ struct AuthView: View {
         .padding(.horizontal, 20)
         .backHiddenSwipeEnabled()
         .dismissKeyboard()
-        
+        .alert("안내", isPresented: $viewModel.showPhoneMismatchAlert) {
+            Button("확인", role: .cancel) {
+                viewModel.userPhoneNumber = ""
+            }
+        } message: {
+            Text(viewModel.mismatchAlertText)
+        }
     }
 }

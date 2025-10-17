@@ -35,6 +35,9 @@ final class AuthViewModel: ObservableObject {
     
     @Published var isWithDraw: Bool = false
     
+    @Published var showPhoneMismatchAlert: Bool = false
+    @Published var mismatchAlertText: String = "가입한 전화번호가 아닙니다. 확인해 주세요"
+    
     init(isWithDraw: Bool = false) {
         self.isWithDraw = isWithDraw
     }
@@ -75,6 +78,16 @@ final class AuthViewModel: ObservableObject {
         let formattedDigitsWithCode = "+82" + formattedDigits
         print("서버로 보내는 전화번호: \(formattedDigitsWithCode)")
 
+        // 탈퇴 플로우일 때: 입력 번호가 현재 로그인 계정의 번호와 일치하는지 확인
+        if self.isWithDraw {
+            let currentPhoneE164 = Auth.auth().currentUser?.phoneNumber
+            if currentPhoneE164 != formattedDigitsWithCode {
+                self.mismatchAlertText = "가입한 전화번호가 아닙니다. 확인해 주세요"
+                self.showPhoneMismatchAlert = true
+                return
+            }
+        }
+
         self.isLoading = true
         self.message = ""
         self.phoneError = nil
@@ -103,7 +116,21 @@ final class AuthViewModel: ObservableObject {
                 }
                 self.isCodeSent = true
                 self.phoneError = nil
+                
+                self.coordinator?.authNumberShowWithdraw = false
+                
+                if self.isWithDraw {
+                    let currentPhoneE164 = Auth.auth().currentUser?.phoneNumber
+                    if currentPhoneE164 != formattedDigitsWithCode {
+                        self.mismatchAlertText = "가입한 전화번호가 아닙니다. 확인해 주세요"
+                        self.showPhoneMismatchAlert = true
+                        return
+                    }
+                    self.coordinator?.authNumberShowWithdraw = true
+                }
+                
                 self.coordinator?.push(.authNumber)
+                self.userPhoneNumber = ""
             }
         }
     }

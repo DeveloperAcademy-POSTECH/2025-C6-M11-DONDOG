@@ -20,6 +20,7 @@ final class AppCoordinator: ObservableObject {
     @Published var root: AppRoute = .feed
     @Published var inviteShowSentHint: Bool = false
     @Published var authShowWithdraw: Bool = false
+    @Published var authNumberShowWithdraw: Bool = false
     
     private var lastHandledDeepLink: String?
     private var lastHandledAt: Date?
@@ -81,7 +82,7 @@ final class AppCoordinator: ObservableObject {
         case .auth:
             factory.makeAuthView(isWithDraw: authShowWithdraw)
         case .authNumber:
-            factory.makeAuthNumberView()
+            factory.makeAuthNumberView(isNumberWithdraw :authNumberShowWithdraw)
         case .profileSetup:
             factory.makeProfileSetupView()
         case .invite:

@@ -300,9 +300,14 @@ struct FeedView: View {
             )
         }
         .sheet(isPresented: $showStickerSheet) {
-            StickerSheetView(stickerImage: nil)
-                .presentationDetents([.height(200)])
-                .presentationDragIndicator(.visible)
+            if let sticker = viewModel.sticker {
+                StickerSheetView(stickerImage:  UIImage(named: "stickerTest")!)
+                    .presentationDetents([.height(400)])
+                    .presentationDragIndicator(.visible)
+                    .background(Color.ddWhite)
+            }else{
+                Text("스티커를 만들 사진이 없어요")
+            }
         }
     }
 }

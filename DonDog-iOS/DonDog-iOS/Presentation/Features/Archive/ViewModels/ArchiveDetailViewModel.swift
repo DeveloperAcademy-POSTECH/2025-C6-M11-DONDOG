@@ -52,10 +52,10 @@ final class ArchiveDetailViewModel: ObservableObject {
     init(roomId: String, date: Date) {
         self.roomId = roomId
         self.date = date
-        Task { await fetch() }
+        Task { await fetchDailyPosts() }
     }
     
-    func fetch() async {
+    func fetchDailyPosts() async {
         isLoading = true
         defer { isLoading = false }
         

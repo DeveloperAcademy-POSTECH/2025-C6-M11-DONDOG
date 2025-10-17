@@ -79,6 +79,7 @@
 		D2A7F38C2E9BA88F005F5AF8 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A7F38B2E9BA88A005F5AF8 /* ImageUtils.swift */; };
 		D2A7FA3B2E9FFDCD005F5AF8 /* PostData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A7FA3A2E9FFDCA005F5AF8 /* PostData.swift */; };
 		D2C9F7092EA2372500393208 /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C9F7082EA2372100393208 /* CommentView.swift */; };
+		D2C9F70B2EA23A4800393208 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D2C9F70A2EA23A4800393208 /* GoogleService-Info.plist */; };
 		D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */; };
 		D2D16C022E9153BE008FB3E2 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D16C012E9153BC008FB3E2 /* PostView.swift */; };
 /* End PBXBuildFile section */
@@ -145,6 +146,7 @@
 		D2A7FA3A2E9FFDCA005F5AF8 /* PostData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostData.swift; sourceTree = "<group>"; };
 		D2C9F7072EA234A200393208 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2C9F7082EA2372100393208 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
+		D2C9F70A2EA23A4800393208 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D2D16BFF2E9153B2008FB3E2 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		D2D16C012E9153BC008FB3E2 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -432,6 +434,7 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
+				D2C9F70A2EA23A4800393208 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -616,6 +619,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
+				D2C9F70B2EA23A4800393208 /* GoogleService-Info.plist in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,

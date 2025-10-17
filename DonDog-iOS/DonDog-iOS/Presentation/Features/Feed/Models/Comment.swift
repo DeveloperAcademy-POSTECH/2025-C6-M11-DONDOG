@@ -7,11 +7,16 @@
 
 import FirebaseFirestore
 
-struct Comment: Identifiable {
+struct Comment: Identifiable, Equatable {
     var id: String
     var uid: String
     var text: String
     var createdAt: Date
+
+    // Equality based on unique document id
+    static func == (lhs: Comment, rhs: Comment) -> Bool {
+        lhs.id == rhs.id
+    }
 
     init?(doc: QueryDocumentSnapshot) {
         let data = doc.data()

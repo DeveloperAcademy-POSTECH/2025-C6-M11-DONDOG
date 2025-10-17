@@ -22,7 +22,7 @@ final class AuthViewModel: ObservableObject {
     }
     
     @Published var userPhoneNumber: String = ""
-    @Published var verificationCode: String = ""
+    
     @Published var verificationID: String?
     
     @Published var message: String = ""
@@ -32,6 +32,12 @@ final class AuthViewModel: ObservableObject {
     
     @Published var phoneError: String? = nil
     @Published var codeError: String? = nil
+    
+    @Published var isWithDraw: Bool = false
+    
+    init(isWithDraw: Bool = false) {
+        self.isWithDraw = isWithDraw
+    }
     
     func signInAnonymously() {
         self.isLoading = true
@@ -97,67 +103,7 @@ final class AuthViewModel: ObservableObject {
                 }
                 self.isCodeSent = true
                 self.phoneError = nil
-            }
-        }
-    }
-    
-    /// 인증번호로 로그인
-    func logIn() {
-        // verifyPhoneNumber로 받은 verificationID 확보
-        let storedID = UserDefaults.standard.string(forKey: "authVerificationID")
-        guard let verificationID = self.verificationID ?? storedID else {
-            self.codeError = "문제가 생겼어요. 잠시 후 다시 시도해 주세요."
-            return
-        }
-        
-        self.isLoading = true
-        self.message = ""
-        self.phoneError = nil
-        self.codeError = nil
-        
-        let credential = PhoneAuthProvider.provider().credential(
-            withVerificationID: verificationID,
-            verificationCode: self.verificationCode
-        )
-        
-        Auth.auth().signIn(with: credential) { [weak self] result, error in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                self.isLoading = false
-                
-                if let error = error {
-                    print("[Auth][signIn] error: \(error.localizedDescription)")
-                    self.codeError = "인증번호를 다시 확인해주세요."
-                } else {
-                    self.codeError = nil
-                    self.routeAfterSignIn()
-                }
-            }
-        }
-    }
-    
-    private func routeAfterSignIn() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let docRef = Firestore.firestore().collection("Users").document(uid)
-
-        docRef.getDocument { [weak self] snapshot, error in
-            guard let self = self else { return }
-
-            if let error = error {
-                print("[Auth][routeAfterSignIn] fetch user doc error: \(error.localizedDescription)")
-                DispatchQueue.main.async {
-                    self.coordinator?.push(.profileSetup)
-                }
-                return
-            }
-
-            let exists = (snapshot?.exists == true)
-            DispatchQueue.main.async {
-                if exists {
-                    self.coordinator?.replaceRoot(.feed)
-                } else {
-                    self.coordinator?.replaceRoot(.profileSetup)
-                }
+                self.coordinator?.push(.authNumber)
             }
         }
     }

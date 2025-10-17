@@ -16,14 +16,18 @@ struct CustomTextField: View {
     var onCommit: (() -> Void)? = nil
     var errorMessage: String? = nil
     var errorText: Binding<String?>? = nil
+    var softMaxLength: Int? = nil
+    var softMaxErrorText: String? = nil
        
+    @FocusState private var isFocused: Bool
+    @State private var localValidationError: String? = nil
+
     private var hasError: Bool {
+        if let msg = localValidationError, !msg.isEmpty { return true }
         if let bound = errorText?.wrappedValue { return !bound.isEmpty }
         if let msg = errorMessage { return !msg.isEmpty }
         return false
     }
-
-    @FocusState private var isFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -40,46 +44,63 @@ struct CustomTextField: View {
                                 .foregroundColor(Color.ddGray500)
                                 .allowsHitTesting(false)
                         }
-                        TextField("", text: $text)
-                            .font(.bodyRegular18)
-                            .foregroundColor(Color.ddBlack)
-                            .keyboardType(keyboard)
-                            .focused($isFocused)
-                            .submitLabel(.done)
-                            .onSubmit {
-                                onCommit?()
-                                isFocused = false
-                            }
-                            .onChange(of: text) { _, newValue in
-                                // Clear error as soon as the user starts typing
-                                if hasError {
-                                    errorText?.wrappedValue = nil
-                                }
-                                var value = newValue.filter { !$0.isWhitespace }
-                                                               
-                                if contentType == .telephoneNumber {
-                                    let digits = value.filter { $0.isNumber }
-                                    let limited = String(digits.prefix(11))
-                                    var formatted = ""
-                                    for (i, ch) in limited.enumerated() {
-                                        if i == 3 || i == 7 { formatted.append("-") }
-                                        formatted.append(ch)
-                                    }
-                                    value = formatted
-                                } else if keyboard == .numberPad {
-                                    value = value.filter { $0.isNumber }
-                                }
-
-                                if value != text {
-                                    text = value
-                                }
-                            }
-                            .onChange(of: isFocused) { _, focused in
-                                if !focused {
+                        HStack {
+                            TextField("", text: $text)
+                                .font(.bodyRegular18)
+                                .foregroundColor(Color.ddBlack)
+                                .keyboardType(keyboard)
+                                .focused($isFocused)
+                                .submitLabel(.done)
+                                .onSubmit {
                                     onCommit?()
+                                    isFocused = false
                                 }
+                                .onChange(of: text) { _, newValue in
+                                    if hasError {
+                                        errorText?.wrappedValue = nil
+                                    }
+                                    localValidationError = nil
+                                    var value = newValue.filter { !$0.isWhitespace }
+                                                                   
+                                    if contentType == .telephoneNumber {
+                                        let digits = value.filter { $0.isNumber }
+                                        let limited = String(digits.prefix(11))
+                                        var formatted = ""
+                                        for (i, ch) in limited.enumerated() {
+                                            if i == 3 || i == 7 { formatted.append("-") }
+                                            formatted.append(ch)
+                                        }
+                                        value = formatted
+                                    } else if keyboard == .numberPad {
+                                        value = value.filter { $0.isNumber }
+                                    }
+                                    
+                                    if let max = softMaxLength {
+                                        if value.count > max {
+                                            localValidationError = softMaxErrorText ?? "최대 \(max)자까지 입력할 수 있어요"
+                                        } else {
+                                            localValidationError = nil
+                                        }
+                                    }
+
+                                    if value != text {
+                                        text = value
+                                    }
+                                }
+                                .onChange(of: isFocused) { _, focused in
+                                    if !focused {
+                                        onCommit?()
+                                    }
+                                }
+                                .textContentType(contentType)
+                            
+                            if let max = softMaxLength {
+                                Text("\(text.count)/\(max)")
+                                    .font(.captionRegular13)
+                                    .foregroundColor(hasError ? Color.ddAlert : Color.ddGray500)
                             }
-                            .textContentType(contentType)
+                        }
+                    
                     }
                 }
                 
@@ -90,7 +111,7 @@ struct CustomTextField: View {
                         ? Color.ddAlert : ((isFocused && !text.isEmpty) ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
                     )
                 
-                if hasError, let message = (errorText?.wrappedValue ?? errorMessage) {
+                if hasError, let message = (localValidationError ?? errorText?.wrappedValue ?? errorMessage) {
                     HStack(spacing: 0) {
                         Image(systemName: "exclamationmark.circle")
                             .resizable()

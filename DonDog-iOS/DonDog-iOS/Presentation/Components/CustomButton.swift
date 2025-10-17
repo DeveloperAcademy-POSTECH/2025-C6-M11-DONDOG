@@ -9,14 +9,15 @@ import SwiftUI
 
 struct CustomButton: View {
     var title: String
-    var isDisabled: Bool = true
+    var isEnable: Bool = true
     var action: (() -> Void)?
     var isProgressView: Bool = false
+    @StateObject private var keyboard = KeyboardResponder()
     
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
-                .foregroundStyle(isDisabled ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
+                .foregroundStyle(isEnable ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
             
             HStack(spacing: 8) {
                 Text(title)
@@ -30,17 +31,19 @@ struct CustomButton: View {
             }
             
         }
+        .disabled(!isEnable)
         .frame(height: 52)
         .padding(.vertical, 8)
         .onTapGesture {
-            if isDisabled {
+            if isEnable {
                 action?()
             }
         }
+        .padding(.bottom, keyboard.keyboardHeight == 0 ? 0 : 10)
     }
 }
 
 #Preview {
-    CustomButton(title: "Continue", isDisabled: true, action: { print("Disabled button tapped") })
-    CustomButton(title: "Submit", isDisabled: false, action: { print("Enabled button tapped") }, isProgressView: true)
+    CustomButton(title: "Continue", isEnable: true, action: { print("Disabled button tapped") })
+    CustomButton(title: "Submit", isEnable: false, action: { print("Enabled button tapped") }, isProgressView: true)
 }

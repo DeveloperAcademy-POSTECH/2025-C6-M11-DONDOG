@@ -17,13 +17,16 @@ struct CommentView: View {
             HStack(spacing: 20) {
                 Text(authorName)
                     .font(.system(size: 14))
-                Text(DataUtils.formatDate(comment.createdAt, format: "HH:mm"))
+                Text(DataUtils.formatTimeAgo(from: comment.createdAt))
                     .font(.system(size: 13))
                     .foregroundStyle(.gray)
             }
             Text(comment.text)
                 .font(.system(size: 14))
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
         .task {
             authorName = await viewModel.fetchAuthorName(of: comment.uid) ?? "익명"
         }

@@ -10,7 +10,8 @@ import Combine
 
 protocol ModuleFactoryProtocol {
     func makeWelcomeView() -> WelcomeView
-    func makeAuthView() -> AuthView
+    func makeAuthView(isWithDraw: Bool) -> AuthView
+    func makeAuthNumberView(isNumberWithdraw: Bool) -> AuthNumberView
     func makeProfileSetupView() -> ProfileSetupView
     func makeInviteView(showSentHint: Bool) -> InviteView
     func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
@@ -30,9 +31,15 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeAuthView() -> AuthView {
-        let viewModel = AuthViewModel()
+    func makeAuthView(isWithDraw : Bool) -> AuthView {
+        let viewModel = AuthViewModel(isWithDraw: isWithDraw)
         let view = AuthView(viewModel: viewModel)
+        return view
+    }
+    
+    func makeAuthNumberView(isNumberWithdraw: Bool) -> AuthNumberView {
+        let viewModel = AuthNumberViewModel(isNumberWithdraw: isNumberWithdraw)
+        let view = AuthNumberView(viewModel: viewModel)
         return view
     }
     

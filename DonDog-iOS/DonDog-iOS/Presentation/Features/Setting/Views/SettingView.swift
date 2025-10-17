@@ -48,13 +48,15 @@ struct SettingView: View {
             .alert("윙키를 탈퇴하시겠습니까?", isPresented: $viewModel.showDeleteConfirm) {
                 Button("취소", role: .cancel) {}
                 Button("확인", role: .destructive) {
-                    viewModel.performAccountDeletion()
+                    coordinator.authShowWithdraw = true
+                    coordinator.push(.auth)
                 }
             } message: {
                 Text("탈퇴하면 모든 기록이 사라져요")
             }
         }
-
+        .dismissKeyboard()
+        .backHiddenSwipeEnabled()
     }
 }
 

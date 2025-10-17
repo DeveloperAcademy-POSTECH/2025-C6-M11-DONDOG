@@ -10,6 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 final class AuthService {
+    static var isAccountDeletionInProgress: Bool = false
     private var authHandle: AuthStateDidChangeListenerHandle?
     private var userDocListenr: ListenerRegistration?
     
@@ -48,6 +49,11 @@ final class AuthService {
             return
         }
         
+        if AuthService.isAccountDeletionInProgress {
+            replaceRootinAuthService(.welcome, coordinator: coordinator)
+            return
+        }
+        
         user.getIDTokenResult(forcingRefresh: true) { _, _ in
             guard let refresehUser = Auth.auth().currentUser else {
                 replaceRootinAuthService(.welcome, coordinator: coordinator)
@@ -60,6 +66,11 @@ final class AuthService {
             
             self.userDocListenr?.remove()
             self.userDocListenr = userDoc.addSnapshotListener(includeMetadataChanges: true) { userDoc, error in
+                if AuthService.isAccountDeletionInProgress {
+                    replaceRootinAuthService(.welcome, coordinator: coordinator)
+                    return
+                }
+                
                 if let nsError = error as NSError? {
                     if nsError.domain == FirestoreErrorDomain,
                        nsError.code == FirestoreErrorCode.permissionDenied.rawValue {

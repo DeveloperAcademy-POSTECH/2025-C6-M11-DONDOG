@@ -14,6 +14,7 @@
 		61C9B1A42E9BFC830007C8F4 /* ArchiveDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A32E9BFC830007C8F4 /* ArchiveDay.swift */; };
 		61C9B1A62E9BFCBE0007C8F4 /* ArchiveMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */; };
 		8B1EB7932EA07F7A00F720CF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */; };
+		8B1EB7972EA08E9800F720CF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EB7962EA08E9800F720CF /* GoogleService-Info.plist */; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
 		8B31826E2E90CE1B004505AE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826D2E90CE1B004505AE /* FirebaseAuthCombine-Community */; };
@@ -38,6 +39,8 @@
 		8BA7184B2E9DD7EC001F7857 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */; };
 		8BA7184D2E9DE2C3001F7857 /* CustomTextfield.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */; };
 		8BA7184F2E9E1942001F7857 /* KeyboardUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184E2E9E1942001F7857 /* KeyboardUtils.swift */; };
+		8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */; };
+		8BBE41F22EA1E9CB00057A23 /* AuthNumberViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */; };
 		8BDF768B2E9F4086007F12BB /* CustomRoleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */; };
 		8BDF768E2E9F498B007F12BB /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF768D2E9F498B007F12BB /* WelcomeView.swift */; };
 		8BDF76982E9F72CE007F12BB /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF76972E9F72CE007F12BB /* SplashView.swift */; };
@@ -100,6 +103,9 @@
 		8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextfield.swift; sourceTree = "<group>"; };
 		8BA7184E2E9E1942001F7857 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
+		8BBE41EE2EA1DDD600057A23 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
+		8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberView.swift; sourceTree = "<group>"; };
+		8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberViewModel.swift; sourceTree = "<group>"; };
 		8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRoleButton.swift; sourceTree = "<group>"; };
 		8BDF768D2E9F498B007F12BB /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		8BDF76972E9F72CE007F12BB /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -314,6 +320,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AEC32E8FC15C0047A89A /* AuthViewModel.swift */,
+				8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */,
 				8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */,
 			);
 			path = ViewModels;
@@ -323,6 +330,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AEC52E8FC15C0047A89A /* AuthView.swift */,
+				8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */,
 				8BDF768D2E9F498B007F12BB /* WelcomeView.swift */,
 				8BDF76972E9F72CE007F12BB /* SplashView.swift */,
 				8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */,
@@ -421,6 +429,7 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
+				8B1EB7962EA08E9800F720CF /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -559,7 +568,7 @@
 				8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8B60BA1A2EA0ADE2004F1278 /* DonDog-iOS.app */;
+			productReference = 8BBE41EE2EA1DDD600057A23 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -610,6 +619,7 @@
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
 				CA957D072E99017400AEAB49 /* Colors.xcassets in Resources */,
+				8B1EB7972EA08E9800F720CF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -655,9 +665,11 @@
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				D2A7F38C2E9BA88F005F5AF8 /* ImageUtils.swift in Sources */,
 				8BDF768B2E9F4086007F12BB /* CustomRoleButton.swift in Sources */,
+				8BBE41F22EA1E9CB00057A23 /* AuthNumberViewModel.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
 				8B60BA1C2EA0AE22004F1278 /* SwipeBackUtils.swift in Sources */,
 				8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */,
+				8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */,
 				D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */,
 				D24402B02E992E7200D837C8 /* DataUtils.swift in Sources */,
 				D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */,

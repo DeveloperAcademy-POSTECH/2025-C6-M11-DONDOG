@@ -23,7 +23,10 @@ struct WelcomeView: View {
             }
             VStack {
                 Spacer()
-                CustomButton(title: "전화번호로 시작하기", isDisabled: true, action: { coordinator.push(.auth) }
+                CustomButton(title: "전화번호로 시작하기", isEnable: true, action: {
+                    coordinator.authShowWithdraw = false
+                    coordinator.push(.auth)
+                }
                 )
             }
             .padding(.horizontal, 20)

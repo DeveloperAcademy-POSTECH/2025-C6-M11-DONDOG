@@ -10,6 +10,7 @@ import SwiftUI
 struct ProfileSetupView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: ProfileSetupViewModel
+    @StateObject private var keyboard = KeyboardResponder()
     
     var body: some View {
         VStack(spacing: 0) {
@@ -38,15 +39,22 @@ struct ProfileSetupView: View {
                 text: $viewModel.name,
                 keyboard: .default,
                 contentType: nil,
-                errorMessage: viewModel.errorMessage
+                errorMessage: viewModel.errorMessage,
+                softMaxLength: 10,
+                softMaxErrorText: "최대 10자까지 입력할 수 있어요"
             )
             
             Spacer()
             
-            CustomButton(title: "다음", isDisabled: viewModel.isValid, action: viewModel.saveUserProfile)
+            CustomButton(
+                title: "다음",
+                isEnable: viewModel.isValid && viewModel.name.count < 10,
+                action: viewModel.saveUserProfile
+            )
         }
-        .padding(20)
-        .navigationBarBackButtonHidden(true)
+        .padding(.horizontal, 20)
+        .dismissKeyboard()
+        .backHiddenSwipeEnabled()
         .onChange(of: viewModel.didComplete, initial: true) { _, newValue in
             if newValue {
                 coordinator.inviteShowSentHint = true

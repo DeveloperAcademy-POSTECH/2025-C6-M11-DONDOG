@@ -10,6 +10,7 @@ import Foundation
 enum AppRoute: Hashable {
     case welcome
     case auth
+    case authNumber
     case profileSetup
     case invite
     case camera

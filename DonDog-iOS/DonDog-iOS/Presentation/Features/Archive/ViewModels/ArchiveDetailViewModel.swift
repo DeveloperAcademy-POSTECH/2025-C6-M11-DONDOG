@@ -16,23 +16,6 @@ enum StickerType: String, Codable, CaseIterable, Hashable {
     case love, cool, what, upset, sad
 }
 
-struct ArchivePost: Identifiable, Hashable {
-    let id: String
-    let createdAt: Date
-    let updatedAt: Date
-    let authorName: String?
-    
-    let frontImageURL: URL?
-    let backImageURL: URL?
-    
-    let caption: String?
-    let stickerPostId: String?
-    let stickerType: StickerType?
-    
-    var thumbnailURL: URL? { frontImageURL ?? backImageURL }
-    var hasSticker: Bool { stickerPostId != nil && stickerPostId != nil }
-}
-
 @MainActor
 final class ArchiveDetailViewModel: ObservableObject {
     @Published var posts: [ArchivePost] = []

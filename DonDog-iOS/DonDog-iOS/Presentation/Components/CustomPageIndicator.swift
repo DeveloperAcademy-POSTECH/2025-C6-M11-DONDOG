@@ -17,8 +17,8 @@ struct CustomPageIndicator: View {
         Text("\(currentIndex)/\(totalCount)")
             .font(.captionRegular13)
             .foregroundColor(textColor)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 2)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(backgroundColor)

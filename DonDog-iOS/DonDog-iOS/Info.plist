@@ -15,6 +15,7 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
+		<string>SejongGeulggot.otf</string>
 		<string>Pretendard-Bold.otf</string>
 		<string>Pretendard-Medium.otf</string>
 		<string>Pretendard-Regular.otf</string>
@@ -26,9 +27,9 @@
 		<string>fetch</string>
 		<string>processing</string>
 	</array>
-    <key>BGTaskSchedulerPermittedIdentifiers</key>
-    <array>
-        <string>com.DonDog</string>
-    </array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.DonDog</string>
+	</array>
 </dict>
 </plist>

@@ -14,7 +14,7 @@
 		61C9B1A42E9BFC830007C8F4 /* ArchiveDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A32E9BFC830007C8F4 /* ArchiveDay.swift */; };
 		61C9B1A62E9BFCBE0007C8F4 /* ArchiveMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */; };
 		8B1EB7932EA07F7A00F720CF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */; };
-		8B1EB7972EA08E9800F720CF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EB7962EA08E9800F720CF /* GoogleService-Info.plist */; };
+		8B1EB7972EA08E9800F720CF /* (null) in Resources */ = {isa = PBXBuildFile; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
 		8B31826E2E90CE1B004505AE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826D2E90CE1B004505AE /* FirebaseAuthCombine-Community */; };
@@ -37,7 +37,6 @@
 		8BA62EA42E9149A00054EB8F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA62EA32E9149A00054EB8F /* AppDelegate.swift */; };
 		8BA7184B2E9DD7EC001F7857 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */; };
 		8BA7184D2E9DE2C3001F7857 /* CustomTextfield.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */; };
-		8BA7184F2E9E1942001F7857 /* KeyboardUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184E2E9E1942001F7857 /* KeyboardUtils.swift */; };
 		8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */; };
 		8BBE41F22EA1E9CB00057A23 /* AuthNumberViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */; };
 		8BDF768B2E9F4086007F12BB /* CustomRoleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */; };
@@ -59,6 +58,8 @@
 		CAA62D032EA1E3FD00C60E05 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */; };
 		CAA62D042EA1E3FD00C60E05 /* KeyboardUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFE2EA1E3FD00C60E05 /* KeyboardUtils.swift */; };
 		CAA62D062EA1E57200C60E05 /* CustomPageIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62D052EA1E57200C60E05 /* CustomPageIndicator.swift */; };
+		CAA62D082EA205FC00C60E05 /* SejongGeulggot.otf in Resources */ = {isa = PBXBuildFile; fileRef = CAA62D072EA205FC00C60E05 /* SejongGeulggot.otf */; };
+		CAA62D892EA2725C00C60E05 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAA62D882EA2725C00C60E05 /* GoogleService-Info.plist */; };
 		CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */; };
 		CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */; };
 		CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */; };
@@ -73,7 +74,6 @@
 		CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEE42E8FC1B40047A89A /* InviteView.swift */; };
 		CAA9AEF02E8FE2990047A89A /* ModuleFactoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEEF2E8FE2990047A89A /* ModuleFactoryProtocol.swift */; };
 		CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */; };
-		CAACD3682EA0B8490057827D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAACD3672EA0B8490057827D /* GoogleService-Info.plist */; };
 		CAACD36A2EA0B8970057827D /* ArchiveDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAACD3692EA0B8970057827D /* ArchiveDetailView.swift */; };
 		CAACD36C2EA0C1120057827D /* ArchiveDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAACD36B2EA0C1120057827D /* ArchiveDetailViewModel.swift */; };
 		D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */; };
@@ -105,8 +105,6 @@
 		8BA62EA32E9149A00054EB8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextfield.swift; sourceTree = "<group>"; };
-		8BA7184E2E9E1942001F7857 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
-		8BBE41EE2EA1DDD600057A23 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberView.swift; sourceTree = "<group>"; };
 		8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberViewModel.swift; sourceTree = "<group>"; };
 		8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRoleButton.swift; sourceTree = "<group>"; };
@@ -124,12 +122,14 @@
 		CA957CF72E98FCD700AEAB49 /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-SemiBold.otf"; sourceTree = "<group>"; };
 		CA957D022E98FD0900AEAB49 /* Font+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+.swift"; sourceTree = "<group>"; };
 		CA957D062E99017400AEAB49 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
-		CAA62CFB2EA1C9E300C60E05 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
 		CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		CAA62CFE2EA1E3FD00C60E05 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
 		CAA62CFF2EA1E3FD00C60E05 /* SwipeBackUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeBackUtils.swift; sourceTree = "<group>"; };
 		CAA62D052EA1E57200C60E05 /* CustomPageIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPageIndicator.swift; sourceTree = "<group>"; };
+		CAA62D072EA205FC00C60E05 /* SejongGeulggot.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SejongGeulggot.otf; sourceTree = "<group>"; };
+		CAA62D872EA2724800C60E05 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/yuu/Documents/GitHub/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
+		CAA62D882EA2725C00C60E05 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
 		CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootNavigationView.swift; sourceTree = "<group>"; };
@@ -144,7 +144,6 @@
 		CAA9AEE42E8FC1B40047A89A /* InviteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteView.swift; sourceTree = "<group>"; };
 		CAA9AEEF2E8FE2990047A89A /* ModuleFactoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleFactoryProtocol.swift; sourceTree = "<group>"; };
 		CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteViewModel.swift; sourceTree = "<group>"; };
-		CAACD3672EA0B8490057827D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CAACD3692EA0B8970057827D /* ArchiveDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDetailView.swift; sourceTree = "<group>"; };
 		CAACD36B2EA0C1120057827D /* ArchiveDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDetailViewModel.swift; sourceTree = "<group>"; };
 		D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewContainer.swift; sourceTree = "<group>"; };
@@ -262,8 +261,8 @@
 			children = (
 				8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */,
 				8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */,
-				8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */,
 				CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */,
+				8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */,
 				CAA62D052EA1E57200C60E05 /* CustomPageIndicator.swift */,
 				A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */,
 			);
@@ -298,6 +297,7 @@
 				CA957CF52E98FCD700AEAB49 /* Pretendard-Medium.otf */,
 				CA957CF62E98FCD700AEAB49 /* Pretendard-Regular.otf */,
 				CA957CF72E98FCD700AEAB49 /* Pretendard-SemiBold.otf */,
+				CAA62D072EA205FC00C60E05 /* SejongGeulggot.otf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -317,7 +317,6 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
-				CAA62CFB2EA1C9E300C60E05 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -453,8 +452,7 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
-				CAACD3672EA0B8490057827D /* GoogleService-Info.plist */,
-				8B1EB7962EA08E9800F720CF /* GoogleService-Info.plist */,
+				CAA62D882EA2725C00C60E05 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -583,8 +581,7 @@
 				8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */,
 			);
 			productName = "DonDog-iOS";
-			productReference = CAA62CFB2EA1C9E300C60E05 /* DonDog-iOS.app */;
-			productReference = 8BBE41EE2EA1DDD600057A23 /* DonDog-iOS.app */;
+			productReference = CAA62D872EA2724800C60E05 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -630,13 +627,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
+				CAA62D892EA2725C00C60E05 /* GoogleService-Info.plist in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
+				CAA62D082EA205FC00C60E05 /* SejongGeulggot.otf in Resources */,
 				CA957D072E99017400AEAB49 /* Colors.xcassets in Resources */,
-				CAACD3682EA0B8490057827D /* GoogleService-Info.plist in Resources */,
-				8B1EB7972EA08E9800F720CF /* GoogleService-Info.plist in Resources */,
+				8B1EB7972EA08E9800F720CF /* (null) in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

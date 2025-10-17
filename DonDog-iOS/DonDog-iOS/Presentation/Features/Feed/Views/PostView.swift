@@ -17,17 +17,11 @@ struct PostView: View {
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading) {
-                Text(viewModel.authorName)
-                    .font(.system(size: 20, weight: .semibold))
-                    .padding(.bottom, 4)
-                Text(DataUtils.formatDate(viewModel.createdAt, format: "HH:mm"))
-                    .font(.system(size: 16, weight: .regular))
-                    .padding(.bottom, 19)
-                
+            VStack {
                 PostContentView(viewModel: viewModel)
                     .padding(.horizontal, 2)
                     .padding(.bottom, 16)
+                
                 HStack {
                     TextField("댓글을 입력해 주세요", text: $text)
                         .padding(.leading, 20)

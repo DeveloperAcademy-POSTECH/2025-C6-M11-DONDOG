@@ -13,20 +13,17 @@ struct CommentView: View {
     @StateObject var viewModel: PostViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
+        VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 20) {
                 Text(authorName)
-                    .font(.system(size: 18))
-                    .foregroundStyle(.gray)
+                    .font(.system(size: 14))
                 Text(DataUtils.formatDate(comment.createdAt, format: "HH:mm"))
-                    .font(.system(size: 18))
+                    .font(.system(size: 13))
                     .foregroundStyle(.gray)
             }
             Text(comment.text)
-                .font(.system(size: 18))
-                .foregroundStyle(.gray)
+                .font(.system(size: 14))
         }
-        .padding(.vertical, 5)
         .task {
             authorName = await viewModel.fetchAuthorName(of: comment.uid) ?? "익명"
         }

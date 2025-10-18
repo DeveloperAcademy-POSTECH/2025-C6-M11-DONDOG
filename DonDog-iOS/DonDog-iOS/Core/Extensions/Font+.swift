@@ -12,6 +12,7 @@ enum FontName: String {
     case pretendardSemiBold = "Pretendard-SemiBold"
     case pretendardMedium = "Pretendard-Medium"
     case pretendardRegular = "Pretendard-Regular"
+    case sejongGeulggot = "SejongGeulggot"
 }
 
 extension Font {
@@ -35,4 +36,8 @@ extension Font {
     static var captionRegular11: Font = .custom(FontName.pretendardRegular.rawValue, size: 11)
     static var captionRegular14: Font = .custom(FontName.pretendardRegular.rawValue, size: 14)
     static var captionRegular13: Font = .custom(FontName.pretendardRegular.rawValue, size: 13)
+    
+    // MARK: - Polaroid Caption
+    static var polaroidCaptionRegular20: Font = .custom(FontName.sejongGeulggot.rawValue, size: 20)
+    static var polaroidCaptionRegular16: Font = .custom(FontName.sejongGeulggot.rawValue, size: 16)
 }

@@ -13,14 +13,31 @@ import UIKit
 
 final class ArchiveViewModel: ObservableObject {
     @Published var archiveMonths: [ArchiveMonth] = []
+    @Published var dailyPosts: [String: [ArchivePost]] = [:]
     @Published var totalPostCount: Int = 0
     @Published var isLoading = false
     @Published var myNickname: String = ""
     @Published var partnerNickname: String = ""
+    
     let roomId: String
     private let db = Firestore.firestore()
     private let calendar = Calendar(identifier: .gregorian)
     private let timezone = TimeZone(identifier: "Asia/Seoul") ?? .current
+    
+    private lazy var dayKeyFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.calendar = calendar
+        df.timeZone = timezone
+        df.locale = Locale(identifier: "ko_KR")
+        df.dateFormat = "yyyy-MM-dd"
+        return df
+    }()
+
+    private func dayKey(from date: Date) -> String {
+        let startOfDay = calendar.startOfDay(for: date)
+        return dayKeyFormatter.string(from: startOfDay)
+    }
+
     
     init(roomId: String) {
         self.roomId = roomId
@@ -34,10 +51,10 @@ final class ArchiveViewModel: ObservableObject {
     func fetchMonthlyArchives() async {
         await MainActor.run { isLoading = true }
         
-        async let posts = fetchAllPosts()
+        async let months = fetchAllPosts()
         async let count = fetchPostCount()
+        let (monthData, totalCount) = await (months, count)
         
-        let (monthData, totalCount) = await (posts, count)
         await MainActor.run {
             self.archiveMonths = monthData
             self.totalPostCount = totalCount
@@ -50,7 +67,7 @@ final class ArchiveViewModel: ObservableObject {
         self.partnerNickname = result.partnerNickname
     }
     
-    // 월/일 별로 전체 기록 가져오기
+    // 월/일 별로 전체 기록 가져오기 -> 일자별 기록 캐싱
     private func fetchAllPosts() async -> [ArchiveMonth] {
         do {
             let snapshot = try await db.collection("Rooms")
@@ -60,6 +77,7 @@ final class ArchiveViewModel: ObservableObject {
                 .getDocuments()
             
             var monthDict: [String: [Int: ArchiveDay]] = [:]
+            var dayDict: [String: [ArchivePost]] = [:]
             
             // 디버깅용 날짜 포매팅
             let fmt = DateFormatter()
@@ -70,34 +88,55 @@ final class ArchiveViewModel: ObservableObject {
             
             for doc in snapshot.documents {
                 let data = doc.data()
-                guard let ts = data["createdAt"] as? Timestamp else { continue }
+                guard let tsCreated = data["createdAt"] as? Timestamp else { continue }
+                let date = tsCreated.dateValue()
                 
-                let urlString = (data["frontImageURL"] as? String)
-                ?? (data["backImageURL"] as? String) // front 없으면 back 폴백
-                guard let urlString, let url = URL(string: urlString) else { continue }
                 
-                let date = ts.dateValue()
+                let caption = data["caption"] as? String
+                let stickerPostId = data["stickerPostId"] as? String
+                let stickerTypeString = (data["stickerType"] as? String)?.lowercased()
+                let stickerType: StickerType? = {
+                    guard let s = stickerTypeString, s != "null" else { return nil }
+                    return StickerType(rawValue: s)
+                }()
+                
+                let post = ArchivePost(
+                    id: doc.documentID,
+                    createdAt: tsCreated.dateValue(),
+                    updatedAt: (data["updatedAt"] as? Timestamp)?.dateValue() ?? tsCreated.dateValue(),
+                    authorName: (data["authorName"] as? String) ?? (data["authorId"] as? String),
+                    frontImageURL: (data["frontImageURL"] as? String).flatMap(URL.init(string:)),
+                    backImageURL:  (data["backImageURL"]  as? String).flatMap(URL.init(string:)),
+                    caption: caption,
+                    stickerPostId: stickerPostId,
+                    stickerType: stickerType
+                )
+                
+                let dayKeyStr = dayKey(from: date)
+                dayDict[dayKeyStr, default: []].append(post)
+                
                 let comps = calendar.dateComponents(in: timezone, from: date)
                 guard let y = comps.year, let m = comps.month, let d = comps.day else { continue }
-                
-                let key = "\(y)-\(m)"
-                if monthDict[key] == nil { monthDict[key] = [:] }
+                let monthKey = "\(y)-\(m)"
+                if monthDict[monthKey] == nil { monthDict[monthKey] = [:] }
                 
                 // 해당 날짜에 찍은 첫 사진을 썸네일로 채택
-                if monthDict[key]?[d] == nil {
-                    monthDict[key]?[d] = ArchiveDay(
+                if monthDict[monthKey]?[d] == nil {
+                    guard let thumbnail = post.thumbnailURL else { continue }
+                    
+                    monthDict[monthKey]?[d] = ArchiveDay(
                         id: doc.documentID,
                         day: d,
-                        thumbnailURL: url,
+                        thumbnailURL: thumbnail,
                         postId: doc.documentID
                     )
                     
 #if DEBUG
                     print("""
                     썸네일
-                    - 날짜: \(fmt.string(from: date)) (\(y)-\(m)-\(d))
+                    - 날짜: \(fmt.string(from: date))) (\(y)-\(m)-\(d))
                     - id: \(doc.documentID)
-                    - url: \(url.absoluteString)
+                    - url: \(thumbnail.absoluteString)
                     """)
 #endif
                 } else {
@@ -105,6 +144,15 @@ final class ArchiveViewModel: ObservableObject {
                     print("사진들 \(fmt.string(from: date)) docId=\(doc.documentID)")
 #endif
                 }
+            }
+            
+            // 일자별 캐시 정렬
+            for (k, arr) in dayDict {
+                dayDict[k] = arr.sorted { $0.createdAt < $1.createdAt }
+            }
+            
+            await MainActor.run {
+                self.dailyPosts = dayDict
             }
             
             let result: [ArchiveMonth] = monthDict.compactMap { key, dayMap in

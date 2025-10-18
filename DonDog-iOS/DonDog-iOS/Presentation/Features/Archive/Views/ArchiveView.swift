@@ -47,7 +47,7 @@ struct ArchiveView: View {
                         
                     case .empty:
                         Rectangle()
-                            .fill(.gray.opacity(0.08))
+                            .fill(.ddGray600.opacity(0.2))
                             .cornerRadius(8)
                             .overlay(ProgressView())
                             .frame(width: 75, height: 100)
@@ -104,8 +104,8 @@ struct ArchiveView: View {
                             Text("\(viewModel.partnerNickname)").bold()
                             + Text("님과 ")
                             + Text("\(viewModel.myNickname)").bold()
-                            + Text("님만의 윙크가\n")
-                            + Text("\(viewModel.totalPostCount)장").bold()
+                            + Text("님만의 추억이\n")
+                            + Text("\(viewModel.totalPostCount)개").bold()
                             + Text(" 모였어요")
                         }
                         .font(.bodyRegular18)
@@ -125,7 +125,15 @@ struct ArchiveView: View {
                             LazyVGrid(columns: grid, spacing: 8) {
                                 ForEach(month.days) { day in
                                     Button {
+                                        var cal = Calendar(identifier: .gregorian)
+                                        cal.timeZone = TimeZone(identifier: "Asia/Seoul")!
+                                        let comp = DateComponents(year: month.year, month: month.month, day: day.day, hour: 0, minute: 0, second: 0)
+                                        let selectedDate = cal.date(from: comp) ?? Date()
+                                        
                                         print("\(month.year).\(month.month).\(day.day) 디테일 뷰 / postId: \(day.postId)")
+                                        coordinator.push(
+                                            .archiveDetail(roomId: viewModel.roomId, date: selectedDate)
+                                        )
                                     } label: {
                                         ArchivePostContainer(url: day.thumbnailURL, day: day.day)
                                     }
@@ -135,9 +143,9 @@ struct ArchiveView: View {
                         .padding(.vertical, 8)
                     }
                 }
-                .padding(.horizontal, 20)
             }
         }
+        .padding(.horizontal, 20)
         .background(
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()

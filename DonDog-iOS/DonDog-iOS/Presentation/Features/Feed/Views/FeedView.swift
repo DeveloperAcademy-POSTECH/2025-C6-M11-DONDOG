@@ -57,8 +57,10 @@ struct FeedView: View {
                         }
                         .disabled(viewModel.isLoading)
                         
-                        Button("게시글 상세로 이동"){
-                            coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
+                        Button("사진 뒤집기"){
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                isFrontImageOnTop.toggle()
+                            }
                         }
                     }
                 }.padding(.horizontal)

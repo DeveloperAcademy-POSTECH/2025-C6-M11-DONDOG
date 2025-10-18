@@ -6,22 +6,19 @@
 //
 
 import SwiftUI
-import FirebaseCore
 
 struct PostContentView: View {
     @StateObject var viewModel: PostViewModel
     @State private var image: UIImage = UIImage()
     @State private var showingFront = true
-    @State private var authorName:String = "익명"
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .center) {
+        VStack(alignment: .leading, spacing: 23) {
+            ZStack(alignment: .bottom) {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 348)
-                    .padding(8)
+                    .frame(height: 465)
                     .onTapGesture {
                         showingFront.toggle()
                         image = showingFront ? (viewModel.frontImage) : (viewModel.backImage)
@@ -32,40 +29,65 @@ struct PostContentView: View {
                     .onReceive(viewModel.$backImage) { newBack in
                         if !showingFront { image = newBack }
                     }
-                VStack {
-                    Text(viewModel.caption ?? "")
-                        .font(.system(size: 20, weight: .regular))
-                    
-                    HStack {
-                        Text(viewModel.authorName)
-                            .font(.system(size: 13, weight: .regular))
-                            .foregroundColor(Color.gray)
-                        
-                        Text(DataUtils.formatDate(viewModel.createdAt, format: "HH:mm"))
-                            .font(.system(size: 13, weight: .regular))
-                            .foregroundColor(Color.gray)
+                
+                HStack(spacing: 5) {
+                    let caption = viewModel.caption ?? ""
+                    ForEach(Array(caption.enumerated()), id: \.offset) { idx, char in
+                        Text(String(char))
+                            .font(.system(size: 20, weight: .regular))
+                            .padding(.vertical, 5)
+                            .padding(.horizontal, 8)
+                            .background(Color.gray)
+                            .cornerRadius(4)
                     }
                 }
+                .padding(.bottom, 38)
             }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 15)
             
-            VStack(alignment: .leading) {
-                ForEach(viewModel.comments) { comment in
-                    CommentView(comment: comment, viewModel: viewModel)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 8)
-                        .contextMenu {
-                            Button(role: .destructive) {
-                                Task { await viewModel.deleteComment(of: comment) }
-                            } label: {
-                                Text("삭제")
-                                Image(systemName: "trash")
-                            }
+            List {
+                ForEach(viewModel.comments.filter { $0.uid == viewModel.currentUser }) { comment in
+                    VStack(alignment: .leading, spacing: 7) {
+                        HStack(spacing: 20) {
+                            Text(comment.author)
+                                .font(.system(size: 18))
+                                .foregroundStyle(.gray)
+                            Text(DataUtils.formatDate(comment.timestamp, format: "HH:mm"))
+                                .font(.system(size: 18))
+                                .foregroundStyle(.gray)
                         }
+                        
+                        Text(comment.text)
+                            .font(.system(size: 18))
+                            .foregroundStyle(.gray)
+                    }
+                    .padding(.vertical, 5)
+                }
+                .onDelete { indexSet in
+                    for index in indexSet {
+                        let comment = viewModel.comments.filter { $0.uid == viewModel.currentUser }[index]
+                        viewModel.deleteComment(of: comment)
+                    }
+                }
+                
+                ForEach(viewModel.comments.filter { $0.uid != viewModel.currentUser }) { comment in
+                    VStack(alignment: .leading, spacing: 7) {
+                        HStack(spacing: 20) {
+                            Text(comment.author)
+                                .font(.system(size: 18))
+                                .foregroundStyle(.gray)
+                            Text(DataUtils.formatDate(comment.timestamp, format: "HH:mm"))
+                                .font(.system(size: 18))
+                                .foregroundStyle(.gray)
+                        }
+                        
+                        Text(comment.text)
+                            .font(.system(size: 18))
+                            .foregroundStyle(.gray)
+                    }
+                    .padding(.vertical, 5)
                 }
             }
+            .listStyle(.plain)
         }
     }
 }

@@ -188,7 +188,7 @@ struct FeedView: View {
         .sheet(isPresented: $showStickerSheet) {
             if let sticker = viewModel.sticker {
                 StickerSheetView(
-                    stickerImage: UIImage(named: "stickerTest")!,
+                    stickerImage: sticker,
                     currentSelectedEmotion: viewModel.selectedStickerEmotion,
                     onStickerSelected: { emotion in
                         viewModel.selectedStickerEmotion = emotion

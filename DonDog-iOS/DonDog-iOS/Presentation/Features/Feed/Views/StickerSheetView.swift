@@ -132,11 +132,14 @@ struct StickerContainerView: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(uiImage: stickerImage.addBorder(thickness: 4, color: borderColor)!)
+                .resizable()
+                .frame(width: 75, height: 100)
             Text(emotion)
                 .font(.captionRegular11)
                 .foregroundColor(.ddGray600)
                 .fixedSize(horizontal: true, vertical: false)
         }
+        
         .scaleEffect(isSelected ? 1.2 : 1.0)
         .opacity(isOtherSelected ? 0.3 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isSelected)

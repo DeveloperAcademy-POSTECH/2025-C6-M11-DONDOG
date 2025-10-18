@@ -14,7 +14,7 @@
 		61C9B1A42E9BFC830007C8F4 /* ArchiveDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A32E9BFC830007C8F4 /* ArchiveDay.swift */; };
 		61C9B1A62E9BFCBE0007C8F4 /* ArchiveMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */; };
 		8B1EB7932EA07F7A00F720CF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */; };
-		8B1EB7972EA08E9800F720CF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B1EB7962EA08E9800F720CF /* GoogleService-Info.plist */; };
+		8B1EB7972EA08E9800F720CF /* (null) in Resources */ = {isa = PBXBuildFile; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
 		8B31826E2E90CE1B004505AE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826D2E90CE1B004505AE /* FirebaseAuthCombine-Community */; };
@@ -27,6 +27,7 @@
 		8B31827C2E90CE1B004505AE /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31827B2E90CE1B004505AE /* FirebaseRemoteConfig */; };
 		8B31827E2E90CE1B004505AE /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31827D2E90CE1B004505AE /* FirebaseStorage */; };
 		8B3182802E90CE1B004505AE /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31827F2E90CE1B004505AE /* FirebaseStorageCombine-Community */; };
+		8B5C8C0D2EA22F8F00F88D22 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B5C8C0C2EA22F8F00F88D22 /* GoogleService-Info.plist */; };
 		8B5F44562E90FA74003137F2 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */; };
 		8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */; };
 		8B60BA1C2EA0AE22004F1278 /* SwipeBackUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B60BA1B2EA0AE22004F1278 /* SwipeBackUtils.swift */; };
@@ -89,10 +90,11 @@
 		61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveViewModel.swift; sourceTree = "<group>"; };
 		61C9B1A32E9BFC830007C8F4 /* ArchiveDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDay.swift; sourceTree = "<group>"; };
 		61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveMonth.swift; sourceTree = "<group>"; };
+		8B5C8C0B2EA22F7300F88D22 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
+		8B5C8C0C2EA22F8F00F88D22 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewModel.swift; sourceTree = "<group>"; };
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8B60BA1A2EA0ADE2004F1278 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8B60BA1B2EA0AE22004F1278 /* SwipeBackUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeBackUtils.swift; sourceTree = "<group>"; };
 		8B6C6D0C2E99702200D12F61 /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		8B6E11892E968E2B0082B24C /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
@@ -103,7 +105,6 @@
 		8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextfield.swift; sourceTree = "<group>"; };
 		8BA7184E2E9E1942001F7857 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
-		8BBE41EE2EA1DDD600057A23 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberView.swift; sourceTree = "<group>"; };
 		8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberViewModel.swift; sourceTree = "<group>"; };
 		8BDF768A2E9F4086007F12BB /* CustomRoleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRoleButton.swift; sourceTree = "<group>"; };
@@ -429,7 +430,7 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
-				8B1EB7962EA08E9800F720CF /* GoogleService-Info.plist */,
+				8B5C8C0C2EA22F8F00F88D22 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -568,7 +569,7 @@
 				8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8BBE41EE2EA1DDD600057A23 /* DonDog-iOS.app */;
+			productReference = 8B5C8C0B2EA22F7300F88D22 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -614,12 +615,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
+				8B5C8C0D2EA22F8F00F88D22 /* GoogleService-Info.plist in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
 				CA957D072E99017400AEAB49 /* Colors.xcassets in Resources */,
-				8B1EB7972EA08E9800F720CF /* GoogleService-Info.plist in Resources */,
+				8B1EB7972EA08E9800F720CF /* (null) in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

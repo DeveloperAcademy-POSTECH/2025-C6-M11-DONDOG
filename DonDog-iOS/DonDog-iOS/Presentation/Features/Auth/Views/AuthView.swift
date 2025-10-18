@@ -88,9 +88,6 @@ struct AuthView: View {
             CustomButton(title: "다음", isEnable: !viewModel.userPhoneNumber.isEmpty && !viewModel.isLoading, action: viewModel.sendCode, isProgressView: viewModel.isLoading)
             
         }
-        .padding(.horizontal, 20)
-        .backHiddenSwipeEnabled()
-        .dismissKeyboard()
         .task {
             viewModel.attach(coordinator: coordinator)
         }

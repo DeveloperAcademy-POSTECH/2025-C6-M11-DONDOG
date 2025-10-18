@@ -7,6 +7,21 @@
 
 import SwiftUI
 
+struct CustomNavMenuItem: Identifiable {
+    let id = UUID()
+    let title: String
+    let role: ButtonRole?
+    let action: () -> Void
+    
+    init(_ title: String,
+         role: ButtonRole? = nil,
+         action: @escaping () -> Void) {
+        self.title = title
+        self.role = role
+        self.action = action
+    }
+}
+
 enum CustomNavigationBarLeadingType {
     case back(action: () -> Void)
     case none
@@ -19,7 +34,7 @@ enum CustomNavigationBarCenterType {
 
 enum CustomNavigationBarTrailingType {
     case close(action: () -> Void)
-    case option(action: () -> Void)
+    case menu(items: [CustomNavMenuItem])
     case setting(action: () -> Void)
     case none
 }
@@ -117,12 +132,25 @@ struct CustomNavigationBar: View {
                     .frame(width: 24, height: 24)
             }
             
-        case .option(let action):
-            Button(action: action) {
+        case .menu(let items):
+            Menu {
+                ForEach(items) { item in
+                    Button(role: item.role) {
+                        item.action()
+                    } label: {
+                        if item.title.contains("삭제") {
+                            Label(item.title, systemImage: "trash")
+                        } else {
+                            Text(item.title)
+                        }
+                    }
+                }
+            } label: {
                 Image(systemName: "ellipsis")
                     .font(.body)
                     .frame(width: 24, height: 24)
             }
+            
             
         case .setting(let action):
             Button(action: action) {
@@ -145,10 +173,18 @@ struct CustomNavigationBar: View {
     CustomNavigationBar(leadingType: .none, centerType: .title(title: "가족연결"), trailingType: .none, navigationColor: .black)
     
     // 게시물 상세
-    CustomNavigationBar(leadingType: .back(action: {}), centerType: .title(title: "10월 14일"), trailingType: .option(action: {}), navigationColor: .black)
+    CustomNavigationBar(
+        leadingType: .back(action: {}),
+        centerType: .title(title: "10월 14일"),
+        trailingType: .menu(items: [
+            CustomNavMenuItem("삭제", role: .destructive) {
+            },
+        ]),
+        navigationColor: .black
+    )
     
     // 카메라 상세 - 촬영
-    CustomNavigationBar(leadingType: .back(action: {}), centerType: .none, trailingType: .option(action: {}), navigationColor: .black)
+    CustomNavigationBar(leadingType: .back(action: {}), centerType: .none, trailingType: .none, navigationColor: .black)
     
     // 카메라 상세 - 캡션
     CustomNavigationBar(leadingType: .none, centerType: .none, trailingType: .close(action: {}), navigationColor: .black)

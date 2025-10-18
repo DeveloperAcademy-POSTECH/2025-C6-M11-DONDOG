@@ -10,7 +10,8 @@ import Combine
 
 protocol ModuleFactoryProtocol {
     func makeWelcomeView() -> WelcomeView
-    func makeAuthView() -> AuthView
+    func makeAuthView(isWithDraw: Bool) -> AuthView
+    func makeAuthNumberView(isNumberWithdraw: Bool) -> AuthNumberView
     func makeProfileSetupView() -> ProfileSetupView
     func makeInviteView(showSentHint: Bool) -> InviteView
     func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
@@ -19,6 +20,7 @@ protocol ModuleFactoryProtocol {
     func makeSettingView() -> SettingView
     func makeEditProfileView() -> EditProfileView
     func makeArchiveView(in roomId: String) -> ArchiveView
+    func makeArchiveDetailView(in roomId: String, date: Date) -> ArchiveDetailView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -30,9 +32,15 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeAuthView() -> AuthView {
-        let viewModel = AuthViewModel()
+    func makeAuthView(isWithDraw : Bool) -> AuthView {
+        let viewModel = AuthViewModel(isWithDraw: isWithDraw)
         let view = AuthView(viewModel: viewModel)
+        return view
+    }
+    
+    func makeAuthNumberView(isNumberWithdraw: Bool) -> AuthNumberView {
+        let viewModel = AuthNumberViewModel(isNumberWithdraw: isNumberWithdraw)
+        let view = AuthNumberView(viewModel: viewModel)
         return view
     }
     
@@ -81,6 +89,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makeArchiveView(in roomId: String) -> ArchiveView {
         let viewModel = ArchiveViewModel(roomId: roomId)
         let view = ArchiveView(viewModel: viewModel)
+        return view
+    }
+    
+    func makeArchiveDetailView(in roomId: String, date: Date) -> ArchiveDetailView {
+        let viewModel = ArchiveDetailViewModel(roomId: roomId, date: date)
+        let view = ArchiveDetailView(viewModel: viewModel)
         return view
     }
 }

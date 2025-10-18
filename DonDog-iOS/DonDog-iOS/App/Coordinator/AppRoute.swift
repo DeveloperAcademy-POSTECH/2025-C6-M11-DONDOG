@@ -10,6 +10,7 @@ import Foundation
 enum AppRoute: Hashable {
     case welcome
     case auth
+    case authNumber
     case profileSetup
     case invite
     case camera
@@ -18,4 +19,5 @@ enum AppRoute: Hashable {
     case setting
     case editprofile
     case archive(roomId: String)
+    case archiveDetail(roomId: String, date: Date)
 }

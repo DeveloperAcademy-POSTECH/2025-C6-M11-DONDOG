@@ -98,7 +98,7 @@ struct InviteView: View {
             
             Spacer()
             
-            CustomButton(title: "초대 코드 인증", isDisabled: !viewModel.inputInviteCode.isEmpty && !viewModel.isLoading, action: viewModel.connectWithInviteCode)
+            CustomButton(title: "초대 코드 인증", isEnable: !viewModel.inputInviteCode.isEmpty && !viewModel.isLoading, action: viewModel.connectWithInviteCode)
             
             if viewModel.showSentHint {
                 Text("초대 코드를 보냈어요")

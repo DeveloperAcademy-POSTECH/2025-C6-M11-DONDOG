@@ -57,6 +57,10 @@ struct FeedView: View {
                                 .rotationEffect(.degrees(isRefreshing ? 360 : 0))
                         }
                         .disabled(viewModel.isLoading)
+
+                        Button("게시글 상세로 이동"){
+                            coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
+                        }
                     }
                 }.padding(.horizontal)
                 Spacer()

@@ -19,6 +19,8 @@ final class AppCoordinator: ObservableObject {
     // 기본뷰
     @Published var root: AppRoute = .feed
     @Published var inviteShowSentHint: Bool = false
+    @Published var authShowWithdraw: Bool = false
+    @Published var authNumberShowWithdraw: Bool = false
     
     private var lastHandledDeepLink: String?
     private var lastHandledAt: Date?
@@ -78,7 +80,9 @@ final class AppCoordinator: ObservableObject {
         case .welcome:
             factory.makeWelcomeView()
         case .auth:
-            factory.makeAuthView()
+            factory.makeAuthView(isWithDraw: authShowWithdraw)
+        case .authNumber:
+            factory.makeAuthNumberView(isNumberWithdraw :authNumberShowWithdraw)
         case .profileSetup:
             factory.makeProfileSetupView()
         case .invite:
@@ -95,6 +99,8 @@ final class AppCoordinator: ObservableObject {
             factory.makeEditProfileView()
         case .archive(let roomId):
             factory.makeArchiveView(in: roomId)
+        case .archiveDetail(let roomId, let date):
+            factory.makeArchiveDetailView(in: roomId, date: date)
         }
     }
     

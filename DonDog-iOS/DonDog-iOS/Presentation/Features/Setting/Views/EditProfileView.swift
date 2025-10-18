@@ -38,15 +38,19 @@ struct EditProfileView: View {
                 text: $viewModel.name,
                 keyboard: .default,
                 contentType: nil,
-                errorMessage: viewModel.errorMessage
+                errorMessage: viewModel.errorMessage,
+                softMaxLength: 10,
+                softMaxErrorText: "최대 10자까지 입력할 수 있어요"
             )
             
             Spacer()
             
-            CustomButton(title: "저장", isDisabled: viewModel.isValid || viewModel.didChangeFromInitial, action: viewModel.saveChanges)
+            CustomButton(title: "저장", isEnable: (viewModel.isValid || viewModel.didChangeFromInitial) && viewModel.name.count <= 10, action: viewModel.saveChanges)
+            
         }
-        .padding(20)
-        .navigationBarBackButtonHidden(true)
+        .padding(.horizontal, 20)
+        .dismissKeyboard()
+        .backHiddenSwipeEnabled()
         .onAppear {
             viewModel.fetchCurrentProfile()
         }

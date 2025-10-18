@@ -94,7 +94,7 @@ struct PostView: View {
             }
             .alert("게시글을 삭제하시겠습니까?", isPresented: $showDeleteAlert) {
                 Button("삭제", role: .destructive) {
-                    // deletePost()
+                    coordinator.pop()
                 }
                 Button("취소", role: .cancel) { }
             }

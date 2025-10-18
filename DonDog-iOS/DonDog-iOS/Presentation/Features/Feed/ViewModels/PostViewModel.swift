@@ -15,6 +15,7 @@ final class PostViewModel: ObservableObject {
     
     private let db = Firestore.firestore()
     private var postRef: DocumentReference
+    private var commentRef: CollectionReference
 
     @Published var uid: String = ""
     @Published var currentUser: String = ""
@@ -33,13 +34,29 @@ final class PostViewModel: ObservableObject {
     init(postId: String, roomId: String) {
         self.postId = postId
         self.roomId = roomId
-        self.postRef = db.collection("Rooms").document(roomId)
-                         .collection("posts").document(postId)
+        let roomRef = db.collection("Rooms").document(roomId)
+        self.postRef = roomRef.collection("posts").document(postId)
+        self.commentRef = roomRef.collection("comments").document(postId).collection("comments")
         self.currentUser = Auth.auth().currentUser?.uid ?? ""
 
         Task {
             await self.fetchPostData()
             await self.fetchComments()
+        }
+    }
+    
+    func fetchAuthorName(of uid: String) async -> String? {
+        do {
+            let snapshot = try await db.collection("Users").document(uid).getDocument()
+            if let data = snapshot.data(),
+               let name = data["name"] as? String {
+                return name
+            } else {
+                return nil
+            }
+        } catch {
+            print("작성자 이름 불러오기 실패: ", error.localizedDescription)
+            return nil
         }
     }
 
@@ -51,6 +68,7 @@ final class PostViewModel: ObservableObject {
             
             guard let data = postSnapshot.data() else { return }
             self.uid = data["uid"] as? String ?? ""
+            self.authorName = await self.fetchAuthorName(of: uid) ?? "익명"
             self.caption = data["caption"] as? String
             self.createdAt = (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
             
@@ -60,17 +78,6 @@ final class PostViewModel: ObservableObject {
             
             if let urlString = data["backImageURL"] as? String {
                 self.backURL = URL(string: urlString)
-            }
-            
-            if !self.uid.isEmpty {
-                let userRef = db.collection("Users").document(self.uid)
-                let userSnapshot = try await userRef.getDocument()
-                if let userData = userSnapshot.data() {
-                    self.authorName = userData["name"] as? String ?? "Unknown"
-                    if let urlString = userData["recentSticker"] as? String {
-                        self.stickerURL = URL(string: urlString)
-                    }
-                }
             }
             
             await loadImages()
@@ -105,18 +112,13 @@ final class PostViewModel: ObservableObject {
     
     func saveComment(of text: String) async {
         do {
-            let userRef = db.collection("Users").document(currentUser)
-            let userSnapshot = try await userRef.getDocument()
-            let authorName = userSnapshot.data()?["name"] as? String ?? "Unknown"
-
             let commentData: [String: Any] = [
                 "uid": currentUser,
-                "author": authorName,
-                "content": text,
-                "timestamp": Timestamp(date: Date())
+                "text": text,
+                "createdAt": Timestamp(date: Date())
             ]
             
-            try await postRef.collection("comments").addDocument(data: commentData)
+            try await commentRef.addDocument(data: commentData)
 
             await fetchComments()
         } catch {
@@ -125,19 +127,23 @@ final class PostViewModel: ObservableObject {
     }
     
     func fetchComments() async {
-        let commentsRef = postRef.collection("comments")
         do {
-            let snapshot = try await commentsRef.getDocuments()
+            let snapshot = try await self.commentRef.getDocuments()
             let fetchedComments = snapshot.documents.compactMap { Comment(doc: $0) }
             await MainActor.run {
-                self.comments = fetchedComments.sorted { $0.timestamp < $1.timestamp }
+                self.comments = fetchedComments.sorted { $0.createdAt < $1.createdAt }
             }
         } catch {
             print("댓글 로드 실패:", error.localizedDescription)
         }
     }
     
-    func deleteComment(of comment: Comment) {
-        postRef.collection("comments").document(comment.id).delete()
+    func deleteComment(of comment: Comment) async {
+        do {
+            try await commentRef.document(comment.id).delete()
+            await fetchComments()
+        } catch {
+            print("댓글 삭제 실패: ", error.localizedDescription)
+        }
     }
 }

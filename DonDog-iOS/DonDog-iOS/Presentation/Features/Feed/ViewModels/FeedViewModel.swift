@@ -234,7 +234,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
   
                             if let firstPost = todayPosts.first {
-                                self?.selectedPostId = firstPost.postId
                                 self?.currentPost = firstPost
                                 self?.downloadTodayImages(from: firstPost)
                                 self?.getUserName(uid: firstPost.uid)

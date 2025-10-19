@@ -11,8 +11,29 @@ struct PolaroidFrame: View {
     let image: UIImage
     let nickname: String
     let createdAt: String
-    let caption: String
-    let isFlipped: Bool //zIndex로 위치 변환을 위한 변수
+    let caption: String?
+    let isTopImage: Bool //zIndex로 위치 변환을 위한 변수
+    let onStickerButtonTapped: (() -> Void)?
+    let selectedStickerEmotion: String?
+    let stickerImage: UIImage?
+    let isMyPost: Bool?  // 내 게시물인지 여부
+    
+    private func borderColor(for emotion: String) -> UIColor {
+        switch emotion {
+        case "사랑해":
+            return .ddFeelingPink
+        case "멋지다":
+            return .ddFeelingYellow
+        case "뭐야?":
+            return .ddFeelingGreen
+        case "화나":
+            return .ddFeelingOrange
+        case "슬퍼":
+            return .ddFeelingBlue
+        default:
+            return .ddGray700
+        }
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -23,31 +44,55 @@ struct PolaroidFrame: View {
                 .frame(width: 230)
                 .padding(16)
                 .background(.ddWhite)
-            VStack{
-                Spacer()
-                HStack{
-                    Text(caption)
-                        .font(.subtitleMedium18)
-                        .foregroundColor(.ddBlack)
-                    Spacer()
+            HStack{
+                VStack{
+                    HStack{
+                        if let caption = caption{
+                            Text(caption)
+                                .font(.subtitleMedium18)
+                                .foregroundColor(.ddBlack)
+                        }
+                        Spacer()
+                    }
+                    .padding(.bottom, 4)
+                    
+                    HStack(spacing: 4){
+                        Text(nickname)
+                            .font(.captionRegular11)
+                            .foregroundColor(.ddGray500)
+                        Text(createdAt)
+                            .font(.captionRegular11)
+                            .foregroundColor(.ddGray500)
+                        Spacer()
+                    }
                 }
-                .frame(width: 230)
-                .padding(.leading, 4)
-                .padding(.bottom, 4)
-                
-                HStack(spacing: 4){
-                    Text(nickname)
-                        .font(.captionRegular11)
-                        .foregroundColor(.ddGray500)
-                    Text(createdAt)
-                        .font(.captionRegular11)
-                        .foregroundColor(.ddGray500)
-                    Spacer()
-                }.frame(width: 230)
-                    .padding(.leading, 4)
-                    .padding(.bottom, 16)
+                Spacer()
+                // 다른 사람의 게시물이고 캡션이 있을 때만 스티커 버튼 표시
+                if let isMyPost = isMyPost{
+                    if !isMyPost{
+                        Button{
+                            onStickerButtonTapped?()
+                        }label: {
+                            if let emotion = selectedStickerEmotion, let sticker = stickerImage {
+                                // 선택된 스티커 표시
+                                Image(uiImage: sticker.addBorder(thickness: 2, color: borderColor(for: emotion))!)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 32, height: 32)
+                            } else {
+                                // 기본 face.dashed 아이콘
+                                Image(systemName: "face.dashed")
+                                    .resizable()
+                                    .frame(width: 32, height: 32)
+                                    .foregroundStyle(.ddSecondaryBlue)
+                            }
+                        }
+                    }
+                }
             }
-            .frame(height: 63)
+            .frame(width: 230, height: 63)
+            .padding(.leading, 4)
+            .padding(.bottom, 16)
             .background(.ddWhite)
         }
         .frame(width: 264, height: 415)
@@ -65,27 +110,65 @@ struct PolaroidSetView: View {
     let backImage: UIImage
     let nickname: String
     let createdAt: String
-    let caption: String
+    let caption: String?
+    let onStickerButtonTapped: (() -> Void)?
+    let selectedStickerEmotion: String?
+    let stickerImage: UIImage?
+    let isMyPost: Bool  // 내 게시물인지 여부
     
     var body: some View {
         ZStack {
-            PolaroidFrame(image: backImage, nickname: "", createdAt: "", caption: "", isFlipped: isTopImage)
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isTopImage.toggle()
-                    }
+            PolaroidFrame(
+                image: backImage,
+                nickname: "",
+                createdAt: "",
+                caption: "",
+                isTopImage: !isTopImage,
+                onStickerButtonTapped: nil,
+                selectedStickerEmotion: nil,
+                stickerImage: nil,
+                isMyPost: isMyPost
+            )
+            .onTapGesture {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    isTopImage.toggle()
                 }
-                .zIndex(isTopImage ? 0 : 1)
-                .rotationEffect(.degrees(8))
-                .offset(x: -50 ,y: -57)
+            }
+            .zIndex(isTopImage ? 0 : 1)
+            .rotationEffect(.degrees(8))
+            .offset(x: -50 ,y: -57)
             
-            PolaroidFrame(image: frontImage, nickname: nickname, createdAt: createdAt, caption: caption, isFlipped: !isTopImage)
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isTopImage.toggle()
-                    }
+            PolaroidFrame(
+                image: frontImage,
+                nickname: nickname,
+                createdAt: createdAt,
+                caption: caption,
+                isTopImage: isTopImage,
+                onStickerButtonTapped: onStickerButtonTapped,
+                selectedStickerEmotion: selectedStickerEmotion,
+                stickerImage: stickerImage,
+                isMyPost: isMyPost
+            )
+            .onTapGesture {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    isTopImage.toggle()
                 }
-                .zIndex(isTopImage ? 1 : 0)
+            }
+            .zIndex(isTopImage ? 1 : 0)
         }
     }
 }
+
+#Preview(body: {
+    PolaroidSetView(
+        frontImage: UIImage(named: "test1")!,
+        backImage: UIImage(named: "test2")!,
+        nickname: "이토",
+        createdAt: "오전 04:45",
+        caption: "하이디라오 짱맛",
+        onStickerButtonTapped: nil,
+        selectedStickerEmotion: "사랑해",
+        stickerImage: UIImage(named: "stickerTest")!,
+        isMyPost: false  // Preview에서는 다른 사람 게시물로 설정
+    )
+})

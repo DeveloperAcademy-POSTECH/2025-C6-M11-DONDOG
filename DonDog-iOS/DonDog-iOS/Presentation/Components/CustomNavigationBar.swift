@@ -84,6 +84,7 @@ struct CustomNavigationBar: View {
                 
                 navigationTrailingView()
             }
+            .contentShape(Rectangle())
             .foregroundStyle(color)
             .padding(.vertical, 11)
             .background(.clear)

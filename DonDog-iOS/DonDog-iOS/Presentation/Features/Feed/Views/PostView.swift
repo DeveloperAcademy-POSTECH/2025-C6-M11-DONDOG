@@ -35,6 +35,9 @@ struct PostView: View {
             ]),
             navigationColor: .black
         )
+        .onTapGesture {
+            isTextFieldFocused = false
+        }
         
         ScrollViewReader { proxy in
             ZStack(alignment: .topTrailing) {

@@ -20,8 +20,9 @@ struct PostContentView: View {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 348)
-                    .padding(8)
+                    .frame(width: 348, height: 464)
+                    .cornerRadius(12)
+                    .padding(.vertical, 8)
                     .onTapGesture {
                         showingFront.toggle()
                         image = showingFront ? (viewModel.frontImage) : (viewModel.backImage)
@@ -32,19 +33,19 @@ struct PostContentView: View {
                     .onReceive(viewModel.$backImage) { newBack in
                         if !showingFront { image = newBack }
                     }
-                VStack {
-                    Text(viewModel.caption ?? "")
-                        .font(.system(size: 20, weight: .regular))
+                
+                Text(viewModel.caption ?? "")
+                    .font(.title)
+                    .padding(.top, 8)
+                
+                HStack(spacing: 4) {
+                    Text(viewModel.authorName)
+                        .font(.captionRegular13)
+                        .foregroundColor(Color.ddGray600)
                     
-                    HStack {
-                        Text(viewModel.authorName)
-                            .font(.system(size: 13, weight: .regular))
-                            .foregroundColor(Color.gray)
-                        
-                        Text(DataUtils.formatDate(viewModel.createdAt, format: "HH:mm"))
-                            .font(.system(size: 13, weight: .regular))
-                            .foregroundColor(Color.gray)
-                    }
+                    Text(DataUtils.relativeTimeString(from: viewModel.createdAt))
+                        .font(.captionRegular13)
+                        .foregroundColor(Color.ddGray500)
                 }
             }
             .padding(.vertical, 8)

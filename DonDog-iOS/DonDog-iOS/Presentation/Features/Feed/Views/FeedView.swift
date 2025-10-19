@@ -64,19 +64,7 @@ struct FeedView: View {
                                             .padding(.vertical, 8)
                                             .padding(.trailing, 20)
                                     }
-                } else {
-                    Button{
-                        coordinator.push(.archive(roomId: viewModel.currentRoomId))
-                    }label: {
-                        Image(systemName: "photo.circle.fill")
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                            .foregroundStyle(.ddPrimaryBlue)
-                            .padding(.vertical, 8)
-                            .padding(.trailing, 20)
-                    }
                 }
-                
             }
             //날짜표시
             HStack {
@@ -209,19 +197,52 @@ struct FeedView: View {
             }
             Spacer()
             if connectState.isConnected == true{
-                Button{
-                    showCameraView = true
-                }label: {
-                    Circle()
-                        .foregroundColor(.ddWhite)
-                        .frame(width: 64, height: 64)
-                        .background{
-                            Circle()
-                                .foregroundColor(.ddPrimaryBlue)
-                                .frame(width: 72, height: 72)
+                HStack{
+                    Spacer()
+                    Button{
+                        coordinator.push(.archive(roomId: viewModel.currentRoomId))
+                    }label: {
+                        VStack(spacing: 2){
+                            Image(systemName: "calendar")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
+                                .foregroundStyle(.ddPrimaryBlue)
+                            Text("보관함")
+                                .foregroundStyle(.ddPrimaryBlue)
+                                .font(.captionRegular14)
                         }
-                }
-                .padding(.bottom, 22)
+                    }
+                    Spacer()
+                    Button{
+                        showCameraView = true
+                    }label: {
+                        Circle()
+                            .foregroundColor(.ddWhite)
+                            .frame(width: 64, height: 64)
+                            .background{
+                                Circle()
+                                    .foregroundColor(.ddPrimaryBlue)
+                                    .frame(width: 72, height: 72)
+                            }
+                    }
+                    Spacer()
+                    Button{
+                        //보관함
+                    }label: {
+                        VStack(spacing: 2){
+                            Image(systemName: "face.smiling")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
+                                .foregroundStyle(.ddPrimaryBlue)
+                            Text("스티커")
+                                .foregroundStyle(.ddPrimaryBlue)
+                                .font(.captionRegular14)
+                        }
+                    }
+                    Spacer()
+                }.padding(.bottom, 22)
             }
         }
         .onAppear() {

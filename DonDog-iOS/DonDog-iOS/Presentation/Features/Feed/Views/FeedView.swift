@@ -158,7 +158,7 @@ struct FeedView: View {
                     .frame(height: 520)
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
-                    .onChange(of: viewModel.currentPostIndex) { newIndex in
+                    .onChange(of: viewModel.currentPostIndex) { _, newIndex in
                         withAnimation(.easeInOut(duration: 0.3)) {
                             viewModel.updateCurrentPost(at: newIndex)
                         }
@@ -175,7 +175,7 @@ struct FeedView: View {
                         .padding(.top, 16)
                     }
                 }
-            } else { // 오늘 찍은 사진이 없을 때
+            } else {
                 VStack(spacing: 10){
                     Image(systemName: "photo.on.rectangle.angled")
                         .resizable()

@@ -30,44 +30,28 @@ struct PostView: View {
                     }
                     
                     HStack {
-                        TextField("댓글을 입력해 주세요", text: $text)
-                            .padding(.leading, 20)
-                            .focused($isTextFieldFocused)
-                        
-                        if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            Button {
-                                Task {
-                                    let currentText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-                                    guard !currentText.isEmpty else { return }
-                                    
-                                    await viewModel.saveComment(of: currentText)
-                                    text = ""
-                                    isTextFieldFocused = false
-                                    withAnimation(.easeOut) {
-                                        proxy.scrollTo("bottom", anchor: .bottom)
-                                    }
-                                }
-                            } label: {
-                                Image(systemName: "arrow.up")
-                                    .font(.system(size: 20))
-                                    .foregroundStyle(Color.white)
-                                    .padding(.vertical, 5)
-                                    .padding(.horizontal, 8)
-                                    .background(Color.black)
-                                    .clipShape(Circle())
+                        GrowingTextEditor(text: $text, minHeight: 52, maxHeight: 73, isFocused: _isTextFieldFocused)
+                        Button {
+                            Task {
+                                let currentText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                                guard !currentText.isEmpty else { return }
+                                await viewModel.saveComment(of: currentText)
+                                text = ""
+                                isTextFieldFocused = false
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .animation(.spring(), value: text)
-                            .padding(.trailing, 11)
+                        } label: {
+                            Image(systemName: "arrow.up")
+                                .font(.system(size: 20))
+                                .foregroundStyle(Color.white)
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 8)
+                                .background(Color.black)
+                                .clipShape(Circle())
                         }
+                        .buttonStyle(PlainButtonStyle())
+                        .animation(.spring(), value: text)
+                        .padding(.trailing, 11)
                     }
-                    .frame(height: 52)
-                    .cornerRadius(32)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 32)
-                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                    )
-                    .padding(.bottom, 12)
                 }
                 
                 Image(uiImage: viewModel.stickerImage)

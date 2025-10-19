@@ -8,6 +8,7 @@
 import Combine
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 
 final class PostViewModel: ObservableObject {
     let postId: String
@@ -147,9 +148,31 @@ final class PostViewModel: ObservableObject {
         }
     }
     
-    func deletePost() async {
+    func deletePost(completion: @escaping (Error?) -> Void) async {
         do {
+            let frontPath = "rooms/\(roomId)/posts/\(postId)/front.jpg"
+            let backPath = "rooms/\(roomId)/posts/\(postId)/back.jpg"
+            let storageRef = Storage.storage().reference()
+            
             try await postRef.delete()
+            
+            storageRef.child(frontPath).delete { error in
+                    if let error = error {
+                        print("전면 사진 삭제 실패:", error.localizedDescription)
+                        completion(error)
+                    } else {
+                        completion(nil)
+                    }
+                }
+            
+            storageRef.child(backPath).delete { error in
+                    if let error = error {
+                        print("후면 사진 삭제 실패:", error.localizedDescription)
+                        completion(error)
+                    } else {
+                        completion(nil)
+                    }
+                }
             
             let commentsCollection = commentRef.collection("comments")
             let snapshot = try await commentsCollection.getDocuments()

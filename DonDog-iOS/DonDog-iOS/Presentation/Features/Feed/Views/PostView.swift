@@ -96,7 +96,11 @@ struct PostView: View {
                 Button("삭제", role: .destructive) {
                     coordinator.pop()
                     Task {
-                        await viewModel.deletePost()
+                        await viewModel.deletePost() { error in
+                            if let error = error {
+                                print("게시물 삭제 중 오류: ", error.localizedDescription)
+                            }
+                        }
                     }
                 }
                 Button("취소", role: .cancel) { }

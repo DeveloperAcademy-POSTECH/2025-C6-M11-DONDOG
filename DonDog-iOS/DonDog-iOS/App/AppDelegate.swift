@@ -72,8 +72,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // APNs device token → Firebase Auth
     func application(_ application: UIApplication,
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        
         // Firebase Auth (전화번호 인증용)
-        Auth.auth().setAPNSToken(deviceToken, type: .unknown)
+        Auth.auth().setAPNSToken(deviceToken, type: .prod)
         
         // FCM
         Messaging.messaging().apnsToken = deviceToken
@@ -83,6 +84,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             print("FCM 토큰 (post-APNs): \(token)")
             self.uploadTokenToServer(token)
         }
+    }
+
+    func application(_ application: UIApplication,
+                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("APNs 등록 실패: \(error.localizedDescription)")
     }
     
     // Handle custom URL scheme for reCAPTCHA callback

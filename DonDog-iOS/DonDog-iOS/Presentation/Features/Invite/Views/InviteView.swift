@@ -90,8 +90,8 @@ struct InviteView: View {
                                 .scaledToFit()
                                 .frame(width: 18)
                                 .foregroundStyle(Color.ddGray800)
+                                .padding(.leading, 3)
                         }
-                        .padding(.leading, 3)
                     }
                 }
             }

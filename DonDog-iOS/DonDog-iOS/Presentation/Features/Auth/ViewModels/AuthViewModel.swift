@@ -82,7 +82,7 @@ final class AuthViewModel: ObservableObject {
         if self.isWithDraw {
             let currentPhoneE164 = Auth.auth().currentUser?.phoneNumber
             if currentPhoneE164 != formattedDigitsWithCode {
-                self.mismatchAlertText = "가입한 전화번호가 아닙니다. 확인해 주세요"
+                self.mismatchAlertText = "가입한 전화번호가 아닙니다"
                 self.showPhoneMismatchAlert = true
                 return
             }
@@ -119,15 +119,15 @@ final class AuthViewModel: ObservableObject {
                 
                 self.coordinator?.authNumberShowWithdraw = false
                 
-                if self.isWithDraw {
-                    let currentPhoneE164 = Auth.auth().currentUser?.phoneNumber
-                    if currentPhoneE164 != formattedDigitsWithCode {
-                        self.mismatchAlertText = "가입한 전화번호가 아닙니다. 확인해 주세요"
-                        self.showPhoneMismatchAlert = true
-                        return
-                    }
-                    self.coordinator?.authNumberShowWithdraw = true
-                }
+//                if self.isWithDraw {
+//                    let currentPhoneE164 = Auth.auth().currentUser?.phoneNumber
+//                    if currentPhoneE164 != formattedDigitsWithCode {
+//                        self.mismatchAlertText = "가입한 전화번호가 아닙니다"
+//                        self.showPhoneMismatchAlert = true
+//                        return
+//                    }
+//                    self.coordinator?.authNumberShowWithdraw = true
+//                }
                 
                 self.coordinator?.push(.authNumber)
                 self.userPhoneNumber = ""

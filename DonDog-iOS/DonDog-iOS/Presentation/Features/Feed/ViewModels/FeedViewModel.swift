@@ -31,8 +31,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var currentPost: PostData?
     @Published var currentNickname: String = ""
     @Published var currentPostIndex: Int = 0
-    @Published var allTodayPosts: [PostData] = []
-    @Published var allTodayImages: [(front: UIImage, back: UIImage, nickname: String)] = []
+    @Published var displayablePosts: [DisplayablePost] = []
     @Published var frame: UIImage?
     @Published var emotion: String = "null"
     @Published var isNotMyPost = false
@@ -234,7 +233,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                         switch result {
                         case .success(let todayPosts):
                             self?.images = todayPosts
-                            self?.allTodayPosts = todayPosts
                             print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
   
                             if let firstPost = todayPosts.first {
@@ -244,7 +242,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                                 self?.downloadAllTodayImages(posts: todayPosts)
                             } else {
                                 print("📭 오늘 찍은 게시물이 없습니다")
-                                self?.allTodayImages = []
+                                self?.displayablePosts = []
                             }
                         case .failure(let error):
                             print("오늘 posts 로드 실패: \(error.localizedDescription)")
@@ -300,25 +298,23 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     
     private func downloadAllTodayImages(posts: [PostData]) {
         print("🖼️ 모든 게시물 이미지 다운로드 시작")
-        allTodayImages = []
+        displayablePosts = []
         
         let group = DispatchGroup()
-        var downloadedImages: [(front: UIImage, back: UIImage, nickname: String)] = []
+        var tempDisplayablePosts: [Int: DisplayablePost] = [:]  // 인덱스와 함께 저장
         
         for (index, post) in posts.enumerated() {
             group.enter()
             
+            var displayablePost = DisplayablePost(post: post)
             let imageGroup = DispatchGroup()
-            var frontImage: UIImage?
-            var backImage: UIImage?
-            var nickname: String = "익명"
             
             // 전면 이미지 다운로드
             imageGroup.enter()
             photoSaveService.downloadImage(from: post.frontImageURL) { result in
                 switch result {
                 case .success(let image):
-                    frontImage = image
+                    displayablePost.frontImage = image
                 case .failure(let error):
                     print("❌ 전면 이미지 다운로드 실패: \(error.localizedDescription)")
                 }
@@ -330,7 +326,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             photoSaveService.downloadImage(from: post.backImageURL) { result in
                 switch result {
                 case .success(let image):
-                    backImage = image
+                    displayablePost.backImage = image
                 case .failure(let error):
                     print("❌ 후면 이미지 다운로드 실패: \(error.localizedDescription)")
                 }
@@ -340,13 +336,13 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             // 사용자 이름 가져오기
             imageGroup.enter()
             getUserName(uid: post.uid) { name in
-                nickname = name
+                displayablePost.nickname = name
                 imageGroup.leave()
             }
             
             imageGroup.notify(queue: .main) {
-                if let front = frontImage, let back = backImage {
-                    downloadedImages.append((front: front, back: back, nickname: nickname))
+                if displayablePost.isReady {
+                    tempDisplayablePosts[index] = displayablePost  // 인덱스로 저장
                     print("✅ 게시물 \(index + 1) 이미지 다운로드 완료")
                 }
                 group.leave()
@@ -354,14 +350,16 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
         
         group.notify(queue: .main) {
-            self.allTodayImages = downloadedImages
-            print("🎉 모든 게시물 이미지 다운로드 완료: \(downloadedImages.count)개")
+            // 인덱스 순서대로 정렬하여 배열로 변환
+            let sortedPosts = tempDisplayablePosts.sorted(by: { $0.key < $1.key }).map { $0.value }
+            self.displayablePosts = sortedPosts
+            print("🎉 모든 게시물 이미지 다운로드 완료: \(sortedPosts.count)개 (순서 유지)")
             
             // 첫 번째 게시물을 현재 게시물로 설정
-            if let firstPost = posts.first, let firstImage = downloadedImages.first {
-                self.todayFrontImage = firstImage.front
-                self.todayBackImage = firstImage.back
-                self.currentNickname = firstImage.nickname
+            if let firstDisplayablePost = sortedPosts.first {
+                self.todayFrontImage = firstDisplayablePost.frontImage
+                self.todayBackImage = firstDisplayablePost.backImage
+                self.currentNickname = firstDisplayablePost.nickname
             }
         }
     }
@@ -414,16 +412,15 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     
     // 캐러셀에서 현재 선택된 게시물 업데이트
     func updateCurrentPost(at index: Int) {
-        guard index >= 0 && index < allTodayPosts.count && index < allTodayImages.count else { return }
+        guard index >= 0 && index < displayablePosts.count else { return }
+        
+        let displayablePost = displayablePosts[index]
         
         currentPostIndex = index
-        currentPost = allTodayPosts[index]
-        selectedPostId = allTodayPosts[index].postId
-        
-        let imageData = allTodayImages[index]
-        todayFrontImage = imageData.front
-        todayBackImage = imageData.back
-        currentNickname = imageData.nickname
-        
+        currentPost = displayablePost.post
+        selectedPostId = displayablePost.postId
+        todayFrontImage = displayablePost.frontImage
+        todayBackImage = displayablePost.backImage
+        currentNickname = displayablePost.nickname
     }
 }

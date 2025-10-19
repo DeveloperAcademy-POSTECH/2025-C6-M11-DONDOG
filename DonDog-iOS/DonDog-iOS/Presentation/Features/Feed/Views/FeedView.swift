@@ -94,20 +94,20 @@ struct FeedView: View {
                         .foregroundStyle(.ddGray600)
                 }
                 .padding(.top, 220)
-            } else if !viewModel.allTodayPosts.isEmpty && !viewModel.allTodayImages.isEmpty {
+            } else if !viewModel.displayablePosts.isEmpty {
                 VStack(spacing: 0){
                     TabView(selection: $viewModel.currentPostIndex) {
-                        ForEach(Array(viewModel.allTodayPosts.enumerated()), id: \.element.postId) { index, post in
-                            if index < viewModel.allTodayImages.count {
-                                let imageData = viewModel.allTodayImages[index]
+                        ForEach(Array(viewModel.displayablePosts.enumerated()), id: \.element.id) { index, displayablePost in
+                            if let frontImage = displayablePost.frontImage,
+                               let backImage = displayablePost.backImage {
                                 HStack {
                                     Spacer()
                                     PolaroidSetView(
-                                        frontImage: imageData.front,
-                                        backImage: imageData.back,
-                                        nickname: imageData.nickname,
-                                        createdAt: DataUtils.formatDate(post.createdAt.dateValue(), format: "a hh:mm"),
-                                        caption: post.caption,
+                                        frontImage: frontImage,
+                                        backImage: backImage,
+                                        nickname: displayablePost.nickname,
+                                        createdAt: DataUtils.formatDate(displayablePost.createdAt, format: "a hh:mm"),
+                                        caption: displayablePost.caption,
                                         onStickerButtonTapped: {
                                             showStickerSheet = true
                                         },
@@ -132,9 +132,9 @@ struct FeedView: View {
                             viewModel.updateCurrentPost(at: newIndex)
                         }
                     }
-                    if viewModel.allTodayPosts.count > 1 {
+                    if viewModel.displayablePosts.count > 1 {
                         HStack(spacing: 8) {
-                            ForEach(0..<viewModel.allTodayPosts.count, id: \.self) { index in
+                            ForEach(0..<viewModel.displayablePosts.count, id: \.self) { index in
                                 Circle()
                                     .fill(index == viewModel.currentPostIndex ? Color.ddPrimaryBlue : Color.ddGray300)
                                     .frame(width: 8, height: 8)

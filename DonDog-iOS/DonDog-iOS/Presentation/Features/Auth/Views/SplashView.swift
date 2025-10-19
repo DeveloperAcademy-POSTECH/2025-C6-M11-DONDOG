@@ -19,9 +19,16 @@ struct SplashView: View {
             
             VStack {
                 Spacer()
-                Text("Winky")
+                Image("SplashLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 94)
+                    .padding(.bottom, 68)
                 Spacer()
             }
+            .padding(.horizontal, 20)
+            .navigationBarBackButtonHidden(true)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

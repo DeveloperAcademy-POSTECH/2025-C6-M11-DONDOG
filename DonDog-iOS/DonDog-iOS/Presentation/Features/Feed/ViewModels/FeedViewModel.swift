@@ -21,15 +21,14 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var isLoading = false
     @Published var uploadStatus: String = ""
     @Published var currentRoomId: String = ""
-    @Published var selectedPostId: String = "" {
+    
+    @Published var stickerImage: UIImage?
+    @Published var sticker: UIImage?
+    @Published var currentPost: PostData? {
         didSet {
             checkIsNotMyPost()
         }
     }
-    
-    @Published var stickerImage: UIImage?
-    @Published var sticker: UIImage?
-    @Published var currentPost: PostData?
     @Published var currentNickname: String = ""
     @Published var frame: UIImage?
     @Published var emotion: String = "null"
@@ -58,15 +57,15 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func checkIsNotMyPost() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
-            print("currentRoomId 또는 selectedPostId가 비어 있음")
+        guard !currentRoomId.isEmpty, ((currentPost?.postId.isEmpty) == nil) else {
+            print("currentRoomId 또는 currentPostId가 비어 있음")
             return
         }
         
         let postRef = db.collection("Rooms")
             .document(currentRoomId)
             .collection("posts")
-            .document(selectedPostId)
+            .document(currentPost?.postId ?? "")
 
         postRef.getDocument { snapshot, error in
             if let error = error {
@@ -153,7 +152,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func updateStickerData() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+        guard !currentRoomId.isEmpty, ((currentPost?.postId.isEmpty) == nil) else {
             print("currentRoomId 또는 selectedPostId가 비어 있어 업데이트 불가")
             return
         }
@@ -161,11 +160,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         let postRef = db.collection("Rooms")
             .document(currentRoomId)
             .collection("posts")
-            .document(selectedPostId)
+            .document(currentPost?.postId ?? "")
 
         let batch = db.batch()
         batch.updateData([
-            "stickerPostId": selectedPostId,
+            "stickerPostId": currentPost?.postId ?? "",
             "stickerType": emotion,
             "updatedAt": FieldValue.serverTimestamp()
         ], forDocument: postRef)

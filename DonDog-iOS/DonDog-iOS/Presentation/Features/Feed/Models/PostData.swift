@@ -8,6 +8,7 @@
 import FirebaseCore
 
 struct PostData: Codable {
+    let postId: String
     let uid: String
     let frontImageURL: String
     let backImageURL: String
@@ -17,7 +18,8 @@ struct PostData: Codable {
     let stickerPostId: String
     let stickerType: String
     
-    init(uid: String, frontImageURL: String, backImageURL: String, caption: String = "", stickerPostId: String, stickerType: String = "null") {
+    init(postId: String, uid: String, frontImageURL: String, backImageURL: String, caption: String = "", stickerPostId: String, stickerType: String = "null") {
+        self.postId = postId
         self.uid = uid
         self.frontImageURL = frontImageURL
         self.backImageURL = backImageURL

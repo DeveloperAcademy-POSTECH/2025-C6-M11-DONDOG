@@ -145,6 +145,9 @@ struct FeedView: View {
                                         stickerImage: displayablePost.stickerImage,
                                         isMyPost: displayablePost.isMyPost
                                     )
+                                    .onAppear {
+                                        print("🎨 게시물 \(index) 렌더링: stickerType=\(displayablePost.stickerType ?? "nil"), stickerImage=\(displayablePost.stickerImage != nil ? "있음" : "없음")")
+                                    }
                                     .allowsHitTesting(true)
                                     .scaleEffect(index == viewModel.currentPostIndex ? 1.0 : 0.95)
                                     .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.currentPostIndex)
@@ -231,7 +234,6 @@ struct FeedView: View {
                         } else {
                             viewModel.removeStickerData()
                         }
-                        // 리스너가 자동으로 업데이트하므로 새로고침 불필요
                     },
                     borderedStickers: viewModel.borderedStickers 
                 )

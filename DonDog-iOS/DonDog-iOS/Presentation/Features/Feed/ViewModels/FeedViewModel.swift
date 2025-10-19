@@ -40,134 +40,21 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     private let photoSaveService = PhotoSaveService.shared
     private let db = Firestore.firestore()
     private let imageUtils = ImageUtils()
-    private var postsListener: ListenerRegistration?
     
     init() {
-        loadTodayPosts()
-        
         photoSaveService.getCurrentUserRoomId { [weak self] result in
             switch result {
             case .success(let roomId):
                 DispatchQueue.main.async {
                     self?.currentRoomId = roomId
                     print("currentRoomId 초기화 완료: \(roomId)")
-                    // roomId를 얻은 후 리스너 시작
-                    self?.startListeningToPostUpdates()
                 }
             case .failure(let error):
                 print("roomId 가져오기 실패: \(error.localizedDescription)")
             }
         }
-        
+        loadTodayPosts()
         self.getStickerData()
-    }
-    
-    deinit {
-        postsListener?.remove()
-    }
-    
-    func startListeningToPostUpdates() {
-        guard !currentRoomId.isEmpty else {
-            print("⚠️ currentRoomId가 비어있어 리스너를 시작할 수 없습니다")
-            return
-        }
-        
-        // 기존 리스너가 있다면 제거
-        postsListener?.remove()
-        
-        let calendar = Calendar.current
-        let startOfDay = calendar.startOfDay(for: Date())
-        
-        postsListener = db.collection("Rooms")
-            .document(currentRoomId)
-            .collection("posts")
-            .whereField("createdAt", isGreaterThanOrEqualTo: Timestamp(date: startOfDay))
-            .addSnapshotListener { [weak self] snapshot, error in
-                guard let self = self else { return }
-                
-                if let error = error {
-                    print("❌ Firestore 리스너 에러: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let snapshot = snapshot else { return }
-                
-                // 변경된 문서만 처리
-                for diff in snapshot.documentChanges {
-                    if diff.type == .modified {
-                        let data = diff.document.data()
-                        let postId = diff.document.documentID
-                        
-                        let stickerType = data["stickerType"] as? String
-                        let stickerPostId = data["stickerPostId"] as? String ?? ""
-                        
-                        // 스티커 이미지 다운로드 (stickerPostId가 있는 경우)
-                        if !stickerPostId.isEmpty {
-                            self.downloadStickerImage(stickerPostId: stickerPostId, roomId: self.currentRoomId, stickerType: stickerType) { stickerImage in
-                                DispatchQueue.main.async {
-                                    // 비동기 완료 후 다시 index 찾기 (배열이 변경되었을 수 있음)
-                                    guard let currentIndex = self.displayablePosts.firstIndex(where: { $0.postId == postId }) else {
-                                        print("⚠️ 게시물 \(postId)을 찾을 수 없습니다")
-                                        return
-                                    }
-                                    
-                                    let existingPost = self.displayablePosts[currentIndex]
-                                    let newPostData = PostData(
-                                        postId: existingPost.postId,
-                                        uid: existingPost.uid,
-                                        frontImageURL: existingPost.post.frontImageURL,
-                                        backImageURL: existingPost.post.backImageURL,
-                                        caption: existingPost.caption,
-                                        stickerPostId: stickerPostId,
-                                        stickerType: stickerType
-                                    )
-                                    
-                                    self.displayablePosts[currentIndex] = DisplayablePost(
-                                        post: newPostData,
-                                        frontImage: existingPost.frontImage,
-                                        backImage: existingPost.backImage,
-                                        stickerImage: stickerImage,
-                                        nickname: existingPost.nickname,
-                                        isMyPost: existingPost.isMyPost
-                                    )
-                                    print("✅ 게시물 \(postId) 스티커 실시간 업데이트 완료: \(stickerType ?? "nil")")
-                                }
-                            }
-                        } else {
-                            // 스티커가 제거된 경우 (동기 처리)
-                            DispatchQueue.main.async {
-                                guard let currentIndex = self.displayablePosts.firstIndex(where: { $0.postId == postId }) else {
-                                    print("⚠️ 게시물 \(postId)을 찾을 수 없습니다")
-                                    return
-                                }
-                                
-                                let existingPost = self.displayablePosts[currentIndex]
-                                let newPostData = PostData(
-                                    postId: existingPost.postId,
-                                    uid: existingPost.uid,
-                                    frontImageURL: existingPost.post.frontImageURL,
-                                    backImageURL: existingPost.post.backImageURL,
-                                    caption: existingPost.caption,
-                                    stickerPostId: "",
-                                    stickerType: nil
-                                )
-                                
-                                self.displayablePosts[currentIndex] = DisplayablePost(
-                                    post: newPostData,
-                                    frontImage: existingPost.frontImage,
-                                    backImage: existingPost.backImage,
-                                    stickerImage: nil,
-                                    nickname: existingPost.nickname,
-                                    isMyPost: existingPost.isMyPost
-                                )
-                                print("✅ 게시물 \(postId) 스티커 제거됨")
-                            }
-                        }
-                    }
-                }
-            }
-        
-        print("🎧 Firestore 리스너 시작됨 (roomId: \(currentRoomId))")
     }
     
     func checkIsNotMyPost() {
@@ -328,11 +215,46 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 "updatedAt": FieldValue.serverTimestamp()
             ], forDocument: postRef)
             
-            batch.commit { error in
+            batch.commit { [weak self] error in
+                guard let self = self else { return }
+                
                 if let error = error {
                     print("❌ 스티커 업데이트 실패: \(error.localizedDescription)")
-                } else {
-                    print("✅ 스티커 저장 완료: \(self.selectedPostId)에 \(recentPostId) 스티커 붙임")
+                    return
+                }
+                
+                print("✅ Firestore 스티커 저장 완료: \(self.selectedPostId)에 \(recentPostId) 스티커 붙임")
+                
+                // 🎯 로컬 상태도 즉시 업데이트
+                self.downloadStickerImage(stickerPostId: recentPostId, roomId: self.currentRoomId, stickerType: self.emotion) { stickerImage in
+                    DispatchQueue.main.async {
+                        // postId로 게시물 찾기
+                        guard let index = self.displayablePosts.firstIndex(where: { $0.postId == self.selectedPostId }) else {
+                            print("⚠️ 게시물을 찾을 수 없습니다")
+                            return
+                        }
+                        
+                        let existingPost = self.displayablePosts[index]
+                        let newPostData = PostData(
+                            postId: existingPost.postId,
+                            uid: existingPost.uid,
+                            frontImageURL: existingPost.post.frontImageURL,
+                            backImageURL: existingPost.post.backImageURL,
+                            caption: existingPost.caption,
+                            stickerPostId: recentPostId,
+                            stickerType: self.emotion
+                        )
+                        
+                        self.displayablePosts[index] = DisplayablePost(
+                            post: newPostData,
+                            frontImage: existingPost.frontImage,
+                            backImage: existingPost.backImage,
+                            stickerImage: stickerImage,
+                            nickname: existingPost.nickname,
+                            isMyPost: existingPost.isMyPost
+                        )
+                        print("✅ 로컬 UI 업데이트 완료: 스티커 표시됨")
+                    }
                 }
             }
         }
@@ -356,11 +278,43 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             "updatedAt": FieldValue.serverTimestamp()
         ], forDocument: postRef)
         
-        batch.commit { error in
+        batch.commit { [weak self] error in
+            guard let self = self else { return }
+            
             if let error = error {
                 print("❌ 스티커 삭제 실패: \(error.localizedDescription)")
-            } else {
-                print("✅ 스티커 삭제 완료: \(self.selectedPostId)")
+                return
+            }
+            
+            print("✅ Firestore 스티커 삭제 완료: \(self.selectedPostId)")
+            
+            // 🎯 로컬 상태도 즉시 업데이트
+            DispatchQueue.main.async {
+                guard let index = self.displayablePosts.firstIndex(where: { $0.postId == self.selectedPostId }) else {
+                    print("⚠️ 게시물을 찾을 수 없습니다")
+                    return
+                }
+                
+                let existingPost = self.displayablePosts[index]
+                let newPostData = PostData(
+                    postId: existingPost.postId,
+                    uid: existingPost.uid,
+                    frontImageURL: existingPost.post.frontImageURL,
+                    backImageURL: existingPost.post.backImageURL,
+                    caption: existingPost.caption,
+                    stickerPostId: "",
+                    stickerType: nil
+                )
+                
+                self.displayablePosts[index] = DisplayablePost(
+                    post: newPostData,
+                    frontImage: existingPost.frontImage,
+                    backImage: existingPost.backImage,
+                    stickerImage: nil,
+                    nickname: existingPost.nickname,
+                    isMyPost: existingPost.isMyPost
+                )
+                print("✅ 로컬 UI 업데이트 완료: 스티커 제거됨")
             }
         }
     }
@@ -426,7 +380,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                                 self?.selectedPostId = firstPost.postId
                                 self?.currentPost = firstPost
                                 self?.currentPostIndex = 0
-                                self?.downloadAllTodayImages(posts: todayPosts)
+                                self?.downloadAllTodayImages(posts: todayPosts, roomId: roomId)
                             } else {
                                 print("📭 오늘 찍은 게시물이 없습니다")
                                 self?.displayablePosts = []
@@ -483,8 +437,8 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    private func downloadAllTodayImages(posts: [PostData]) {
-        print("🖼️ 모든 게시물 이미지 다운로드 시작")
+    private func downloadAllTodayImages(posts: [PostData], roomId: String) {
+        print("🖼️ 모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")
         displayablePosts = []
         
         // 현재 사용자 UID 가져오기
@@ -537,28 +491,43 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 imageGroup.leave()
             }
             
-            // 스티커 이미지 다운로드 (stickerPostId가 있는 경우)
-            if !post.stickerPostId.isEmpty {
-                imageGroup.enter()
-                self.downloadStickerImage(stickerPostId: post.stickerPostId, roomId: self.currentRoomId, stickerType: post.stickerType) { image in
-                    stickerImage = image
-                    imageGroup.leave()
-                }
-            }
-            
             imageGroup.notify(queue: .main) {
-                // 모든 비동기 작업 완료 후 DisplayablePost 생성
-                if let frontImage = frontImage, let backImage = backImage {
+                // 기본 이미지와 닉네임으로 DisplayablePost 생성 (스티커 없이)
+                if let front = frontImage, let back = backImage {
                     let displayablePost = DisplayablePost(
                         post: post,
-                        frontImage: frontImage,
-                        backImage: backImage,
-                        stickerImage: stickerImage,
+                        frontImage: front,
+                        backImage: back,
+                        stickerImage: nil,  // 일단 nil로 생성
                         nickname: nickname,
                         isMyPost: isMyPost
                     )
                     tempDisplayablePosts[index] = displayablePost
-                    print("✅ 게시물 \(index + 1) 이미지 다운로드 완료 (스티커: \(stickerImage != nil ? "있음" : "없음"))")
+                    print("✅ 게시물 \(index + 1) 기본 이미지 다운로드 완료")
+                    
+                    // 🎯 스티커가 있으면 별도로 다운로드 후 업데이트
+                    if !post.stickerPostId.isEmpty {
+                        print("🎯 스티커 다운로드 시작: \(post.stickerPostId) for post \(post.postId)")
+                        self.downloadStickerImage(stickerPostId: post.stickerPostId, roomId: roomId, stickerType: post.stickerType) { [weak self] stickerImg in
+                            guard let self = self, let sticker = stickerImg else { return }
+                            
+                            DispatchQueue.main.async {
+                                // 스티커 다운로드 완료 후 displayablePosts 업데이트
+                                if let idx = self.displayablePosts.firstIndex(where: { $0.postId == post.postId }) {
+                                    let updatedPost = DisplayablePost(
+                                        post: self.displayablePosts[idx].post,
+                                        frontImage: self.displayablePosts[idx].frontImage,
+                                        backImage: self.displayablePosts[idx].backImage,
+                                        stickerImage: sticker,
+                                        nickname: self.displayablePosts[idx].nickname,
+                                        isMyPost: self.displayablePosts[idx].isMyPost
+                                    )
+                                    self.displayablePosts[idx] = updatedPost
+                                    print("✅ 게시물 \(index + 1) 스티커 추가 완료!")
+                                }
+                            }
+                        }
+                    }
                 }
                 group.leave()
             }
@@ -568,7 +537,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             // 인덱스 순서대로 정렬하여 배열로 변환
             let sortedPosts = tempDisplayablePosts.sorted(by: { $0.key < $1.key }).map { $0.value }
             self.displayablePosts = sortedPosts
-            print("🎉 모든 게시물 이미지 다운로드 완료: \(sortedPosts.count)개 (순서 유지)")
+            print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(sortedPosts.count)개 (스티커는 별도 로딩)")
             
             // 첫 번째 게시물을 현재 게시물로 설정
             if let firstDisplayablePost = sortedPosts.first {

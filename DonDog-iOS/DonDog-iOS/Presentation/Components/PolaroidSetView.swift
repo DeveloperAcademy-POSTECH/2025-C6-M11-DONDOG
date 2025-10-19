@@ -53,24 +53,26 @@ struct PolaroidFrame: View {
                 
                 // 스티커 표시 영역
                 if let isMyPost = isMyPost {
-                    if let stickerImage = stickerImage, selectedStickerEmotion != nil {
+                    if let sticker = stickerImage, let emotion = selectedStickerEmotion {
                         
                         if !isMyPost {
                             // 다른 사람의 게시물: 클릭 가능한 버튼
                             Button {
                                 onStickerButtonTapped?()
                             } label: {
-                                Image(uiImage: stickerImage)
+                                Image(uiImage: sticker)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 32, height: 32)
                             }
+                            .id("\(emotion)_\(sticker.size.width)") // SwiftUI 변경 감지용
                         } else {
                             // 내 게시물: 스티커만 표시 (클릭 불가)
-                            Image(uiImage: stickerImage)
+                            Image(uiImage: sticker)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 32, height: 32)
+                                .id("\(emotion)_\(sticker.size.width)")  // SwiftUI 변경 감지용
                         }
                     } else if !isMyPost {
                         // 스티커가 없고 다른 사람의 게시물: 스티커 버튼 표시
@@ -82,6 +84,9 @@ struct PolaroidFrame: View {
                                 .frame(width: 32, height: 32)
                                 .foregroundStyle(.ddSecondaryBlue)
                         }
+                    } else {
+                        // 내 게시물이고 스티커 없음
+                        EmptyView()
                     }
                 }
             }

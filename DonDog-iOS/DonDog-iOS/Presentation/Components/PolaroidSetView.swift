@@ -63,16 +63,16 @@ struct PolaroidFrame: View {
                                 Image(uiImage: sticker)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 32, height: 32)
+                                    .frame(width: 90, height: 120)
+                                    .offset(x: 10, y: -10)
                             }
-                            .id("\(emotion)_\(sticker.size.width)") // SwiftUI 변경 감지용
                         } else {
                             // 내 게시물: 스티커만 표시 (클릭 불가)
                             Image(uiImage: sticker)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 32, height: 32)
-                                .id("\(emotion)_\(sticker.size.width)")  // SwiftUI 변경 감지용
+                                .frame(width: 90, height: 120)
+                                .offset(x: 10, y: -10)
                         }
                     } else if !isMyPost {
                         // 스티커가 없고 다른 사람의 게시물: 스티커 버튼 표시

@@ -130,8 +130,15 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                                     self?.stickerImage = image
                                     print("recentSticker 이미지 로드 성공")
                                     
-                                    self?.makeStickerAndMask(with: image)
+//                                    if self?.currentPost?.stickerPostId != "" {
+//                                        // 1. currentPost의 stickerPostId를 이용해서 해당 post에 대응된 스티커 이미지 url 가져오기
+//                                        // 2. 1번에서 가져온 url로 UIImage 가져오기
+//                                        self?.makeStickerAndMask(with: ) // 3. 여기 with: 뒤에 2번에서 가져온 UIImage 넣기
+//                                    } else {
+//                                        self?.makeStickerAndMask(with: image)
+//                                    }
                                     
+                                    self?.makeStickerAndMask(with: image)
                                     self?.emotion = postData["stickerType"] as? String ?? "null"
                                 }
                             case .failure(let error):
@@ -565,6 +572,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             completion(name)
         }
     }
+
     
     private func downloadStickerImage(stickerPostId: String, roomId: String, stickerType: String?, completion: @escaping (UIImage?) -> Void) {
         // Firestore 조회
@@ -591,14 +599,15 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     return
                 }
                 
-                // 이미지 다운로드
                 self.photoSaveService.downloadImage(from: frontImageURL) { result in
                     switch result {
                     case .success(let image):
-                        // 🚀 백그라운드 큐에서 이미지 처리 (CPU 집약적 작업)
                         DispatchQueue.global(qos: .userInitiated).async {
-                            // 스티커로 변환 (배경 제거)
-                            guard let stickerImage = self.imageUtils.makeSticker(with: image) else {
+                            let localImageUtils = ImageUtils()
+                            
+                            _ = localImageUtils.makeMask(from: image)
+                            
+                            guard let stickerImage = localImageUtils.makeSticker(with: image) else {
                                 print("❌ 스티커 변환 실패: \(stickerPostId)")
                                 DispatchQueue.main.async {
                                     completion(nil)
@@ -606,7 +615,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                                 return
                             }
                             
-                            // 감정에 맞는 테두리 추가
+
                             if let emotion = stickerType {
                                 let borderColor = self.borderColor(for: emotion)
                                 if let borderedSticker = stickerImage.addBorder(thickness: 4, color: borderColor) {

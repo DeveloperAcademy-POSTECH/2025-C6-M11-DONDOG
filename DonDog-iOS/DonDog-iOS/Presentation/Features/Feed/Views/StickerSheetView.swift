@@ -13,6 +13,7 @@ struct StickerSheetView: View {
     let stickerImage: UIImage?
     let currentSelectedEmotion: String?
     let onStickerSelected: (String?) -> Void
+    let borderedStickers: [String: UIImage]  // 미리 생성된 테두리 스티커들
     
     var body: some View {
         if let stickerImage = stickerImage {
@@ -33,7 +34,7 @@ struct StickerSheetView: View {
                             dismiss()
                         }) {
                             StickerContainerView(
-                                stickerImage: stickerImage,
+                                borderedImage: borderedStickers["사랑해"],
                                 emotion: "사랑해",
                                 isSelected: selectedEmotion == "사랑해",
                                 isOtherSelected: selectedEmotion != nil && selectedEmotion != "사랑해"
@@ -46,7 +47,7 @@ struct StickerSheetView: View {
                             dismiss()
                         }) {
                             StickerContainerView(
-                                stickerImage: stickerImage,
+                                borderedImage: borderedStickers["멋지다"],
                                 emotion: "멋지다",
                                 isSelected: selectedEmotion == "멋지다",
                                 isOtherSelected: selectedEmotion != nil && selectedEmotion != "멋지다"
@@ -59,7 +60,7 @@ struct StickerSheetView: View {
                             dismiss()
                         }) {
                             StickerContainerView(
-                                stickerImage: stickerImage,
+                                borderedImage: borderedStickers["뭐야?"],
                                 emotion: "뭐야?",
                                 isSelected: selectedEmotion == "뭐야?",
                                 isOtherSelected: selectedEmotion != nil && selectedEmotion != "뭐야?"
@@ -75,7 +76,7 @@ struct StickerSheetView: View {
                             dismiss()
                         }) {
                             StickerContainerView(
-                                stickerImage: stickerImage,
+                                borderedImage: borderedStickers["화나"],
                                 emotion: "화나",
                                 isSelected: selectedEmotion == "화나",
                                 isOtherSelected: selectedEmotion != nil && selectedEmotion != "화나"
@@ -88,7 +89,7 @@ struct StickerSheetView: View {
                             dismiss()
                         }) {
                             StickerContainerView(
-                                stickerImage: stickerImage,
+                                borderedImage: borderedStickers["슬퍼"],
                                 emotion: "슬퍼",
                                 isSelected: selectedEmotion == "슬퍼",
                                 isOtherSelected: selectedEmotion != nil && selectedEmotion != "슬퍼"
@@ -107,39 +108,28 @@ struct StickerSheetView: View {
 }
 
 struct StickerContainerView: View {
-    let stickerImage: UIImage
+    let borderedImage: UIImage?  // 미리 생성된 테두리 이미지
     let emotion: String
     let isSelected: Bool
     let isOtherSelected: Bool
     
-    var borderColor: UIColor{
-        switch emotion {
-        case "사랑해":
-            return .ddFeelingPink
-        case "멋지다":
-            return .ddFeelingYellow
-        case "뭐야?":
-            return .ddFeelingGreen
-        case "화나":
-            return .ddFeelingOrange
-        case "슬퍼":
-            return .ddFeelingBlue
-        default:
-            return .ddGray700
-        }
-    }
-    
     var body: some View {
         VStack(spacing: 8) {
-            Image(uiImage: stickerImage.addBorder(thickness: 4, color: borderColor)!)
-                .resizable()
-                .frame(width: 75, height: 100)
+            if let borderedImage = borderedImage {
+                Image(uiImage: borderedImage)
+                    .resizable()
+                    .frame(width: 75, height: 100)
+            } else {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(width: 75, height: 100)
+            }
+            
             Text(emotion)
                 .font(.captionRegular11)
                 .foregroundColor(.ddGray600)
                 .fixedSize(horizontal: true, vertical: false)
         }
-        
         .scaleEffect(isSelected ? 1.2 : 1.0)
         .opacity(isOtherSelected ? 0.3 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isSelected)
@@ -153,6 +143,7 @@ struct StickerContainerView: View {
     StickerSheetView(
         stickerImage: UIImage(named: "stickerTest")!,
         currentSelectedEmotion: nil,
-        onStickerSelected: { _ in }
+        onStickerSelected: { _ in },
+        borderedStickers: [:]  // Preview에서는 빈 딕셔너리
     )
 }

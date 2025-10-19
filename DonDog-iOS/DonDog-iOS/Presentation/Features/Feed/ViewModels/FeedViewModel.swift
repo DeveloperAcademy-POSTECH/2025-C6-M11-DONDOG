@@ -36,6 +36,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var emotion: String = "null"
     @Published var isNotMyPost = false
     @Published var selectedStickerEmotion: String? = nil
+    @Published var borderedStickers: [String: UIImage] = [:]  // 감정별 테두리 적용된 스티커
     
     private let photoSaveService = PhotoSaveService.shared
     private let db = Firestore.firestore()
@@ -152,6 +153,30 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     func makeStickerAndMask(with stickerImage: UIImage) {
         frame = imageUtils.makeMask(from: stickerImage)
         sticker = imageUtils.makeSticker(with: stickerImage)
+        
+        if let sticker = sticker {
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                let emotions: [(String, UIColor)] = [
+                    ("사랑해", .ddFeelingPink),
+                    ("멋지다", .ddFeelingYellow),
+                    ("뭐야?", .ddFeelingGreen),
+                    ("화나", .ddFeelingOrange),
+                    ("슬퍼", .ddFeelingBlue)
+                ]
+                
+                var bordered: [String: UIImage] = [:]
+                for (emotion, color) in emotions {
+                    if let borderedImage = sticker.addBorder(thickness: 4, color: color) {
+                        bordered[emotion] = borderedImage
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    self?.borderedStickers = bordered
+                    print("✅ 5가지 감정 스티커 테두리 생성 완료")
+                }
+            }
+        }
     }
     
     
@@ -161,7 +186,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             return
         }
         
-        // 현재 사용자(A)의 recentPostId 가져오기
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
         db.collection("Users").document(currentUid).getDocument { [weak self] snapshot, error in
@@ -171,16 +195,15 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 print("recentPostId 가져오기 실패")
                 return
             }
-            
-            // B의 게시물에 A의 recentPostId 저장
+
             let postRef = self.db.collection("Rooms")
                 .document(self.currentRoomId)
                 .collection("posts")
-                .document(self.selectedPostId)  // B의 게시물
+                .document(self.selectedPostId)
             
             let batch = self.db.batch()
             batch.updateData([
-                "stickerPostId": recentPostId,  // ✅ A의 recentPostId!
+                "stickerPostId": recentPostId,
                 "stickerType": self.emotion,
                 "updatedAt": FieldValue.serverTimestamp()
             ], forDocument: postRef)

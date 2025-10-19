@@ -72,7 +72,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // APNs device token → Firebase Auth
     func application(_ application: UIApplication,
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        
         // Firebase Auth (전화번호 인증용)
         Auth.auth().setAPNSToken(deviceToken, type: .prod)
         
@@ -85,7 +84,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             self.uploadTokenToServer(token)
         }
     }
-
+    
     func application(_ application: UIApplication,
                      didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("APNs 등록 실패: \(error.localizedDescription)")

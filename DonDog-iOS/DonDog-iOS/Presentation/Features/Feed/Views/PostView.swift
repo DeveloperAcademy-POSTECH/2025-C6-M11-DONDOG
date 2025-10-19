@@ -18,6 +18,12 @@ struct PostView: View {
     var body: some View {
         ScrollViewReader { proxy in
             ZStack(alignment: .topTrailing) {
+                Color.white
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        isTextFieldFocused = false
+                    }
+                
                 VStack {
                     ScrollView {
                         VStack {
@@ -27,10 +33,20 @@ struct PostView: View {
                                 .frame(height: 1)
                                 .id("bottom")
                         }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            isTextFieldFocused = false
+                        }
                     }
                     
                     HStack {
-                        GrowingTextEditor(text: $text, minHeight: 52, maxHeight: 73, isFocused: _isTextFieldFocused)
+                        GrowingTextEditor(
+                            text: $text,
+                            minHeight: 52,
+                            maxHeight: 73,
+                            isFocused: _isTextFieldFocused
+                        )
+                        
                         Button {
                             Task {
                                 let currentText = text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -38,6 +54,9 @@ struct PostView: View {
                                 await viewModel.saveComment(of: currentText)
                                 text = ""
                                 isTextFieldFocused = false
+                                withAnimation(.easeOut) {
+                                    proxy.scrollTo("bottom", anchor: .bottom)
+                                }
                             }
                         } label: {
                             Image(systemName: "arrow.up")

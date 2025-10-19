@@ -49,7 +49,7 @@ struct FeedView: View {
                         .disabled(viewModel.isLoading)
 
                         Button("게시글 상세로 이동"){
-                            coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
+                            coordinator.push(.post(postId: viewModel.currentPost?.postId ?? "", roomId: viewModel.currentRoomId))
                         }
                     }
                 }.padding(.horizontal)
@@ -208,6 +208,9 @@ struct FeedView: View {
                 }
                 .padding(.bottom, 22)
             }
+        }
+        .onAppear() {
+            viewModel.loadTodayPosts()
         }
         .background{
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)

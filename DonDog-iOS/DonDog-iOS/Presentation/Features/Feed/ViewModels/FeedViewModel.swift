@@ -21,14 +21,15 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var isLoading = false
     @Published var uploadStatus: String = ""
     @Published var currentRoomId: String = ""
-    @Published var selectedPostId: String = "" {
+    
+    @Published var stickerImage: UIImage?
+    @Published var sticker: UIImage?
+    @Published var currentPost: PostData? {
         didSet {
             checkIsNotMyPost()
         }
     }
-    @Published var stickerImage: UIImage?
-    @Published var sticker: UIImage?
-    @Published var currentPost: PostData?
+    
     @Published var currentNickname: String = ""
     @Published var currentPostIndex: Int = 0
     @Published var displayablePosts: [DisplayablePost] = []
@@ -58,15 +59,15 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func checkIsNotMyPost() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
-            print("currentRoomId 또는 selectedPostId가 비어 있음")
+        guard !currentRoomId.isEmpty, ((currentPost?.postId.isEmpty) == nil) else {
+            print("currentRoomId 또는 currentPostId가 비어 있음")
             return
         }
         
         let postRef = db.collection("Rooms")
             .document(currentRoomId)
             .collection("posts")
-            .document(selectedPostId)
+            .document(currentPost?.postId ?? "")
 
         postRef.getDocument { snapshot, error in
             if let error = error {
@@ -187,7 +188,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     
     
     func updateStickerData() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+        guard !currentRoomId.isEmpty, ((currentPost?.postId.isEmpty) == nil) else {
             print("currentRoomId 또는 selectedPostId가 비어 있어 업데이트 불가")
             return
         }
@@ -205,7 +206,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             let postRef = self.db.collection("Rooms")
                 .document(self.currentRoomId)
                 .collection("posts")
-                .document(self.selectedPostId)
+                .document(self.currentPost?.postId ?? "")
             
             let batch = self.db.batch()
             batch.updateData([
@@ -260,20 +261,20 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func removeStickerData() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
-            print("currentRoomId 또는 selectedPostId가 비어 있어 삭제 불가")
+        guard !currentRoomId.isEmpty, ((currentPost?.postId.isEmpty) == nil) else {
+            print("currentRoomId 또는 currentPostId가 비어 있어 삭제 불가")
             return
         }
         
         let postRef = db.collection("Rooms")
             .document(currentRoomId)
             .collection("posts")
-            .document(selectedPostId)
-        
+            .document(currentPost?.postId ?? "")
+
         let batch = db.batch()
         batch.updateData([
-            "stickerPostId": "",
-            "stickerType": FieldValue.delete(),
+            "stickerPostId": currentPost?.postId ?? "",
+            "stickerType": emotion,
             "updatedAt": FieldValue.serverTimestamp()
         ], forDocument: postRef)
         
@@ -314,6 +315,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     isMyPost: existingPost.isMyPost
                 )
                 print("✅ 로컬 UI 업데이트 완료: 스티커 제거됨")
+
             }
         }
     }
@@ -376,7 +378,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
   
                             if let firstPost = todayPosts.first {
-                                self?.selectedPostId = firstPost.postId
                                 self?.currentPost = firstPost
                                 self?.currentPostIndex = 0
                                 self?.downloadAllTodayImages(posts: todayPosts, roomId: roomId)
@@ -675,7 +676,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             
             DispatchQueue.main.async {
                 self?.currentNickname = name
-                print("✅ 사용자 이름 가져오기 성공: \(name)")
             }
         }
     }
@@ -688,7 +688,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         currentPostIndex = index
         currentPost = displayablePost.post
-        selectedPostId = displayablePost.postId
         todayFrontImage = displayablePost.frontImage
         todayBackImage = displayablePost.backImage
         currentNickname = displayablePost.nickname

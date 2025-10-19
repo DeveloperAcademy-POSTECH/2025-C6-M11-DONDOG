@@ -18,11 +18,15 @@ struct WelcomeView: View {
             
             VStack {
                 Spacer()
-                Text("Winky")
+                HStack {
+                    Image("SplashLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 94)
+                }
+
                 Spacer()
-            }
-            VStack {
-                Spacer()
+                
                 CustomButton(title: "전화번호로 시작하기", isEnable: true, action: {
                     coordinator.authShowWithdraw = false
                     coordinator.push(.auth)

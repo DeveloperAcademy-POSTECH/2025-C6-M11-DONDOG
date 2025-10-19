@@ -252,6 +252,9 @@ struct FeedView: View {
             }
             .padding(.bottom, 22)
         }
+        .onAppear() {
+            viewModel.loadTodayPosts()
+        }
         .background{
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()

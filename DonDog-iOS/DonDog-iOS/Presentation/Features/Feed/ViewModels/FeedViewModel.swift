@@ -313,7 +313,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             
             DispatchQueue.main.async {
                 self?.currentNickname = name
-                print("✅ 사용자 이름 가져오기 성공: \(name)")
             }
         }
     }

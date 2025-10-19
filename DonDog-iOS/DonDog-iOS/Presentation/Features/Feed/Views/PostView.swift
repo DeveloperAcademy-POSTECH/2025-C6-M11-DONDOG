@@ -94,12 +94,14 @@ struct PostView: View {
             }
             .alert("게시글을 삭제하시겠습니까?", isPresented: $showDeleteAlert) {
                 Button("삭제", role: .destructive) {
-                    coordinator.pop()
                     Task {
-                        await viewModel.deletePost() { error in
-                            if let error = error {
-                                print("게시물 삭제 중 오류: ", error.localizedDescription)
+                        do {
+                            try await viewModel.deletePost()
+                            await MainActor.run {
+                                coordinator.pop()
                             }
+                        } catch {
+                            print("게시물 삭제 중 오류:", error.localizedDescription)
                         }
                     }
                 }

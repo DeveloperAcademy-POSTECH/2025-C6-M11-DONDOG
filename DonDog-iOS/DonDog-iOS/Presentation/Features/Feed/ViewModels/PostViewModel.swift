@@ -148,42 +148,34 @@ final class PostViewModel: ObservableObject {
         }
     }
     
-    func deletePost(completion: @escaping (Error?) -> Void) async {
-        do {
-            let frontPath = "rooms/\(roomId)/posts/\(postId)/front.jpg"
-            let backPath = "rooms/\(roomId)/posts/\(postId)/back.jpg"
-            let storageRef = Storage.storage().reference()
-            
-            try await postRef.delete()
-            
-            storageRef.child(frontPath).delete { error in
-                    if let error = error {
-                        print("전면 사진 삭제 실패:", error.localizedDescription)
-                        completion(error)
-                    } else {
-                        completion(nil)
-                    }
+    func deletePost() async throws {
+        let frontPath = "rooms/\(roomId)/posts/\(postId)/front.jpg"
+        let backPath = "rooms/\(roomId)/posts/\(postId)/back.jpg"
+        let commentsCollection = commentRef.collection("comments")
+
+        try? await deleteStorageFile(at: frontPath)
+        try? await deleteStorageFile(at: backPath)
+
+        let snapshot = try await commentsCollection.getDocuments()
+        for doc in snapshot.documents {
+            try await commentsCollection.document(doc.documentID).delete()
+        }
+        try await commentRef.delete()
+
+        try await postRef.delete()
+
+        print("✅ 게시물 및 관련 파일 완전 삭제 완료")
+    }
+
+    private func deleteStorageFile(at path: String) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            Storage.storage().reference().child(path).delete { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
                 }
-            
-            storageRef.child(backPath).delete { error in
-                    if let error = error {
-                        print("후면 사진 삭제 실패:", error.localizedDescription)
-                        completion(error)
-                    } else {
-                        completion(nil)
-                    }
-                }
-            
-            let commentsCollection = commentRef.collection("comments")
-            let snapshot = try await commentsCollection.getDocuments()
-            for doc in snapshot.documents {
-                try await commentsCollection.document(doc.documentID).delete()
             }
-            
-            try await commentRef.delete()
-            
-        } catch {
-            print("게시물 삭제 실패: ", error.localizedDescription)
         }
     }
 }

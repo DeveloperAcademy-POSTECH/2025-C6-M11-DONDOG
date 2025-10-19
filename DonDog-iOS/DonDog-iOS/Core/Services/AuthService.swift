@@ -5,20 +5,19 @@
 //  Created by 이주현 on 10/5/25.
 //
 
-
+import Combine
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
-
-//:: 연결 여부 (User, roomID 있는지) 는 뷰모델에서 명시적으로 라우팅하는것으로 수정
+import Combine
 
 @MainActor
-final class ConnectState {
+final class ConnectState: ObservableObject {
     static let shared = ConnectState()
     private init() {}
     
-    var isConnected: Bool = false
-    var roomId: String? = nil
+    @Published var isConnected: Bool = false
+    @Published var roomId: String? = nil
 }
 
 final class AuthService {
@@ -44,6 +43,7 @@ final class AuthService {
     }
     
     private func applyRouteForUser(coordinator: AppCoordinator) {
+        
         func replaceRootinAuthService(_ route: AppRoute, coordinator: AppCoordinator) {
             Task { @MainActor in
                 if coordinator.root == route { return }
@@ -61,7 +61,7 @@ final class AuthService {
             replaceRootinAuthService(.welcome, coordinator: coordinator)
             self.userDocListenr?.remove()
             self.userDocListenr = nil
-            print("[AuthService] currentUser 없음 → auth 화면으로 이동")
+            print("[AuthService] currentUser 없음 → welcome 화면으로 이동")
             return
         }
         
@@ -75,13 +75,15 @@ final class AuthService {
         }
         
         user.getIDTokenResult(forcingRefresh: true) { _, _ in
+            
+            /// 로그인 안됨 -> welcome으로 이동
             guard let refresehUser = Auth.auth().currentUser else {
                 Task { @MainActor in
                     ConnectState.shared.isConnected = false
                     ConnectState.shared.roomId = nil
                 }
                 replaceRootinAuthService(.welcome, coordinator: coordinator)
-                print("[AuthService] IDToken 분실로 current User 찾을 수 없음 → auth 화면으로 이동")
+                print("[AuthService] IDToken 분실로 current User 찾을 수 없음 → welcome 화면으로 이동")
                 return
             }
             
@@ -90,6 +92,8 @@ final class AuthService {
             
             self.userDocListenr?.remove()
             self.userDocListenr = userDoc.addSnapshotListener(includeMetadataChanges: true) { userDoc, error in
+                
+                /// 계정 삭제 중일 때 (탈퇴) -> welcome으로 이동
                 if AuthService.isAccountDeletionInProgress {
                     Task { @MainActor in
                         ConnectState.shared.isConnected = false
@@ -99,30 +103,27 @@ final class AuthService {
                     return
                 }
                 
-                if let nsError = error as NSError? {
-                    if nsError.domain == FirestoreErrorDomain,
-                       nsError.code == FirestoreErrorCode.permissionDenied.rawValue {
-                        print("⚠️ permission-denied: 보안 규칙로 인해 읽기 불가 → auth로 이동")
+                /// 에러 또는 스냅샷 nil 통합 처리
+                guard error == nil, let userDoc = userDoc else {
+                    if let nsError = error as NSError? {
+                        print("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → welcome로 이동")
+                        Task { @MainActor in
+                            ConnectState.shared.isConnected = false
+                            ConnectState.shared.roomId = nil
+                        }
+                        replaceRootinAuthService(.welcome, coordinator: coordinator)
                     } else {
-                        print("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → auth로 이동")
+                        // 오류는 없지만 스냅샷이 nil인 경우: profileSetup으로 이동
+                        Task { @MainActor in
+                            ConnectState.shared.isConnected = false
+                            ConnectState.shared.roomId = nil
+                        }
+                        replaceRootinAuthService(.profileSetup, coordinator: coordinator)
                     }
-                    Task { @MainActor in
-                        ConnectState.shared.isConnected = false
-                        ConnectState.shared.roomId = nil
-                    }
-                    replaceRootinAuthService(.welcome, coordinator: coordinator)
                     return
                 }
                 
-                guard let userDoc = userDoc else {
-                    Task { @MainActor in
-                        ConnectState.shared.isConnected = false
-                        ConnectState.shared.roomId = nil
-                    }
-                    replaceRootinAuthService(.profileSetup, coordinator: coordinator)
-                    return
-                }
-                
+                /// user 문서가 없을때 (가입 후 프로필 미완성) -> profileSetup
                 if userDoc.exists == false {
                     Task { @MainActor in
                         ConnectState.shared.isConnected = false
@@ -132,10 +133,12 @@ final class AuthService {
                     return
                 }
                 
+                /// 보류 중 쓰기 -> 대기
                 if userDoc.metadata.hasPendingWrites {
                     return
                 }
 
+                /// user 문서가 있을 때 -> 라우팅 처리 ㄴ
                 let data = userDoc.data() ?? [:]
                 let roomId = data["roomId"] as? String
                 Task { @MainActor in
@@ -143,10 +146,13 @@ final class AuthService {
                     ConnectState.shared.isConnected = (roomId?.isEmpty == false)
                     if let rid = roomId, !rid.isEmpty {
                         print("[AuthService] 🔗 연결됨 roomId=\(rid)")
+                        replaceRootinAuthService(.feed, coordinator: coordinator)
                     } else {
                         print("[AuthService] 🔓 미연결 상태 (roomId 없음)")
                     }
                 }
+                
+                
             }
         }
     }

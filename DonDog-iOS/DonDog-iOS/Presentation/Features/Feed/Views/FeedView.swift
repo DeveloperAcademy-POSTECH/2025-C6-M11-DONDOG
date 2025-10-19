@@ -21,6 +21,8 @@ struct FeedView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var isSelectingSticker = false
     
+    @EnvironmentObject var connectState: ConnectState
+    
     var body: some View {
         VStack(spacing: 0){
             //네비게이션 바
@@ -49,11 +51,21 @@ struct FeedView: View {
                             coordinator.push(.post(postId: viewModel.selectedPostId, roomId: viewModel.currentRoomId))
                         }
                     }
-                }.padding(.horizontal)
+                }
+                .padding(.horizontal)
+                .frame(width: 200)
+                
                 Spacer()
                 
-                if ConnectState.shared.isConnected == false {
-                    //
+                if connectState.isConnected == false {
+                    Button{
+                        coordinator.push(.setting)
+                    }label: {
+                        Image(systemName: "gear")
+                            .font(.body)
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(Color.ddPrimaryBlue)
+                    }
                 } else {
                     Button{
                         coordinator.push(.archive(roomId: ConnectState.shared.roomId ?? ""))
@@ -68,7 +80,7 @@ struct FeedView: View {
                 }
             }
             
-            if ConnectState.shared.isConnected == false {
+            if connectState.isConnected == false {
                 Spacer()
                 Image(systemName: "person.fill.xmark")
                     .foregroundStyle(Color.ddSecondaryBlue)
@@ -83,7 +95,7 @@ struct FeedView: View {
                     coordinator.push(.invite)
                 } label: {
                     HStack(alignment: .center, spacing: 10) {
-                        Text("초대링크 공유")
+                        Text("가족 초대하기")
                             .foregroundStyle(Color.ddGray100)
                             .font(.captionRegular14)
                     }
@@ -147,7 +159,7 @@ struct FeedView: View {
                         }
                     }
                     
-                } else { // 오늘 찍은 사진이 없을 때
+                } else {
                     VStack(spacing: 10){
                         Image(systemName: "photo.on.rectangle.angled")
                             .resizable()
@@ -313,4 +325,5 @@ struct FeedView: View {
     let coordinator = AppCoordinator(factory: ModuleFactory.shared)
     FeedView(viewModel: FeedViewModel())
         .environmentObject(coordinator)
+        .environmentObject(ConnectState.shared)
 }

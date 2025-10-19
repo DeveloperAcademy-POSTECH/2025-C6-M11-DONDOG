@@ -10,6 +10,7 @@ import SwiftUI
 struct InviteView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: InviteViewModel
+    @StateObject private var keyboard = KeyboardResponder()
     
     var body: some View {
         VStack(spacing: 0) {
@@ -26,19 +27,18 @@ struct InviteView: View {
             .font(.subtitleMedium20)
             .padding(.vertical, 40)
             
-            // MARK: - 다른 사람 초대코드 입력
             CustomTextField(
                 title: "가족에게 받은 초대 코드가 있어요",
                 placeholder: "영어와 숫자 조합의 코드를 입력해 주세요",
                 text: $viewModel.inputInviteCode,
                 keyboard: .default,
                 contentType: nil,
-                errorMessage: viewModel.message
+                errorMessage: viewModel.message,
+                showExternalError: $viewModel.allowInviteCodeError
             )
             .padding(.bottom, 40)
             .disabled(viewModel.isLoading)
             
-            // MARK: - 내 초대코드 띄우기
             VStack(alignment: .leading, spacing: 8) {
                 Text("내 코드로 가족을 초대할게요")
                     .font(.subtitleMedium18)
@@ -99,6 +99,7 @@ struct InviteView: View {
             Spacer()
             
             CustomButton(title: "연결하기", isEnable: !viewModel.inputInviteCode.isEmpty && !viewModel.isLoading, action: viewModel.connectWithInviteCode)
+                .padding(.bottom, viewModel.showSentHint ? (keyboard.keyboardHeight == 0 ? 0 : -10) : 0)
             
             if viewModel.showSentHint {
                 Text("초대 코드를 보냈어요")

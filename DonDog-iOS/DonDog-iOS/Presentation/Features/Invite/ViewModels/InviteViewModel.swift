@@ -19,6 +19,7 @@ final class InviteViewModel: ObservableObject {
     @Published var connectSucceeded: Bool = false
     @Published var message: String = ""
     @Published var isLoading: Bool = false
+    @Published var allowInviteCodeError: Bool = false
     
     @Published var showSentHint: Bool = false
     
@@ -111,10 +112,12 @@ final class InviteViewModel: ObservableObject {
         message = ""
         connectSucceeded = false
         isLoading = true
+        allowInviteCodeError = false
         
         let inputcode = inputInviteCode.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !inputcode.isEmpty else {
             message = "초대 코드를 입력해 주세요."
+            self.allowInviteCodeError = true
             isLoading = false
             return
         }
@@ -126,6 +129,7 @@ final class InviteViewModel: ObservableObject {
             if let error = error {
                 DispatchQueue.main.async {
                     self.message = "초대 코드를 다시 확인해 주세요. \(error.localizedDescription)"
+                    self.allowInviteCodeError = true
                     self.isLoading = false
                 }
                 return
@@ -133,6 +137,7 @@ final class InviteViewModel: ObservableObject {
             guard let doc = result, doc.exists else {
                 DispatchQueue.main.async {
                     self.message = "유효하지 않은 초대코드입니다."
+                    self.allowInviteCodeError = true
                     self.isLoading = false
                 }
                 return
@@ -144,6 +149,7 @@ final class InviteViewModel: ObservableObject {
                 if expire < Date() {
                     DispatchQueue.main.async {
                         self.message = "유효하지 않은 초대코드입니다."
+                        self.allowInviteCodeError = true
                         self.isLoading = false
                     }
                     return
@@ -153,6 +159,7 @@ final class InviteViewModel: ObservableObject {
             guard let inviterUid = inviteData["inviterUid"] as? String, !inviterUid.isEmpty else {
                 DispatchQueue.main.async {
                     self.message = "유효하지 않은 초대코드입니다."
+                    self.allowInviteCodeError = true
                     self.isLoading = false
                 }
                 return
@@ -163,6 +170,7 @@ final class InviteViewModel: ObservableObject {
                 if let inviterErr = inviterErr {
                     DispatchQueue.main.async {
                         self.message = "유효하지 않은 초대코드입니다. \(inviterErr.localizedDescription)"
+                        self.allowInviteCodeError = true
                         self.isLoading = false
                     }
                     return
@@ -179,6 +187,7 @@ final class InviteViewModel: ObservableObject {
                         if let err = err {
                             DispatchQueue.main.async {
                                 self.message = "유효하지 않은 초대코드입니다. \(err.localizedDescription)"
+                                self.allowInviteCodeError = true
                                 self.isLoading = false
                             }
                             return
@@ -198,6 +207,7 @@ final class InviteViewModel: ObservableObject {
                             if let err = err {
                                 DispatchQueue.main.async {
                                     self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(err.localizedDescription)"
+                                    self.allowInviteCodeError = true
                                     self.isLoading = false
                                 }
                                 return
@@ -213,6 +223,7 @@ final class InviteViewModel: ObservableObject {
                                 if let err = err {
                                     DispatchQueue.main.async {
                                         self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(err.localizedDescription)"
+                                        self.allowInviteCodeError = true
                                         self.isLoading = false
                                     }
                                     return

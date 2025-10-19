@@ -10,8 +10,6 @@ import SwiftUI
 struct AuthView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: AuthViewModel
-    @StateObject private var keyboard = KeyboardResponder()
-    
     
     var body: some View {
         VStack(spacing: 0) {

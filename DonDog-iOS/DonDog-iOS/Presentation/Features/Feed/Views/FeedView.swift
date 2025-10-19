@@ -141,10 +141,13 @@ struct FeedView: View {
                                         onStickerButtonTapped: {
                                             showStickerSheet = true
                                         },
-                                        selectedStickerEmotion: viewModel.selectedStickerEmotion,
-                                        stickerImage: viewModel.sticker,
+                                        selectedStickerEmotion: displayablePost.stickerType,
+                                        stickerImage: displayablePost.stickerImage,
                                         isMyPost: displayablePost.isMyPost
                                     )
+                                    .onAppear {
+                                        print("🎨 게시물 \(index) 렌더링: stickerType=\(displayablePost.stickerType ?? "nil"), stickerImage=\(displayablePost.stickerImage != nil ? "있음" : "없음")")
+                                    }
                                     .allowsHitTesting(true)
                                     .scaleEffect(index == viewModel.currentPostIndex ? 1.0 : 0.95)
                                     .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.currentPostIndex)
@@ -158,7 +161,7 @@ struct FeedView: View {
                     .frame(height: 520)
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
-                    .onChange(of: viewModel.currentPostIndex) { newIndex in
+                    .onChange(of: viewModel.currentPostIndex) { oldValue, newIndex in
                         withAnimation(.easeInOut(duration: 0.3)) {
                             viewModel.updateCurrentPost(at: newIndex)
                         }
@@ -223,12 +226,11 @@ struct FeedView: View {
         }
         .sheet(isPresented: $showStickerSheet) {
             if let sticker = viewModel.sticker {
+                let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
                 StickerSheetView(
                     stickerImage: sticker,
-                    currentSelectedEmotion: viewModel.selectedStickerEmotion,
+                    currentSelectedEmotion: currentPost.stickerType,
                     onStickerSelected: { emotion in
-                        viewModel.selectedStickerEmotion = emotion
-                    
                         if let emotion = emotion {
                             viewModel.emotion = emotion
                             viewModel.updateStickerData()

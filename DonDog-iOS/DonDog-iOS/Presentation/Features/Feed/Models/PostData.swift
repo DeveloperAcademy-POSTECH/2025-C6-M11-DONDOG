@@ -40,14 +40,16 @@ struct DisplayablePost: Identifiable {
     let post: PostData
     var frontImage: UIImage?
     var backImage: UIImage?
+    var stickerImage: UIImage?  // 이 게시물에 붙은 스티커 이미지
     var nickname: String
     let isMyPost: Bool  // 내 게시물인지 여부
     
-    init(post: PostData, frontImage: UIImage? = nil, backImage: UIImage? = nil, nickname: String = "익명", isMyPost: Bool = false) {
+    init(post: PostData, frontImage: UIImage? = nil, backImage: UIImage? = nil, stickerImage: UIImage? = nil, nickname: String = "익명", isMyPost: Bool = false) {
         self.id = post.postId
         self.post = post
         self.frontImage = frontImage
         self.backImage = backImage
+        self.stickerImage = stickerImage
         self.nickname = nickname
         self.isMyPost = isMyPost
     }

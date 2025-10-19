@@ -16,7 +16,7 @@ struct StickerSheetView: View {
     let borderedStickers: [String: UIImage]  // 미리 생성된 테두리 스티커들
     
     var body: some View {
-        if let stickerImage = stickerImage {
+        if stickerImage != nil {
             VStack(spacing: 24) {
                 Spacer()
                 Text("스티커를 붙여보세요")

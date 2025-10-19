@@ -42,27 +42,6 @@ final class AuthViewModel: ObservableObject {
         self.isWithDraw = isWithDraw
     }
     
-    func signInAnonymously() {
-        self.isLoading = true
-        self.message = ""
-        
-        Auth.auth().signInAnonymously { [weak self] result, error in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                self.isLoading = false
-                
-                if let error = error {
-                    self.message = "익명 로그인 실패: \(error.localizedDescription)"
-                    return
-                }
-                
-                if let user = result?.user {
-                    self.message = "익명 로그인 성공! uid: \(user.uid)"
-                }
-            }
-        }
-    }
-    
     //인증번호(SMS) 요청
     func sendCode() {
         let digits = userPhoneNumber.filter { $0.isNumber }

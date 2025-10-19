@@ -56,7 +56,7 @@ struct CaptionView: View {
                         .opacity(0)
                         .focused($isCaptionFocused)
                         .submitLabel(.done)
-                        .onChange(of: viewModel.caption) { newValue in
+                        .onChange(of: viewModel.caption) { oldValue, newValue in
                             if newValue.count > 8 {
                                 viewModel.caption = String(newValue.prefix(8))
                             }
@@ -92,7 +92,7 @@ struct CaptionView: View {
                 .disabled(viewModel.isUploading)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 8)
-                .onChange(of: viewModel.isUploading) { newValue in
+                .onChange(of: viewModel.isUploading) { oldValue, newValue in
                     if newValue == false{
                         onUploadComplete()
                     }

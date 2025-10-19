@@ -15,25 +15,8 @@ struct PolaroidFrame: View {
     let isTopImage: Bool //zIndex로 위치 변환을 위한 변수
     let onStickerButtonTapped: (() -> Void)?
     let selectedStickerEmotion: String?
-    let stickerImage: UIImage?
+    let stickerImage: UIImage?  // 이 게시물에 붙은 스티커 이미지 (이미 테두리 적용됨)
     let isMyPost: Bool?  // 내 게시물인지 여부
-    
-    private func borderColor(for emotion: String) -> UIColor {
-        switch emotion {
-        case "사랑해":
-            return .ddFeelingPink
-        case "멋지다":
-            return .ddFeelingYellow
-        case "뭐야?":
-            return .ddFeelingGreen
-        case "화나":
-            return .ddFeelingOrange
-        case "슬퍼":
-            return .ddFeelingBlue
-        default:
-            return .ddGray700
-        }
-    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -67,26 +50,43 @@ struct PolaroidFrame: View {
                     }
                 }
                 Spacer()
-                // 다른 사람의 게시물이고 캡션이 있을 때만 스티커 버튼 표시
-                if let isMyPost = isMyPost{
-                    if !isMyPost{
-                        Button{
-                            onStickerButtonTapped?()
-                        }label: {
-                            if let emotion = selectedStickerEmotion, let sticker = stickerImage {
-                                // 선택된 스티커 표시
-                                Image(uiImage: sticker.addBorder(thickness: 2, color: borderColor(for: emotion))!)
+                
+                // 스티커 표시 영역
+                if let isMyPost = isMyPost {
+                    if let sticker = stickerImage, let emotion = selectedStickerEmotion {
+                        
+                        if !isMyPost {
+                            // 다른 사람의 게시물: 클릭 가능한 버튼
+                            Button {
+                                onStickerButtonTapped?()
+                            } label: {
+                                Image(uiImage: sticker)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 32, height: 32)
-                            } else {
-                                // 기본 face.dashed 아이콘
-                                Image(systemName: "face.dashed")
-                                    .resizable()
-                                    .frame(width: 32, height: 32)
-                                    .foregroundStyle(.ddSecondaryBlue)
+                                    .frame(width: 90, height: 120)
+                                    .offset(x: 10, y: -10)
                             }
+                        } else {
+                            // 내 게시물: 스티커만 표시 (클릭 불가)
+                            Image(uiImage: sticker)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 90, height: 120)
+                                .offset(x: 10, y: -10)
                         }
+                    } else if !isMyPost {
+                        // 스티커가 없고 다른 사람의 게시물: 스티커 버튼 표시
+                        Button {
+                            onStickerButtonTapped?()
+                        } label: {
+                            Image(systemName: "face.dashed")
+                                .resizable()
+                                .frame(width: 32, height: 32)
+                                .foregroundStyle(.ddSecondaryBlue)
+                        }
+                    } else {
+                        // 내 게시물이고 스티커 없음
+                        EmptyView()
                     }
                 }
             }
@@ -113,7 +113,7 @@ struct PolaroidSetView: View {
     let caption: String?
     let onStickerButtonTapped: (() -> Void)?
     let selectedStickerEmotion: String?
-    let stickerImage: UIImage?
+    let stickerImage: UIImage?  // 이 게시물에 붙은 스티커 이미지 (이미 테두리 적용됨)
     let isMyPost: Bool  // 내 게시물인지 여부
     
     var body: some View {
@@ -168,7 +168,7 @@ struct PolaroidSetView: View {
         caption: "하이디라오 짱맛",
         onStickerButtonTapped: nil,
         selectedStickerEmotion: "사랑해",
-        stickerImage: UIImage(named: "stickerTest")!,
+        stickerImage: UIImage(named: "stickerTest"),
         isMyPost: false  // Preview에서는 다른 사람 게시물로 설정
     )
 })

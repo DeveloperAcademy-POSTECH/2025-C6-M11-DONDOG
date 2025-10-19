@@ -99,7 +99,7 @@ struct CustomNavigationBar: View {
             Button(action: action) {
                 Image(systemName: "chevron.left")
                     .font(.body)
-                    .frame(width: 24, height: 24)
+                    .frame(width: 32, height: 44, alignment: .trailing)
             }
         case .none:
             Spacer().frame(width: 24).opacity(0)
@@ -148,7 +148,7 @@ struct CustomNavigationBar: View {
             } label: {
                 Image(systemName: "ellipsis")
                     .font(.body)
-                    .frame(width: 24, height: 24)
+                    .frame(width: 40, height: 44, alignment: .leading)
             }
             
             

@@ -16,6 +16,26 @@ struct PostView: View {
     @FocusState private var isTextFieldFocused: Bool
     
     var body: some View {
+        CustomNavigationBar(
+            leadingType: .back(action: { coordinator.pop() }),
+            centerType: .title(title: "10월 14일"),
+            trailingType: .menu(items: [
+                CustomNavMenuItem("삭제", role: .destructive) {
+                    Task {
+                        do {
+                            try await viewModel.deletePost()
+                            await MainActor.run {
+                                coordinator.pop()
+                            }
+                        } catch {
+                            print("게시물 삭제 중 오류:", error.localizedDescription)
+                        }
+                    }
+                }
+            ]),
+            navigationColor: .black
+        )
+        
         ScrollViewReader { proxy in
             ZStack(alignment: .topTrailing) {
                 Color.white
@@ -80,36 +100,7 @@ struct PostView: View {
             }
             .padding(.horizontal, 20)
             .frame(maxWidth: .infinity)
-            .toolbar {
-                if viewModel.uid == viewModel.currentUser {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Menu {
-                            Button(role: .destructive) {
-                                showDeleteAlert = true
-                            } label: {
-                                Label("삭제하기", systemImage: "trash")
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis")
-                        }
-                    }
-                }
-            }
-            .alert("게시글을 삭제하시겠습니까?", isPresented: $showDeleteAlert) {
-                Button("삭제", role: .destructive) {
-                    Task {
-                        do {
-                            try await viewModel.deletePost()
-                            await MainActor.run {
-                                coordinator.pop()
-                            }
-                        } catch {
-                            print("게시물 삭제 중 오류:", error.localizedDescription)
-                        }
-                    }
-                }
-                Button("취소", role: .cancel) { }
-            }
         }
+        .navigationBarBackButtonHidden()
     }
 }

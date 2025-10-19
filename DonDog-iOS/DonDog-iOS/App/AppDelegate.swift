@@ -43,6 +43,16 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // FCM 토큰/메시징 델리게이트
         Messaging.messaging().delegate = self
+        
+        // 로그인 상태 변화에도 토큰 업로드
+            Auth.auth().addStateDidChangeListener { _, user in
+                guard user != nil else { return }
+                Messaging.messaging().token { token, _ in
+                    if let token = token {
+                        self.uploadTokenToServer(token)
+                    }
+                }
+            }
         return true
     }
     
@@ -69,23 +79,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         Messaging.messaging().apnsToken = deviceToken
         
         Messaging.messaging().token { token, error in
-            if let error = error {
-                print("FCM 토큰 가져오기 에러: \(error.localizedDescription)")
-                return
-            }
-            guard let token = token else {
-                print("FCM 토큰 없음")
-                return
-            }
+            guard let token = token else { return }
             print("FCM 토큰 (post-APNs): \(token)")
-
-            Messaging.messaging().subscribe(toTopic: "daily_random_notification") { error in
-                if let error = error {
-                    print("토픽 구독 에러: \(error.localizedDescription)")
-                } else {
-                    print("daily_random_notification 구독 성공")
-                }
-            }
+            self.uploadTokenToServer(token)
         }
     }
     
@@ -101,19 +97,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     // FCM MessagingDelegate - FCM이 토큰을 갱신하면 사용, APNs 토큰이 이미 있다면 여기서 구독 시도
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("FCM 토큰 (delegate): \(fcmToken ?? "nil")")
-        guard fcmToken != nil else { return }
-        guard Messaging.messaging().apnsToken != nil else {
-            // 아직 APNs 미세팅이면 스킵
-            return
-        }
-        Messaging.messaging().subscribe(toTopic: "daily_random_notification") { error in
-            if let error = error {
-                print("토픽 구독 에러 (delegate): \(error.localizedDescription)")
-            } else {
-                print("daily_random_notification 구독 성공 (delegate)")
-            }
-        }
+        guard let token = fcmToken else { return }
+        print("FCM 토큰 (delegate): \(token)")
+        self.uploadTokenToServer(token)
+        self.subscribeDailyTopic()
     }
     
     // UNUserNotificationCenterDelegate
@@ -128,10 +115,30 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
 
         let userInfo = response.notification.request.content.userInfo
-        print("🟢 tapped notification: \(userInfo)")
+        print("tapped notification: \(userInfo)")
         if let deeplink = userInfo["deeplink"] as? String {
             NotificationCenter.default.post(name: .openDeepLink, object: deeplink)
         }
         completionHandler()
     }
+    
+    private func subscribeDailyTopic() {
+        Messaging.messaging().subscribe(toTopic: "daily_random_notification") { error in
+            if let error = error {
+                print("토픽 구독 에러: \(error.localizedDescription)")
+            } else {
+                print("daily_random_notification 구독 성공")
+            }
+        }
+    }
+    
+    private func uploadTokenToServer(_ token: String) {
+            guard let uid = Auth.auth().currentUser?.uid else {
+                print("⚠️ 현재 로그인한 사용자 없음 — 로그인 이후 다시 업로드 필요")
+                return
+            }
+            NotificationService.shared.uploadFCMToken(token)
+            print("Firestore에 FCM 토큰 업로드 완료: \(token)")
+        }
+
 }

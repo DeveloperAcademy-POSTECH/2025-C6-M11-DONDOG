@@ -154,27 +154,70 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         sticker = imageUtils.makeSticker(with: stickerImage)
     }
     
+    
     func updateStickerData() {
         guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있어 업데이트 불가")
             return
         }
-
+        
+        // 현재 사용자(A)의 recentPostId 가져오기
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
+        db.collection("Users").document(currentUid).getDocument { [weak self] snapshot, error in
+            guard let self = self,
+                  let data = snapshot?.data(),
+                  let recentPostId = data["recentPostId"] as? String else {
+                print("recentPostId 가져오기 실패")
+                return
+            }
+            
+            // B의 게시물에 A의 recentPostId 저장
+            let postRef = self.db.collection("Rooms")
+                .document(self.currentRoomId)
+                .collection("posts")
+                .document(self.selectedPostId)  // B의 게시물
+            
+            let batch = self.db.batch()
+            batch.updateData([
+                "stickerPostId": recentPostId,  // ✅ A의 recentPostId!
+                "stickerType": self.emotion,
+                "updatedAt": FieldValue.serverTimestamp()
+            ], forDocument: postRef)
+            
+            batch.commit { error in
+                if let error = error {
+                    print("❌ 스티커 업데이트 실패: \(error.localizedDescription)")
+                } else {
+                    print("✅ 스티커 저장 완료: \(self.selectedPostId)에 \(recentPostId) 스티커 붙임")
+                }
+            }
+        }
+    }
+    
+    func removeStickerData() {
+        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+            print("currentRoomId 또는 selectedPostId가 비어 있어 삭제 불가")
+            return
+        }
+        
         let postRef = db.collection("Rooms")
             .document(currentRoomId)
             .collection("posts")
             .document(selectedPostId)
-
+        
         let batch = db.batch()
         batch.updateData([
-            "stickerPostId": selectedPostId,
-            "stickerType": emotion,
+            "stickerPostId": "",
+            "stickerType": FieldValue.delete(),
             "updatedAt": FieldValue.serverTimestamp()
         ], forDocument: postRef)
-
+        
         batch.commit { error in
             if let error = error {
-                print("업데이트 실패: \(error.localizedDescription)")
+                print("❌ 스티커 삭제 실패: \(error.localizedDescription)")
+            } else {
+                print("✅ 스티커 삭제 완료: \(self.selectedPostId)")
             }
         }
     }

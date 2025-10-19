@@ -193,6 +193,16 @@ struct FeedView: View {
                     currentSelectedEmotion: viewModel.selectedStickerEmotion,
                     onStickerSelected: { emotion in
                         viewModel.selectedStickerEmotion = emotion
+                        
+                        // Firebase에 저장
+                        if let emotion = emotion {
+                            // 감정 선택 시 → Firebase에 저장
+                            viewModel.emotion = emotion
+                            viewModel.updateStickerData()
+                        } else {
+                            // 감정 취소 시 → Firebase에서 삭제
+                            viewModel.removeStickerData()
+                        }
                     }
                 )
                 .presentationDetents([.height(400)])

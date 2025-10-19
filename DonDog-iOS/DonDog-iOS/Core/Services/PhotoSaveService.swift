@@ -69,6 +69,7 @@ final class PhotoSaveService: ObservableObject {
             }
             
             completion(.success(roomId))
+            print("✅ 사용자 roomId: \(roomId)")
         }
     }
     

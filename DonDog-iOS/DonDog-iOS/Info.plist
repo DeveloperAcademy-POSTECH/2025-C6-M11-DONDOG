@@ -31,5 +31,7 @@
 	<array>
 		<string>com.DonDog</string>
 	</array>
+    <key>GoogleUtilitiesAppDelegateProxyEnabled</key>
+    <false/>
 </dict>
 </plist>

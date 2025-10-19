@@ -82,8 +82,8 @@ struct InviteView: View {
                         }
                     } else {
                         ShareLink(
-                            item: "https://앱스토어 링크",
-                            message: Text("초대코드 \(viewModel.inviteText)를 입력하고 부모지를 시작하세요!")
+                            item: "🪽 윙키 초대장이 도착했어요!\n사진 한 장으로 멀리 떨어져 있어도, 특별한 추억을 쌓아요.\n",
+                            message: Text("https://앱스토어링크\n초대코드 : \(viewModel.inviteText)")
                         ) {
                             Image(systemName: "square.and.arrow.up")
                                 .resizable()
@@ -98,7 +98,7 @@ struct InviteView: View {
             
             Spacer()
             
-            CustomButton(title: "초대 코드 인증", isEnable: !viewModel.inputInviteCode.isEmpty && !viewModel.isLoading, action: viewModel.connectWithInviteCode)
+            CustomButton(title: "연결하기", isEnable: !viewModel.inputInviteCode.isEmpty && !viewModel.isLoading, action: viewModel.connectWithInviteCode)
             
             if viewModel.showSentHint {
                 Text("초대 코드를 보냈어요")
@@ -112,7 +112,8 @@ struct InviteView: View {
             }
         }
         .padding(.horizontal, 20)
-        .navigationBarBackButtonHidden(true)
+        .backHiddenSwipeEnabled()
+        .dismissKeyboard()
         .task { viewModel.fetchInviteCodeandExpireDate() }
         .onChange(of: viewModel.connectSucceeded) {
             coordinator.replaceRoot(.feed)

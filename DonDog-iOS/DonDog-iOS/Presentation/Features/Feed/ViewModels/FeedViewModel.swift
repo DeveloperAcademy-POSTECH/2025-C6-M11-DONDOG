@@ -130,14 +130,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                                     self?.stickerImage = image
                                     print("recentSticker 이미지 로드 성공")
                                     
-//                                    if self?.currentPost?.stickerPostId != "" {
-//                                        // 1. currentPost의 stickerPostId를 이용해서 해당 post에 대응된 스티커 이미지 url 가져오기
-//                                        // 2. 1번에서 가져온 url로 UIImage 가져오기
-//                                        self?.makeStickerAndMask(with: ) // 3. 여기 with: 뒤에 2번에서 가져온 UIImage 넣기
-//                                    } else {
-//                                        self?.makeStickerAndMask(with: image)
-//                                    }
-                                    
                                     self?.makeStickerAndMask(with: image)
                                     self?.emotion = postData["stickerType"] as? String ?? "null"
                                 }

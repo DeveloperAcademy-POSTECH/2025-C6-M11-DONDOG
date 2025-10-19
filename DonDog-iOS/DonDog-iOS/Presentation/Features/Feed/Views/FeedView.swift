@@ -112,7 +112,8 @@ struct FeedView: View {
                                             showStickerSheet = true
                                         },
                                         selectedStickerEmotion: viewModel.selectedStickerEmotion,
-                                        stickerImage: viewModel.sticker
+                                        stickerImage: viewModel.sticker,
+                                        isMyPost: displayablePost.isMyPost
                                     )
                                     .allowsHitTesting(true)
                                     .scaleEffect(index == viewModel.currentPostIndex ? 1.0 : 0.95)

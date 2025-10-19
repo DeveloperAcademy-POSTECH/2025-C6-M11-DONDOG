@@ -300,13 +300,18 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         print("🖼️ 모든 게시물 이미지 다운로드 시작")
         displayablePosts = []
         
+        // 현재 사용자 UID 가져오기
+        let currentUserUid = Auth.auth().currentUser?.uid ?? ""
+        
         let group = DispatchGroup()
         var tempDisplayablePosts: [Int: DisplayablePost] = [:]  // 인덱스와 함께 저장
         
         for (index, post) in posts.enumerated() {
             group.enter()
             
-            var displayablePost = DisplayablePost(post: post)
+            // 내 게시물인지 확인
+            let isMyPost = (post.uid == currentUserUid)
+            var displayablePost = DisplayablePost(post: post, isMyPost: isMyPost)
             let imageGroup = DispatchGroup()
             
             // 전면 이미지 다운로드

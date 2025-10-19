@@ -25,6 +25,7 @@ protocol ModuleFactoryProtocol {
 
 final class ModuleFactory: ModuleFactoryProtocol {
     static let shared = ModuleFactory()
+    private let feedViewModel = FeedViewModel() // 루트뷰 재사용
     private init() {}
     
     func makeWelcomeView() -> WelcomeView {
@@ -63,8 +64,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func makeFeedView() -> FeedView {
-        let viewModel = FeedViewModel()
-        let view = FeedView(viewModel: viewModel)
+        let view = FeedView(viewModel: self.feedViewModel)
         return view
     }
     

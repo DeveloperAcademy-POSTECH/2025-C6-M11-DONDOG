@@ -20,7 +20,7 @@ struct PostView: View {
             leadingType: .back(action: { coordinator.pop() }),
             centerType: .title(title: "10월 14일"),
             trailingType: .menu(items: [
-                CustomNavMenuItem("삭제", role: .destructive) {
+                CustomNavMenuItem("삭제하기", role: .destructive) {
                     Task {
                         do {
                             try await viewModel.deletePost()
@@ -31,6 +31,8 @@ struct PostView: View {
                             print("게시물 삭제 중 오류:", error.localizedDescription)
                         }
                     }
+                },
+                CustomNavMenuItem("취소") {
                 }
             ]),
             navigationColor: .black

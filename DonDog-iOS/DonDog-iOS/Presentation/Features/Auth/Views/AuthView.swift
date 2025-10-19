@@ -59,26 +59,6 @@ struct AuthView: View {
             
             Spacer()
             
-            //:: 배포 전 삭제
-            VStack {
-                Text("익명 로그인(개발자용)")
-                    .font(.title)
-                
-                Button(action: viewModel.signInAnonymously) {
-                    Text("익명 로그인 시작")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-            }
-            .padding()
-            .border(Color.red, width: 3)
-            
-            Spacer()
-            
             CustomButton(title: "다음", isEnable: !viewModel.userPhoneNumber.isEmpty && !viewModel.isLoading, action: viewModel.sendCode, isProgressView: viewModel.isLoading)
             
         }

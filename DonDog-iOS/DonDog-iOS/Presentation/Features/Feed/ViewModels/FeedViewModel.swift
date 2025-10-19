@@ -264,6 +264,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     func didUploadPost() {
         print("✅ 게시물 업로드 완료 - FeedView 새로고침")
         loadTodayPosts()
+        getStickerData()
     }
     
     

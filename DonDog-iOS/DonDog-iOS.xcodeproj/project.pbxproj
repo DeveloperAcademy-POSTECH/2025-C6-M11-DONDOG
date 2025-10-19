@@ -47,7 +47,6 @@
 		8CF9C7A32EA148C100EB944A /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7A22EA148BC00EB944A /* UIImage+.swift */; };
 		A192F2B12E9E45AC00995DCC /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2B02E9E45A800995DCC /* Color+.swift */; };
 		A192F2BF2E9F3ADA00995DCC /* PolaroidSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */; };
-		A192F2CC2EA009E100995DCC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A192F2CB2EA009E100995DCC /* GoogleService-Info.plist */; };
 		A1AEBED12E9110160006FBBA /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AEBED02E9110120006FBBA /* CameraViewController.swift */; };
 		CA2A58302E9E38C700AC3500 /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */; };
 		CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */; };
@@ -56,7 +55,6 @@
 		CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF62E98FCD700AEAB49 /* Pretendard-Regular.otf */; };
 		CA957D032E98FD0900AEAB49 /* Font+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA957D022E98FD0900AEAB49 /* Font+.swift */; };
 		CA957D072E99017400AEAB49 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA957D062E99017400AEAB49 /* Colors.xcassets */; };
-		CA9C13DA2EA3E83000519748 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CA9C13D92EA3E83000519748 /* GoogleService-Info.plist */; };
 		CAA62D012EA1E3FD00C60E05 /* SwipeBackUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFF2EA1E3FD00C60E05 /* SwipeBackUtils.swift */; };
 		CAA62D022EA1E3FD00C60E05 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */; };
 		CAA62D032EA1E3FD00C60E05 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */; };
@@ -119,11 +117,11 @@
 		8BDF768D2E9F498B007F12BB /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		8BDF76972E9F72CE007F12BB /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeService.swift; sourceTree = "<group>"; };
+		8CAD897B2EA48274004318F0 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CF9C7502EA129D400EB944A /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		8CF9C7A22EA148BC00EB944A /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		A192F2B02E9E45A800995DCC /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
 		A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolaroidSetView.swift; sourceTree = "<group>"; };
-		A192F2CB2EA009E100995DCC /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A192F2D22EA07F3C00995DCC /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1AEBED02E9110120006FBBA /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
@@ -134,8 +132,6 @@
 		CA957CF72E98FCD700AEAB49 /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-SemiBold.otf"; sourceTree = "<group>"; };
 		CA957D022E98FD0900AEAB49 /* Font+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+.swift"; sourceTree = "<group>"; };
 		CA957D062E99017400AEAB49 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
-		CA9C13D82EA3E7DD00519748 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/yuu/Documents/GitHub/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
-		CA9C13D92EA3E83000519748 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
 		CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		CAA62CFE2EA1E3FD00C60E05 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
@@ -337,6 +333,7 @@
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
 				A192F2D22EA07F3C00995DCC /* DonDog-iOS.app */,
+				8CAD897B2EA48274004318F0 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -474,10 +471,6 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
-				A192F2CB2EA009E100995DCC /* GoogleService-Info.plist */,
-				CAA62D882EA2725C00C60E05 /* GoogleService-Info.plist */,
-				D2C9F70A2EA23A4800393208 /* GoogleService-Info.plist */,
-				CA9C13D92EA3E83000519748 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -609,9 +602,7 @@
 				8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */,
 			);
 			productName = "DonDog-iOS";
-			productReference = A192F2D22EA07F3C00995DCC /* DonDog-iOS.app */;
-			productReference = D2C9F7072EA234A200393208 /* DonDog-iOS.app */;
-			productReference = CA9C13D82EA3E7DD00519748 /* DonDog-iOS.app */;
+			productReference = 8CAD897B2EA48274004318F0 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -658,13 +649,11 @@
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
-				CA9C13DA2EA3E83000519748 /* GoogleService-Info.plist in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
 				CAA62D082EA205FC00C60E05 /* SejongGeulggot.otf in Resources */,
 				CA957D072E99017400AEAB49 /* Colors.xcassets in Resources */,
-				A192F2CC2EA009E100995DCC /* GoogleService-Info.plist in Resources */,
 				8B1EB7972EA08E9800F720CF /* (null) in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

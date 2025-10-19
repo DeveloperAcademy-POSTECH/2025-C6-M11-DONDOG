@@ -7,24 +7,34 @@
 
 import SwiftUI
 
-struct DetailContentContainer: View {
+struct DetailContentView: View {
     let post: ArchivePost
+    let userNameByUid: [String: String]
+    let onDelete: ((Comment) async -> Void)?
     
     var body: some View {
-        VStack(alignment: .center) {
+        ScrollView {
             // 폴라로이드 프레임
-            VStack {
-                // 사진
-                DetailPhotoView(post: post)
+            ZStack {
+                VStack {
+                    // 사진
+                    DetailPhotoView(post: post)
+                    
+                    // 캡션 + 작성자
+                    DetailCaptionView(post: post, userNameByUid: userNameByUid)
+                }
+                .padding(.vertical, 8)
                 
-                // 캡션 + 작성자
-                DetailCaptionView(post: post)
- 
+                // 스티커
             }
+            .background(.ddWhite)
             .shadow(color: .ddBlack.opacity(0.05), radius: 2.5, x: 0, y: 3)
             
             // 댓글
-            Spacer()
+            DetailCommentsView(
+                comments: post.comments.map { ($0, userNameByUid[$0.uid] ?? "익명") },
+                onDelete: onDelete
+            )
         }
     }
 }

@@ -141,8 +141,8 @@ struct FeedView: View {
                                         onStickerButtonTapped: {
                                             showStickerSheet = true
                                         },
-                                        selectedStickerEmotion: viewModel.selectedStickerEmotion,
-                                        stickerImage: viewModel.sticker,
+                                        selectedStickerEmotion: displayablePost.stickerType,
+                                        stickerImage: displayablePost.stickerImage,
                                         isMyPost: displayablePost.isMyPost
                                     )
                                     .allowsHitTesting(true)
@@ -220,18 +220,18 @@ struct FeedView: View {
         }
         .sheet(isPresented: $showStickerSheet) {
             if let sticker = viewModel.sticker {
+                let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
                 StickerSheetView(
                     stickerImage: sticker,
-                    currentSelectedEmotion: viewModel.selectedStickerEmotion,
+                    currentSelectedEmotion: currentPost.stickerType,
                     onStickerSelected: { emotion in
-                        viewModel.selectedStickerEmotion = emotion
-                    
                         if let emotion = emotion {
                             viewModel.emotion = emotion
                             viewModel.updateStickerData()
                         } else {
                             viewModel.removeStickerData()
                         }
+                        // 리스너가 자동으로 업데이트하므로 새로고침 불필요
                     },
                     borderedStickers: viewModel.borderedStickers 
                 )

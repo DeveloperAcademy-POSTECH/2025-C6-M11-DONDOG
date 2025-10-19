@@ -21,7 +21,7 @@ struct FeedView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var isSelectingSticker = false
     
-    @EnvironmentObject var connectState: ConnectState
+    @EnvironmentObject var connectState: ConnectStateService
     
     var body: some View {
         VStack(spacing: 0){
@@ -68,7 +68,7 @@ struct FeedView: View {
                     }
                 } else {
                     Button{
-                        coordinator.push(.archive(roomId: ConnectState.shared.roomId ?? ""))
+                        coordinator.push(.archive(roomId: viewModel.currentRoomId))
                     }label: {
                         Image(systemName: "photo.circle.fill")
                             .resizable()
@@ -325,5 +325,5 @@ struct FeedView: View {
     let coordinator = AppCoordinator(factory: ModuleFactory.shared)
     FeedView(viewModel: FeedViewModel())
         .environmentObject(coordinator)
-        .environmentObject(ConnectState.shared)
+        .environmentObject(ConnectStateService.shared)
 }

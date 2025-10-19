@@ -25,6 +25,7 @@ struct SettingView: View {
                         Button { coordinator.push(.editprofile) }    label: { Text("프로필 수정") }
                         Button { viewModel.showLogoutConfirm = true } label: { Text("로그아웃") }
                         Button { viewModel.showDeleteConfirm = true } label: { Text("회원탈퇴") }
+                        //:: 배포 전 삭제
                         Button { viewModel.performAccountDeletion() } label: { Text("(개발자용)익명 계정 회원탈퇴") }
                     }
                     .font(.subtitleMedium18)

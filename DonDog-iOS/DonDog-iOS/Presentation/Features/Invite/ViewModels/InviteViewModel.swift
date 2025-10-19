@@ -107,7 +107,6 @@ final class InviteViewModel: ObservableObject {
     }
     
     // MARK: - 다른 사람 초대코드 입력
-    //:: 여기서 연결되면 라우팅 되도록 명시적으로 작성
     func connectWithInviteCode() {
         message = ""
         connectSucceeded = false

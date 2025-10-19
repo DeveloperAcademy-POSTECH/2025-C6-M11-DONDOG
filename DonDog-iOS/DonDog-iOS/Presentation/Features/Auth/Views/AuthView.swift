@@ -59,6 +59,7 @@ struct AuthView: View {
             
             Spacer()
             
+            //:: 배포 전 삭제
             VStack {
                 Text("익명 로그인(개발자용)")
                     .font(.title)

@@ -5,10 +5,11 @@
 //  Created by 이주현 on 10/9/25.
 //
 
-import Combine
 import FirebaseAuth
 import FirebaseFirestore
 
+//:: 배포 전 삭제
+import Combine
 import FirebaseStorage
 
 final class SettingViewModel: ObservableObject {
@@ -23,6 +24,7 @@ final class SettingViewModel: ObservableObject {
         }
     }
     
+    //:: 배포 전 삭제
     func performAccountDeletion() {
         Task {
             await deleteUserDataAndAuth()

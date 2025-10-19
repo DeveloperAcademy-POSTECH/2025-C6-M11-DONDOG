@@ -5,20 +5,9 @@
 //  Created by 이주현 on 10/5/25.
 //
 
-import Combine
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
-import Combine
-
-@MainActor
-final class ConnectState: ObservableObject {
-    static let shared = ConnectState()
-    private init() {}
-    
-    @Published var isConnected: Bool = false
-    @Published var roomId: String? = nil
-}
 
 final class AuthService {
     static var isAccountDeletionInProgress: Bool = false
@@ -55,8 +44,8 @@ final class AuthService {
         
         guard let user = Auth.auth().currentUser else {
             Task { @MainActor in
-                ConnectState.shared.isConnected = false
-                ConnectState.shared.roomId = nil
+                ConnectStateService.shared.isConnected = false
+                ConnectStateService.shared.roomId = nil
             }
             replaceRootinAuthService(.welcome, coordinator: coordinator)
             self.userDocListenr?.remove()
@@ -67,8 +56,8 @@ final class AuthService {
         
         if AuthService.isAccountDeletionInProgress {
             Task { @MainActor in
-                ConnectState.shared.isConnected = false
-                ConnectState.shared.roomId = nil
+                ConnectStateService.shared.isConnected = false
+                ConnectStateService.shared.roomId = nil
             }
             replaceRootinAuthService(.welcome, coordinator: coordinator)
             return
@@ -79,8 +68,8 @@ final class AuthService {
             /// 로그인 안됨 -> welcome으로 이동
             guard let refresehUser = Auth.auth().currentUser else {
                 Task { @MainActor in
-                    ConnectState.shared.isConnected = false
-                    ConnectState.shared.roomId = nil
+                    ConnectStateService.shared.isConnected = false
+                    ConnectStateService.shared.roomId = nil
                 }
                 replaceRootinAuthService(.welcome, coordinator: coordinator)
                 print("[AuthService] IDToken 분실로 current User 찾을 수 없음 → welcome 화면으로 이동")
@@ -96,8 +85,8 @@ final class AuthService {
                 /// 계정 삭제 중일 때 (탈퇴) -> welcome으로 이동
                 if AuthService.isAccountDeletionInProgress {
                     Task { @MainActor in
-                        ConnectState.shared.isConnected = false
-                        ConnectState.shared.roomId = nil
+                        ConnectStateService.shared.isConnected = false
+                        ConnectStateService.shared.roomId = nil
                     }
                     replaceRootinAuthService(.welcome, coordinator: coordinator)
                     return
@@ -108,15 +97,15 @@ final class AuthService {
                     if let nsError = error as NSError? {
                         print("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → welcome로 이동")
                         Task { @MainActor in
-                            ConnectState.shared.isConnected = false
-                            ConnectState.shared.roomId = nil
+                            ConnectStateService.shared.isConnected = false
+                            ConnectStateService.shared.roomId = nil
                         }
                         replaceRootinAuthService(.welcome, coordinator: coordinator)
                     } else {
                         // 오류는 없지만 스냅샷이 nil인 경우: profileSetup으로 이동
                         Task { @MainActor in
-                            ConnectState.shared.isConnected = false
-                            ConnectState.shared.roomId = nil
+                            ConnectStateService.shared.isConnected = false
+                            ConnectStateService.shared.roomId = nil
                         }
                         replaceRootinAuthService(.profileSetup, coordinator: coordinator)
                     }
@@ -126,8 +115,8 @@ final class AuthService {
                 /// user 문서가 없을때 (가입 후 프로필 미완성) -> profileSetup
                 if userDoc.exists == false {
                     Task { @MainActor in
-                        ConnectState.shared.isConnected = false
-                        ConnectState.shared.roomId = nil
+                        ConnectStateService.shared.isConnected = false
+                        ConnectStateService.shared.roomId = nil
                     }
                     replaceRootinAuthService(.profileSetup, coordinator: coordinator)
                     return
@@ -138,12 +127,12 @@ final class AuthService {
                     return
                 }
 
-                /// user 문서가 있을 때 -> 라우팅 처리 ㄴ
+                /// user 문서가 있을 때 -> feed로 이동
                 let data = userDoc.data() ?? [:]
                 let roomId = data["roomId"] as? String
                 Task { @MainActor in
-                    ConnectState.shared.roomId = roomId
-                    ConnectState.shared.isConnected = (roomId?.isEmpty == false)
+                    ConnectStateService.shared.roomId = roomId
+                    ConnectStateService.shared.isConnected = (roomId?.isEmpty == false)
                     if let rid = roomId, !rid.isEmpty {
                         print("[AuthService] 🔗 연결됨 roomId=\(rid)")
                         replaceRootinAuthService(.feed, coordinator: coordinator)

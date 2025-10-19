@@ -69,7 +69,6 @@ final class PhotoSaveService: ObservableObject {
             }
             
             completion(.success(roomId))
-            print("✅ 사용자 roomId: \(roomId)")
         }
     }
     
@@ -258,7 +257,6 @@ final class PhotoSaveService: ObservableObject {
             }
         }.resume()
     }
-    
     
     private func uploadImage(image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("🚀 이미지 업로드 시작 - 경로: \(path)")

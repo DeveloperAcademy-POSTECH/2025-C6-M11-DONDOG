@@ -94,7 +94,16 @@ struct PostView: View {
             }
             .alert("게시글을 삭제하시겠습니까?", isPresented: $showDeleteAlert) {
                 Button("삭제", role: .destructive) {
-                    // deletePost()
+                    Task {
+                        do {
+                            try await viewModel.deletePost()
+                            await MainActor.run {
+                                coordinator.pop()
+                            }
+                        } catch {
+                            print("게시물 삭제 중 오류:", error.localizedDescription)
+                        }
+                    }
                 }
                 Button("취소", role: .cancel) { }
             }

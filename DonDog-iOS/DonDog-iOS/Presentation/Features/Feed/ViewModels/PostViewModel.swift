@@ -8,6 +8,7 @@
 import Combine
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 
 final class PostViewModel: ObservableObject {
     let postId: String
@@ -15,7 +16,7 @@ final class PostViewModel: ObservableObject {
     
     private let db = Firestore.firestore()
     private var postRef: DocumentReference
-    private var commentRef: CollectionReference
+    private var commentRef: DocumentReference
 
     @Published var uid: String = ""
     @Published var currentUser: String = ""
@@ -36,7 +37,7 @@ final class PostViewModel: ObservableObject {
         self.roomId = roomId
         let roomRef = db.collection("Rooms").document(roomId)
         self.postRef = roomRef.collection("posts").document(postId)
-        self.commentRef = roomRef.collection("comments").document(postId).collection("comments")
+        self.commentRef = roomRef.collection("comments").document(postId)
         self.currentUser = Auth.auth().currentUser?.uid ?? ""
 
         Task {
@@ -118,7 +119,7 @@ final class PostViewModel: ObservableObject {
                 "createdAt": Timestamp(date: Date())
             ]
             
-            try await commentRef.addDocument(data: commentData)
+            try await commentRef.collection("comments").addDocument(data: commentData)
 
             await fetchComments()
         } catch {
@@ -128,7 +129,7 @@ final class PostViewModel: ObservableObject {
     
     func fetchComments() async {
         do {
-            let snapshot = try await self.commentRef.getDocuments()
+            let snapshot = try await self.commentRef.collection("comments").getDocuments()
             let fetchedComments = snapshot.documents.compactMap { Comment(doc: $0) }
             await MainActor.run {
                 self.comments = fetchedComments.sorted { $0.createdAt < $1.createdAt }
@@ -140,10 +141,41 @@ final class PostViewModel: ObservableObject {
     
     func deleteComment(of comment: Comment) async {
         do {
-            try await commentRef.document(comment.id).delete()
+            try await commentRef.collection("comments").document(comment.id).delete()
             await fetchComments()
         } catch {
             print("댓글 삭제 실패: ", error.localizedDescription)
+        }
+    }
+    
+    func deletePost() async throws {
+        let frontPath = "rooms/\(roomId)/posts/\(postId)/front.jpg"
+        let backPath = "rooms/\(roomId)/posts/\(postId)/back.jpg"
+        let commentsCollection = commentRef.collection("comments")
+
+        try? await deleteStorageFile(at: frontPath)
+        try? await deleteStorageFile(at: backPath)
+
+        let snapshot = try await commentsCollection.getDocuments()
+        for doc in snapshot.documents {
+            try await commentsCollection.document(doc.documentID).delete()
+        }
+        try await commentRef.delete()
+
+        try await postRef.delete()
+
+        print("✅ 게시물 및 관련 파일 완전 삭제 완료")
+    }
+
+    private func deleteStorageFile(at path: String) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            Storage.storage().reference().child(path).delete { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
         }
     }
 }

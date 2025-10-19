@@ -15,6 +15,7 @@ struct PostData: Codable {
     let backImageURL: String
     let caption: String
     let createdAt: Timestamp
+    let updatedAt: Timestamp
     let stickerPostId: String
     let stickerType: String?
     
@@ -25,6 +26,7 @@ struct PostData: Codable {
         self.backImageURL = backImageURL
         self.caption = caption
         self.createdAt = Timestamp()
+        self.updatedAt = Timestamp()
         self.stickerPostId = stickerPostId
         self.stickerType = stickerType
         

@@ -17,16 +17,18 @@ struct GrowingTextEditor: View {
     
     var currentRadius: CGFloat {
         let range = maxHeight - minHeight
-        if range == 0 { return minHeight }
+        guard range > 0 else { return 74 }
         let progress = (dynamicHeight - minHeight) / range
-        return 32 - (16 * progress)
+        return 74 - (62 * progress)
     }
     
     var body: some View {
         ZStack(alignment: .leading) {
             TextEditor(text: $text)
-                .padding(.leading, 20)
-                .padding(.top, 8)
+                .padding(.leading, 12)
+                .padding(.trailing, 8)
+                .padding(.vertical, 8)
+                .scrollContentBackground(.hidden)
                 .background(
                     GeometryReader { geometry in
                         Color.clear
@@ -39,27 +41,25 @@ struct GrowingTextEditor: View {
                                 ).height
                                 
                                 DispatchQueue.main.async {
-                                    dynamicHeight = min(max(textSize + 24, minHeight), maxHeight)
+                                    withAnimation(.easeOut(duration: 0.15)) {
+                                        dynamicHeight = min(max(textSize + 24, minHeight), maxHeight)
+                                    }
                                 }
                             }
                     }
                 )
-            
                 .frame(height: dynamicHeight > 0 ? dynamicHeight : minHeight)
                 .focused($isFocused)
+                .background(Color.ddGray100)
+                .cornerRadius(currentRadius)
+                .animation(.easeOut(duration: 0.15), value: currentRadius)
             
             if text.isEmpty && !isFocused {
                 Text("댓글을 입력해 주세요...")
-                    .foregroundColor(.gray)
-                    .padding(.leading, 24)
-                    .padding(.vertical, 8)
+                    .font(.bodyRegular16)
+                    .foregroundColor(.ddGray600)
+                    .padding(.leading, 16)
             }
         }
-        .overlay(
-            RoundedRectangle(cornerRadius: currentRadius)
-                .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-        )
-        .padding(.bottom, 12)
-        .animation(.easeOut(duration: 0.15), value: dynamicHeight)
     }
 }

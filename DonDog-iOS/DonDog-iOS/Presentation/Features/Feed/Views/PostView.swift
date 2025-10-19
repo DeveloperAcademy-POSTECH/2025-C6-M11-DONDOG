@@ -62,37 +62,45 @@ struct PostView: View {
                         }
                     }
                     
-                    HStack {
-                        GrowingTextEditor(
-                            text: $text,
-                            minHeight: 52,
-                            maxHeight: 73,
-                            isFocused: _isTextFieldFocused
-                        )
+                    ZStack(alignment: .top) {
+                        Rectangle()
+                            .fill(Color.white)
+                            .frame(height: 56)
+                            .shadow(color: Color.black.opacity(0.05),
+                                    radius: 5,
+                                    x: 0,
+                                    y: -2)
                         
-                        Button {
-                            Task {
-                                isTextFieldFocused = false
-                                let currentText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-                                guard !currentText.isEmpty else { return }
-                                await viewModel.saveComment(of: currentText)
-                                text = ""
-                                withAnimation(.easeOut) {
-                                    proxy.scrollTo("bottom", anchor: .bottom)
+                        HStack(spacing: 4) {
+                            GrowingTextEditor(
+                                text: $text,
+                                minHeight: 40,
+                                maxHeight: 73,
+                                isFocused: _isTextFieldFocused
+                            )
+                            
+                            Button {
+                                Task {
+                                    isTextFieldFocused = false
+                                    let currentText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    guard !currentText.isEmpty else { return }
+                                    await viewModel.saveComment(of: currentText)
+                                    text = ""
+                                    withAnimation(.easeOut) {
+                                        proxy.scrollTo("bottom", anchor: .bottom)
+                                    }
                                 }
+                            } label: {
+                                Image(systemName: "paperplane.circle.fill")
+                                    .font(.system(size: 40))
+                                    .foregroundStyle(isTextFieldFocused && !text.isEmpty ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
+                                    .clipShape(Circle())
                             }
-                        } label: {
-                            Image(systemName: "arrow.up")
-                                .font(.system(size: 20))
-                                .foregroundStyle(Color.white)
-                                .padding(.vertical, 5)
-                                .padding(.horizontal, 8)
-                                .background(Color.black)
-                                .clipShape(Circle())
+                            .buttonStyle(PlainButtonStyle())
+                            .animation(.spring(), value: text)
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .animation(.spring(), value: text)
-                        .padding(.trailing, 11)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 20)
                     }
                 }
                 

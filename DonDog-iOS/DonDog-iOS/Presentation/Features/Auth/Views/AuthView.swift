@@ -10,17 +10,10 @@ import SwiftUI
 struct AuthView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: AuthViewModel
-    @StateObject private var keyboard = KeyboardResponder()
-    
     
     var body: some View {
         VStack(spacing: 0) {
-            CustomNavigationBar(leadingType: .back(action: {
-                
-                //:: 추후 수정 디자인피드백4
-                !viewModel.isCodeSent ? coordinator.pop() : print("백이 아니라 iscodesent 취소되도록 수정")
-                
-            }), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
+            CustomNavigationBar(leadingType: .back(action: {coordinator.pop()}), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
             
             Spacer()
                 .frame(height: 104)
@@ -47,7 +40,7 @@ struct AuthView: View {
                     +
                     Text("를 이용한 인증이 필요해요")
                 }
-            
+                
                 Spacer()
             }
             .lineSpacing(4)
@@ -65,32 +58,30 @@ struct AuthView: View {
             .padding(.bottom, 32)
             
             Spacer()
-            //
-            //            VStack {
-            //                Text("익명 로그인(개발자용)")
-            //                    .font(.title)
-            //
-            //                Button(action: viewModel.signInAnonymously) {
-            //                    Text("익명 로그인 시작")
-            //                        .font(.headline)
-            //                        .frame(maxWidth: .infinity)
-            //                        .padding()
-            //                        .background(Color.blue)
-            //                        .foregroundColor(.white)
-            //                        .cornerRadius(10)
-            //                }
-            //            }
-            //            .padding()
-            //            .border(Color.red, width: 3)
+            
+            //:: 배포 전 삭제
+            VStack {
+                Text("익명 로그인(개발자용)")
+                    .font(.title)
+                
+                Button(action: viewModel.signInAnonymously) {
+                    Text("익명 로그인 시작")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+            }
+            .padding()
+            .border(Color.red, width: 3)
             
             Spacer()
             
             CustomButton(title: "다음", isEnable: !viewModel.userPhoneNumber.isEmpty && !viewModel.isLoading, action: viewModel.sendCode, isProgressView: viewModel.isLoading)
             
         }
-        .padding(.horizontal, 20)
-        .backHiddenSwipeEnabled()
-        .dismissKeyboard()
         .task {
             viewModel.attach(coordinator: coordinator)
         }

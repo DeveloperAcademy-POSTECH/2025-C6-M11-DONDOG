@@ -16,17 +16,25 @@ struct CustomTextField: View {
     var onCommit: (() -> Void)? = nil
     var errorMessage: String? = nil
     var errorText: Binding<String?>? = nil
+    var showExternalError: Binding<Bool>? = nil
     var softMaxLength: Int? = nil
     var softMaxErrorText: String? = nil
        
     @FocusState private var isFocused: Bool
     @State private var localValidationError: String? = nil
+    @State private var suppressExternalError: Bool = false
+
+    private var externalErrorMessage: String? {
+        if suppressExternalError { return nil }
+        if let gate = showExternalError?.wrappedValue, gate == false { return nil }
+        if let bound = errorText?.wrappedValue, !bound.isEmpty { return bound }
+        if let msg = errorMessage, !msg.isEmpty { return msg }
+        return nil
+    }
 
     private var hasError: Bool {
         if let msg = localValidationError, !msg.isEmpty { return true }
-        if let bound = errorText?.wrappedValue { return !bound.isEmpty }
-        if let msg = errorMessage { return !msg.isEmpty }
-        return false
+        return externalErrorMessage != nil
     }
 
     var body: some View {
@@ -52,14 +60,17 @@ struct CustomTextField: View {
                                 .focused($isFocused)
                                 .submitLabel(.done)
                                 .onSubmit {
+                                    suppressExternalError = false
                                     onCommit?()
                                     isFocused = false
                                 }
                                 .onChange(of: text) { _, newValue in
+                                    showExternalError?.wrappedValue = false
+                                    suppressExternalError = true
                                     if hasError {
+                                        localValidationError = nil
                                         errorText?.wrappedValue = nil
                                     }
-                                    localValidationError = nil
                                     var value = newValue.filter { !$0.isWhitespace }
                                                                    
                                     if contentType == .telephoneNumber {
@@ -89,6 +100,7 @@ struct CustomTextField: View {
                                 }
                                 .onChange(of: isFocused) { _, focused in
                                     if !focused {
+                                        suppressExternalError = false
                                         onCommit?()
                                     }
                                 }
@@ -111,7 +123,7 @@ struct CustomTextField: View {
                         ? Color.ddAlert : ((isFocused && !text.isEmpty) ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
                     )
                 
-                if hasError, let message = (localValidationError ?? errorText?.wrappedValue ?? errorMessage) {
+                if hasError, let message = (localValidationError ?? externalErrorMessage) {
                     HStack(spacing: 0) {
                         Image(systemName: "exclamationmark.circle")
                             .resizable()

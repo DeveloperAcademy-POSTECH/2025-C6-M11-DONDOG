@@ -99,7 +99,6 @@ final class EditProfileViewModel: ObservableObject {
     }
 
     // MARK: - Helpers
-
     func checkIfModified() {
         didChangeFromInitial = (name != initialName) || (selectedRole != initialRole)
     }

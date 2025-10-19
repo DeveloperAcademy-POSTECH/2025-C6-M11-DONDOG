@@ -22,24 +22,14 @@ struct FeedView: View {
     @State private var isSelectingSticker = false
     @State private var showStickerSheet = false
     
+    @EnvironmentObject var connectState: ConnectStateService
+    
     var body: some View {
         VStack(spacing: 0){
             //네비게이션 바
             HStack{
                 DisclosureGroup("디버깅 용") {
                     HStack{
-                        Button("연결뷰로 이동") {
-                            coordinator.inviteShowSentHint = false
-                            coordinator.push(.invite) }
-                        Button("설정뷰로 이동") { coordinator.push(.setting) }
-                        Button("로그아웃") {
-                            do {
-                                try Auth.auth().signOut()
-                            } catch {
-                                print("로그아웃 실패: \(error.localizedDescription)")
-                            }
-                        }
-                        Spacer()
                         Button(action: {
                             print("🔄 수동 새로고침 시작")
                             withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
@@ -64,16 +54,29 @@ struct FeedView: View {
                     }
                 }.padding(.horizontal)
                 Spacer()
-                Button{
-                    coordinator.push(.archive(roomId: viewModel.currentRoomId))
-                }label: {
-                    Image(systemName: "photo.circle.fill")
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                        .foregroundStyle(.ddPrimaryBlue)
-                        .padding(.vertical, 8)
-                        .padding(.trailing, 20)
+                if connectState.isConnected == false {
+                                    Button{
+                                        coordinator.push(.setting)
+                                    }label: {
+                                        Image(systemName: "gear")
+                                            .frame(width: 24, height: 24)
+                                            .foregroundStyle(Color.ddPrimaryBlue)
+                                            .padding(.vertical, 8)
+                                            .padding(.trailing, 20)
+                                    }
+                } else {
+                    Button{
+                        coordinator.push(.archive(roomId: viewModel.currentRoomId))
+                    }label: {
+                        Image(systemName: "photo.circle.fill")
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .foregroundStyle(.ddPrimaryBlue)
+                            .padding(.vertical, 8)
+                            .padding(.trailing, 20)
+                    }
                 }
+                
             }
             //날짜표시
             HStack {
@@ -94,7 +97,34 @@ struct FeedView: View {
                         .foregroundStyle(.ddGray600)
                 }
                 .padding(.top, 220)
-            } else if !viewModel.displayablePosts.isEmpty {
+            }else if connectState.isConnected == false {
+                VStack{
+                    Spacer()
+                    Image(systemName: "person.fill.xmark")
+                        .foregroundStyle(Color.ddSecondaryBlue)
+                        .font(.system(size: 40))
+                    Text("아직 가족과 연결되지 않았어요\n아래 버튼으로 가족을 초대할 수 있어요")
+                        .font(.bodyRegular16)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Color.ddSecondaryBlue)
+                        .padding(10)
+                    Button {
+                        coordinator.inviteShowSentHint = false
+                        coordinator.push(.invite)
+                    } label: {
+                        HStack(alignment: .center, spacing: 10) {
+                            Text("가족 초대하기")
+                                .foregroundStyle(Color.ddGray100)
+                                .font(.captionRegular14)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.ddPrimaryBlue)
+                        .cornerRadius(999)
+                    }
+                    Spacer()
+                }
+            }  else if !viewModel.displayablePosts.isEmpty {
                 VStack(spacing: 0){
                     TabView(selection: $viewModel.currentPostIndex) {
                         ForEach(Array(viewModel.displayablePosts.enumerated()), id: \.element.id) { index, displayablePost in
@@ -160,19 +190,21 @@ struct FeedView: View {
                 .padding(.top, 220)
             }
             Spacer()
-            Button{
-                showCameraView = true
-            }label: {
-                Circle()
-                    .foregroundColor(.ddWhite)
-                    .frame(width: 64, height: 64)
-                    .background{
-                        Circle()
-                            .foregroundColor(.ddPrimaryBlue)
-                            .frame(width: 72, height: 72)
-                    }
+            if connectState.isConnected == true{
+                Button{
+                    showCameraView = true
+                }label: {
+                    Circle()
+                        .foregroundColor(.ddWhite)
+                        .frame(width: 64, height: 64)
+                        .background{
+                            Circle()
+                                .foregroundColor(.ddPrimaryBlue)
+                                .frame(width: 72, height: 72)
+                        }
+                }
+                .padding(.bottom, 22)
             }
-            .padding(.bottom, 22)
         }
         .background{
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
@@ -217,4 +249,5 @@ struct FeedView: View {
     let coordinator = AppCoordinator(factory: ModuleFactory.shared)
     FeedView(viewModel: FeedViewModel())
         .environmentObject(coordinator)
+        .environmentObject(ConnectStateService.shared)
 }

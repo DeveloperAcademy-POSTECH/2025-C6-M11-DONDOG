@@ -49,11 +49,11 @@ struct PostView: View {
                         
                         Button {
                             Task {
+                                isTextFieldFocused = false
                                 let currentText = text.trimmingCharacters(in: .whitespacesAndNewlines)
                                 guard !currentText.isEmpty else { return }
                                 await viewModel.saveComment(of: currentText)
                                 text = ""
-                                isTextFieldFocused = false
                                 withAnimation(.easeOut) {
                                     proxy.scrollTo("bottom", anchor: .bottom)
                                 }

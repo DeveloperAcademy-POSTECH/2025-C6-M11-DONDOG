@@ -81,9 +81,24 @@ struct FeedView: View {
             //날짜표시
             HStack {
                 Spacer()
-                Text(DataUtils.formatDate(.now, format: "MM월 dd일 E요일"))
-                    .font(.subtitleSemiBold16)
-                    .foregroundStyle(.ddGray600)
+                if !viewModel.displayablePosts.isEmpty{
+                    Text("\(viewModel.currentPostIndex + 1)/\(viewModel.displayablePosts.count)")
+                        .font(.captionRegular13)
+                        .foregroundStyle(.ddGray600)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 2)
+                        .background {
+                            Rectangle()
+                                .foregroundStyle(.ddGray100)
+                                .cornerRadius(120)
+                        }
+                }else{
+                    Text("")
+                        .font(.captionRegular13)
+                        .foregroundStyle(.ddGray600)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 2)
+                }
                 Spacer()
             }
             .padding(.top, 24)

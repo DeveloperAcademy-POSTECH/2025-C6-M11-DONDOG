@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DetailCaptionView: View {
     let post: ArchivePost
+    let userNameByUid: [String: String]
     
     var body: some View {
         VStack {
@@ -22,13 +23,24 @@ struct DetailCaptionView: View {
                         .hidden()
                 }
             }
+            .frame(maxWidth: .infinity)
             .frame(height: 27) // 캡션이 없어도 높이 고정되게
             
             HStack(spacing: 4) {
-                if let author = post.authorName, !author.isEmpty {
+                if let authorUid = post.authorUid,
+                   let name = userNameByUid[authorUid],
+                    
+                   !name.isEmpty {
+                    Text(name)
+                        .foregroundStyle(.ddGray600)
+                } else if let author = post.authorName, !author.isEmpty {
                     Text(author)
                         .foregroundStyle(.ddGray600)
+                } else {
+                    Text("익명")
+                        .foregroundStyle(.ddGray600)
                 }
+                
                 Text(DataUtils.relativeTimeString(from: post.createdAt))
                     .foregroundStyle(.ddGray500)
             }
@@ -38,3 +50,4 @@ struct DetailCaptionView: View {
         .padding(.horizontal, 20)
     }
 }
+

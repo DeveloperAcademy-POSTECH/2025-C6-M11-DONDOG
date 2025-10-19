@@ -29,9 +29,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             checkIsNotMyPost()
         }
     }
-    @Published var stickerImage: UIImage?
-    @Published var sticker: UIImage?
-    @Published var currentPost: PostData?
+    
     @Published var currentNickname: String = ""
     @Published var currentPostIndex: Int = 0
     @Published var displayablePosts: [DisplayablePost] = []
@@ -202,7 +200,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             let postRef = self.db.collection("Rooms")
                 .document(self.currentRoomId)
                 .collection("posts")
-                .document(self.selectedPostId)
+                .document(self.currentPost?.postId ?? "")
             
             let batch = self.db.batch()
             batch.updateData([
@@ -214,16 +212,14 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             batch.commit { error in
                 if let error = error {
                     print("❌ 스티커 업데이트 실패: \(error.localizedDescription)")
-                } else {
-                    print("✅ 스티커 저장 완료: \(self.selectedPostId)에 \(recentPostId) 스티커 붙임")
                 }
             }
         }
     }
     
     func removeStickerData() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
-            print("currentRoomId 또는 selectedPostId가 비어 있어 삭제 불가")
+        guard !currentRoomId.isEmpty, ((currentPost?.postId.isEmpty) == nil) else {
+            print("currentRoomId 또는 currentPostId가 비어 있어 삭제 불가")
             return
         }
         
@@ -242,8 +238,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         batch.commit { error in
             if let error = error {
                 print("❌ 스티커 삭제 실패: \(error.localizedDescription)")
-            } else {
-                print("✅ 스티커 삭제 완료: \(self.selectedPostId)")
             }
         }
     }
@@ -491,7 +485,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         currentPostIndex = index
         currentPost = displayablePost.post
-        selectedPostId = displayablePost.postId
         todayFrontImage = displayablePost.frontImage
         todayBackImage = displayablePost.backImage
         currentNickname = displayablePost.nickname

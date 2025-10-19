@@ -7,7 +7,7 @@
 
 import FirebaseFirestore
 
-struct Comment: Identifiable, Equatable {
+struct Comment: Identifiable, Equatable, Hashable {
     var id: String
     var uid: String
     var text: String

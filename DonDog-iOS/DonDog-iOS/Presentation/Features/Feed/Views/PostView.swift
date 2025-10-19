@@ -101,8 +101,6 @@ struct PostView: View {
                     .frame(width: 76, height: 94)
                     .padding(.top, 28)
             }
-            .padding(.horizontal, 20)
-            .frame(maxWidth: .infinity)
         }
         .navigationBarBackButtonHidden()
     }

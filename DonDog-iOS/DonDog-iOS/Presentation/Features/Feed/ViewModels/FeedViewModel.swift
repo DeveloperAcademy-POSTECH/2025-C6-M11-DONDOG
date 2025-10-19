@@ -532,16 +532,41 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
         
         group.notify(queue: .main) {
-            // 인덱스 순서대로 정렬하여 배열로 변환
-            let sortedPosts = tempDisplayablePosts.sorted(by: { $0.key < $1.key }).map { $0.value }
-            self.displayablePosts = sortedPosts
-            print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(sortedPosts.count)개 (스티커는 별도 로딩)")
             
-            // 첫 번째 게시물을 현재 게시물로 설정
-            if let firstDisplayablePost = sortedPosts.first {
-                self.todayFrontImage = firstDisplayablePost.frontImage
-                self.todayBackImage = firstDisplayablePost.backImage
-                self.currentNickname = firstDisplayablePost.nickname
+            let sortedPosts = tempDisplayablePosts.sorted(by: { $0.key < $1.key }).map { $0.value }
+            
+            
+            let finalSortedPosts = sortedPosts.sorted { post1, post2 in
+                let hasSticker1 = !post1.stickerPostId.isEmpty
+                let hasSticker2 = !post2.stickerPostId.isEmpty
+                
+                
+                if hasSticker1 != hasSticker2 {
+                    return hasSticker1  // 스티커 있는게 왼쪽
+                }
+                
+                return post1.createdAt < post2.createdAt
+            }
+            
+            self.displayablePosts = finalSortedPosts
+            print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개 (스티커는 별도 로딩)")
+            
+            // 🎯 스티커 없는 게시물 중 첫 번째 인덱스 찾기 (정렬 후 스티커 없는 것 중 가장 오래된 것)
+            let initialIndex = finalSortedPosts.firstIndex { post in
+                post.stickerPostId.isEmpty
+            } ?? 0  // 스티커 없는 게시물이 없으면 0번
+            
+            self.currentPostIndex = initialIndex
+            print("📍 초기 TabView 인덱스: \(initialIndex)")
+            
+            // 해당 인덱스의 게시물을 현재 게시물로 설정
+            if initialIndex < finalSortedPosts.count {
+                let initialPost = finalSortedPosts[initialIndex]
+                self.todayFrontImage = initialPost.frontImage
+                self.todayBackImage = initialPost.backImage
+                self.currentNickname = initialPost.nickname
+                self.selectedPostId = initialPost.postId
+                self.currentPost = initialPost.post
             }
         }
     }

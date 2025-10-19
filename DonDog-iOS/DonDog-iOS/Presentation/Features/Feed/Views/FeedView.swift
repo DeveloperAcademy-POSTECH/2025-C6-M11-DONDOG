@@ -161,7 +161,7 @@ struct FeedView: View {
                     .frame(height: 520)
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
-                    .onChange(of: viewModel.currentPostIndex) { newIndex in
+                    .onChange(of: viewModel.currentPostIndex) { oldValue, newIndex in
                         withAnimation(.easeInOut(duration: 0.3)) {
                             viewModel.updateCurrentPost(at: newIndex)
                         }

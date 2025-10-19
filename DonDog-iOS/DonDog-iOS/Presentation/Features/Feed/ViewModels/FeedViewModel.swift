@@ -458,7 +458,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             var frontImage: UIImage?
             var backImage: UIImage?
             var nickname: String = "익명"
-            var stickerImage: UIImage?
             
             // 전면 이미지 다운로드
             imageGroup.enter()

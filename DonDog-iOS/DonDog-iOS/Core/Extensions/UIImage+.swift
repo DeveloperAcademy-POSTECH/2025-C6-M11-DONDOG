@@ -10,7 +10,7 @@ import UIKit
 extension UIImage {
 
     func addBorder(thickness: CGFloat, color: UIColor) -> UIImage? {
-        let scale = self.scale
+        _ = self.scale
         let canvas = CGSize(width: self.size.width + thickness * 2,
                            height: self.size.height + thickness * 2)
         let origin = CGPoint(x: thickness, y: thickness)

@@ -92,6 +92,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
+    @MainActor
     func makeArchiveDetailView(in roomId: String, date: Date) -> ArchiveDetailView {
         let viewModel = ArchiveDetailViewModel(roomId: roomId, date: date)
         let view = ArchiveDetailView(viewModel: viewModel)

@@ -12,18 +12,15 @@ import Combine
 extension View {
     /// 텍스트 입력 중 화면을 탭하면 키보드를 내리는 커스텀 Modifier
     func dismissKeyboard() -> some View {
-            self
-                .background(
-                    Color.clear
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            UIApplication.shared.sendAction(
-                                #selector(UIResponder.resignFirstResponder),
-                                to: nil, from: nil, for: nil
-                            )
-                        }
+        self
+            .contentShape(Rectangle())
+            .simultaneousGesture(TapGesture().onEnded {
+                UIApplication.shared.sendAction(
+                    #selector(UIResponder.resignFirstResponder),
+                    to: nil, from: nil, for: nil
                 )
-        }
+            })
+    }
 }
 
 final class KeyboardResponder: ObservableObject {

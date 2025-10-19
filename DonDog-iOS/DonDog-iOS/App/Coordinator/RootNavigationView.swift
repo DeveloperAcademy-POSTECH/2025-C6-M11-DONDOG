@@ -25,6 +25,7 @@ struct RootNavigationView: View {
                         }
                 }
                 .environmentObject(coordinator)
+                .environmentObject(ConnectStateService.shared)
             } else {
                 SplashView()
                     .task {

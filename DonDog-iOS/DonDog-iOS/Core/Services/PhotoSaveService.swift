@@ -258,7 +258,6 @@ final class PhotoSaveService: ObservableObject {
         }.resume()
     }
     
-    
     private func uploadImage(image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("🚀 이미지 업로드 시작 - 경로: \(path)")
         

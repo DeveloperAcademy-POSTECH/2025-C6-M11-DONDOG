@@ -156,8 +156,8 @@ struct CustomNavigationBar: View {
             Button(action: action) {
                 Image(systemName: "gear")
                     .font(.body)
+                    .frame(width: 24, height: 24)
             }
-            .frame(width: 24, height: 24)
             
         case .none:
             Spacer().frame(width: 24).opacity(0)

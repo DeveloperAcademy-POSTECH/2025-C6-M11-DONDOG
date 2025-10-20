@@ -23,48 +23,69 @@ struct ArchiveDetailView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // CustomNavigationBar
-            CustomNavigationBar(
-                leadingType:
-                        .back(
-                            action: { coordinator.pop() }
-                        ),
-                centerType:
-                        .title(title: titleString),
-                trailingType: .menu(items: [
-                    CustomNavMenuItem("삭제하기", role: .destructive) {
-                        viewModel.handleDeleteRequest(at: currentIndex)
-                    },
-                ]),
-                navigationColor: .black
-            )
-            .padding(.horizontal, 20)
+        ZStack(alignment: .top) {
+            VStack(spacing: 0) {
+                // CustomNavigationBar
+                CustomNavigationBar(
+                    leadingType:
+                            .back(
+                                action: { coordinator.pop() }
+                            ),
+                    centerType:
+                            .title(title: titleString),
+                    trailingType: .menu(items: [
+                        CustomNavMenuItem("삭제하기", role: .destructive) {
+                            viewModel.handleDeleteRequest(at: currentIndex)
+                        },
+                    ]),
+                    navigationColor: .black
+                )
+                .padding(.horizontal, 20)
+                
+                // 인디케이터
+                CustomPageIndicator(
+                    currentIndex: min(currentIndex + 1, max(viewModel.posts.count, 1)),
+                    totalCount: max(viewModel.posts.count, 1),
+                    backgroundColor: .ddGray100,
+                    textColor: .ddGray500
+                )
+                .padding(.vertical, 4)
+                
+                // 캐러셀
+                TabView(selection: $currentIndex) {
+                    ForEach(Array(viewModel.posts.enumerated()), id: \.offset) { idx, post in
+                        DetailContentView(
+                            post: post,
+                            userNameByUid: viewModel.userNameByUid,
+                            onDelete: { comment in
+                                await viewModel.deleteComment(comment, from: post)
+                            }
+                        )
+                        .tag(idx)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+            }
             
-            // 인디케이터
-            CustomPageIndicator(
-                currentIndex: min(currentIndex + 1, max(viewModel.posts.count, 1)),
-                totalCount: max(viewModel.posts.count, 1),
-                backgroundColor: .ddGray100,
-                textColor: .ddGray500
-            )
-            .padding(.vertical, 4)
-            
-            // 캐러셀
-            TabView(selection: $currentIndex) {
-                ForEach(Array(viewModel.posts.enumerated()), id: \.offset) { idx, post in
-                    DetailContentView(
-                        post: post,
-                        userNameByUid: viewModel.userNameByUid,
-                        onDelete: { comment in
-                            await viewModel.deleteComment(comment, from: post)
+            if viewModel.showUnauthorizedAlert {
+                VStack {
+                    Spacer()
+                    ToastView(toastText: "본인이 작성한 글만 삭제할 수 있어요")
+                        .padding(.bottom, 80)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                withAnimation {
+                                    viewModel.showUnauthorizedAlert = false
+                                }
+                            }
                         }
-                    )
-                    .tag(idx)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .bottom).animation(.spring()),
+                            removal: .opacity.animation(.easeOut(duration: 0.7))
+                        ))
                 }
             }
-            .frame(maxWidth: .infinity)
-            .tabViewStyle(.page(indexDisplayMode: .never))
         }
         .background(.ddWhite)
         .backHiddenSwipeEnabled()
@@ -83,11 +104,6 @@ struct ArchiveDetailView: View {
             Button("취소", role: .cancel) { }
         } message: {
             Text("삭제한 사진은 되돌릴 수 없어요")
-        }
-        .alert("삭제 권한 없음", isPresented: $viewModel.showUnauthorizedAlert) {
-            Button("확인", role: .cancel) { }
-        } message: {
-            Text("본인이 작성한 것만 삭제할 수 있어요!")
         }
     }
 }

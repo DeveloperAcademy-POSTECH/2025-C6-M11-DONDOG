@@ -66,7 +66,6 @@ struct FeedView: View {
                                     }
                 }
             }
-            //날짜표시
             HStack {
                 Spacer()
                 if !viewModel.displayablePosts.isEmpty{
@@ -90,6 +89,7 @@ struct FeedView: View {
                 Spacer()
             }
             .padding(.top, 24)
+            
             if viewModel.isLoading {
                 VStack(spacing: 16) {
                     ProgressView()
@@ -128,7 +128,7 @@ struct FeedView: View {
                     Spacer()
                 }
             }  else if !viewModel.displayablePosts.isEmpty {
-                VStack(spacing: 0){
+                ZStack{
                     TabView(selection: $viewModel.currentPostIndex) {
                         ForEach(Array(viewModel.displayablePosts.enumerated()), id: \.element.id) { index, displayablePost in
                             if let frontImage = displayablePost.frontImage,
@@ -166,17 +166,28 @@ struct FeedView: View {
                             viewModel.updateCurrentPost(at: newIndex)
                         }
                     }
-                    if viewModel.displayablePosts.count > 1 {
-                        HStack(spacing: 8) {
-                            ForEach(0..<viewModel.displayablePosts.count, id: \.self) { index in
-                                Circle()
-                                    .fill(index == viewModel.currentPostIndex ? Color.ddPrimaryBlue : Color.ddGray300)
-                                    .frame(width: 8, height: 8)
-                                    .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
-                            }
+                    VStack{
+                        HStack{
+                            Spacer()
+                            
+                                Button{
+                                    coordinator.push(.post(postId: viewModel.currentPost?.postId ?? "", roomId: viewModel.currentRoomId))
+                                }label: {
+                                    ZStack{
+                                        Image("DetailViewButton")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 109)
+                                        Text("댓글 쓰기...")
+                                            .font(.bodyMedium16)
+                                            .foregroundStyle(.ddGray500)
+                                            .padding(.bottom, 10)
+                                    }.padding(.trailing, 20)
+                                }
                         }
-                        .padding(.top, 16)
+                        Spacer()
                     }
+                    .padding(.top, 23)
                 }
             } else { // 오늘 찍은 사진이 없을 때
                 VStack(spacing: 10){

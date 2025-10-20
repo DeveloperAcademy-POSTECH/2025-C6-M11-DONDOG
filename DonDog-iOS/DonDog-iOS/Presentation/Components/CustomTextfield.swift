@@ -19,6 +19,7 @@ struct CustomTextField: View {
     var showExternalError: Binding<Bool>? = nil
     var softMaxLength: Int? = nil
     var softMaxErrorText: String? = nil
+    var isDisabled: Bool = false
        
     @FocusState private var isFocused: Bool
     @State private var localValidationError: String? = nil
@@ -54,6 +55,7 @@ struct CustomTextField: View {
                         }
                         HStack {
                             TextField("", text: $text)
+                                .disabled(isDisabled)
                                 .font(.bodyRegular18)
                                 .foregroundColor(Color.ddBlack)
                                 .keyboardType(keyboard)

@@ -32,7 +32,6 @@ final class AuthService {
     }
     
     private func applyRouteForUser(coordinator: AppCoordinator) {
-        
         func replaceRootinAuthService(_ route: AppRoute, coordinator: AppCoordinator) {
             Task { @MainActor in
                 if coordinator.root == route { return }

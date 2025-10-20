@@ -27,10 +27,11 @@ final class AuthNumberViewModel: ObservableObject {
     
     @Published var message: String = ""
     @Published var isLoading: Bool = false
-    
     @Published var codeError: String? = nil
     
     @Published var isNumberWithdraw = false
+    @Published var showAlert = false
+    @Published var alertMessage: String? = nil
     
     init(isNumberWithdraw: Bool = false) {
         self.isNumberWithdraw = isNumberWithdraw
@@ -87,22 +88,15 @@ final class AuthNumberViewModel: ObservableObject {
     }
     
     private func deleteUserDataAndAuth() async {
-        // 🔒 회원탈퇴 진행 중 플래그 ON + 즉시 웰컴으로 라우팅(중간 깜빡임 방지)
-        await MainActor.run {
-            AuthService.isAccountDeletionInProgress = true
-            self.coordinator?.replaceRoot(.welcome)
-        }
-        defer {
-            Task { @MainActor in
-                AuthService.isAccountDeletionInProgress = false
-            }
-        }
-        
         guard let user = Auth.auth().currentUser else {
             print("[회원탈퇴] 로그인 정보를 찾을 수 없습니다")
             return
         }
         
+        await MainActor.run {
+            AuthService.isAccountDeletionInProgress = true
+        }
+
         let uid = user.uid
         let db = Firestore.firestore()
 
@@ -115,9 +109,9 @@ final class AuthNumberViewModel: ObservableObject {
             if let data = userData.data(), let rid = data["roomId"] as? String, !rid.isEmpty {
                 roomId = rid
             }
-            
+
             let deleteTgt = db.batch()
-            
+
             // Users/{uid} 삭제
             deleteTgt.deleteDocument(userDoc)
 
@@ -147,13 +141,24 @@ final class AuthNumberViewModel: ObservableObject {
                 uniqueRids[ref.path] = ref
             }
 
-            // participants에서 uid 제거
-            for (_, ref) in uniqueRids {
-                deleteTgt.updateData(["participants": FieldValue.arrayRemove([uid])], forDocument: ref)
-            }
-
-            // 배치 커밋 (users/ invites/ rooms arrayRemove 까지)
+            // Users/Invites clean-up in a batch, but do NOT include Rooms participants update in that batch
             try await deleteTgt.commit()
+
+            // participants에서 uid 제거 (존재하는 방에 한해 개별 업데이트)
+            for (_, ref) in uniqueRids {
+                do {
+                    try await ref.updateData(["participants": FieldValue.arrayRemove([uid])])
+                } catch {
+                    let ns = error as NSError
+                    if ns.domain == FirestoreErrorDomain,
+                       FirestoreErrorCode.Code(rawValue: ns.code) == .notFound {
+                        // 방이 이미 삭제된 경우: 무시하고 계속 진행
+                        continue
+                    } else {
+                        throw error
+                    }
+                }
+            }
 
             // participants 제거 후 빈 방이면 삭제 방 삭제, 방 내부의 storage 파일 삭제
             for (_, ref) in uniqueRids {
@@ -208,25 +213,45 @@ final class AuthNumberViewModel: ObservableObject {
                 }
             }
 
+//
+//            await MainActor.run {
+//                AuthService.isAccountDeletionInProgress = true
+//            }
+            
             // 2) Firebase Auth 사용자 삭제
             do {
-                print("유저 삭제를 위해 다시 전화번호 인증")
-                // 다시 인증받기
                 try await user.delete()
+                await MainActor.run {
+                    AuthService.isAccountDeletionInProgress = false
+                    self.coordinator?.replaceRoot(.welcome)
+                }
             } catch {
                 let nsError = error as NSError
+                await MainActor.run {
+                    AuthService.isAccountDeletionInProgress = false
+                }
                 if nsError.code == AuthErrorCode.requiresRecentLogin.rawValue {
                     print("[회원탈퇴] requiresRecentLogin: 최근 로그인 후 다시 시도 필요")
-                    // 유저 안내 필요 (다시 로그인 시도)
+                    await MainActor.run {
+                        self.showAlert = true
+                        self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
+                    }
                 } else {
                     print("[회원탈퇴] Auth 삭제 중 오류: \(nsError.localizedDescription)")
-                    // 유저 안내 필요
+                    await MainActor.run {
+                        self.showAlert = true
+                        self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
+                    }
                 }
+                return
             }
         } catch {
             let nsError = error as NSError
             print("[회원탈퇴] 오류: \(nsError.localizedDescription)")
-            // 유저 안내 필요
+            await MainActor.run {
+                self.showAlert = true
+                self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
+            }
         }
     }
     

@@ -84,6 +84,7 @@ struct CustomNavigationBar: View {
                 
                 navigationTrailingView()
             }
+            .contentShape(Rectangle())
             .foregroundStyle(color)
             .padding(.vertical, 11)
             .background(.clear)
@@ -138,11 +139,7 @@ struct CustomNavigationBar: View {
                     Button(role: item.role) {
                         item.action()
                     } label: {
-                        if item.title.contains("삭제") {
-                            Label(item.title, systemImage: "trash")
-                        } else {
-                            Text(item.title)
-                        }
+                        Text(item.title)
                     }
                 }
             } label: {

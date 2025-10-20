@@ -123,7 +123,6 @@
 		8BDF768D2E9F498B007F12BB /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		8BDF76972E9F72CE007F12BB /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeService.swift; sourceTree = "<group>"; };
-		8CAD89922EA52075004318F0 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/yuu/Documents/GitHub/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8CF9C7502EA129D400EB944A /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		8CF9C7A22EA148BC00EB944A /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		A192F2B02E9E45A800995DCC /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
@@ -172,6 +171,7 @@
 		D24402AA2E992CE700D837C8 /* PostContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentView.swift; sourceTree = "<group>"; };
 		D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSaveService.swift; sourceTree = "<group>"; };
 		D293F3752EA4D23000AECA1A /* GrowingTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowingTextEditor.swift; sourceTree = "<group>"; };
+		D293F37F2EA5B8F400AECA1A /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2A7F3892E9A28B7005F5AF8 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		D2A7FA3A2E9FFDCA005F5AF8 /* PostData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostData.swift; sourceTree = "<group>"; };
 		D2C9F7082EA2372100393208 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
@@ -343,6 +343,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
+				D293F37F2EA5B8F400AECA1A /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -428,12 +429,9 @@
 		CAA9AECD2E8FC15C0047A89A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D293F3752EA4D23000AECA1A /* GrowingTextEditor.swift */,
-				8CF9C7502EA129D400EB944A /* StickerSheetView.swift */,
-				D2C9F7082EA2372100393208 /* CommentView.swift */,
+				D293F37B2EA55B7100AECA1A /* SubViews */,
 				D2D16C012E9153BC008FB3E2 /* PostView.swift */,
 				CAA9AED02E8FC15C0047A89A /* FeedView.swift */,
-				D24402AA2E992CE700D837C8 /* PostContentView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -573,6 +571,17 @@
 			path = Caption;
 			sourceTree = "<group>";
 		};
+		D293F37B2EA55B7100AECA1A /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				D24402AA2E992CE700D837C8 /* PostContentView.swift */,
+				D293F3752EA4D23000AECA1A /* GrowingTextEditor.swift */,
+				D2C9F7082EA2372100393208 /* CommentView.swift */,
+				8CF9C7502EA129D400EB944A /* StickerSheetView.swift */,
+			);
+			path = SubViews;
+			sourceTree = "<group>";
+		};
 		D2A7F3882E9A28A9005F5AF8 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -614,7 +623,7 @@
 				8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8CAD89922EA52075004318F0 /* DonDog-iOS.app */;
+			productReference = D293F37F2EA5B8F400AECA1A /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

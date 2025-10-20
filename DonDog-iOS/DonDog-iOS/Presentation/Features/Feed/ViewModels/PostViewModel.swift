@@ -163,8 +163,6 @@ final class PostViewModel: ObservableObject {
         try await commentRef.delete()
 
         try await postRef.delete()
-
-        print("✅ 게시물 및 관련 파일 완전 삭제 완료")
     }
 
     private func deleteStorageFile(at path: String) async throws {

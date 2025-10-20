@@ -76,17 +76,8 @@ struct FeedView: View {
                             .padding(.trailing, 20)
                     }
                 }
-                
             }
-            //날짜표시
-            HStack {
-                Spacer()
-                Text(DataUtils.formatDate(.now, format: "MM월 dd일 E요일"))
-                    .font(.subtitleSemiBold16)
-                    .foregroundStyle(.ddGray600)
-                Spacer()
-            }
-            .padding(.top, 24)
+            
             if viewModel.isLoading {
                 VStack(spacing: 16) {
                     ProgressView()
@@ -136,7 +127,7 @@ struct FeedView: View {
                                         frontImage: frontImage,
                                         backImage: backImage,
                                         nickname: displayablePost.nickname,
-                                        createdAt: DataUtils.formatDate(displayablePost.createdAt, format: "a hh:mm"),
+                                        createdAt: DataUtils.relativeTimeString(from: displayablePost.createdAt),
                                         caption: displayablePost.caption,
                                         onStickerButtonTapped: {
                                             showStickerSheet = true

@@ -15,88 +15,20 @@ struct PostView: View {
     @State private var showDeleteAlert = false
     @FocusState private var isTextFieldFocused: Bool
     
+    private var titleString: String {
+        let fmt = DateFormatter()
+        fmt.locale = Locale(identifier: "ko_KR")
+        fmt.timeZone = TimeZone(identifier: "Asia/Seoul")
+        fmt.dateFormat = "MM월 dd일"
+        return fmt.string(from: viewModel.createdAt)
+    }
+    
     var body: some View {
-        ScrollViewReader { proxy in
-            ZStack(alignment: .topTrailing) {
-                Color.white
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        isTextFieldFocused = false
-                    }
-                
-                VStack {
-                    ScrollView {
-                        VStack {
-                            PostContentView(viewModel: viewModel)
-                            
-                            Color.clear
-                                .frame(height: 1)
-                                .id("bottom")
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            isTextFieldFocused = false
-                        }
-                    }
-                    
-                    HStack {
-                        GrowingTextEditor(
-                            text: $text,
-                            minHeight: 52,
-                            maxHeight: 73,
-                            isFocused: _isTextFieldFocused
-                        )
-                        
-                        Button {
-                            Task {
-                                isTextFieldFocused = false
-                                let currentText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-                                guard !currentText.isEmpty else { return }
-                                await viewModel.saveComment(of: currentText)
-                                text = ""
-                                withAnimation(.easeOut) {
-                                    proxy.scrollTo("bottom", anchor: .bottom)
-                                }
-                            }
-                        } label: {
-                            Image(systemName: "arrow.up")
-                                .font(.system(size: 20))
-                                .foregroundStyle(Color.white)
-                                .padding(.vertical, 5)
-                                .padding(.horizontal, 8)
-                                .background(Color.black)
-                                .clipShape(Circle())
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        .animation(.spring(), value: text)
-                        .padding(.trailing, 11)
-                    }
-                }
-                
-                Image(uiImage: viewModel.stickerImage)
-                    .resizable()
-                    .frame(width: 76, height: 94)
-                    .padding(.top, 28)
-            }
-            .padding(.horizontal, 20)
-            .frame(maxWidth: .infinity)
-            .toolbar {
-                if viewModel.uid == viewModel.currentUser {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Menu {
-                            Button(role: .destructive) {
-                                showDeleteAlert = true
-                            } label: {
-                                Label("삭제하기", systemImage: "trash")
-                            }
-                        } label: {
-                            Image(systemName: "ellipsis")
-                        }
-                    }
-                }
-            }
-            .alert("게시글을 삭제하시겠습니까?", isPresented: $showDeleteAlert) {
-                Button("삭제", role: .destructive) {
+        CustomNavigationBar(
+            leadingType: .back(action: { coordinator.pop() }),
+            centerType: .title(title: titleString),
+            trailingType: .menu(items: [
+                CustomNavMenuItem("삭제하기", role: .destructive) {
                     Task {
                         do {
                             try await viewModel.deletePost()
@@ -107,9 +39,95 @@ struct PostView: View {
                             print("게시물 삭제 중 오류:", error.localizedDescription)
                         }
                     }
+                },
+                CustomNavMenuItem("취소") {
                 }
-                Button("취소", role: .cancel) { }
-            }
+            ]),
+            navigationColor: .black
+        )
+        .padding(.horizontal, 20)
+        .onTapGesture {
+            isTextFieldFocused = false
         }
+        
+            ScrollViewReader { proxy in
+                ZStack(alignment: .topTrailing) {
+                    Color.white
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            isTextFieldFocused = false
+                        }
+                    
+                    VStack {
+                        ScrollView {
+                            VStack {
+                                PostContentView(viewModel: viewModel)
+                                
+                                Color.clear
+                                    .frame(height: 1)
+                                    .id("bottom")
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                isTextFieldFocused = false
+                            }
+                        }
+                        
+                        ZStack(alignment: .top) {
+                            Rectangle()
+                                .fill(Color.white)
+                                .frame(height: 56)
+                                .shadow(color: Color.black.opacity(0.05),
+                                        radius: 5,
+                                        x: 0,
+                                        y: -2)
+                            
+                            HStack(spacing: 4) {
+                                GrowingTextEditor(
+                                    text: $text,
+                                    minHeight: 40,
+                                    maxHeight: 73,
+                                    isFocused: _isTextFieldFocused
+                                )
+                                
+                                Button {
+                                    Task {
+                                        isTextFieldFocused = false
+                                        let currentText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                                        guard !currentText.isEmpty else { return }
+                                        await viewModel.saveComment(of: currentText)
+                                        text = ""
+                                        withAnimation(.easeOut) {
+                                            proxy.scrollTo("bottom", anchor: .bottom)
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: "paperplane.circle.fill")
+                                        .font(.system(size: 40))
+                                        .foregroundStyle(isTextFieldFocused && !text.isEmpty ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
+                                        .clipShape(Circle())
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .animation(.spring(), value: text)
+                            }
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 20)
+                        }
+                    }
+                    
+                    Image(uiImage: viewModel.stickerImage)
+                        .resizable()
+                        .frame(width: 76, height: 94)
+                        .padding(.top, 28)
+                }
+        }
+        .navigationBarBackButtonHidden()
     }
+}
+
+#Preview {
+    let coordinator = AppCoordinator(factory: ModuleFactory.shared)
+    let vm = PostViewModel(postId: "preview-post", roomId: "preview-room")
+    PostView(viewModel: vm)
+        .environmentObject(coordinator)
 }

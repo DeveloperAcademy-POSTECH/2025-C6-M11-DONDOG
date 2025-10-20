@@ -116,18 +116,33 @@ final class PostViewModel: ObservableObject {
     }
     
     func saveComment(of text: String) async {
-        do {
-            let commentData: [String: Any] = [
-                "uid": currentUser,
-                "text": text,
-                "createdAt": Timestamp(date: Date())
-            ]
-            
-            try await commentRef.collection("comments").addDocument(data: commentData)
+        let tempComment = Comment(
+            uid: currentUser,
+            text: text,
+            createdAt: Date()
+        )
 
-            await fetchComments()
-        } catch {
-            print("댓글 업로드 실패: \(error.localizedDescription)")
+        await MainActor.run {
+            comments.append(tempComment)
+        }
+
+        Task {
+            do {
+                let commentData: [String: Any] = [
+                    "uid": currentUser,
+                    "text": text,
+                    "createdAt": Timestamp(date: Date())
+                ]
+                try await commentRef.collection("comments").addDocument(data: commentData)
+
+                await fetchComments()
+            } catch {
+                print("댓글 업로드 실패: \(error.localizedDescription)")
+
+                await MainActor.run {
+                    comments.removeAll { $0.id == tempComment.id }
+                }
+            }
         }
     }
     

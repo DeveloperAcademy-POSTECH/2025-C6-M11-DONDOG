@@ -62,6 +62,7 @@
 		CA9C13E12EA4879400519748 /* DetailCommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9C13E02EA4879400519748 /* DetailCommentsView.swift */; };
 		CA9C13E32EA48A5500519748 /* ArchivePostContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9C13E22EA48A5500519748 /* ArchivePostContainer.swift */; };
 		CA9C14032EA5CD8C00519748 /* PostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9C14022EA5CD8C00519748 /* PostService.swift */; };
+		CA9C140C2EA60BA000519748 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9C140B2EA60BA000519748 /* ToastView.swift */; };
 		CAA62D012EA1E3FD00C60E05 /* SwipeBackUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFF2EA1E3FD00C60E05 /* SwipeBackUtils.swift */; };
 		CAA62D022EA1E3FD00C60E05 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */; };
 		CAA62D032EA1E3FD00C60E05 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */; };
@@ -146,6 +147,7 @@
 		CA9C13E22EA48A5500519748 /* ArchivePostContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivePostContainer.swift; sourceTree = "<group>"; };
 		CA9C13FB2EA5C26A00519748 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA9C14022EA5CD8C00519748 /* PostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostService.swift; sourceTree = "<group>"; };
+		CA9C140B2EA60BA000519748 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
 		CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		CAA62CFE2EA1E3FD00C60E05 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
@@ -300,6 +302,7 @@
 				A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */,
 				8BDF76972E9F72CE007F12BB /* SplashView.swift */,
 				8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */,
+				CA9C140B2EA60BA000519748 /* ToastView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -720,6 +723,7 @@
 				8B7377E02E9546030001EFCD /* AuthService.swift in Sources */,
 				8B6E118D2E976F380082B24C /* EditProfileView.swift in Sources */,
 				D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */,
+				CA9C140C2EA60BA000519748 /* ToastView.swift in Sources */,
 				61C9B1A02E9BED150007C8F4 /* ArchiveViewModel.swift in Sources */,
 				CA9C13DF2EA4855100519748 /* Sticker.swift in Sources */,
 				CAA9AEDC2E8FC15C0047A89A /* CameraViewModel.swift in Sources */,

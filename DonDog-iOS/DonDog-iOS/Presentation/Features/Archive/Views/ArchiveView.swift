@@ -9,72 +9,19 @@ import SwiftUI
 struct ArchiveView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: ArchiveViewModel
-    private let grid = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
-    private struct ArchivePostContainer: View {
-        let url: URL
-        let day: Int
-        
-        var body: some View {
-            ZStack(alignment: .center) {
-                AsyncImage(url: url) { state in
-                    switch state {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 75, height: 100)
-                            .clipped()
-                            .transition(.opacity)
-                            .cornerRadius(8)
-                            .overlay(
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                        .fill(.ddGray1000.opacity(0.3))
-                                    
-                                    Text("\(day)일")
-                                        .font(.subtitleSemiBold16)
-                                        .foregroundStyle(.ddWhite)
-                                }
-                            )
-                        
-                    case .failure:
-                        Rectangle()
-                            .fill(.ddGray600)
-                            .cornerRadius(8)
-                            .overlay(Image(systemName: "photo").opacity(0.7))
-                            .frame(width: 75, height: 100)
-                        
-                    case .empty:
-                        Rectangle()
-                            .fill(.ddGray600.opacity(0.2))
-                            .cornerRadius(8)
-                            .overlay(ProgressView())
-                            .frame(width: 75, height: 100)
-                        
-                    @unknown default:
-                        Color.clear.frame(width: 75, height: 100)
-                    }
-                }
-                
-            }
-        }
-    }
+    private let grid = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
     @ViewBuilder
     private func archivePlaceholder(height: CGFloat = 100) -> some View {
         Rectangle()
-            .fill(Color.gray.opacity(0.3))
+            .fill(.ddGray600.opacity(0.3))
             .frame(height: height)
             .cornerRadius(8)
             .overlay(
                 Image(systemName: "photo")
                     .foregroundStyle(.ddWhite.opacity(0.7))
             )
-    }
-    
-    private func monthTitle(year: Int, month: Int) -> String {
-        "\(year)년 \(month)월"
     }
     
     var body: some View {
@@ -100,13 +47,17 @@ struct ArchiveView: View {
             ScrollView {
                 VStack {
                     HStack {
-                        VStack(alignment: .leading) {
-                            Text("\(viewModel.partnerNickname)").bold()
-                            + Text("님과 ")
-                            + Text("\(viewModel.myNickname)").bold()
-                            + Text("님만의 추억이\n")
-                            + Text("\(viewModel.totalPostCount)개").bold()
-                            + Text(" 모였어요")
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack(spacing: 0) {
+                                Text(viewModel.partnerNickname).bold()
+                                Text("님과 ")
+                                Text(viewModel.myNickname).bold()
+                                Text("님만의 추억이")
+                            }
+                            HStack(spacing: 0) {
+                                Text("\(viewModel.totalPostCount)개").bold()
+                                Text(" 모였어요")
+                            }
                         }
                         .font(.bodyRegular18)
                         .padding(.vertical, 8)
@@ -118,22 +69,14 @@ struct ArchiveView: View {
                     
                     ForEach(viewModel.archiveMonths) { month in
                         VStack(alignment: .leading) {
-                            Text(monthTitle(year: month.year, month: month.month))
+                            Text(String("\(month.year)년 \(month.month)월"))
                                 .font(.subtitleSemiBold16)
                                 .padding(.vertical, 8)
                             
                             LazyVGrid(columns: grid, spacing: 8) {
                                 ForEach(month.days) { day in
                                     Button {
-                                        var cal = Calendar(identifier: .gregorian)
-                                        cal.timeZone = TimeZone(identifier: "Asia/Seoul")!
-                                        let comp = DateComponents(year: month.year, month: month.month, day: day.day, hour: 0, minute: 0, second: 0)
-                                        let selectedDate = cal.date(from: comp) ?? Date()
-                                        
-                                        print("\(month.year).\(month.month).\(day.day) 디테일 뷰 / postId: \(day.postId)")
-                                        coordinator.push(
-                                            .archiveDetail(roomId: viewModel.roomId, date: selectedDate)
-                                        )
+                                        moveDailyArchive(month: month, day: day)
                                     } label: {
                                         ArchivePostContainer(url: day.thumbnailURL, day: day.day)
                                     }
@@ -153,4 +96,23 @@ struct ArchiveView: View {
         )
         .navigationBarBackButtonHidden(true)
     }
+    
+    // 일자별 기록으로 이동, 버튼 내부 타입 체커 이슈로 함수로 분리
+    func moveDailyArchive(month: ArchiveMonth, day: ArchiveDay) {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = TimeZone(identifier: "Asia/Seoul") ?? .current
+        let comp = DateComponents(
+            year: month.year, month: month.month, day: day.day,
+            hour: 0, minute: 0, second: 0
+        )
+        guard let selectedDate = cal.date(from: comp) else { return }
+
+        let key = viewModel.dayKey(from: selectedDate)
+        let initial = viewModel.dailyPosts[key] ?? []
+
+        coordinator.push(
+            .archiveDetail(roomId: viewModel.roomId, date: selectedDate, initialPosts: initial)
+        )
+    }
 }
+

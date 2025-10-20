@@ -21,10 +21,12 @@ struct DetailCommentRow: View {
                     .font(.captionRegular13)
                     .foregroundStyle(.ddGray600)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             Text(comment.text)
                 .font(.captionRegular14)
                 .foregroundStyle(.ddBlack)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 20)

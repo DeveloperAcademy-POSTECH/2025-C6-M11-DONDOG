@@ -83,14 +83,22 @@ final class AuthNumberViewModel: ObservableObject {
     
     private func performAccountDeletion() {
         Task {
-            await deleteUserDataAndAuth()
+            await MainActor.run { AuthService.isAccountDeletionInProgress = true }
+            let success = await deleteUserDataAndAuth()
+            await MainActor.run {
+                AuthService.isAccountDeletionInProgress = false
+                if success {
+                    self.coordinator?.replaceRoot(.welcome)
+                }
+                NotificationCenter.default.post(name: .authServiceReconfigureRouting, object: nil)
+            }
         }
     }
     
-    private func deleteUserDataAndAuth() async {
+    private func deleteUserDataAndAuth() async -> Bool {
         guard let user = Auth.auth().currentUser else {
             print("[회원탈퇴] 로그인 정보를 찾을 수 없습니다")
-            return
+            return false
         }
         
         await MainActor.run {
@@ -141,7 +149,6 @@ final class AuthNumberViewModel: ObservableObject {
                 uniqueRids[ref.path] = ref
             }
 
-            // Users/Invites clean-up in a batch, but do NOT include Rooms participants update in that batch
             try await deleteTgt.commit()
 
             // participants에서 uid 제거 (존재하는 방에 한해 개별 업데이트)
@@ -216,15 +223,9 @@ final class AuthNumberViewModel: ObservableObject {
             // 2) Firebase Auth 사용자 삭제
             do {
                 try await user.delete()
-                await MainActor.run {
-                    AuthService.isAccountDeletionInProgress = false
-                    self.coordinator?.replaceRoot(.welcome)
-                }
+                return true
             } catch {
                 let nsError = error as NSError
-                await MainActor.run {
-                    AuthService.isAccountDeletionInProgress = false
-                }
                 if nsError.code == AuthErrorCode.requiresRecentLogin.rawValue {
                     print("[회원탈퇴] requiresRecentLogin: 최근 로그인 후 다시 시도 필요")
                     await MainActor.run {
@@ -238,7 +239,7 @@ final class AuthNumberViewModel: ObservableObject {
                         self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
                     }
                 }
-                return
+                return false
             }
         } catch {
             let nsError = error as NSError
@@ -247,6 +248,7 @@ final class AuthNumberViewModel: ObservableObject {
                 self.showAlert = true
                 self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
             }
+            return false
         }
     }
     

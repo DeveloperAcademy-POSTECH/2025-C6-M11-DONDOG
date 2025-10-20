@@ -9,10 +9,16 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 
+extension Notification.Name {
+    static let authServiceReconfigureRouting = Notification.Name("AuthService.ReconfigureRouting")
+}
+
 final class AuthService {
     static var isAccountDeletionInProgress: Bool = false
     private var authHandle: AuthStateDidChangeListenerHandle?
     private var userDocListenr: ListenerRegistration?
+    private var reconfigureObserver: NSObjectProtocol?
+    private weak var coordinatorRef: AppCoordinator?
     
     deinit {
         if let handle = authHandle {
@@ -21,13 +27,21 @@ final class AuthService {
         if let listener = userDocListenr {
             listener.remove()
         }
+        if let obs = reconfigureObserver { NotificationCenter.default.removeObserver(obs) }
     }
     
     func configureAuthBasedRouting(coordinator: AppCoordinator) {
+        self.coordinatorRef = coordinator
         applyRouteForUser(coordinator: coordinator)
         authHandle = Auth.auth().addStateDidChangeListener { [weak self] _, _ in
             guard let self = self else { return }
             self.applyRouteForUser(coordinator: coordinator)
+        }
+        if reconfigureObserver == nil {
+            reconfigureObserver = NotificationCenter.default.addObserver(forName: .authServiceReconfigureRouting, object: nil, queue: .main) { [weak self] _ in
+                guard let self = self, let coord = self.coordinatorRef else { return }
+                self.applyRouteForUser(coordinator: coord)
+            }
         }
     }
     
@@ -54,11 +68,6 @@ final class AuthService {
         }
         
         if AuthService.isAccountDeletionInProgress {
-            Task { @MainActor in
-                ConnectStateService.shared.isConnected = false
-                ConnectStateService.shared.roomId = nil
-            }
-            replaceRootinAuthService(.welcome, coordinator: coordinator)
             return
         }
         
@@ -83,11 +92,6 @@ final class AuthService {
                 
                 /// 계정 삭제 중일 때 (탈퇴) -> welcome으로 이동
                 if AuthService.isAccountDeletionInProgress {
-                    Task { @MainActor in
-                        ConnectStateService.shared.isConnected = false
-                        ConnectStateService.shared.roomId = nil
-                    }
-                    replaceRootinAuthService(.welcome, coordinator: coordinator)
                     return
                 }
                 

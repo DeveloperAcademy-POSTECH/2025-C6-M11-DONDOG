@@ -35,30 +35,31 @@ struct CameraViewContainer: View {
                             cameraViewModel.resetCameraState()
                         },
                         onUploadComplete: {
-                            // 업로드 완료 시 기존 로직 실행
-                            feedViewModel.didUploadPost()
+                            // ✅ 업로드 시작 시 상태 설정
+                            feedViewModel.isUploading = true
                             
                             // CameraViewModel 상태 초기화
                             cameraViewModel.frontImage = nil
                             cameraViewModel.backImage = nil
                             
-                            
                             // 화면 닫기
-                                isPresented = false
+                            isPresented = false
                         }
                     )
                 }
             }
         }
         .onChange(of: cameraViewModel.showCaptionView) { oldValue, newValue in
-            if newValue {
-                let newCaptionVM = CaptionViewModel(
-                    frontImage: cameraViewModel.frontImage,
-                    backImage: cameraViewModel.backImage
-                )
-                
-                captionViewModel = newCaptionVM
-            }
+            
+            let newCaptionVM = CaptionViewModel(
+                frontImage: cameraViewModel.frontImage,
+                backImage: cameraViewModel.backImage
+            )
+            
+            // ✅✅✅ 중요: delegate 설정!
+            newCaptionVM.delegate = feedViewModel
+            
+            captionViewModel = newCaptionVM
         }
         .onChange(of: shouldDismiss) { oldValue, newValue in
             if newValue {

@@ -92,7 +92,6 @@ struct PostContentView: View {
                 ForEach(viewModel.comments) { comment in
                     CommentView(comment: comment, viewModel: viewModel)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 20)
                         .padding(.vertical, 8)
                         .contextMenu {
                             Button(role: .destructive) {

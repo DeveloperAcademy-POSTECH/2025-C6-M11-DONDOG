@@ -73,30 +73,24 @@ struct CaptionView: View {
                 
                 Button{
                     viewModel.uploadPost()
+                    onUploadComplete()
                 }label: {
-                    if viewModel.isUploading {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                    } else {
                         Text("업로드")
                             .font(.bodyRegular18)
                             .foregroundColor(.ddWhite)
                             .frame(maxWidth: .infinity)
                             .frame(height: 52)
-                    }
                 }
-                .background(viewModel.isUploading ? .ddGray600 : .ddPrimaryBlue)
+                .background(.ddPrimaryBlue)
                 .cornerRadius(12)
                 .disabled(viewModel.isUploading)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 8)
-                .onChange(of: viewModel.isUploading) { oldValue, newValue in
-                    if newValue == false{
-                        onUploadComplete()
-                    }
-                }
+//                .onChange(of: viewModel.isUploading) { oldValue, newValue in
+//                    if newValue == false{
+//                        onUploadComplete()
+//                    }
+//                }
             }
             //MARK: -- 캡션 남길 때
             if isShowCaptionEditor {

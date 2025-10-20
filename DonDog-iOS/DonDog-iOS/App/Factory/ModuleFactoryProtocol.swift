@@ -20,11 +20,12 @@ protocol ModuleFactoryProtocol {
     func makeSettingView() -> SettingView
     func makeEditProfileView() -> EditProfileView
     func makeArchiveView(in roomId: String) -> ArchiveView
-    func makeArchiveDetailView(in roomId: String, date: Date) -> ArchiveDetailView
+    func makeArchiveDetailView(in roomId: String, date: Date, initialPosts: [ArchivePost]?) -> ArchiveDetailView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
     static let shared = ModuleFactory()
+    private let feedViewModel = FeedViewModel() // 루트뷰 재사용
     private init() {}
     
     func makeWelcomeView() -> WelcomeView {
@@ -63,8 +64,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func makeFeedView() -> FeedView {
-        let viewModel = FeedViewModel()
-        let view = FeedView(viewModel: viewModel)
+        let view = FeedView(viewModel: self.feedViewModel)
         return view
     }
     
@@ -93,8 +93,8 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     @MainActor
-    func makeArchiveDetailView(in roomId: String, date: Date) -> ArchiveDetailView {
-        let viewModel = ArchiveDetailViewModel(roomId: roomId, date: date)
+    func makeArchiveDetailView(in roomId: String, date: Date, initialPosts: [ArchivePost]? = nil) -> ArchiveDetailView {
+        let viewModel = ArchiveDetailViewModel(roomId: roomId, date: date, initialPosts: initialPosts)
         let view = ArchiveDetailView(viewModel: viewModel)
         return view
     }

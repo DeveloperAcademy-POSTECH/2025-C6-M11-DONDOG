@@ -33,7 +33,7 @@ final class ArchiveViewModel: ObservableObject {
         return df
     }()
 
-    private func dayKey(from date: Date) -> String {
+    func dayKey(from date: Date) -> String {
         let startOfDay = calendar.startOfDay(for: date)
         return dayKeyFormatter.string(from: startOfDay)
     }
@@ -60,8 +60,8 @@ final class ArchiveViewModel: ObservableObject {
             self.totalPostCount = totalCount
             self.isLoading = false }
     }
-    
-    @MainActor func fetchPartnerNicknames() async {
+
+    func fetchPartnerNicknames() async {
         guard let result = await fetchPartnerNickname() else { return }
         self.myNickname = result.myNickname
         self.partnerNickname = result.partnerNickname
@@ -104,6 +104,7 @@ final class ArchiveViewModel: ObservableObject {
                     id: doc.documentID,
                     createdAt: tsCreated.dateValue(),
                     updatedAt: (data["updatedAt"] as? Timestamp)?.dateValue() ?? tsCreated.dateValue(),
+                    authorUid: data["uid"] as? String,
                     authorName: (data["authorName"] as? String) ?? (data["authorId"] as? String),
                     frontImageURL: (data["frontImageURL"] as? String).flatMap(URL.init(string:)),
                     backImageURL:  (data["backImageURL"]  as? String).flatMap(URL.init(string:)),

@@ -44,19 +44,36 @@ struct PostContentView: View {
                                 if !showingFront { image = newBack }
                             }
                         
-                        Text(viewModel.caption ?? "")
-                            .font(.polaroidCaptionRegular20)
-                            .padding(.top, 8)
-                        
-                        HStack(spacing: 4) {
-                            Text(viewModel.authorName)
-                                .font(.captionRegular13)
-                                .foregroundColor(Color.ddGray600)
+                        VStack {
+                            VStack {
+                                if let cap = viewModel.caption, !cap.isEmpty {
+                                    Text(cap)
+                                        .font(.polaroidCaptionRegular20)
+                                        .foregroundStyle(.ddGray1000)
+                                } else {
+                                    Text(" ")
+                                        .hidden()
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 27) // 캡션이 없어도 높이 고정되게
                             
-                            Text(DataUtils.relativeTimeString(from: viewModel.createdAt))
-                                .font(.captionRegular13)
-                                .foregroundColor(Color.ddGray500)
+                            HStack(spacing: 4) {
+                                if !viewModel.authorName.isEmpty {
+                                    Text(viewModel.authorName)
+                                        .foregroundStyle(.ddGray600)
+                                } else {
+                                    Text("익명")
+                                        .foregroundStyle(.ddGray600)
+                                }
+                                
+                                Text(DataUtils.relativeTimeString(from: viewModel.createdAt))
+                                    .foregroundStyle(.ddGray500)
+                            }
+                            .font(.captionRegular13)
                         }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 20)
                     }
                     
                     Spacer()

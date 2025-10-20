@@ -212,11 +212,6 @@ final class AuthNumberViewModel: ObservableObject {
                     try await ref.delete()
                 }
             }
-
-//
-//            await MainActor.run {
-//                AuthService.isAccountDeletionInProgress = true
-//            }
             
             // 2) Firebase Auth 사용자 삭제
             do {

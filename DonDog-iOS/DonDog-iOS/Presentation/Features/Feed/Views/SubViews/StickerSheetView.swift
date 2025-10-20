@@ -6,6 +6,45 @@
 //
 
 import SwiftUI
+import UIKit
+
+enum StickerEmotion: String, CaseIterable {
+    case love = "사랑해"
+    case cool = "멋지다"
+    case what = "뭐야?"
+    case angry = "화나"
+    case sad = "슬퍼"
+    
+    var strokeColor: Color {
+        switch self {
+        case .love:
+            return .ddFeelingPink
+        case .cool:
+            return .ddFeelingYellow
+        case .what:
+            return .ddFeelingGreen
+        case .angry:
+            return .ddFeelingOrange
+        case .sad:
+            return .ddFeelingBlue
+        }
+    }
+    
+    var stickerDecoString: String {
+        switch self {
+        case .love:
+            return "loveSticker"
+        case .cool:
+            return "coolSticker"
+        case .what:
+            return "whatSticker"
+        case .angry:
+            return "angrySticker"
+        case .sad:
+            return "sadSticker"
+        }
+    }
+}
 
 struct StickerSheetView: View {
     @Environment(\.dismiss) private var dismiss
@@ -14,19 +53,23 @@ struct StickerSheetView: View {
     let currentSelectedEmotion: String?
     let onStickerSelected: (String?) -> Void
     let borderedStickers: [String: UIImage]  // 미리 생성된 테두리 스티커들
+    let nickname: String
     
     var body: some View {
         if stickerImage != nil {
             VStack(spacing: 24) {
                 Spacer()
-                Text("스티커를 붙여보세요")
-                    .font(.bodyRegular16)
+                VStack(spacing: 4){
+                    Text("\(nickname) 님의 셀카로")
+                    Text("스티커를 붙여보세요😉")
+                }
+                .font(.bodyRegular16)
                     .foregroundColor(.ddGray600)
                     .onAppear {
                         selectedEmotion = currentSelectedEmotion
                     }
                 VStack(spacing: 8){
-                    HStack(spacing: 40) {
+                    HStack(spacing: 16) {
                         Spacer()
                         Button(action: {
                             let newEmotion = selectedEmotion == "사랑해" ? nil : "사랑해"
@@ -40,7 +83,7 @@ struct StickerSheetView: View {
                                 isOtherSelected: selectedEmotion != nil && selectedEmotion != "사랑해"
                             )
                         }
-
+                        
                         Button(action: {
                             let newEmotion = selectedEmotion == "멋지다" ? nil : "멋지다"
                             onStickerSelected(newEmotion)
@@ -68,7 +111,7 @@ struct StickerSheetView: View {
                         }
                         Spacer()
                     }
-                    HStack(spacing: 40) {
+                    HStack(spacing: 16) {
                         Spacer()
                         Button(action: {
                             let newEmotion = selectedEmotion == "화나" ? nil : "화나"
@@ -112,23 +155,46 @@ struct StickerContainerView: View {
     let emotion: String
     let isSelected: Bool
     let isOtherSelected: Bool
+    private var emotionStrokeColor: Color {
+            guard let stickerEmotion = StickerEmotion(rawValue: emotion) else {
+                return .ddBlack
+            }
+            return stickerEmotion.strokeColor
+        }
+    
+    private var stickerDecoString: String {
+            guard let stickerEmotion = StickerEmotion(rawValue: emotion) else {
+                return ""
+            }
+            return stickerEmotion.stickerDecoString
+        }
     
     var body: some View {
-        VStack(spacing: 8) {
-            if let borderedImage = borderedImage {
-                Image(uiImage: borderedImage)
-                    .resizable()
-                    .frame(width: 75, height: 100)
-            } else {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .frame(width: 75, height: 100)
+        ZStack{
+            VStack(spacing: 5) {
+                if let borderedImage = borderedImage {
+                    Image(uiImage: borderedImage)
+                        .resizable()
+                        .frame(width: 75, height: 95)
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(width: 69, height: 92)
+                }
+                
+                ZStack{
+                    StrokeTextView(text: emotion, textColor: .ddBlack, fontName: FontName.sejongGeulggot.rawValue, fontSize: 16, strokeColor: emotionStrokeColor, strokeWidth: 12)
+                    Text(emotion)
+                        .font(.polaroidCaptionRegular16)
+                        .foregroundColor(.ddBlack)
+                        .fixedSize(horizontal: true, vertical: false)
+                }.frame(width: 75, height: 18)
+                    
             }
-            
-            Text(emotion)
-                .font(.captionRegular11)
-                .foregroundColor(.ddGray600)
-                .fixedSize(horizontal: true, vertical: false)
+            Image(stickerDecoString)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 105, height: 110)
         }
         .scaleEffect(isSelected ? 1.2 : 1.0)
         .opacity(isOtherSelected ? 0.3 : 1.0)
@@ -137,13 +203,7 @@ struct StickerContainerView: View {
     }
 }
 
-
-
 #Preview {
-    StickerSheetView(
-        stickerImage: UIImage(named: "stickerTest")!,
-        currentSelectedEmotion: nil,
-        onStickerSelected: { _ in },
-        borderedStickers: [:]  // Preview에서는 빈 딕셔너리
-    )
+    StickerContainerView(borderedImage: UIImage(named: "frontTest")!, emotion: "멋지다", isSelected: false, isOtherSelected: false)
 }
+

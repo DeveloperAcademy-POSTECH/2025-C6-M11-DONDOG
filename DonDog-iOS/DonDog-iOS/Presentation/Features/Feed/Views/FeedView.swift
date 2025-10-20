@@ -263,9 +263,9 @@ struct FeedView: View {
                             viewModel.removeStickerData()
                         }
                     },
-                    borderedStickers: viewModel.borderedStickers
+                    borderedStickers: viewModel.borderedStickers, nickname: currentPost.nickname
                 )
-                .presentationDetents([.height(400)])
+                .presentationDetents([.height(392)])
                 .presentationDragIndicator(.visible)
                 .background(Color.ddWhite)
             } else {

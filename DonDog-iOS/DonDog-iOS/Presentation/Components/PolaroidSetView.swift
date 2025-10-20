@@ -32,7 +32,7 @@ struct PolaroidFrame: View {
                     HStack{
                         if let caption = caption{
                             Text(caption)
-                                .font(.subtitleMedium18)
+                                .font(.polaroidCaptionRegular20)
                                 .foregroundColor(.ddBlack)
                         }
                         Spacer()

@@ -28,31 +28,6 @@ struct FeedView: View {
         VStack(spacing: 0){
             //네비게이션 바
             HStack{
-                DisclosureGroup("디버깅 용") {
-                    HStack{
-                        Button(action: {
-                            print("🔄 수동 새로고침 시작")
-                            withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
-                                isRefreshing = true
-                            }
-                            viewModel.loadTodayPosts()
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                isRefreshing = false
-                            }
-                        }) {
-                            Image(systemName: "arrow.clockwise")
-                                .font(.title2)
-                                .foregroundColor(.blue)
-                                .rotationEffect(.degrees(isRefreshing ? 360 : 0))
-                        }
-                        .disabled(viewModel.isLoading)
-                        
-                        Button("게시글 상세로 이동"){
-                            coordinator.push(.post(postId: viewModel.currentPost?.postId ?? "", roomId: viewModel.currentRoomId))
-                        }
-                    }
-                }.padding(.horizontal)
                 Spacer()
                 if connectState.isConnected == false {
                     Button{

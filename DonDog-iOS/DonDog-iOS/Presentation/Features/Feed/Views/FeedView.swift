@@ -43,7 +43,7 @@ struct FeedView: View {
             }
             HStack {
                 Spacer()
-                if !viewModel.displayablePosts.isEmpty{
+                if !viewModel.displayablePosts.isEmpty && !viewModel.isUploading {
                     Text("\(viewModel.currentPostIndex + 1)/\(viewModel.displayablePosts.count)")
                         .font(.captionRegular13)
                         .foregroundStyle(.ddGray600)
@@ -65,16 +65,16 @@ struct FeedView: View {
             }
             .padding(.top, 24)
 
-            if viewModel.isLoading {
+            if viewModel.isLoading || viewModel.isUploading {
                 VStack(spacing: 16) {
                     ProgressView()
                         .scaleEffect(1.2)
                         .tint(.ddPrimaryBlue)
-                    Text("게시물을 불러오는 중...")
+                    Text("로딩중...")
                         .font(.bodyMedium16)
-                        .foregroundStyle(.ddGray600)
+                        .foregroundStyle(.ddPrimaryBlue)
                 }
-                .padding(.top, 220)
+                .padding(.top, 280)
             }else if connectState.isConnected == false {
                 VStack{
                     Spacer()
@@ -175,7 +175,7 @@ struct FeedView: View {
                         .font(.bodyMedium16)
                         .foregroundStyle(.ddSecondaryBlue)
                 }
-                .padding(.top, 220)
+                .padding(.top, 280)
             }
             Spacer()
             if connectState.isConnected == true{
@@ -233,7 +233,9 @@ struct FeedView: View {
             }
         }
         .onAppear() {
-            viewModel.loadTodayPosts()
+            if !viewModel.isUploading && !viewModel.isLoading {
+                viewModel.loadTodayPosts()
+            }
         }
         .background{
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)

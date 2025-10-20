@@ -11,7 +11,7 @@ struct ToastView: View {
     @State var toastText: String
     
     var body: some View {
-        HStack(alignment: .center, spacing: 10) {
+        HStack(alignment: .center, spacing: 3) {
             Image(systemName: "exclamationmark.circle")
                 .font(.caption)
         
@@ -21,7 +21,7 @@ struct ToastView: View {
         }
         .foregroundStyle(.ddGray100)
         .padding(.horizontal, 16)
-        .padding(.vertical, 4)
+        .padding(.vertical, 6)
         .background(.ddGray600)
         .cornerRadius(20)
     }

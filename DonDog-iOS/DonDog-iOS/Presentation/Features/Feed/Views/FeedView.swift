@@ -28,56 +28,43 @@ struct FeedView: View {
         VStack(spacing: 0){
             //네비게이션 바
             HStack{
-                DisclosureGroup("디버깅 용") {
-                    HStack{
-                        Button(action: {
-                            print("🔄 수동 새로고침 시작")
-                            withAnimation(.linear(duration: 1).repeatCount(1, autoreverses: false)) {
-                                isRefreshing = true
-                            }
-                            viewModel.loadTodayPosts()
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                isRefreshing = false
-                            }
-                        }) {
-                            Image(systemName: "arrow.clockwise")
-                                .font(.title2)
-                                .foregroundColor(.blue)
-                                .rotationEffect(.degrees(isRefreshing ? 360 : 0))
-                        }
-                        .disabled(viewModel.isLoading)
-
-                        Button("게시글 상세로 이동"){
-                            coordinator.push(.post(postId: viewModel.currentPost?.postId ?? "", roomId: viewModel.currentRoomId))
-                        }
-                    }
-                }.padding(.horizontal)
                 Spacer()
                 if connectState.isConnected == false {
-                                    Button{
-                                        coordinator.push(.setting)
-                                    }label: {
-                                        Image(systemName: "gear")
-                                            .frame(width: 24, height: 24)
-                                            .foregroundStyle(Color.ddPrimaryBlue)
-                                            .padding(.vertical, 8)
-                                            .padding(.trailing, 20)
-                                    }
-                } else {
                     Button{
-                        coordinator.push(.archive(roomId: viewModel.currentRoomId))
+                        coordinator.push(.setting)
                     }label: {
-                        Image(systemName: "photo.circle.fill")
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                            .foregroundStyle(.ddPrimaryBlue)
+                        Image(systemName: "gear")
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(Color.ddPrimaryBlue)
                             .padding(.vertical, 8)
                             .padding(.trailing, 20)
                     }
                 }
             }
-            
+            HStack {
+                Spacer()
+                if !viewModel.displayablePosts.isEmpty{
+                    Text("\(viewModel.currentPostIndex + 1)/\(viewModel.displayablePosts.count)")
+                        .font(.captionRegular13)
+                        .foregroundStyle(.ddGray600)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 2)
+                        .background {
+                            Rectangle()
+                                .foregroundStyle(.ddGray100)
+                                .cornerRadius(120)
+                        }
+                }else{
+                    Text("")
+                        .font(.captionRegular13)
+                        .foregroundStyle(.ddGray600)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 2)
+                }
+                Spacer()
+            }
+            .padding(.top, 24)
+
             if viewModel.isLoading {
                 VStack(spacing: 16) {
                     ProgressView()
@@ -116,7 +103,7 @@ struct FeedView: View {
                     Spacer()
                 }
             }  else if !viewModel.displayablePosts.isEmpty {
-                VStack(spacing: 0){
+                ZStack{
                     TabView(selection: $viewModel.currentPostIndex) {
                         ForEach(Array(viewModel.displayablePosts.enumerated()), id: \.element.id) { index, displayablePost in
                             if let frontImage = displayablePost.frontImage,
@@ -129,9 +116,6 @@ struct FeedView: View {
                                         nickname: displayablePost.nickname,
                                         createdAt: DataUtils.relativeTimeString(from: displayablePost.createdAt),
                                         caption: displayablePost.caption,
-                                        onStickerButtonTapped: {
-                                            showStickerSheet = true
-                                        },
                                         selectedStickerEmotion: displayablePost.stickerType,
                                         stickerImage: displayablePost.stickerImage,
                                         isMyPost: displayablePost.isMyPost
@@ -157,17 +141,27 @@ struct FeedView: View {
                             viewModel.updateCurrentPost(at: newIndex)
                         }
                     }
-                    if viewModel.displayablePosts.count > 1 {
-                        HStack(spacing: 8) {
-                            ForEach(0..<viewModel.displayablePosts.count, id: \.self) { index in
-                                Circle()
-                                    .fill(index == viewModel.currentPostIndex ? Color.ddPrimaryBlue : Color.ddGray300)
-                                    .frame(width: 8, height: 8)
-                                    .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
+                    VStack{
+                        HStack{
+                            Spacer()
+                            Button{
+                                coordinator.push(.post(postId: viewModel.currentPost?.postId ?? "", roomId: viewModel.currentRoomId))
+                            }label: {
+                                ZStack{
+                                    Image("DetailViewButton")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 109)
+                                    Text("댓글 쓰기...")
+                                        .font(.bodyMedium16)
+                                        .foregroundStyle(.ddGray500)
+                                        .padding(.bottom, 10)
+                                }.padding(.trailing, 20)
                             }
                         }
-                        .padding(.top, 16)
+                        Spacer()
                     }
+                    .padding(.top, 23)
                 }
             } else {
                 VStack(spacing: 10){
@@ -185,19 +179,57 @@ struct FeedView: View {
             }
             Spacer()
             if connectState.isConnected == true{
-                Button{
-                    showCameraView = true
-                }label: {
-                    Circle()
-                        .foregroundColor(.ddWhite)
-                        .frame(width: 64, height: 64)
-                        .background{
-                            Circle()
-                                .foregroundColor(.ddPrimaryBlue)
-                                .frame(width: 72, height: 72)
+                HStack{
+                    Spacer()
+                    Button{
+                        coordinator.push(.archive(roomId: viewModel.currentRoomId))
+                    }label: {
+                        VStack(spacing: 2){
+                            Image(systemName: "calendar")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
+                                .foregroundStyle(.ddPrimaryBlue)
+                            Text("보관함")
+                                .foregroundStyle(.ddPrimaryBlue)
+                                .font(.captionRegular14)
                         }
-                }
-                .padding(.bottom, 22)
+                    }
+                    Spacer()
+                    Button{
+                        showCameraView = true
+                    }label: {
+                        Circle()
+                            .foregroundColor(.ddWhite)
+                            .frame(width: 64, height: 64)
+                            .background{
+                                Circle()
+                                    .foregroundColor(.ddPrimaryBlue)
+                                    .frame(width: 72, height: 72)
+                            }
+                    }
+                    Spacer()
+                    Button{
+                        if !viewModel.displayablePosts.isEmpty {
+                            let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
+                            if !currentPost.isMyPost {
+                                showStickerSheet = true
+                            }
+                        }
+                    }label: {
+                        VStack(spacing: 2){
+                            Image("AddStickerButton")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
+                                .foregroundStyle(.ddPrimaryBlue)
+                            Text("스티커")
+                                .foregroundStyle(.ddPrimaryBlue)
+                                .font(.captionRegular14)
+                        }
+                    }
+                    Spacer()
+                }.padding(.bottom, 22)
             }
         }
         .onAppear() {
@@ -229,13 +261,47 @@ struct FeedView: View {
                             viewModel.removeStickerData()
                         }
                     },
-                    borderedStickers: viewModel.borderedStickers 
+                    borderedStickers: viewModel.borderedStickers
                 )
                 .presentationDetents([.height(400)])
                 .presentationDragIndicator(.visible)
                 .background(Color.ddWhite)
             } else {
-                Text("스티커를 만들 사진이 없어요")
+                VStack(spacing: 4){
+                    Spacer()
+                    Text("스티커를 만들 사진이 없어요")
+                        .font(.subtitleSemiBold16)
+                        .foregroundStyle(.ddGray600)
+                    Text("첫 게시물을 올리면 감정 스티커를 붙일 수 있어요!")
+                        .font(.captionRegular13)
+                        .foregroundStyle(.ddGray500)
+                    Button{
+                        //카메라 버튼
+                        showStickerSheet = false
+                    }label: {
+                        ZStack{
+                            Rectangle()
+                                .foregroundStyle(.ddPrimaryBlue)
+                                .frame(width: 112, height: 34)
+                                .cornerRadius(999)
+                            HStack{
+                                Text("사진찍기")
+                                    .font(.captionRegular13)
+                                    .foregroundStyle(.ddGray100)
+                                Image(systemName: "camera")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundStyle(.ddGray100)
+                                    .frame(height: 22)
+                            }
+                        }
+                    }.padding(.top, 4)
+                    
+                }
+                .padding(.bottom, 10)
+                .presentationDetents([.height(138)])
+                .presentationDragIndicator(.visible)
+                .background(Color.ddWhite)
             }
         }
     }

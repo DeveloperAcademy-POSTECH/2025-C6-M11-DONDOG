@@ -75,6 +75,7 @@ final class AuthNumberViewModel: ObservableObject {
                         self.routeAfterSignIn()
                     }
                 }
+                self.isLoading = false
             }
         }
     }

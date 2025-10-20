@@ -82,8 +82,7 @@ struct InviteView: View {
                         }
                     } else {
                         ShareLink(
-                            item: "🪽 윙키 초대장이 도착했어요!\n사진 한 장으로 멀리 떨어져 있어도, 특별한 추억을 쌓아요.\n",
-                            message: Text("https://앱스토어링크\n초대코드 : \(viewModel.inviteText)")
+                            item: "🪽 윙키 초대장이 도착했어요!\n사진 한 장으로 멀리 떨어져 있어도, 특별한 추억을 쌓아요.\n\n초대코드 : \(viewModel.inviteText)"
                         ) {
                             Image(systemName: "square.and.arrow.up")
                                 .resizable()

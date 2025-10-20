@@ -96,7 +96,11 @@ final class AuthViewModel: ObservableObject {
                 self.isCodeSent = true
                 self.phoneError = nil
                 
-                self.coordinator?.authNumberShowWithdraw = false
+                if self.isWithDraw {
+                    self.coordinator?.authNumberShowWithdraw = true
+                } else {
+                    self.coordinator?.authNumberShowWithdraw = false
+                }
                 self.coordinator?.push(.authNumber)
                 self.userPhoneNumber = ""
             }

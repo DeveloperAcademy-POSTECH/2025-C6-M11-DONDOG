@@ -103,13 +103,15 @@ struct CaptionView: View {
                 ZStack{
                     Color.black
                         .opacity(0.75)
-                    VStack{
+                    VStack(spacing: 4){
                         Spacer()
                         Text(viewModel.caption.isEmpty ? "눌러서 캡션 남기기..." : viewModel.caption)
                             .font(.subtitleMedium20)
                             .foregroundStyle(viewModel.caption.isEmpty ? .ddGray600 : .ddWhite)
                         if !viewModel.caption.isEmpty {
                             Text("\(viewModel.caption.count)/8")
+                                .font(.captionRegular13)
+                                .foregroundStyle(.ddSecondaryBlue)
                         }
                         Spacer()
                     }

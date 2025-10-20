@@ -182,7 +182,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 
                 for emotion in emotions {
                     let color = self.borderColor(for: emotion)
-                    if let bordered = stickerOnly.addBorder(thickness: 170, color: color) {
+                    if let bordered = stickerOnly.addBorder(thickness: 50, color: color) {
                         borderedDict[emotion] = bordered
                     }
                 }
@@ -686,7 +686,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
 
                             if let emotion = stickerType {
                                 let borderColor = self.borderColor(for: emotion)
-                                if let borderedSticker = stickerOnly.addBorder(thickness: 170, color: borderColor) {
+                                if let borderedSticker = stickerOnly.addBorder(thickness: 50, color: borderColor) {
                                     DispatchQueue.main.async {
                                         completion(borderedSticker)
                                     }

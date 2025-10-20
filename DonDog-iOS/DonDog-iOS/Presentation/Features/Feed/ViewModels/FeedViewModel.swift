@@ -240,6 +240,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             frontImageURL: existingPost.post.frontImageURL,
                             backImageURL: existingPost.post.backImageURL,
                             caption: existingPost.caption,
+                            createdAt: existingPost.post.createdAt,
                             stickerPostId: recentPostId,
                             stickerType: self.emotion
                         )
@@ -301,6 +302,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     frontImageURL: existingPost.post.frontImageURL,
                     backImageURL: existingPost.post.backImageURL,
                     caption: existingPost.caption,
+                    createdAt: existingPost.post.createdAt,
                     stickerPostId: "",
                     stickerType: nil
                 )

@@ -19,13 +19,13 @@ struct PostData: Codable {
     let stickerPostId: String
     let stickerType: String?
     
-    init(postId: String, uid: String, frontImageURL: String, backImageURL: String, caption: String = "", stickerPostId: String, stickerType: String?) {
+    init(postId: String, uid: String, frontImageURL: String, backImageURL: String, caption: String = "", createdAt: Timestamp? = nil, stickerPostId: String, stickerType: String?) {
         self.postId = postId
         self.uid = uid
         self.frontImageURL = frontImageURL
         self.backImageURL = backImageURL
         self.caption = caption
-        self.createdAt = Timestamp()
+        self.createdAt = createdAt ?? Timestamp()
         self.updatedAt = Timestamp()
         self.stickerPostId = stickerPostId
         self.stickerType = stickerType

@@ -89,7 +89,7 @@ struct FeedView: View {
                 Spacer()
             }
             .padding(.top, 24)
-            
+
             if viewModel.isLoading {
                 VStack(spacing: 16) {
                     ProgressView()
@@ -139,7 +139,7 @@ struct FeedView: View {
                                         frontImage: frontImage,
                                         backImage: backImage,
                                         nickname: displayablePost.nickname,
-                                        createdAt: DataUtils.formatDate(displayablePost.createdAt, format: "a hh:mm"),
+                                        createdAt: DataUtils.relativeTimeString(from: displayablePost.createdAt),
                                         caption: displayablePost.caption,
                                         selectedStickerEmotion: displayablePost.stickerType,
                                         stickerImage: displayablePost.stickerImage,
@@ -188,7 +188,7 @@ struct FeedView: View {
                     }
                     .padding(.top, 23)
                 }
-            } else { // 오늘 찍은 사진이 없을 때
+            } else {
                 VStack(spacing: 10){
                     Image(systemName: "photo.on.rectangle.angled")
                         .resizable()

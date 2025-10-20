@@ -55,8 +55,14 @@ struct ArchiveDetailView: View {
             // 캐러셀
             TabView(selection: $currentIndex) {
                 ForEach(Array(viewModel.posts.enumerated()), id: \.offset) { idx, post in
-                    DetailContentContainer(post: post)
-                        .tag(idx)
+                    DetailContentView(
+                        post: post,
+                        userNameByUid: viewModel.userNameByUid,
+                        onDelete: { comment in
+                            await viewModel.deleteComment(comment, from: post)
+                        }
+                    )
+                    .tag(idx)
                 }
             }
             .frame(maxWidth: .infinity)

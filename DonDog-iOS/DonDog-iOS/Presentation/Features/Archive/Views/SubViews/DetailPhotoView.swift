@@ -26,7 +26,7 @@ struct DetailPhotoView: View {
             .padding(.vertical, 8)
             .padding(.horizontal, 20)
             .onTapGesture {
-                withAnimation(.easeInOut(duration: 0.6)) {
+                withAnimation(.easeInOut(duration: 0.4)) {
                     showingFront.toggle()
                 }
             }

@@ -42,7 +42,8 @@ struct AuthNumberView: View {
                 placeholder: "인증번호를 입력해 주세요",
                 text: $viewModel.verificationCode,
                 keyboard: .numberPad,
-                errorText: $viewModel.codeError
+                errorText: $viewModel.codeError,
+                isDisabled: viewModel.isLoading
             )
             .padding(.bottom, 32)
             
@@ -56,5 +57,12 @@ struct AuthNumberView: View {
         .padding(.horizontal, 20)
         .backHiddenSwipeEnabled()
         .dismissKeyboard()
+        .alert("", isPresented: $viewModel.showAlert) {
+            Button("확인", role: .cancel) {
+                // setting view로 돌아가게
+            }
+        } message: {
+            Text(viewModel.alertMessage ?? "")
+        }
     }
 }

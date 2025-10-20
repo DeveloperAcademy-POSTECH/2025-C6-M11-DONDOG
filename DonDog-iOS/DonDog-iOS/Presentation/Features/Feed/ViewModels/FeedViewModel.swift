@@ -349,13 +349,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    // MARK: - CaptionViewModelDelegate
-//    func didUploadPost() {
-//        print("✅ 게시물 업로드 완료 - FeedView 새로고침")
-//        loadTodayPosts()
-//        getStickerData()
-//    }
-//    
     func didUploadPost() {
         print("✅ 게시물 업로드 완료 - FeedView 새로고침")
         // ⚠️ 여기서 loadTodayPosts() 호출하지 말고, 타이밍 조절을 위해 약간 딜레이
@@ -385,45 +378,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
         }
     }
-
-    
-//    func loadTodayPosts() {
-//        isLoading = true
-//        photoSaveService.getCurrentUserRoomId { [weak self] result in
-//            switch result {
-//            case .success(let roomId):
-//                self?.photoSaveService.fetchTodayRoomPosts(roomId: roomId) { result in
-//                    DispatchQueue.main.async {
-//                        // ⚠️ 여기서 isLoading = false 제거!
-//                        switch result {
-//                        case .success(let todayPosts):
-//                            self?.images = todayPosts
-//                            print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
-//      
-//                            if let firstPost = todayPosts.first {
-//                                self?.selectedPostId = firstPost.postId
-//                                self?.currentPost = firstPost
-//                                self?.currentPostIndex = 0
-//                                self?.downloadAllTodayImages(posts: todayPosts, roomId: roomId)
-//                            } else {
-//                                print("📭 오늘 찍은 게시물이 없습니다")
-//                                self?.displayablePosts = []
-//                                self?.isLoading = false  // ✅ 게시물이 없을 때만 여기서 false
-//                            }
-//                        case .failure(let error):
-//                            print("오늘 posts 로드 실패: \(error.localizedDescription)")
-//                            self?.isLoading = false  // ✅ 실패 시에도 false
-//                        }
-//                    }
-//                }
-//            case .failure(let error):
-//                print("roomId 가져오기 실패: \(error.localizedDescription)")
-//                DispatchQueue.main.async {
-//                    self?.isLoading = false
-//                }
-//            }
-//        }
-//    }
     
     func loadTodayPosts() {
         isLoading = true

@@ -63,7 +63,6 @@ struct PostContentView: View {
                 }
                 .padding(.vertical, 8)
                 
-                // TODO: FeedView에서 프레임까지 완성된 StickerImage UIImage로 받아와서 띄우기
                 Image(uiImage: viewModel.borderedSticker ?? UIImage())
                     .resizable()
                     .scaledToFit()
@@ -77,6 +76,7 @@ struct PostContentView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
+                        .contentShape(Rectangle())
                         .contextMenu {
                             if viewModel.currentUser == comment.uid {
                                 Button(role: .destructive) {

@@ -56,7 +56,7 @@ struct ArchiveDetailView: View {
             TabView(selection: $currentIndex) {
                 ForEach(Array(viewModel.posts.enumerated()), id: \.offset) { idx, post in
                     DetailContentView(
-                        post: post,
+                        viewModel: ArchiveViewModel(roomId: viewModel.roomId), post: post,
                         userNameByUid: viewModel.userNameByUid,
                         onDelete: { comment in
                             await viewModel.deleteComment(comment, from: post)

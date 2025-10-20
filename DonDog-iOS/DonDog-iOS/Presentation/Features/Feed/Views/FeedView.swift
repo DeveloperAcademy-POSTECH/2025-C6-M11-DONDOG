@@ -144,10 +144,19 @@ struct FeedView: View {
                     VStack{
                         HStack{
                             Spacer()
-                            Button{
-                                coordinator.push(.post(postId: viewModel.currentPost?.postId ?? "", roomId: viewModel.currentRoomId))
-                            }label: {
-                                ZStack{
+                            Button {
+                                if viewModel.currentPost != nil {
+                                    if !viewModel.displayablePosts.isEmpty {
+                                        let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
+                                        coordinator.push(.post(
+                                            postId: currentDisplayable.post.postId,
+                                            roomId: viewModel.currentRoomId,
+                                            borderedSticker: currentDisplayable.stickerImage ?? UIImage()
+                                        ))
+                                    }
+                                }
+                            } label: {
+                                ZStack {
                                     Image("DetailViewButton")
                                         .resizable()
                                         .scaledToFit()
@@ -156,8 +165,10 @@ struct FeedView: View {
                                         .font(.bodyMedium16)
                                         .foregroundStyle(.ddGray500)
                                         .padding(.bottom, 10)
-                                }.padding(.trailing, 20)
+                                }
+                                .padding(.trailing, 20)
                             }
+
                         }
                         Spacer()
                     }

@@ -122,10 +122,3 @@ struct PostView: View {
         .navigationBarBackButtonHidden()
     }
 }
-
-#Preview {
-    let coordinator = AppCoordinator(factory: ModuleFactory.shared)
-    let vm = PostViewModel(postId: "preview-post", roomId: "preview-room")
-    PostView(viewModel: vm)
-        .environmentObject(coordinator)
-}

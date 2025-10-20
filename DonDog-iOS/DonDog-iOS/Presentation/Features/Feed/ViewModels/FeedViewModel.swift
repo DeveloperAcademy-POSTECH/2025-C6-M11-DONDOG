@@ -609,7 +609,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
             
             self.displayablePosts = finalSortedPosts
-            print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개 (스티커는 별도 로딩)")
+            print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개")
             
             let initialIndex = finalSortedPosts.firstIndex { post in
                 post.stickerPostId.isEmpty
@@ -627,9 +627,44 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 self.currentPost = initialPost.post
             }
             
-            self.isLoading = false
-            self.isUploading = false 
-            print("✅ 로딩 완료!")
+            
+            let stickerGroup = DispatchGroup()
+            var postsWithStickers: [DisplayablePost] = finalSortedPosts
+            
+            for (index, post) in finalSortedPosts.enumerated() {
+                if !post.stickerPostId.isEmpty {
+                    stickerGroup.enter()
+                    print("🎯 스티커 다운로드 시작: \(post.stickerPostId) for post \(post.postId)")
+                    
+                    self.downloadStickerImage(
+                        stickerPostId: post.stickerPostId,
+                        roomId: roomId,
+                        stickerType: post.stickerType
+                    ) { stickerImg in
+                        if let sticker = stickerImg {
+                            // 로컬 배열에 업데이트
+                            postsWithStickers[index] = DisplayablePost(
+                                post: postsWithStickers[index].post,
+                                frontImage: postsWithStickers[index].frontImage,
+                                backImage: postsWithStickers[index].backImage,
+                                stickerImage: sticker,
+                                nickname: postsWithStickers[index].nickname,
+                                isMyPost: postsWithStickers[index].isMyPost
+                            )
+                        }
+                        stickerGroup.leave()
+                    }
+                }
+            }
+            
+            stickerGroup.notify(queue: .main) {
+                self.displayablePosts = postsWithStickers  // 스티커 포함된 배열로 재할당
+                print("🎉 모든 스티커 다운로드 완료!")
+                
+                self.isLoading = false
+                self.isUploading = false
+                print("✅ 로딩 완료!")
+            }
         }
     }
     

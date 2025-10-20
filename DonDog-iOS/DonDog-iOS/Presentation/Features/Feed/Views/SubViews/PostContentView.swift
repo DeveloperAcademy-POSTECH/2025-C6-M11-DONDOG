@@ -45,7 +45,7 @@ struct PostContentView: View {
                             }
                         
                         Text(viewModel.caption ?? "")
-                            .font(.title)
+                            .font(.polaroidCaptionRegular20)
                             .padding(.top, 8)
                         
                         HStack(spacing: 4) {

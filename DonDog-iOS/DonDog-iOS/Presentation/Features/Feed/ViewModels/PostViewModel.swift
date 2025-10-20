@@ -15,6 +15,7 @@ final class PostViewModel: ObservableObject {
     let roomId: String
     
     private let db = Firestore.firestore()
+    private let postService = PostService.shared
     private var postRef: DocumentReference
     private var commentRef: DocumentReference
 
@@ -27,6 +28,9 @@ final class PostViewModel: ObservableObject {
     @Published var caption: String?
     @Published var stickerImage: UIImage = UIImage()
     @Published var comments: [Comment] = []
+    @Published var showDeleteConfirmAlert = false
+    @Published var showUnauthorizedAlert = false
+    @Published var commentToDelete: Comment? = nil
 
     private var stickerURL: URL?
     private var frontURL: URL?
@@ -141,7 +145,7 @@ final class PostViewModel: ObservableObject {
     
     func deleteComment(of comment: Comment) async {
         do {
-            try await commentRef.collection("comments").document(comment.id).delete()
+            try await postService.deleteComment(comment, postId: self.postId, in: self.roomId)
             await fetchComments()
         } catch {
             print("댓글 삭제 실패: ", error.localizedDescription)
@@ -149,31 +153,15 @@ final class PostViewModel: ObservableObject {
     }
     
     func deletePost() async throws {
-        let frontPath = "rooms/\(roomId)/posts/\(postId)/front.jpg"
-        let backPath = "rooms/\(roomId)/posts/\(postId)/back.jpg"
-        let commentsCollection = commentRef.collection("comments")
-
-        try? await deleteStorageFile(at: frontPath)
-        try? await deleteStorageFile(at: backPath)
-
-        let snapshot = try await commentsCollection.getDocuments()
-        for doc in snapshot.documents {
-            try await commentsCollection.document(doc.documentID).delete()
-        }
-        try await commentRef.delete()
-
-        try await postRef.delete()
+        let userId = Auth.auth().currentUser!.uid
+        try await postService.deletePost(postId: self.postId, in: self.roomId, by: userId)
     }
-
-    private func deleteStorageFile(at path: String) async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            Storage.storage().reference().child(path).delete { error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: ())
-                }
-            }
+    
+    func handleDeleteRequest() {
+        if uid == currentUser {
+            showDeleteConfirmAlert = true
+        } else {
+            showUnauthorizedAlert = true
         }
     }
 }

@@ -177,7 +177,7 @@ final class ArchiveViewModel: ObservableObject {
     private func fetchPostCount() async -> Int {
         do {
             let countQuery = db.collection("Rooms")
-                .document(roomId) .collection("posts")
+                .document(roomId).collection("posts")
                 .count
             
             let snapshot = try await countQuery.getAggregation(source: .server)

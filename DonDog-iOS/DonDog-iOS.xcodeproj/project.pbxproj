@@ -15,6 +15,7 @@
 		61C9B1A62E9BFCBE0007C8F4 /* ArchiveMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */; };
 		8B1EB7932EA07F7A00F720CF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */; };
 		8B1EB7972EA08E9800F720CF /* (null) in Resources */ = {isa = PBXBuildFile; };
+		8B26D0ED2EA61B1A00D36BF7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B26D0EC2EA61B1A00D36BF7 /* GoogleService-Info.plist */; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
 		8B31826E2E90CE1B004505AE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826D2E90CE1B004505AE /* FirebaseAuthCombine-Community */; };
@@ -62,6 +63,8 @@
 		CA9C13DF2EA4855100519748 /* Sticker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9C13DE2EA4855100519748 /* Sticker.swift */; };
 		CA9C13E12EA4879400519748 /* DetailCommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9C13E02EA4879400519748 /* DetailCommentsView.swift */; };
 		CA9C13E32EA48A5500519748 /* ArchivePostContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9C13E22EA48A5500519748 /* ArchivePostContainer.swift */; };
+		CA9C14032EA5CD8C00519748 /* PostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9C14022EA5CD8C00519748 /* PostService.swift */; };
+		CA9C140C2EA60BA000519748 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9C140B2EA60BA000519748 /* ToastView.swift */; };
 		CAA62D012EA1E3FD00C60E05 /* SwipeBackUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFF2EA1E3FD00C60E05 /* SwipeBackUtils.swift */; };
 		CAA62D022EA1E3FD00C60E05 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */; };
 		CAA62D032EA1E3FD00C60E05 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */; };
@@ -111,7 +114,7 @@
 		8B354C7F2EA4A17A0030F9A1 /* ConnectStateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectStateService.swift; sourceTree = "<group>"; };
 		8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewModel.swift; sourceTree = "<group>"; };
-		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8B6C6D0C2E99702200D12F61 /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		8B6E11892E968E2B0082B24C /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		8B6E118C2E976F380082B24C /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
@@ -146,6 +149,9 @@
 		CA9C13DE2EA4855100519748 /* Sticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sticker.swift; sourceTree = "<group>"; };
 		CA9C13E02EA4879400519748 /* DetailCommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCommentsView.swift; sourceTree = "<group>"; };
 		CA9C13E22EA48A5500519748 /* ArchivePostContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivePostContainer.swift; sourceTree = "<group>"; };
+		CA9C13FB2EA5C26A00519748 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA9C14022EA5CD8C00519748 /* PostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostService.swift; sourceTree = "<group>"; };
+		CA9C140B2EA60BA000519748 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
 		CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		CAA62CFE2EA1E3FD00C60E05 /* KeyboardUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardUtils.swift; sourceTree = "<group>"; };
@@ -284,6 +290,7 @@
 				D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */,
 				619343832E9D3C9B004B5F01 /* NotificationService.swift */,
 				8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */,
+				CA9C14022EA5CD8C00519748 /* PostService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -299,6 +306,7 @@
 				A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */,
 				8BDF76972E9F72CE007F12BB /* SplashView.swift */,
 				8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */,
+				CA9C140B2EA60BA000519748 /* ToastView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -353,6 +361,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
+				CA9C13FB2EA5C26A00519748 /* DonDog-iOS.app */,
 				8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
@@ -488,6 +497,7 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
+				8B26D0EC2EA61B1A00D36BF7 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -632,6 +642,7 @@
 				8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */,
 			);
 			productName = "DonDog-iOS";
+			productReference = CA9C13FB2EA5C26A00519748 /* DonDog-iOS.app */;
 			productReference = 8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -679,6 +690,7 @@
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
+				8B26D0ED2EA61B1A00D36BF7 /* GoogleService-Info.plist in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
@@ -720,6 +732,7 @@
 				8B7377E02E9546030001EFCD /* AuthService.swift in Sources */,
 				8B6E118D2E976F380082B24C /* EditProfileView.swift in Sources */,
 				D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */,
+				CA9C140C2EA60BA000519748 /* ToastView.swift in Sources */,
 				61C9B1A02E9BED150007C8F4 /* ArchiveViewModel.swift in Sources */,
 				CA9C13DF2EA4855100519748 /* Sticker.swift in Sources */,
 				CAA9AEDC2E8FC15C0047A89A /* CameraViewModel.swift in Sources */,
@@ -727,6 +740,7 @@
 				D2A7FA3B2E9FFDCD005F5AF8 /* PostData.swift in Sources */,
 				CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */,
 				8BDF76982E9F72CE007F12BB /* SplashView.swift in Sources */,
+				CA9C14032EA5CD8C00519748 /* PostService.swift in Sources */,
 				D24402AB2E992CE700D837C8 /* PostContentView.swift in Sources */,
 				CA9C13E12EA4879400519748 /* DetailCommentsView.swift in Sources */,
 				D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */,

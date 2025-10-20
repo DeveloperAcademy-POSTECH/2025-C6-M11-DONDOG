@@ -43,7 +43,7 @@ struct FeedView: View {
             }
             HStack {
                 Spacer()
-                if !viewModel.displayablePosts.isEmpty{
+                if !viewModel.displayablePosts.isEmpty && !viewModel.isUploading {
                     Text("\(viewModel.currentPostIndex + 1)/\(viewModel.displayablePosts.count)")
                         .font(.captionRegular13)
                         .foregroundStyle(.ddGray600)

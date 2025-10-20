@@ -80,7 +80,7 @@ struct PostContentView: View {
                         .contextMenu {
                             if viewModel.currentUser == comment.uid {
                                 Button(role: .destructive) {
-                                    Task { await viewModel.deleteComment(of: comment) }
+                                    viewModel.commentToDelete = comment
                                 } label: {
                                     Text("삭제")
                                     Image(systemName: "trash")

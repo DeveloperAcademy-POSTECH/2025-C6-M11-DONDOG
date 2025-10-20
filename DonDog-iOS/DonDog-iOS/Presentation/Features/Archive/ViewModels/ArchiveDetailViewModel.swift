@@ -6,6 +6,7 @@
 //
 
 import Combine
+import FirebaseAuth
 import FirebaseFirestore
 import Foundation
 import SwiftUI
@@ -16,11 +17,14 @@ final class ArchiveDetailViewModel: ObservableObject {
     @Published var userNameByUid: [String: String] = [:]
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var showDeleteConfirmAlert = false
+    @Published var showUnauthorizedAlert = false
     
     let roomId: String
     let date: Date
     
     private let db = Firestore.firestore()
+    private let postService = PostService.shared
     private var calendar: Calendar = {
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = TimeZone(identifier: "Asia/Seoul") ?? .current
@@ -31,12 +35,29 @@ final class ArchiveDetailViewModel: ObservableObject {
         self.roomId = roomId
         self.date = date
         if let initialPosts { self.posts = initialPosts }
+        
         Task {
             if initialPosts != nil {
-                await loadPostDetails()   // 댓글 + 이름만 추가로 가져옴
+                await loadPostDetails() // 댓글 + 이름만 추가로 가져옴
             } else {
                 await fetchDailyPosts()
             }
+        }
+    }
+    
+    // 본인 게시물이 아닐 때 분기 처리
+    func handleDeleteRequest(at index: Int) {
+        guard index >= 0 && index < posts.count else { return }
+        
+        let post = posts[index]
+        let currentUserId = Auth.auth().currentUser!.uid
+        
+        if post.authorUid == currentUserId {
+            // 본인 게시물이면 삭제 확인 알림
+            showDeleteConfirmAlert = true
+        } else {
+            // 본인 게시물이 아니면 권한 없음 알림
+            showUnauthorizedAlert = true
         }
     }
     
@@ -50,7 +71,8 @@ final class ArchiveDetailViewModel: ObservableObject {
         for p in posts {
             let comments = await fetchComments(for: p.id)
             comments.forEach { uidSet.insert($0.uid) }
-            if let au = p.authorUid { uidSet.insert(au) }    // authorUid가 모델에 있다면
+            
+            if let au = p.authorUid { uidSet.insert(au) }
             
             let loadData = ArchivePost(
                 id: p.id,
@@ -72,7 +94,6 @@ final class ArchiveDetailViewModel: ObservableObject {
         self.userNameByUid = await fetchUserNamesIndividually(uids: Array(uidSet))
     }
     
-    // initialPosts가 없을 때만 실행
     func fetchDailyPosts() async {
         isLoading = true
         defer { isLoading = false }
@@ -175,22 +196,37 @@ final class ArchiveDetailViewModel: ObservableObject {
     }
     
     func deleteComment(_ comment: Comment, from post: ArchivePost) async {
-        let commentRef = db.collection("Rooms")
-            .document(roomId)
-            .collection("comments")
-            .document(post.id)
-            .collection("comments")
-            .document(comment.id)
-            
+        let currentUserId = Auth.auth().currentUser!.uid
+        guard comment.uid == currentUserId else {
+            showUnauthorizedAlert = true
+            return
+        }
+
         do {
-            try await commentRef.delete()
-            
+            try await postService.deleteComment(comment, postId: post.id, in: roomId)
             if let postIndex = posts.firstIndex(where: { $0.id == post.id }) {
                 posts[postIndex].comments.removeAll { $0.id == comment.id }
             }
-            
         } catch {
-            self.errorMessage = "댓글 삭제에 실패했습니다."
+            self.errorMessage = "댓글 삭제 실패"
+        }
+    }
+    
+    func deletePost(at index: Int) async {
+        let userId = Auth.auth().currentUser!.uid
+        let postToDelete = posts[index]
+        let postId = postToDelete.id
+        
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            try await postService.deletePost(postId: postId, in: roomId, by: userId)
+            posts.remove(at: index)
+        } catch let error as PostServiceError where error == .unauthorized {
+            showUnauthorizedAlert = true
+        } catch {
+            errorMessage = "게시물 삭제 실패: \(error.localizedDescription)"
         }
     }
 }

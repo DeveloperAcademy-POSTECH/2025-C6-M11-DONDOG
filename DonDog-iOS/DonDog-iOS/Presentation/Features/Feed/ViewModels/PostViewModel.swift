@@ -143,12 +143,19 @@ final class PostViewModel: ObservableObject {
         }
     }
     
-    func deleteComment(of comment: Comment) async {
-        do {
-            try await postService.deleteComment(comment, postId: self.postId, in: self.roomId)
-            await fetchComments()
-        } catch {
-            print("댓글 삭제 실패: ", error.localizedDescription)
+    func deleteComment(of comment: Comment) {
+        comments.removeAll { $0.id == comment.id }
+
+        Task {
+            do {
+                try await postService.deleteComment(comment, postId: self.postId, in: self.roomId)
+                await fetchComments()
+            } catch {
+                print("댓글 삭제 실패: ", error.localizedDescription)
+                await MainActor.run {
+                    comments.append(comment)
+                }
+            }
         }
     }
     

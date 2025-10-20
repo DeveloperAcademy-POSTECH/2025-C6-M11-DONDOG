@@ -15,7 +15,7 @@
 		61C9B1A62E9BFCBE0007C8F4 /* ArchiveMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */; };
 		8B1EB7932EA07F7A00F720CF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */; };
 		8B1EB7972EA08E9800F720CF /* (null) in Resources */ = {isa = PBXBuildFile; };
-		8B26D0ED2EA61B1A00D36BF7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B26D0EC2EA61B1A00D36BF7 /* GoogleService-Info.plist */; };
+		8B26D0ED2EA61B1A00D36BF7 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
 		8B31826E2E90CE1B004505AE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826D2E90CE1B004505AE /* FirebaseAuthCombine-Community */; };
@@ -494,7 +494,6 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
-				8B26D0EC2EA61B1A00D36BF7 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -639,7 +638,6 @@
 				8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */,
 			);
 			productName = "DonDog-iOS";
-			productReference = CA9C13FB2EA5C26A00519748 /* DonDog-iOS.app */;
 			productReference = 8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -687,7 +685,7 @@
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
-				8B26D0ED2EA61B1A00D36BF7 /* GoogleService-Info.plist in Resources */,
+				8B26D0ED2EA61B1A00D36BF7 /* (null) in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,

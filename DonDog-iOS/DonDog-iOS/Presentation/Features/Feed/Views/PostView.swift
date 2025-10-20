@@ -154,7 +154,7 @@ struct PostView: View {
             Button("삭제", role: .destructive) {
                 if let comment = viewModel.commentToDelete {
                     Task {
-                        await viewModel.deleteComment(of: comment)
+                        viewModel.deleteComment(of: comment)
                         viewModel.commentToDelete = nil
                     }
                 }

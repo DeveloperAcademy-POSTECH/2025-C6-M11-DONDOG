@@ -87,7 +87,9 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func makeArchiveView(in roomId: String) -> ArchiveView {
-        let viewModel = ArchiveViewModel(roomId: roomId)
+        let stickerViewModel = ArchiveStickerViewModel(roomId: roomId)
+        let viewModel = ArchiveViewModel(roomId: roomId, stickerViewModel: stickerViewModel)
+
         let view = ArchiveView(viewModel: viewModel)
         return view
     }

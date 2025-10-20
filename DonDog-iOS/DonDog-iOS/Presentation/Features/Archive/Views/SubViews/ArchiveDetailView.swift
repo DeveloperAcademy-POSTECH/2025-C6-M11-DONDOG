@@ -55,7 +55,7 @@ struct ArchiveDetailView: View {
                 TabView(selection: $currentIndex) {
                     ForEach(Array(viewModel.posts.enumerated()), id: \.offset) { idx, post in
                         DetailContentView(
-                            post: post,
+                            stickerViewModel: ArchiveStickerViewModel(roomId: viewModel.roomId), post: post,
                             userNameByUid: viewModel.userNameByUid,
                             onDelete: { comment in
                                 await viewModel.deleteComment(comment, from: post)
@@ -68,14 +68,6 @@ struct ArchiveDetailView: View {
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
             
-            // 캐러셀
-            TabView(selection: $currentIndex) {
-                ForEach(Array(viewModel.posts.enumerated()), id: \.offset) { idx, post in
-                    DetailContentView(
-                        viewModel: ArchiveViewModel(roomId: viewModel.roomId), post: post,
-                        userNameByUid: viewModel.userNameByUid,
-                        onDelete: { comment in
-                            await viewModel.deleteComment(comment, from: post)
             if viewModel.showUnauthorizedAlert {
                 VStack {
                     Spacer()

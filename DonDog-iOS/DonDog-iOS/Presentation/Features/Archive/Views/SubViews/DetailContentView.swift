@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DetailContentView: View {
-    @StateObject var viewModel: ArchiveViewModel
+    @StateObject var stickerViewModel: ArchiveStickerViewModel
 
     let post: ArchivePost
     let userNameByUid: [String: String]
@@ -22,7 +22,7 @@ struct DetailContentView: View {
                     DetailCaptionView(post: post, userNameByUid: userNameByUid)
                 }.padding(.vertical, 8)
                 
-                if let sticker = viewModel.borderedStickers[post.id] {
+                if let sticker = stickerViewModel.borderedStickers[post.id] {
                     Image(uiImage: sticker)
                         .resizable()
                         .scaledToFit()
@@ -35,8 +35,8 @@ struct DetailContentView: View {
                 if let sId = post.stickerPostId,
                    !sId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                    sId.lowercased() != "null",
-                   viewModel.borderedStickers[post.id] == nil {
-                    viewModel.getStickerData(stickerPostId: sId, for: post.id)
+                   stickerViewModel.borderedStickers[post.id] == nil {
+                    stickerViewModel.getStickerData(stickerPostId: sId, for: post.id)
                 }
             }
             DetailCommentsView(

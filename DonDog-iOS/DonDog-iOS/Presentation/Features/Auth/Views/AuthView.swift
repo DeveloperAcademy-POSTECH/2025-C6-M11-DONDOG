@@ -53,7 +53,8 @@ struct AuthView: View {
                 text: $viewModel.userPhoneNumber,
                 keyboard: .numberPad,
                 contentType: .telephoneNumber,
-                errorText: $viewModel.phoneError
+                errorText: $viewModel.phoneError,
+                isDisabled: viewModel.isLoading
             )
             .padding(.bottom, 32)
             

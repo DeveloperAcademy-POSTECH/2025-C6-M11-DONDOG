@@ -78,13 +78,11 @@ struct PostContentView: View {
                         .padding(.vertical, 8)
                         .contentShape(Rectangle())
                         .contextMenu {
-                            if viewModel.currentUser == comment.uid {
-                                Button(role: .destructive) {
-                                    Task { await viewModel.deleteComment(of: comment) }
-                                } label: {
-                                    Text("삭제")
-                                    Image(systemName: "trash")
-                                }
+                            Button(role: .destructive) {
+                                viewModel.commentToDelete = comment
+                            } label: {
+                                Text("삭제")
+                                Image(systemName: "trash")
                             }
                         }
                 }

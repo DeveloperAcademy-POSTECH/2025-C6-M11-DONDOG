@@ -141,9 +141,6 @@ struct FeedView: View {
                                         nickname: displayablePost.nickname,
                                         createdAt: DataUtils.formatDate(displayablePost.createdAt, format: "a hh:mm"),
                                         caption: displayablePost.caption,
-                                        onStickerButtonTapped: {
-                                            showStickerSheet = true
-                                        },
                                         selectedStickerEmotion: displayablePost.stickerType,
                                         stickerImage: displayablePost.stickerImage,
                                         isMyPost: displayablePost.isMyPost
@@ -228,7 +225,12 @@ struct FeedView: View {
                     }
                     Spacer()
                     Button{
-                        //보관함
+                        if !viewModel.displayablePosts.isEmpty {
+                                let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
+                                if !currentPost.isMyPost {
+                                    showStickerSheet = true
+                                }
+                            }
                     }label: {
                         VStack(spacing: 2){
                             Image(systemName: "face.smiling")

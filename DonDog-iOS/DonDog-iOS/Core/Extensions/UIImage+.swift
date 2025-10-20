@@ -99,3 +99,18 @@ extension UIImage {
         return UIGraphicsGetImageFromCurrentImageContext()
     }
 }
+
+extension UIImage {
+    /// 이미지를 지정된 최대 크기로 리사이징
+    func resized(maxWidth: CGFloat) -> UIImage? {
+        let scale = maxWidth / self.size.width
+        let newHeight = self.size.height * scale
+        let newSize = CGSize(width: maxWidth, height: newHeight)
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        defer { UIGraphicsEndImageContext() }
+        
+        self.draw(in: CGRect(origin: .zero, size: newSize))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+}

@@ -261,7 +261,13 @@ final class PhotoSaveService: ObservableObject {
     private func uploadImage(image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("🚀 이미지 업로드 시작 - 경로: \(path)")
         
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+        guard let resizedImage = image.resized(maxWidth: 1080) else {
+                print("❌ 이미지 리사이징 실패")
+                completion(.failure(FirebaseError.imageConversionFailed))
+                return
+            }
+        
+        guard let imageData = resizedImage.jpegData(compressionQuality: 0.8) else {
             print("❌ 이미지 변환 실패")
             completion(.failure(FirebaseError.imageConversionFailed))
             return

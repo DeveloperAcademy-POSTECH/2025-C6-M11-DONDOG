@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RootNavigationView: View {
     @StateObject var coordinator: AppCoordinator
+    @StateObject var networkService = NetworkService()
     @State private var showMainView = false
     
     init(coordinator: AppCoordinator) {
@@ -26,6 +27,11 @@ struct RootNavigationView: View {
                 }
                 .environmentObject(coordinator)
                 .environmentObject(ConnectStateService.shared)
+                .overlay(alignment: .top) {
+                    NetworkErrorView(isUnstable: networkService.status != .satisfied)
+                        .animation(.easeInOut(duration: 0.25), value: networkService.status)
+                        .ignoresSafeArea()
+                }
             } else {
                 SplashView()
                     .task {

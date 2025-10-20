@@ -32,12 +32,10 @@ struct PostView: View {
                     Task {
                         do {
                             try await viewModel.deletePost()
-                            await MainActor.run {
-                                coordinator.pop()
-                            }
                         } catch {
                             print("게시물 삭제 중 오류:", error.localizedDescription)
                         }
+                        coordinator.pop()
                     }
                 },
                 CustomNavMenuItem("취소") {

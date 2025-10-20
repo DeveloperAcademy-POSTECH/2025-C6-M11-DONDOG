@@ -30,7 +30,7 @@ struct PolaroidFrame: View {
             HStack{
                 VStack{
                     HStack{
-                        if let caption = caption{
+                        if let caption = caption {
                             Text(caption)
                                 .font(.polaroidCaptionRegular20)
                                 .foregroundColor(.ddBlack)
@@ -52,7 +52,7 @@ struct PolaroidFrame: View {
                 Spacer()
                 
                 // 스티커 표시 영역 - 이미지만 표시 (버튼 없음)
-                if let sticker = stickerImage, let _ = selectedStickerEmotion {
+                if let sticker = stickerImage {
                     Image(uiImage: sticker)
                         .resizable()
                         .scaledToFit()

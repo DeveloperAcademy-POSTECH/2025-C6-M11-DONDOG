@@ -47,6 +47,7 @@
 		8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */; };
 		8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */; };
 		8BFC73612EA5D18C00B54F03 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC73602EA5D18C00B54F03 /* NetworkService.swift */; };
+		8CAD89B02EA6284E004318F0 /* TextStrokeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */; };
 		8CF9C7512EA129D600EB944A /* StickerSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7502EA129D400EB944A /* StickerSheetView.swift */; };
 		8CF9C7A32EA148C100EB944A /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7A22EA148BC00EB944A /* UIImage+.swift */; };
 		A192F2B12E9E45AC00995DCC /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2B02E9E45A800995DCC /* Color+.swift */; };
@@ -132,6 +133,7 @@
 		8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorView.swift; sourceTree = "<group>"; };
 		8BFC73602EA5D18C00B54F03 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStrokeUtils.swift; sourceTree = "<group>"; };
 		8CF9C7502EA129D400EB944A /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		8CF9C7A22EA148BC00EB944A /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		A192F2B02E9E45A800995DCC /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
@@ -349,6 +351,7 @@
 		CAA62D002EA1E3FD00C60E05 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */,
 				CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */,
 				CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */,
 				CAA62CFE2EA1E3FD00C60E05 /* KeyboardUtils.swift */,
@@ -750,6 +753,7 @@
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				CAA62D062EA1E57200C60E05 /* CustomPageIndicator.swift in Sources */,
 				8BDF768B2E9F4086007F12BB /* CustomRoleButton.swift in Sources */,
+				8CAD89B02EA6284E004318F0 /* TextStrokeUtils.swift in Sources */,
 				8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */,
 				8BBE41F22EA1E9CB00057A23 /* AuthNumberViewModel.swift in Sources */,
 				D2C9F7092EA2372500393208 /* CommentView.swift in Sources */,

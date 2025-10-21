@@ -18,63 +18,79 @@ struct PolaroidFrame: View {
     let stickerImage: UIImage?
     let isMyPost: Bool?
     
-    var body: some View {
-        VStack(spacing: 0) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .cornerRadius(3)
-                .frame(width: 230)
-                .padding(16)
-                .background(.ddWhite)
-            HStack{
-                VStack{
-                    HStack{
-                        if let caption = caption {
-                            Text(caption)
-                                .font(.polaroidCaptionRegular20)
-                                .foregroundColor(.ddBlack)
-                        }
-                        Spacer()
-                    }
-                    .padding(.bottom, 4)
-                    
-                    HStack(spacing: 4){
-                        Text(nickname)
-                            .font(.captionRegular11)
-                            .foregroundColor(.ddGray500)
-                        Text(createdAt)
-                            .font(.captionRegular11)
-                            .foregroundColor(.ddGray500)
-                        Spacer()
-                    }
-                }
-                Spacer()
-                
-                // 스티커 표시 영역 - 이미지만 표시 (버튼 없음)
-                if let sticker = stickerImage {
-                    Image(uiImage: sticker)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 90, height: 120)
-                        .offset(x: 10, y: -10)
-                }else if nickname != "" {
-                    Image(systemName: "circle.dashed")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundColor(.ddSecondaryBlue)
-                        .frame(width: 36, height: 36)
-                }
+    private var stickerDecoString: String {
+        guard let stickerEmotion = StickerEmotion(rawValue: selectedStickerEmotion ?? "") else {
+                return ""
             }
-            .frame(width: 230, height: 63)
-            .padding(.leading, 4)
-            .padding(.bottom, 16)
-            .background(.ddWhite)
+            return stickerEmotion.stickerDecoString
         }
-        .frame(width: 264, height: 415)
-        .background(.ddWhite)
-        .cornerRadius(6)
-        .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
+    
+    var body: some View {
+        ZStack{
+            VStack(spacing: 0) {
+                Spacer()
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .cornerRadius(3)
+                    .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
+                    .frame(width: 240, height: 320)
+                HStack{
+                    VStack(spacing: 0){
+                        HStack{
+                            if let caption = caption{
+                                Text(caption)
+                                    .font(.polaroidCaptionRegular20)
+                                    .foregroundColor(.ddBlack)
+                            }
+                            Spacer()
+                        }
+                        .padding(.bottom, 4)
+                        
+                        HStack(spacing: 4){
+                            Text(nickname)
+                                .font(.captionRegular11)
+                                .foregroundColor(.ddGray500)
+                            Text(createdAt)
+                                .font(.captionRegular11)
+                                .foregroundColor(.ddGray500)
+                            Spacer()
+                        }
+                    }
+                    Spacer()
+                   if stickerImage == nil && nickname != "" {
+                        Image(systemName: "circle.dashed")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(.ddSecondaryBlue)
+                            .frame(width: 36, height: 36)
+                    }
+                }
+                .frame(width: 240, height: 79)
+                .padding(.leading, 4)
+                .background(.ddWhite)
+            }
+            .frame(width: 272, height: 415)
+            .background(.ddWhite)
+            .cornerRadius(6)
+            .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
+            VStack{
+                Spacer()
+                HStack{
+                    Spacer()
+                    if let sticker = stickerImage, let _ = selectedStickerEmotion {
+                        ZStack{
+                            Image(uiImage: sticker)
+                                .resizable()
+                                .frame(width: 110, height: 138)
+                            Image(stickerDecoString)
+                        }.offset(x: 16, y: -36)
+                    }
+                }.frame(width: 272, height: 63)
+            }.frame(width: 272, height: 415)
+            
+        }
+        
     }
 }
 
@@ -140,7 +156,7 @@ struct PolaroidSetView: View {
         createdAt: "오전 04:45",
         caption: "하이디라오 짱맛",
         selectedStickerEmotion: "사랑해",
-        stickerImage: UIImage(named: "stickerTest"),
+        stickerImage: UIImage(named: "frontTest")!,
         isMyPost: false  // Preview에서는 다른 사람 게시물로 설정
     )
 })

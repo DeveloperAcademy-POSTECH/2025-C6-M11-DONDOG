@@ -49,7 +49,7 @@ struct PostView: View {
                                 isTextFieldFocused = false
                             }
                         
-                        VStack {
+                        VStack(spacing: 0) {
                             ScrollView {
                                 VStack {
                                     PostContentView(viewModel: viewModel)
@@ -64,14 +64,18 @@ struct PostView: View {
                                 }
                             }
                             
-                            ZStack(alignment: .top) {
-                                Rectangle()
-                                    .fill(Color.white)
-                                    .frame(height: 56)
-                                    .shadow(color: Color.black.opacity(0.05),
-                                            radius: 5,
-                                            x: 0,
-                                            y: -2)
+                            ZStack(alignment: .bottom) {
+                                Color.clear
+                                    .overlay(
+                                        LinearGradient(
+                                            colors: [Color.black.opacity(0.05), .clear],
+                                            startPoint: .bottom,
+                                            endPoint: .top
+                                        )
+                                        .frame(height: 5),
+                                        alignment: .top
+                                    )
+                                    .frame(height: self.textLineCount > 1 || self.text.count > 20 ? 92 : 59)
                                 
                                 HStack(spacing: 4) {
                                     TextField("댓글을 입력해 주세요...", text: $text, axis: .vertical)
@@ -80,13 +84,15 @@ struct PostView: View {
                                         .scrollContentBackground(.hidden)
                                         .focused($isTextFieldFocused)
                                         .background(
-                                            RoundedRectangle(cornerRadius: self.textLineCount >= 1 ? 24 : 74)
+                                            RoundedRectangle(cornerRadius: (self.textLineCount > 1 || self.text.count > 20) ? 24 : 74)
                                                 .fill(Color.ddGray100)
+                                                .frame(height: (self.textLineCount > 1 || self.text.count > 20) ? 73 : 40)
                                         )
-                                        .frame(minHeight: 40, maxHeight: 73)
                                         .onChange(of: text) { _, _ in
                                             self.textLineCount = text.components(separatedBy: "\n").count
                                         }
+                                        .frame(height: (self.textLineCount > 1 || self.text.count > 20) ? 73 : 40)
+
                                     
                                     Button {
                                         Task {
@@ -108,7 +114,7 @@ struct PostView: View {
                                     .buttonStyle(PlainButtonStyle())
                                     .animation(.spring(), value: text)
                                 }
-                                .padding(.vertical, 8)
+                                .padding(.bottom, 7)
                                 .padding(.horizontal, 20)
                             }
                         }

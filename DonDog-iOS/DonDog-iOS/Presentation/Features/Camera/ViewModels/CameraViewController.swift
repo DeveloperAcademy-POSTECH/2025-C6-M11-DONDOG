@@ -6,7 +6,9 @@
 //
 
 import AVFoundation
+import SwiftUI
 import UIKit
+
 
 // 카메라 델리게이트 프로토콜
 protocol CustomCameraDelegate: AnyObject {

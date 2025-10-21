@@ -91,8 +91,8 @@ final class AppCoordinator: ObservableObject {
             EmptyView()
         case .feed:
             factory.makeFeedView()
-        case .post(let postId, let roomId):
-            factory.makePostView(with: postId, in: roomId)
+        case .post(let postId, let roomId, let borderedSticker):
+            factory.makePostView(with: postId, in: roomId, for: borderedSticker)
         case .setting:
             factory.makeSettingView()
         case .editprofile:
@@ -128,7 +128,7 @@ final class AppCoordinator: ObservableObject {
 
         if parts.count >= 4, parts[2] == "posts" {
             let postId = parts[3]
-            push(.post(postId: postId, roomId: roomId))
+            push(.post(postId: postId, roomId: roomId, borderedSticker: UIImage()))
         } else {
             push(.feed)
         }

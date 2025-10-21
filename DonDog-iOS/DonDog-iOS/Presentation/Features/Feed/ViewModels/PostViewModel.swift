@@ -13,6 +13,7 @@ import FirebaseStorage
 final class PostViewModel: ObservableObject {
     let postId: String
     let roomId: String
+    let borderedSticker: UIImage?
     
     private let db = Firestore.firestore()
     private let postService = PostService.shared
@@ -36,9 +37,10 @@ final class PostViewModel: ObservableObject {
     private var frontURL: URL?
     private var backURL: URL?
     
-    init(postId: String, roomId: String) {
+    init(postId: String, roomId: String, borderedSticker: UIImage) {
         self.postId = postId
         self.roomId = roomId
+        self.borderedSticker = borderedSticker
         let roomRef = db.collection("Rooms").document(roomId)
         self.postRef = roomRef.collection("posts").document(postId)
         self.commentRef = roomRef.collection("comments").document(postId)

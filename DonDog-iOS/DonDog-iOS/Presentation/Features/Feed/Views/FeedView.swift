@@ -67,7 +67,7 @@ struct FeedView: View {
                     Spacer()
                 }
                 .padding(.top, 24)
-
+                
                 if viewModel.isLoading || viewModel.isUploading {
                     VStack(spacing: 16) {
                         ProgressView()
@@ -147,10 +147,19 @@ struct FeedView: View {
                         VStack{
                             HStack{
                                 Spacer()
-                                Button{
-                                    coordinator.push(.post(postId: viewModel.currentPost?.postId ?? "", roomId: viewModel.currentRoomId))
-                                }label: {
-                                    ZStack{
+                                Button {
+                                    if viewModel.currentPost != nil {
+                                        if !viewModel.displayablePosts.isEmpty {
+                                            let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
+                                            coordinator.push(.post(
+                                                postId: currentDisplayable.post.postId,
+                                                roomId: viewModel.currentRoomId,
+                                                borderedSticker: currentDisplayable.stickerImage ?? UIImage()
+                                            ))
+                                        }
+                                    }
+                                } label: {
+                                    ZStack {
                                         Image("DetailViewButton")
                                             .resizable()
                                             .scaledToFit()
@@ -262,20 +271,20 @@ struct FeedView: View {
                 .opacity(0.35)
         }
         .onChange(of: showToastView) { oldValue, newValue in
-                    if newValue {
-                        toastWorkItem?.cancel()
-                        
-                        let workItem = DispatchWorkItem {
-                            withAnimation {
-                                showToastView = false
-                            }
-                        }
-                        toastWorkItem = workItem
-                        
-                        // 2초 후 실행
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: workItem)
+            if newValue {
+                toastWorkItem?.cancel()
+                
+                let workItem = DispatchWorkItem {
+                    withAnimation {
+                        showToastView = false
                     }
                 }
+                toastWorkItem = workItem
+                
+                // 2초 후 실행
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: workItem)
+            }
+        }
         .fullScreenCover(isPresented: $showCameraView) {
             CameraViewContainer(
                 cameraViewModel: cameraViewModel,
@@ -342,11 +351,4 @@ struct FeedView: View {
         }
         
     }
-}
-
-#Preview {
-    let coordinator = AppCoordinator(factory: ModuleFactory.shared)
-    FeedView(viewModel: FeedViewModel())
-        .environmentObject(coordinator)
-        .environmentObject(ConnectStateService.shared)
 }

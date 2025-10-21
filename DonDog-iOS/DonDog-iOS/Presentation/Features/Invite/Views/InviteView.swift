@@ -88,8 +88,8 @@ struct InviteView: View {
                         }
                     } else {
                         ShareLink(
-                            item: "🪽 윙키 초대장이 도착했어요!\n사진 한 장으로 멀리 떨어져 있어도, 특별한 추억을 쌓아요.\n\n초대코드 : \(viewModel.inviteText)",
-                            preview: SharePreview("🪽 윙키 초대장이 도착했어요!", image: Image("AppIcon"))
+                            item: "https://testflight.apple.com/join/4QzRhxBT",
+                            message: Text("\n🪽 윙키 초대장이 도착했어요!\n사진 한 장으로 멀리 떨어져 있어도, 특별한 추억을 쌓아요.\n\n초대코드 : \(viewModel.inviteText)")
                         ) {
                             Image(systemName: "square.and.arrow.up")
                                 .resizable()

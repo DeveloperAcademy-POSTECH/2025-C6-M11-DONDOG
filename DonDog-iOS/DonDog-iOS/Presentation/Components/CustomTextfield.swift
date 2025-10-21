@@ -49,16 +49,14 @@ struct CustomTextField: View {
                     ZStack(alignment: .leading) {
                         if text.isEmpty {
                             Text(placeholder)
-                                .font(.bodyRegular18)
+                                .font(.subtitleMedium18)
                                 .foregroundColor(Color.ddGray500)
                                 .allowsHitTesting(false)
-                                .lineLimit(1)
                         }
                         HStack {
                             TextField("", text: $text)
                                 .disabled(isDisabled)
                                 .font(.bodyRegular18)
-                                .lineLimit(1)
                                 .foregroundColor(Color.ddBlack)
                                 .keyboardType(keyboard)
                                 .focused($isFocused)
@@ -116,7 +114,7 @@ struct CustomTextField: View {
                                     .foregroundColor(hasError ? Color.ddAlert : Color.ddGray500)
                             }
                         }
-                        .frame(height: 28)
+                    
                     }
                 }
                 
@@ -157,20 +155,20 @@ struct Preview_UnderlineTextFieldWrapper: View {
     var body: some View {
         VStack(spacing: 24) {
             CustomTextField(
-                title: "휴대폰 번호",
-                placeholder: "",
-                text: $phone,
-                keyboard: .numberPad,
-                contentType: .telephoneNumber
-            )
+                            title: "휴대폰 번호",
+                            placeholder: "휴대폰 번호를 입력해 주세요",
+                            text: $phone,
+                            keyboard: .numberPad,
+                            contentType: .telephoneNumber,
+                            errorMessage: "형식이 올바르지 않습니다."
+                        )
             CustomTextField(
                 title: "휴대폰 번호",
-                placeholder: "",
+                placeholder: "휴대폰 번호를 입력해 주세요",
                 text: $phone,
                 keyboard: .numberPad,
                 contentType: .telephoneNumber
             )
-            
             CustomTextField(
                 title: "인증번호를 입력해 주세요",
                 placeholder: "010-1234-5678",

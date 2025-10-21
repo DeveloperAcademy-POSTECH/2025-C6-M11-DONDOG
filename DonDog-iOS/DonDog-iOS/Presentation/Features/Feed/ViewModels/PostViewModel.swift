@@ -24,8 +24,6 @@ final class PostViewModel: ObservableObject {
     @Published var currentUser: String = ""
     @Published var authorName: String = ""
     @Published var createdAt: Date = Date()
-    @Published var frontImage: UIImage = UIImage()
-    @Published var backImage: UIImage = UIImage()
     @Published var caption: String?
     @Published var stickerImage: UIImage = UIImage()
     @Published var comments: [Comment] = []
@@ -34,8 +32,8 @@ final class PostViewModel: ObservableObject {
     @Published var commentToDelete: Comment? = nil
 
     private var stickerURL: URL?
-    private var frontURL: URL?
-    private var backURL: URL?
+    @Published var frontURL: URL?
+    @Published var backURL: URL?
     
     init(postId: String, roomId: String, borderedSticker: UIImage) {
         self.postId = postId
@@ -95,15 +93,11 @@ final class PostViewModel: ObservableObject {
 
     private func loadImages() async {
         async let sticker = stickerURL != nil ? loadImage(from: stickerURL!) : nil
-        async let front = frontURL != nil ? loadImage(from: frontURL!) : nil
-        async let back = backURL != nil ? loadImage(from: backURL!) : nil
 
-        let (stickerImage, frontImage, backImage) = await (sticker, front, back)
+        let stickerImage = await sticker
 
         await MainActor.run {
             if let stickerImage = stickerImage { self.stickerImage = stickerImage }
-            if let frontImage = frontImage { self.frontImage = frontImage }
-            if let backImage = backImage { self.backImage = backImage }
         }
     }
 

@@ -27,22 +27,21 @@ struct PostContentView: View {
                     Spacer()
                     
                     VStack(alignment: .center) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 348, height: 464)
-                            .cornerRadius(12)
-                            .padding(.vertical, 8)
-                            .onTapGesture {
+                        ZStack {
+                            AsyncPhoto(url: viewModel.frontURL ?? URL(fileURLWithPath: ""))
+                                .opacity(showingFront ? 1.0 : 0.0)
+                            
+                            AsyncPhoto(url: viewModel.backURL ?? URL(fileURLWithPath: ""))
+                                .opacity(showingFront ? 0.0 : 1.0)
+                        }
+                        .cornerRadius(8)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 20)
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.2)) {
                                 showingFront.toggle()
-                                image = showingFront ? (viewModel.frontImage) : (viewModel.backImage)
                             }
-                            .onReceive(viewModel.$frontImage) { newFront in
-                                if showingFront { image = newFront }
-                            }
-                            .onReceive(viewModel.$backImage) { newBack in
-                                if !showingFront { image = newBack }
-                            }
+                        }
                         
                         VStack {
                             VStack {
@@ -101,6 +100,41 @@ struct PostContentView: View {
                                 Image(systemName: "trash")
                             }
                         }
+                }
+            }
+        }
+    }
+    
+    // 추후 분리
+    private struct AsyncPhoto: View {
+        let url: URL
+        var body: some View {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let img):
+                    img
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(3.0/4.0, contentMode: .fit)
+                        .clipped()
+                        .cornerRadius(10)
+                        .transition(.opacity)
+                case .failure:
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.ddGray600)
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(3.0/4.0, contentMode: .fit)
+                        .overlay(Image(systemName: "photo").opacity(0.7))
+                case .empty:
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.ddGray600.opacity(0.2))
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(3.0/4.0, contentMode: .fit)
+                @unknown default:
+                    Color.clear
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(3.0/4.0, contentMode: .fit)
                 }
             }
         }

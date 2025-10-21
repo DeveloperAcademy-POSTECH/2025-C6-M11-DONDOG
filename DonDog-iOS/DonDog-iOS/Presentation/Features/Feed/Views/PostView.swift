@@ -13,6 +13,7 @@ struct PostView: View {
     
     @State var text: String = ""
     @FocusState private var isTextFieldFocused: Bool
+    @State private var textLineCount: Int = 0
     
     private var titleString: String {
         let fmt = DateFormatter()
@@ -73,12 +74,19 @@ struct PostView: View {
                                             y: -2)
                                 
                                 HStack(spacing: 4) {
-                                    GrowingTextEditor(
-                                        text: $text,
-                                        minHeight: 40,
-                                        maxHeight: 73,
-                                        isFocused: _isTextFieldFocused
-                                    )
+                                    TextField("댓글을 입력해 주세요...", text: $text, axis: .vertical)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .scrollContentBackground(.hidden)
+                                        .focused($isTextFieldFocused)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: self.textLineCount >= 1 ? 24 : 74)
+                                                .fill(Color.ddGray100)
+                                        )
+                                        .frame(minHeight: 40, maxHeight: 73)
+                                        .onChange(of: text) { _, _ in
+                                            self.textLineCount = text.components(separatedBy: "\n").count
+                                        }
                                     
                                     Button {
                                         Task {
@@ -93,9 +101,9 @@ struct PostView: View {
                                         }
                                     } label: {
                                         Image(systemName: "paperplane.circle.fill")
-                                            .font(.system(size: 40))
+                                            .resizable()
+                                            .frame(width: 40, height: 40)
                                             .foregroundStyle(isTextFieldFocused && !text.isEmpty ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
-                                            .clipShape(Circle())
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                     .animation(.spring(), value: text)
@@ -147,21 +155,17 @@ struct PostView: View {
                 }
             }
             Button("취소", role: .cancel) { }
-        } message: {
-            Text("삭제한 사진은 되돌릴 수 없어요")
-        }
-        .alert("댓글을 삭제하시겠어요?", isPresented: .constant(viewModel.commentToDelete != nil), actions: {
-            Button("삭제", role: .destructive) {
-                if let comment = viewModel.commentToDelete {
-                    Task {
-                        viewModel.deleteComment(of: comment)
-                        viewModel.commentToDelete = nil
+        } message: { Text("삭제한 사진은 되돌릴 수 없어요") }
+            .alert("댓글을 삭제하시겠어요?", isPresented: .constant(viewModel.commentToDelete != nil), actions: {
+                Button("삭제", role: .destructive) {
+                    if let comment = viewModel.commentToDelete {
+                        Task {
+                            viewModel.deleteComment(of: comment)
+                            viewModel.commentToDelete = nil
+                        }
                     }
                 }
-            }
-            Button("취소", role: .cancel) {
-                viewModel.commentToDelete = nil
-            }
-        })
+                Button("취소", role: .cancel) { viewModel.commentToDelete = nil }
+            })
     }
 }

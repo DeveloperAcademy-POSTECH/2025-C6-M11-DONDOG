@@ -439,7 +439,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             case .success(let roomId):
                 self?.photoSaveService.fetchTodayRoomPosts(roomId: roomId) { result in
                     DispatchQueue.main.async {
-                        // ⚠️ 여기서 isLoading = false 제거 (이미 수정했을 것)
                         switch result {
                         case .success(let todayPosts):
                             self?.images = todayPosts
@@ -596,20 +595,14 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         group.notify(queue: .main) {
             let sortedPosts = tempDisplayablePosts.sorted(by: { $0.key < $1.key }).map { $0.value }
+        
             
             let finalSortedPosts = sortedPosts.sorted { post1, post2 in
-                let hasSticker1 = !post1.stickerPostId.isEmpty
-                let hasSticker2 = !post2.stickerPostId.isEmpty
-                
-                if hasSticker1 != hasSticker2 {
-                    return hasSticker1
-                }
-                
-                return post1.createdAt < post2.createdAt
+                return post1.createdAt > post2.createdAt  // ✅ 최신순만
             }
             
             self.displayablePosts = finalSortedPosts
-            print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개 (스티커는 별도 로딩)")
+            print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개")
             
             let initialIndex = finalSortedPosts.firstIndex { post in
                 post.stickerPostId.isEmpty
@@ -627,9 +620,44 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 self.currentPost = initialPost.post
             }
             
-            self.isLoading = false
-            self.isUploading = false 
-            print("✅ 로딩 완료!")
+            
+            let stickerGroup = DispatchGroup()
+            var postsWithStickers: [DisplayablePost] = finalSortedPosts
+            
+            for (index, post) in finalSortedPosts.enumerated() {
+                if !post.stickerPostId.isEmpty {
+                    stickerGroup.enter()
+                    print("🎯 스티커 다운로드 시작: \(post.stickerPostId) for post \(post.postId)")
+                    
+                    self.downloadStickerImage(
+                        stickerPostId: post.stickerPostId,
+                        roomId: roomId,
+                        stickerType: post.stickerType
+                    ) { stickerImg in
+                        if let sticker = stickerImg {
+                            // 로컬 배열에 업데이트
+                            postsWithStickers[index] = DisplayablePost(
+                                post: postsWithStickers[index].post,
+                                frontImage: postsWithStickers[index].frontImage,
+                                backImage: postsWithStickers[index].backImage,
+                                stickerImage: sticker,
+                                nickname: postsWithStickers[index].nickname,
+                                isMyPost: postsWithStickers[index].isMyPost
+                            )
+                        }
+                        stickerGroup.leave()
+                    }
+                }
+            }
+            
+            stickerGroup.notify(queue: .main) {
+                self.displayablePosts = postsWithStickers  // 스티커 포함된 배열로 재할당
+                print("🎉 모든 스티커 다운로드 완료!")
+                
+                self.isLoading = false
+                self.isUploading = false
+                print("✅ 로딩 완료!")
+            }
         }
     }
     

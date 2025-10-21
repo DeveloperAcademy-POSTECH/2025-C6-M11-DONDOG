@@ -190,7 +190,7 @@ struct FeedView: View {
                     .padding(.top, 280)
                 }
                 Spacer()
-                if connectState.isConnected == true && !viewModel.displayablePosts.isEmpty{
+                if connectState.isConnected == true{
                     HStack{
                         Spacer()
                         Button{
@@ -239,6 +239,16 @@ struct FeedView: View {
                                         .frame(width: 40)
                                     Text("스티커")
                                         .foregroundStyle(viewModel.displayablePosts[viewModel.currentPostIndex].isMyPost ? .ddGray500 : .ddPrimaryBlue)
+                                        .font(.captionRegular14)
+                                }
+                            }else {
+                                VStack(spacing: 2){
+                                    Image("AddStickerButtonDisabled")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 40)
+                                    Text("스티커")
+                                        .foregroundStyle(.ddGray500)
                                         .font(.captionRegular14)
                                 }
                             }

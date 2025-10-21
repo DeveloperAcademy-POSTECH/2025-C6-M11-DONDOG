@@ -322,41 +322,44 @@ struct FeedView: View {
                 .presentationDragIndicator(.visible)
                 .background(Color.ddWhite)
             } else {
-                VStack(spacing: 4){
+                HStack{
                     Spacer()
-                    Text("스티커를 만들 사진이 없어요")
-                        .font(.subtitleSemiBold16)
-                        .foregroundStyle(.ddGray600)
-                    Text("첫 게시물을 올리면 감정 스티커를 붙일 수 있어요!")
-                        .font(.captionRegular13)
-                        .foregroundStyle(.ddGray500)
-                    Button{
-                        //카메라 버튼
-                        showStickerSheet = false
-                    }label: {
-                        ZStack{
-                            Rectangle()
-                                .foregroundStyle(.ddPrimaryBlue)
-                                .frame(width: 112, height: 34)
-                                .cornerRadius(999)
-                            HStack{
-                                Text("사진찍기")
-                                    .font(.captionRegular13)
-                                    .foregroundStyle(.ddGray100)
-                                Image(systemName: "camera")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundStyle(.ddGray100)
-                                    .frame(height: 22)
+                    VStack(spacing: 4){
+                        Spacer()
+                        Text("스티커를 만들 사진이 없어요")
+                            .font(.subtitleSemiBold16)
+                            .foregroundStyle(.ddGray600)
+                        Text("첫 게시물을 올리면 감정 스티커를 붙일 수 있어요!")
+                            .font(.captionRegular13)
+                            .foregroundStyle(.ddGray500)
+                        Button{
+                            showStickerSheet = false
+                        }label: {
+                            ZStack{
+                                Rectangle()
+                                    .foregroundStyle(.ddPrimaryBlue)
+                                    .frame(width: 112, height: 34)
+                                    .cornerRadius(999)
+                                HStack{
+                                    Text("사진찍기")
+                                        .font(.captionRegular13)
+                                        .foregroundStyle(.ddGray100)
+                                    Image(systemName: "camera")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundStyle(.ddGray100)
+                                        .frame(height: 22)
+                                }
                             }
-                        }
-                    }.padding(.top, 4)
-                    
+                        }.padding(.top, 4)
+                        Spacer()
+                    }
+                    Spacer()
                 }
-                .padding(.bottom, 10)
-                .presentationDetents([.height(138)])
+                .presentationDetents([.height(172)])
                 .presentationDragIndicator(.visible)
                 .background(Color.ddWhite)
+                .ignoresSafeArea()
             }
         }
         

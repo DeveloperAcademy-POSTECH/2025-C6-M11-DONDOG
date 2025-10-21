@@ -5,8 +5,8 @@
 //  Created by 조유진 on 10/3/25.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 protocol ModuleFactoryProtocol {
     func makeWelcomeView() -> WelcomeView
@@ -25,8 +25,10 @@ protocol ModuleFactoryProtocol {
 
 final class ModuleFactory: ModuleFactoryProtocol {
     static let shared = ModuleFactory()
-    private let feedViewModel = FeedViewModel() // 루트뷰 재사용
+    private var feedViewModel = FeedViewModel() // 루트뷰 재사용
     private init() {}
+    
+    func resetSession() { feedViewModel = FeedViewModel() }
     
     func makeWelcomeView() -> WelcomeView {
         let view = WelcomeView()
@@ -89,7 +91,6 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makeArchiveView(in roomId: String) -> ArchiveView {
         let stickerViewModel = ArchiveStickerViewModel(roomId: roomId)
         let viewModel = ArchiveViewModel(roomId: roomId, stickerViewModel: stickerViewModel)
-
         let view = ArchiveView(viewModel: viewModel)
         return view
     }

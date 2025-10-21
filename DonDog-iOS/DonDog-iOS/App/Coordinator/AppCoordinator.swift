@@ -23,6 +23,7 @@ final class AppCoordinator: ObservableObject {
     @Published var authNumberShowWithdraw: Bool = false
     
     private var notificationToken: NSObjectProtocol?
+    var sessionKey: String { Auth.auth().currentUser?.uid ?? "loggedout" }
     
     init(factory: ModuleFactoryProtocol, authService: AuthService = AuthService()) {
         self.factory = factory
@@ -107,6 +108,7 @@ final class AppCoordinator: ObservableObject {
             factory.makeEditProfileView()
         case .archive(let roomId):
             factory.makeArchiveView(in: roomId)
+                .id(roomId)
         case .archiveDetail(let roomId, let date, let initialPosts):
             factory.makeArchiveDetailView(in: roomId, date: date, initialPosts: initialPosts)
         }

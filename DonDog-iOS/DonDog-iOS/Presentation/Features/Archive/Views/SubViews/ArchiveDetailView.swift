@@ -23,14 +23,12 @@ struct ArchiveDetailView: View {
     }
     
     var body: some View {
-        ZStack(alignment: .top) {
+        ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
                 // CustomNavigationBar
                 CustomNavigationBar(
                     leadingType:
-                            .back(
-                                action: { coordinator.pop() }
-                            ),
+                            .back(action: { coordinator.pop() }),
                     centerType:
                             .title(title: titleString),
                     trailingType: .menu(items: [

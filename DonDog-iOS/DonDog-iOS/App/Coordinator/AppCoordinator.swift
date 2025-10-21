@@ -21,9 +21,6 @@ final class AppCoordinator: ObservableObject {
     @Published var inviteShowSentHint: Bool = false
     @Published var authShowWithdraw: Bool = false
     @Published var authNumberShowWithdraw: Bool = false
-    
-    private var lastHandledDeepLink: String?
-    private var lastHandledAt: Date?
 
     private var notificationToken: NSObjectProtocol?
     
@@ -42,6 +39,17 @@ final class AppCoordinator: ObservableObject {
                 let deeplink = note.object as? String
             else { return }
             self.handleDeepLink(deeplink)
+        }
+        
+        DispatchQueue.main.async {
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+               let deepLink = appDelegate.initialDeepLink {
+                print("저장된 딥링크 처리: \(deepLink)")
+                self.handleDeepLink(deepLink)
+                
+                // 처리 후 중복 실행 방지
+                appDelegate.initialDeepLink = nil
+            }
         }
     }
     
@@ -105,36 +113,31 @@ final class AppCoordinator: ObservableObject {
     }
     
     func handleDeepLink(_ urlString: String) {
-        // 같은 딥링크가 1.5초 내 재발신되면 무시 (알림 중복 탭/브로드캐스트 중복 방지)
-        if lastHandledDeepLink == urlString,
-           let last = lastHandledAt,
-           Date().timeIntervalSince(last) < 1.5 {
-            return
-        }
+        guard let url = URL(string: urlString),
+              let scheme = url.scheme,
+              scheme == "dondog" else { return }
 
-        guard let url = URL(string: urlString) else { return }
-        let parts = url.pathComponents.filter { $0 != "/" }
-
-        guard parts.count >= 2, parts[0] == "rooms" else { return }
-        let roomId = parts[1]
-
-        // 항상 피드로 루트 정렬 후 목적지로 이동
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        
+        // 모든 딥링크는 피드에서 시작
         if root != .feed {
             replaceRoot(.feed)
         } else {
-            // 루트가 .feed여도 스택 초기화
             popToRoot()
         }
+        
+        switch url.host {
+        case "post":
+            let roomId = components?.queryItems?.first(where: { $0.name == "roomId" })?.value
+            let postId = components?.queryItems?.first(where: { $0.name == "postId" })?.value
+            
+            if let roomId = roomId, let postId = postId {
+                push(.post(postId: postId, roomId: roomId))
+            }
 
-        if parts.count >= 4, parts[2] == "posts" {
-            let postId = parts[3]
-            push(.post(postId: postId, roomId: roomId))
-        } else {
-            push(.feed)
+        default:
+            // 처리할 수 없는 host일 경우 피드로 이동
+            break
         }
-
-        // 중복 처리 방지
-        lastHandledDeepLink = urlString
-        lastHandledAt = Date()
     }
 }

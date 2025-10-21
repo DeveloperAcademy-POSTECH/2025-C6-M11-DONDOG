@@ -18,7 +18,12 @@ struct DonDog_iOSApp: App {
             let coordinator = AppCoordinator(factory: factory)
             RootNavigationView(coordinator: coordinator)
                 .onOpenURL { url in
-                    _ = Auth.auth().canHandle(url)
+                    if Auth.auth().canHandle(url) {
+                        return
+                    }
+                    
+                    guard let scheme = url.scheme, scheme == "dondog" else { return }
+                    coordinator.handleDeepLink(url.absoluteString)
                 }
         }
     }

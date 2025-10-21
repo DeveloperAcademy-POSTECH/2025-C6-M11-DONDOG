@@ -21,7 +21,7 @@ final class AppCoordinator: ObservableObject {
     @Published var inviteShowSentHint: Bool = false
     @Published var authShowWithdraw: Bool = false
     @Published var authNumberShowWithdraw: Bool = false
-
+    
     private var notificationToken: NSObjectProtocol?
     
     init(factory: ModuleFactoryProtocol, authService: AuthService = AuthService()) {
@@ -58,7 +58,7 @@ final class AppCoordinator: ObservableObject {
             NotificationCenter.default.removeObserver(token)
         }
     }
-
+    
     /// push : 다음 화면으로 넘어갈 때 사용하는 메서드 (_ route 부분에 전환하고자 하는 다음 화면 명시)
     func push(_ route: AppRoute) {
         path.append(route)
@@ -116,7 +116,7 @@ final class AppCoordinator: ObservableObject {
         guard let url = URL(string: urlString),
               let scheme = url.scheme,
               scheme == "dondog" else { return }
-
+        
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         
         // 모든 딥링크는 피드에서 시작
@@ -132,18 +132,12 @@ final class AppCoordinator: ObservableObject {
             let postId = components?.queryItems?.first(where: { $0.name == "postId" })?.value
             
             if let roomId = roomId, let postId = postId {
-                push(.post(postId: postId, roomId: roomId))
+                push(.post(postId: postId, roomId: roomId, borderedSticker: UIImage(named: "StickerExample") ?? UIImage()))
             }
-
+            
         default:
             // 처리할 수 없는 host일 경우 피드로 이동
             break
-          
-        if parts.count >= 4, parts[2] == "posts" {
-            let postId = parts[3]
-            push(.post(postId: postId, roomId: roomId, borderedSticker: UIImage()))
-        } else {
-            push(.feed)
         }
     }
 }

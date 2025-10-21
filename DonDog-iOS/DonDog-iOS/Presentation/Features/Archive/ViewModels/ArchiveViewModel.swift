@@ -186,7 +186,8 @@ final class ArchiveViewModel: ObservableObject {
     // 게시물 개수 조회
     private func fetchPostCount() async -> Int {
         do {
-            let countQuery = db.collection("Rooms").document(roomId).collection("posts").count
+            let countQuery = db.collection("Rooms").document(roomId).collection("posts")
+                .count
             
             let snapshot = try await countQuery.getAggregation(source: .server)
             
@@ -237,4 +238,3 @@ final class ArchiveViewModel: ObservableObject {
         }
     }
 }
-

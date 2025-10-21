@@ -597,15 +597,19 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         group.notify(queue: .main) {
             let sortedPosts = tempDisplayablePosts.sorted(by: { $0.key < $1.key }).map { $0.value }
             
+//            let finalSortedPosts = sortedPosts.sorted { post1, post2 in
+//                let hasSticker1 = !post1.stickerPostId.isEmpty
+//                let hasSticker2 = !post2.stickerPostId.isEmpty
+//                
+//                if hasSticker1 != hasSticker2 {
+//                    return hasSticker1
+//                }
+//                
+//                return post1.createdAt < post2.createdAt
+//            }
+            
             let finalSortedPosts = sortedPosts.sorted { post1, post2 in
-                let hasSticker1 = !post1.stickerPostId.isEmpty
-                let hasSticker2 = !post2.stickerPostId.isEmpty
-                
-                if hasSticker1 != hasSticker2 {
-                    return hasSticker1
-                }
-                
-                return post1.createdAt < post2.createdAt
+                return post1.createdAt > post2.createdAt  // ✅ 최신순만
             }
             
             self.displayablePosts = finalSortedPosts

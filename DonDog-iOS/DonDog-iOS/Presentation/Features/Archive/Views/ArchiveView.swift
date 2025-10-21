@@ -94,10 +94,14 @@ struct ArchiveView: View {
                                     
                                     LazyVGrid(columns: grid, spacing: 8) {
                                         ForEach(month.days) { day in
-                                            Button {
-                                                moveDailyArchive(month: month, day: day)
-                                            } label: {
-                                                ArchivePostContainer(url: day.thumbnailURL, day: day.day)
+                                            if viewModel.isLoading {
+                                                archivePlaceholder(height: 100)
+                                            } else {
+                                                Button {
+                                                    moveDailyArchive(month: month, day: day)
+                                                } label: {
+                                                    ArchivePostContainer(url: day.thumbnailURL, day: day.day)
+                                                }
                                             }
                                         }
                                     }
@@ -110,7 +114,7 @@ struct ArchiveView: View {
             }
             
             if viewModel.isLoading {
-                VStack(spacing: 16) {
+                VStack(alignment: .center, spacing: 16) {
                     ProgressView()
                         .scaleEffect(1.2)
                         .tint(.ddPrimaryBlue)

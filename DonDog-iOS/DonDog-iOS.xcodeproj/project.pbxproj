@@ -15,7 +15,7 @@
 		61C9B1A62E9BFCBE0007C8F4 /* ArchiveMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */; };
 		8B1EB7932EA07F7A00F720CF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */; };
 		8B1EB7972EA08E9800F720CF /* (null) in Resources */ = {isa = PBXBuildFile; };
-		8B26D0ED2EA61B1A00D36BF7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B26D0EC2EA61B1A00D36BF7 /* GoogleService-Info.plist */; };
+		8B26D0ED2EA61B1A00D36BF7 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
 		8B31826E2E90CE1B004505AE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826D2E90CE1B004505AE /* FirebaseAuthCombine-Community */; };
@@ -47,6 +47,7 @@
 		8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */; };
 		8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */; };
 		8BFC73612EA5D18C00B54F03 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC73602EA5D18C00B54F03 /* NetworkService.swift */; };
+		8CAD89B02EA6284E004318F0 /* TextStrokeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */; };
 		8CF9C7512EA129D600EB944A /* StickerSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7502EA129D400EB944A /* StickerSheetView.swift */; };
 		8CF9C7A32EA148C100EB944A /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7A22EA148BC00EB944A /* UIImage+.swift */; };
 		A192F2B12E9E45AC00995DCC /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2B02E9E45A800995DCC /* Color+.swift */; };
@@ -96,6 +97,7 @@
 		D24402AB2E992CE700D837C8 /* PostContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AA2E992CE700D837C8 /* PostContentView.swift */; };
 		D24402AD2E992CF000D837C8 /* PhotoSaveService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */; };
 		D293F3762EA4D23700AECA1A /* GrowingTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D293F3752EA4D23000AECA1A /* GrowingTextEditor.swift */; };
+		D293F3982EA65F2000AECA1A /* ArchiveStickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D293F3972EA65F1100AECA1A /* ArchiveStickerViewModel.swift */; };
 		D2A7F38A2E9A28B8005F5AF8 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A7F3892E9A28B7005F5AF8 /* Comment.swift */; };
 		D2A7FA3B2E9FFDCD005F5AF8 /* PostData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A7FA3A2E9FFDCA005F5AF8 /* PostData.swift */; };
 		D2C9F7092EA2372500393208 /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C9F7082EA2372100393208 /* CommentView.swift */; };
@@ -131,6 +133,7 @@
 		8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorView.swift; sourceTree = "<group>"; };
 		8BFC73602EA5D18C00B54F03 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStrokeUtils.swift; sourceTree = "<group>"; };
 		8CF9C7502EA129D400EB944A /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		8CF9C7A22EA148BC00EB944A /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		A192F2B02E9E45A800995DCC /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
@@ -182,6 +185,7 @@
 		D24402AA2E992CE700D837C8 /* PostContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentView.swift; sourceTree = "<group>"; };
 		D24402AC2E992CF000D837C8 /* PhotoSaveService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSaveService.swift; sourceTree = "<group>"; };
 		D293F3752EA4D23000AECA1A /* GrowingTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowingTextEditor.swift; sourceTree = "<group>"; };
+		D293F3972EA65F1100AECA1A /* ArchiveStickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveStickerViewModel.swift; sourceTree = "<group>"; };
 		D2A7F3892E9A28B7005F5AF8 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		D2A7FA3A2E9FFDCA005F5AF8 /* PostData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostData.swift; sourceTree = "<group>"; };
 		D2C9F7082EA2372100393208 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
@@ -226,6 +230,7 @@
 		61C9B19B2E9BEBF90007C8F4 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				D293F3972EA65F1100AECA1A /* ArchiveStickerViewModel.swift */,
 				61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */,
 				CAACD36B2EA0C1120057827D /* ArchiveDetailViewModel.swift */,
 			);
@@ -346,6 +351,7 @@
 		CAA62D002EA1E3FD00C60E05 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */,
 				CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */,
 				CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */,
 				CAA62CFE2EA1E3FD00C60E05 /* KeyboardUtils.swift */,
@@ -494,7 +500,6 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
-				8B26D0EC2EA61B1A00D36BF7 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				CAA9AED22E8FC15C0047A89A /* Presentation */,
@@ -639,7 +644,6 @@
 				8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */,
 			);
 			productName = "DonDog-iOS";
-			productReference = CA9C13FB2EA5C26A00519748 /* DonDog-iOS.app */;
 			productReference = 8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -687,7 +691,7 @@
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
-				8B26D0ED2EA61B1A00D36BF7 /* GoogleService-Info.plist in Resources */,
+				8B26D0ED2EA61B1A00D36BF7 /* (null) in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
 				CAA9AEE02E8FC15C0047A89A /* Assets.xcassets in Resources */,
@@ -749,6 +753,7 @@
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				CAA62D062EA1E57200C60E05 /* CustomPageIndicator.swift in Sources */,
 				8BDF768B2E9F4086007F12BB /* CustomRoleButton.swift in Sources */,
+				8CAD89B02EA6284E004318F0 /* TextStrokeUtils.swift in Sources */,
 				8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */,
 				8BBE41F22EA1E9CB00057A23 /* AuthNumberViewModel.swift in Sources */,
 				D2C9F7092EA2372500393208 /* CommentView.swift in Sources */,
@@ -774,6 +779,7 @@
 				8BA7184B2E9DD7EC001F7857 /* CustomButton.swift in Sources */,
 				D2D16C022E9153BE008FB3E2 /* PostView.swift in Sources */,
 				CAA9AEDF2E8FC15C0047A89A /* FeedView.swift in Sources */,
+				D293F3982EA65F2000AECA1A /* ArchiveStickerViewModel.swift in Sources */,
 				CAA62D932EA289E800C60E05 /* DetailContentView.swift in Sources */,
 				8B6E118A2E968E2B0082B24C /* SettingView.swift in Sources */,
 			);

@@ -99,8 +99,8 @@ final class AppCoordinator: ObservableObject {
             EmptyView()
         case .feed:
             factory.makeFeedView()
-        case .post(let postId, let roomId):
-            factory.makePostView(with: postId, in: roomId)
+        case .post(let postId, let roomId, let borderedSticker):
+            factory.makePostView(with: postId, in: roomId, for: borderedSticker)
         case .setting:
             factory.makeSettingView()
         case .editprofile:
@@ -138,6 +138,12 @@ final class AppCoordinator: ObservableObject {
         default:
             // 처리할 수 없는 host일 경우 피드로 이동
             break
+          
+        if parts.count >= 4, parts[2] == "posts" {
+            let postId = parts[3]
+            push(.post(postId: postId, roomId: roomId, borderedSticker: UIImage()))
+        } else {
+            push(.feed)
         }
     }
 }

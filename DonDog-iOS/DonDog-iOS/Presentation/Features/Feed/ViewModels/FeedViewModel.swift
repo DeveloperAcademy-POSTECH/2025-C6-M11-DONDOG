@@ -604,15 +604,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             self.displayablePosts = finalSortedPosts
             print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개")
             
-            let initialIndex = finalSortedPosts.firstIndex { post in
-                post.stickerPostId.isEmpty
-            } ?? 0
+
+            self.currentPostIndex = 0
             
-            self.currentPostIndex = initialIndex
-            print("📍 초기 TabView 인덱스: \(initialIndex)")
-            
-            if initialIndex < finalSortedPosts.count {
-                let initialPost = finalSortedPosts[initialIndex]
+            if !finalSortedPosts.isEmpty {
+                let initialPost = finalSortedPosts[0]
                 self.todayFrontImage = initialPost.frontImage
                 self.todayBackImage = initialPost.backImage
                 self.currentNickname = initialPost.nickname

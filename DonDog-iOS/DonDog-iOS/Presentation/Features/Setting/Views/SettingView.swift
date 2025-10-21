@@ -10,7 +10,8 @@ import SwiftUI
 struct SettingView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: SettingViewModel
-    @State private var showReportWebView = false
+    struct WebSheetItem: Identifiable { let id = UUID(); let url: URL }
+    @State private var webSheet: WebSheetItem? = nil
     
     var body: some View {
         ZStack {
@@ -28,30 +29,22 @@ struct SettingView: View {
                         Button { viewModel.showDeleteConfirm = true } label: { Text("회원탈퇴") }
                         
                         Button {
-                            showReportWebView = true
+                            if let url = URL(string: "https://posacademy.notion.site/Winky-2922b843d5af8058aabbc9bbe3009139?source=copy_link") {
+                                webSheet = WebSheetItem(url: url)
+                            }
                         } label: {
                             Text("개인정보처리방침")
                         }
                         .foregroundStyle(Color.ddGray500)
-                        .sheet(isPresented: $showReportWebView) {
-                            if let url = URL(string: "https://posacademy.notion.site/Winky-2922b843d5af8058aabbc9bbe3009139?source=copy_link") {
-                                SafariView(url: url)
-                                    .ignoresSafeArea()
-                            }
-                        }
-                        
+
                         Button {
-                            showReportWebView = true
+                            if let url = URL(string: "https://posacademy.notion.site/2932b843d5af8002a16df56cb9d27afe?source=copy_link") {
+                                webSheet = WebSheetItem(url: url)
+                            }
                         } label: {
                             Text("신고하기")
                         }
                         .foregroundStyle(Color.ddGray500)
-                        .sheet(isPresented: $showReportWebView) {
-                            if let url = URL(string: "https://posacademy.notion.site/2932b843d5af80fdbf9cdf704aaa5ec8?source=copy_link") {
-                                SafariView(url: url)
-                                    .ignoresSafeArea()
-                            }
-                        }
 
                     }
                     .font(.subtitleMedium18)
@@ -83,7 +76,10 @@ struct SettingView: View {
                 Text("탈퇴하면 모든 기록이 사라져요")
             }
         }
-        .dismissKeyboard()
+        .sheet(item: $webSheet) { item in
+            InAppWebSheet(url: item.url)
+                .ignoresSafeArea()
+        }
         .backHiddenSwipeEnabled()
     }
 }

@@ -45,16 +45,22 @@ struct InviteView: View {
                 
                 HStack(alignment: .top) {
                     VStack(spacing: 4) {
-                        HStack(spacing: 0) {
-                            Text(viewModel.inviteText)
+                        if !viewModel.inviteText.isEmpty {
+                            HStack(spacing: 0) {
+                                Text(viewModel.inviteText)
+                                    .font(.bodyRegular18)
+                                    .foregroundColor(viewModel.remainTimeText == "00:00" ? Color.ddGray500 : Color.ddBlack)
+                                
+                                Spacer()
+                                
+                                Text(viewModel.remainTimeText)
+                                    .font(.captionRegular13)
+                                    .foregroundStyle(Color.ddGray500)
+                            }
+                        } else {
+                            Text("Wingky")
                                 .font(.bodyRegular18)
-                                .foregroundColor(viewModel.remainTimeText == "00:00" ? Color.ddGray500 : Color.ddBlack)
-                            
-                            Spacer()
-                            
-                            Text(viewModel.remainTimeText)
-                                .font(.captionRegular13)
-                                .foregroundStyle(Color.ddGray500)
+                                .opacity(0)
                         }
                         
                         Rectangle()
@@ -82,7 +88,8 @@ struct InviteView: View {
                         }
                     } else {
                         ShareLink(
-                            item: "🪽 윙키 초대장이 도착했어요!\n사진 한 장으로 멀리 떨어져 있어도, 특별한 추억을 쌓아요.\n\n초대코드 : \(viewModel.inviteText)"
+                            item: "🪽 윙키 초대장이 도착했어요!\n사진 한 장으로 멀리 떨어져 있어도, 특별한 추억을 쌓아요.\n\n초대코드 : \(viewModel.inviteText)",
+                            preview: SharePreview("🪽 윙키 초대장이 도착했어요!", image: Image("AppIcon"))
                         ) {
                             Image(systemName: "square.and.arrow.up")
                                 .resizable()

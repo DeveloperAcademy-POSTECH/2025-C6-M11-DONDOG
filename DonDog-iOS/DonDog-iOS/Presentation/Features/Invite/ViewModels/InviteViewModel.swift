@@ -23,9 +23,12 @@ final class InviteViewModel: ObservableObject {
     
     @Published var showSentHint: Bool = false
     
+    
     private let db = Firestore.firestore()
     private let generateInviteCodeService: GenerateCodeService
     private var timerCancellable: AnyCancellable?
+    
+    private var stagedInviteText: String = ""
     
     init(showSentHint: Bool = false, generateInviteCodeService: GenerateCodeService = GenerateCodeService()) {
         self.showSentHint = showSentHint
@@ -67,8 +70,8 @@ final class InviteViewModel: ObservableObject {
                     } else {
                         self.expireDate = nil
                     }
-                    
-                    self.inviteText = "\(self.inviteCode ?? "")"
+                    self.stagedInviteText = "\(self.inviteCode ?? "")"
+                    self.inviteText = ""
                     self.startTimer()
                 } else {
                     self.inviteText = "초대코드를 불러오지 못했습니다."
@@ -84,12 +87,17 @@ final class InviteViewModel: ObservableObject {
             remainTimeText = ""
             return
         }
+        remainTimeText = ""
+        inviteText = ""
         timerCancellable = Timer.publish(every: 1.0, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 let remaining = expireDate.timeIntervalSinceNow
                 if remaining > 0 {
+                    if self.inviteText.isEmpty {
+                        self.inviteText = self.stagedInviteText
+                    }
                     self.remainTimeText = "\(InviteViewModel.timeFormat(remaining))"
                 } else {
                     self.remainTimeText = "00:00"
@@ -309,10 +317,11 @@ final class InviteViewModel: ObservableObject {
 
                         print("[초대코드 재발급] 완료 ✅ \(newCode)")
                         self.inviteCode = newCode
-                        self.inviteText = newCode
+                        self.stagedInviteText = newCode
                         self.expireDate = expireDate
+                        self.inviteText = ""
                         self.startTimer()
-                        self.isLoading = false
+                        // self.isLoading = false
                     }
                 }
             }

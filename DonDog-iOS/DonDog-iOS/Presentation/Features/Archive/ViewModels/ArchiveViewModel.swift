@@ -60,7 +60,7 @@ final class ArchiveViewModel: ObservableObject {
         defer { Task { @MainActor in self.isLoading = false } }
         
         // 1) roomId 검사
-        guard let vaildRoomId = validRoomId() else {
+        guard let validRoomId = validRoomId() else {
             print("[ArchiveViewModel] roomId 비어있음 - skip Firestore")
             await MainActor.run { setEmptyArchive() }
             async let _ = fetchPartnerNicknames()
@@ -68,7 +68,7 @@ final class ArchiveViewModel: ObservableObject {
         }
         
         // 2) 개수 먼저 확인
-        let count = await fetchPostCount()
+        let count = await fetchPostCount(roomId: validRoomId)
         await MainActor.run { self.totalPostCount = count }
         
         // 3) 0개면 바로 종료
@@ -80,26 +80,47 @@ final class ArchiveViewModel: ObservableObject {
         }
         
         // 4) 존재하면 실제 데이터 조회
-        async let months = fetchAllPosts()
+        async let months = fetchAllPosts(roomId: validRoomId)
         async let _ = fetchPartnerNicknames()
         
         let monthData = await months
         await MainActor.run { self.archiveMonths = monthData }
     }
     
+    // 게시물 개수 조회
+    private func fetchPostCount(roomId validRoomId: String) async -> Int {
+        do {
+            let countQuery = db.collection("Rooms")
+                .document(validRoomId)
+                .collection("posts")
+                .count
+            
+            let snapshot = try await countQuery.getAggregation(source: .server)
+            return snapshot.count.intValue
+        } catch {
+            print("Count 쿼리 실패: \(error.localizedDescription)")
+            return 0
+        }
+    }
     
     // 전체 기록 가져오기
     func fetchMonthlyArchives() async {
         await MainActor.run { isLoading = true }
-        
-        async let months = fetchAllPosts()
-        async let count = fetchPostCount()
+        defer { Task { @MainActor in self.isLoading = false } }
+
+        guard let validRoomId = validRoomId() else {
+            await MainActor.run { setEmptyArchive() }
+            return
+        }
+
+        async let months = fetchAllPosts(roomId: validRoomId)
+        async let count  = fetchPostCount(roomId: validRoomId)
+
         let (monthData, totalCount) = await (months, count)
-        
         await MainActor.run {
             self.archiveMonths = monthData
             self.totalPostCount = totalCount
-            self.isLoading = false }
+        }
     }
     
     func fetchPartnerNicknames() async {
@@ -109,10 +130,10 @@ final class ArchiveViewModel: ObservableObject {
     }
     
     // 월/일 별로 전체 기록 가져오기 -> 일자별 기록 캐싱 (앱 사용중에만)
-    private func fetchAllPosts() async -> [ArchiveMonth] {
+    private func fetchAllPosts(roomId validRoomId: String) async -> [ArchiveMonth] {
         do {
             let snapshot = try await db.collection("Rooms")
-                .document(roomId)
+                .document(validRoomId)
                 .collection("posts")
                 .order(by: "createdAt", descending: false) // 오래된 것부터
                 .getDocuments()
@@ -218,22 +239,6 @@ final class ArchiveViewModel: ObservableObject {
         } catch {
             print("Firestore 데이터 불러오기 실패: \(error.localizedDescription)")
             return []
-        }
-    }
-    
-    // 게시물 개수 조회
-    private func fetchPostCount() async -> Int {
-        do {
-            let countQuery = db.collection("Rooms")
-                .document(roomId)
-                .collection("posts")
-                .count
-            
-            let snapshot = try await countQuery.getAggregation(source: .server)
-            return snapshot.count.intValue
-        } catch {
-            print("Count 쿼리 실패: \(error.localizedDescription)")
-            return 0
         }
     }
     

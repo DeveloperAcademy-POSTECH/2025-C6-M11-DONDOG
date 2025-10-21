@@ -26,29 +26,67 @@ final class ArchiveViewModel: ObservableObject {
     private let calendar = Calendar(identifier: .gregorian)
     private let timezone = TimeZone(identifier: "Asia/Seoul") ?? .current
     
-    private lazy var dayKeyFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.calendar = calendar
-        df.timeZone = timezone
-        df.locale = Locale(identifier: "ko_KR")
-        df.dateFormat = "yyyy-MM-dd"
-        return df
-    }()
-
-    func dayKey(from date: Date) -> String {
-        let startOfDay = calendar.startOfDay(for: date)
-        return dayKeyFormatter.string(from: startOfDay)
+    private func validRoomId() -> String? {
+        let rid = roomId.trimmingCharacters(in: .whitespacesAndNewlines)
+        return rid.isEmpty ? nil : rid
     }
-
+    
+    func dayKey(from date: Date) -> String {
+        let start = calendar.startOfDay(for: date)
+        let comps = calendar.dateComponents(in: timezone, from: start)
+        let y = comps.year ?? 0
+        let m = comps.month ?? 0
+        let d = comps.day ?? 0
+        
+        return String(format: "%04d-%02d-%02d", y, m, d)
+    }
     
     init(roomId: String, stickerViewModel: ArchiveStickerViewModel) {
         self.roomId = roomId
         self.stickerViewModel = stickerViewModel
-        Task {
-            await fetchMonthlyArchives()
-            await fetchPartnerNicknames()
-        }
+        Task { await fetchRoomData() }
     }
+    
+    @MainActor
+    private func setEmptyArchive() {
+        self.archiveMonths = []
+        self.dailyPosts = [:]
+        self.totalPostCount = 0
+    }
+    
+    // 진입 시
+    func fetchRoomData() async {
+        await MainActor.run { isLoading = true }
+        defer { Task { @MainActor in self.isLoading = false } }
+        
+        // 1) roomId 검사
+        guard let vaildRoomId = validRoomId() else {
+            print("[ArchiveViewModel] roomId 비어있음 - skip Firestore")
+            await MainActor.run { setEmptyArchive() }
+            async let _ = fetchPartnerNicknames()
+            return
+        }
+        
+        // 2) 개수 먼저 확인
+        let count = await fetchPostCount()
+        await MainActor.run { self.totalPostCount = count }
+        
+        // 3) 0개면 바로 종료
+        guard count > 0 else {
+            await MainActor.run { setEmptyArchive() }
+            // 닉네임은 병렬로 가져오되 실패해도 무시
+            async let _ = fetchPartnerNicknames()
+            return
+        }
+        
+        // 4) 존재하면 실제 데이터 조회
+        async let months = fetchAllPosts()
+        async let _ = fetchPartnerNicknames()
+        
+        let monthData = await months
+        await MainActor.run { self.archiveMonths = monthData }
+    }
+    
     
     // 전체 기록 가져오기
     func fetchMonthlyArchives() async {
@@ -63,14 +101,14 @@ final class ArchiveViewModel: ObservableObject {
             self.totalPostCount = totalCount
             self.isLoading = false }
     }
-
+    
     func fetchPartnerNicknames() async {
         guard let result = await fetchPartnerNickname() else { return }
         self.myNickname = result.myNickname
         self.partnerNickname = result.partnerNickname
     }
     
-    // 월/일 별로 전체 기록 가져오기 -> 일자별 기록 캐싱
+    // 월/일 별로 전체 기록 가져오기 -> 일자별 기록 캐싱 (앱 사용중에만)
     private func fetchAllPosts() async -> [ArchiveMonth] {
         do {
             let snapshot = try await db.collection("Rooms")
@@ -186,11 +224,12 @@ final class ArchiveViewModel: ObservableObject {
     // 게시물 개수 조회
     private func fetchPostCount() async -> Int {
         do {
-            let countQuery = db.collection("Rooms").document(roomId).collection("posts")
+            let countQuery = db.collection("Rooms")
+                .document(roomId)
+                .collection("posts")
                 .count
             
             let snapshot = try await countQuery.getAggregation(source: .server)
-            
             return snapshot.count.intValue
         } catch {
             print("Count 쿼리 실패: \(error.localizedDescription)")
@@ -238,4 +277,3 @@ final class ArchiveViewModel: ObservableObject {
         }
     }
 }
-

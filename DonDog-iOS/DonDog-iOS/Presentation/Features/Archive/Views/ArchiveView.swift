@@ -45,8 +45,8 @@ struct ArchiveView: View {
                     navigationColor: .black
                 )
                 
-                // 사진 0장일 때
-                if viewModel.archiveMonths.isEmpty {
+                // 사진 0장일 때 예외처리
+                if !viewModel.isLoading && viewModel.totalPostCount == 0 {
                         Spacer()
                         VStack(spacing: 16){
                             Image(systemName: "photo.on.rectangle.angled")

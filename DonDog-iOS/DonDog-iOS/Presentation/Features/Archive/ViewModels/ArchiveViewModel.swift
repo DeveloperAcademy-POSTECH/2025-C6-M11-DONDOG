@@ -10,6 +10,7 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 import UIKit
+import SwiftUI
 
 final class ArchiveViewModel: ObservableObject {
     @Published var archiveMonths: [ArchiveMonth] = []
@@ -18,6 +19,7 @@ final class ArchiveViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var myNickname: String = ""
     @Published var partnerNickname: String = ""
+    var stickerViewModel: ArchiveStickerViewModel
     
     let roomId: String
     private let db = Firestore.firestore()
@@ -39,8 +41,9 @@ final class ArchiveViewModel: ObservableObject {
     }
 
     
-    init(roomId: String) {
+    init(roomId: String, stickerViewModel: ArchiveStickerViewModel) {
         self.roomId = roomId
+        self.stickerViewModel = stickerViewModel
         Task {
             await fetchMonthlyArchives()
             await fetchPartnerNicknames()
@@ -99,6 +102,13 @@ final class ArchiveViewModel: ObservableObject {
                     guard let s = stickerTypeString, s != "null" else { return nil }
                     return StickerType(rawValue: s)
                 }()
+                
+                if let sId = stickerPostId {
+                    let trimmed = sId.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !trimmed.isEmpty, trimmed.lowercased() != "null" {
+                        stickerViewModel.getStickerData(stickerPostId: trimmed, for: doc.documentID)
+                    }
+                }
                 
                 let post = ArchivePost(
                     id: doc.documentID,
@@ -228,3 +238,4 @@ final class ArchiveViewModel: ObservableObject {
         }
     }
 }
+

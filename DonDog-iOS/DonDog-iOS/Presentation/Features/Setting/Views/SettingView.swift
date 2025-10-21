@@ -10,6 +10,8 @@ import SwiftUI
 struct SettingView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: SettingViewModel
+    struct WebSheetItem: Identifiable { let id = UUID(); let url: URL }
+    @State private var webSheet: WebSheetItem? = nil
     
     var body: some View {
         ZStack {
@@ -25,6 +27,25 @@ struct SettingView: View {
                         Button { coordinator.push(.editprofile) }    label: { Text("프로필 수정") }
                         Button { viewModel.showLogoutConfirm = true } label: { Text("로그아웃") }
                         Button { viewModel.showDeleteConfirm = true } label: { Text("회원탈퇴") }
+                        
+                        Button {
+                            if let url = URL(string: "https://posacademy.notion.site/Winky-2922b843d5af8058aabbc9bbe3009139?source=copy_link") {
+                                webSheet = WebSheetItem(url: url)
+                            }
+                        } label: {
+                            Text("개인정보처리방침")
+                        }
+                        .foregroundStyle(Color.ddGray500)
+
+                        Button {
+                            if let url = URL(string: "https://posacademy.notion.site/2932b843d5af8002a16df56cb9d27afe?source=copy_link") {
+                                webSheet = WebSheetItem(url: url)
+                            }
+                        } label: {
+                            Text("신고하기")
+                        }
+                        .foregroundStyle(Color.ddGray500)
+
                     }
                     .font(.subtitleMedium18)
                     .foregroundStyle(Color.ddGray1000)
@@ -55,7 +76,10 @@ struct SettingView: View {
                 Text("탈퇴하면 모든 기록이 사라져요")
             }
         }
-        .dismissKeyboard()
+        .sheet(item: $webSheet) { item in
+            InAppWebSheet(url: item.url)
+                .ignoresSafeArea()
+        }
         .backHiddenSwipeEnabled()
     }
 }

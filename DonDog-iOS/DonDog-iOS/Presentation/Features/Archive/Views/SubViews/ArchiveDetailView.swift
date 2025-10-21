@@ -42,15 +42,6 @@ struct ArchiveDetailView: View {
                 )
                 .padding(.horizontal, 20)
                 
-                // 인디케이터
-                CustomPageIndicator(
-                    currentIndex: min(currentIndex + 1, max(viewModel.posts.count, 1)),
-                    totalCount: max(viewModel.posts.count, 1),
-                    backgroundColor: .ddGray100,
-                    textColor: .ddGray500
-                )
-                .padding(.vertical, 4)
-                
                 // 캐러셀
                 TabView(selection: $currentIndex) {
                     ForEach(Array(viewModel.posts.enumerated()), id: \.offset) { idx, post in
@@ -59,7 +50,9 @@ struct ArchiveDetailView: View {
                             userNameByUid: viewModel.userNameByUid,
                             onDelete: { comment in
                                 await viewModel.deleteComment(comment, from: post)
-                            }
+                            },
+                            currentIndex: currentIndex,
+                            totalCount: viewModel.posts.count
                         )
                         .tag(idx)
                     }

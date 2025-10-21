@@ -13,9 +13,23 @@ struct DetailContentView: View {
     let post: ArchivePost
     let userNameByUid: [String: String]
     let onDelete: ((Comment) async -> Void)?
-
+    let currentIndex: Int
+    let totalCount: Int
+    
     var body: some View {
         ScrollView {
+            // 인디케이터
+            if totalCount > 1 {
+                CustomPageIndicator(
+                    currentIndex: currentIndex + 1,
+                    totalCount: totalCount,
+                    backgroundColor: .ddGray100,
+                    textColor: .ddGray500
+                )
+                .padding(.vertical, 4)
+            }
+            
+            // 폴라로이드 프레임
             ZStack(alignment: .bottomTrailing) {
                 VStack {
                     DetailPhotoView(post: post)

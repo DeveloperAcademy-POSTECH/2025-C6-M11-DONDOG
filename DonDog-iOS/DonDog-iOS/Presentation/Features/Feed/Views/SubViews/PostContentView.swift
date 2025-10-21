@@ -80,8 +80,7 @@ struct PostContentView: View {
                 }
                 .padding(.vertical, 8)
                 
-                // TODO: FeedView에서 프레임까지 완성된 StickerImage UIImage로 받아와서 띄우기
-                Image(uiImage: viewModel.frontImage)
+                Image(uiImage: viewModel.borderedSticker ?? UIImage())
                     .resizable()
                     .scaledToFit()
                     .frame(width: 90, height: 120)
@@ -93,6 +92,7 @@ struct PostContentView: View {
                     CommentView(comment: comment, viewModel: viewModel)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 8)
+                        .contentShape(Rectangle())
                         .contextMenu {
                             Button(role: .destructive) {
                                 viewModel.commentToDelete = comment

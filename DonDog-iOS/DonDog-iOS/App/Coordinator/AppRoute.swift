@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum AppRoute: Hashable {
     case welcome
@@ -15,7 +16,7 @@ enum AppRoute: Hashable {
     case invite
     case camera
     case feed
-    case post(postId: String, roomId: String)
+    case post(postId: String, roomId: String, borderedSticker: UIImage)
     case setting
     case editprofile
     case archive(roomId: String)

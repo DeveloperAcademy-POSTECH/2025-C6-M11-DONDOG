@@ -32,6 +32,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     
     @Published var stickerImage: UIImage?
     @Published var sticker: UIImage?
+    @Published var myNickname: String = ""
     private var mask: UIImage?
     @Published var frame: UIImage?
     @Published var borderedStickers: [String: UIImage] = [:]
@@ -108,6 +109,12 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 print("recentPostId 없음")
                 return
             }
+            
+            DispatchQueue.main.async {
+                        if let name = data["name"] as? String {
+                            self.myNickname = name
+                        }
+                    }
 
             self.photoSaveService.getCurrentUserRoomId { result in
                 switch result {
@@ -350,19 +357,18 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     // MARK: - CaptionViewModelDelegate
-//    func didUploadPost() {
-//        print("✅ 게시물 업로드 완료 - FeedView 새로고침")
-//        loadTodayPosts()
-//        getStickerData()
-//    }
-//    
+
     func didUploadPost() {
         print("✅ 게시물 업로드 완료 - FeedView 새로고침")
         // ⚠️ 여기서 loadTodayPosts() 호출하지 말고, 타이밍 조절을 위해 약간 딜레이
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             self?.loadTodayPosts()
         }
-        getStickerData()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.getStickerData()
+                print("🔄 새 게시물로 스티커 데이터 갱신")
+            }
     }
     
     func loadRoomPosts() {

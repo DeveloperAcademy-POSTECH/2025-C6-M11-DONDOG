@@ -165,4 +165,3 @@ struct PostView: View {
         })
     }
 }
-

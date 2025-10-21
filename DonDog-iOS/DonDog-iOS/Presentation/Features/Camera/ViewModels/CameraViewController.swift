@@ -251,7 +251,7 @@ class CustomCameraViewController: UIViewController {
         paragraphStyle.alignment = .center
         
         let firstLine = NSAttributedString(
-            string: "STEP 1. 셀카 찍기\n",
+            string: "STEP 1. 셀카 찍기📸\n",
             attributes: [
                 .font: UIFont(name: FontName.pretendardBold.rawValue, size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .bold),
                 .foregroundColor: Color.ddPrimaryBlue.uiColor,
@@ -292,7 +292,7 @@ class CustomCameraViewController: UIViewController {
         backParagraphStyle.alignment = .center
         
         let backFirstLine = NSAttributedString(
-            string: "STEP 2. 배경 찍기\n",
+            string: "STEP 2. 배경 찍기📸\n",
             attributes: [
                 .font: UIFont(name: FontName.pretendardBold.rawValue, size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .bold),
                 .foregroundColor: Color.ddPrimaryBlue.uiColor,

@@ -86,11 +86,6 @@ struct CaptionView: View {
                 .disabled(viewModel.isUploading)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 8)
-//                .onChange(of: viewModel.isUploading) { oldValue, newValue in
-//                    if newValue == false{
-//                        onUploadComplete()
-//                    }
-//                }
             }
             //MARK: -- 캡션 남길 때
             if isShowCaptionEditor {
@@ -125,27 +120,4 @@ struct CaptionView: View {
             }.ignoresSafeArea()
         }
     }
-    
-    private func polaroidView(image: UIImage, label: String, isFlipped: Bool) -> some View {
-        VStack(spacing: 0) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .frame(height: 300)
-                .padding(12)
-                .background(Color.white)
-            VStack {
-                Text(label)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-            .frame(width: 204, height: 40)
-            .background(Color.white)
-        }
-    }
-}
-
-#Preview {
-    CaptionView(viewModel: CaptionViewModel(frontImage: UIImage(named: "test1"), backImage: UIImage(named: "test2")), onCancel: {}, onUploadComplete: {})
-        .ignoresSafeArea(.keyboard)
 }

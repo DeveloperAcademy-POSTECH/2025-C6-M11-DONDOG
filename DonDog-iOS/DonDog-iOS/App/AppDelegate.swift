@@ -23,6 +23,7 @@ class YourAppCheckProviderFactory: NSObject, AppCheckProviderFactory {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
+    var initialDeepLink: String?
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -53,6 +54,15 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                     }
                 }
             }
+        
+        // 앱이 종료된 상태에서 푸시를 탭하여 실행한 경우 딥링크를 저장
+        if let userInfo = launchOptions?[.remoteNotification] as? [AnyHashable: Any] {
+                if let link = userInfo["link"] as? String {
+                    print("앱 실행 시 딥링크 처리: \(userInfo)")
+                    self.initialDeepLink = link
+                }
+        }
+        
         return true
     }
     
@@ -90,13 +100,21 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         print("APNs 등록 실패: \(error.localizedDescription)")
     }
     
-    // Handle custom URL scheme for reCAPTCHA callback
+    // Handle custom URL scheme for reCAPTCHA callback & deeplinks
     func application(_ app: UIApplication,
                      open url: URL,
                      options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        // Firebase Auth (reCAPTCHA)
         if Auth.auth().canHandle(url) {
             return true
         }
+        
+        // Custom URL Scheme (deeplink)
+        if let scheme = url.scheme, scheme == "dondog" {
+            NotificationCenter.default.post(name: .openDeepLink, object: url.absoluteString)
+            return true
+        }
+        
         return false
     }
     
@@ -121,8 +139,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
         let userInfo = response.notification.request.content.userInfo
         print("tapped notification: \(userInfo)")
-        if let deeplink = userInfo["deeplink"] as? String {
-            NotificationCenter.default.post(name: .openDeepLink, object: deeplink)
+        if let link = userInfo["link"] as? String {
+            NotificationCenter.default.post(name: .openDeepLink, object: link)
         }
         completionHandler()
     }

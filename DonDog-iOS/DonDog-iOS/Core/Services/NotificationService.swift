@@ -7,6 +7,7 @@
 
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseMessaging
 
 final class NotificationService {
     static let shared = NotificationService()
@@ -21,5 +22,40 @@ final class NotificationService {
             .collection("fcmTokens")
             .document(token)
             .setData(["updatedAt": FieldValue.serverTimestamp()], merge: true)
+    }
+    
+    // 현재 사용자 로그아웃 또는 회원 탈퇴 시 토큰 삭제
+    func deleteFCMToken(completion: ((Error?) -> Void)? = nil) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion?(nil)
+            return
+        }
+        
+        Messaging.messaging().token { token, error in
+            if let error = error {
+                print("FCM 토큰 가져오기 실패: \(error)")
+                completion?(error)
+                return
+            }
+            
+            guard let token = token else {
+                completion?(nil)
+                return
+            }
+            
+            Firestore.firestore()
+                .collection("Users")
+                .document(uid)
+                .collection("fcmTokens")
+                .document(token)
+                .delete { error in
+                    if let error = error {
+                        print("Firestore 토큰 삭제 실패: \(error)")
+                    } else {
+                        print("Firestore에서 FCM 토큰 삭제 완료")
+                    }
+                    completion?(error)
+                }
+        }
     }
 }

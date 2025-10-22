@@ -21,18 +21,17 @@ final class PostViewModel: ObservableObject {
 
     @Published var uid: String = ""
     @Published var currentUser: String = ""
+    @Published var frontURL: URL?
+    @Published var backURL: URL?
     @Published var authorName: String = ""
     @Published var createdAt: Date = Date()
     @Published var caption: String?
-    @Published var stickerImage: UIImage = UIImage()
+    @Published var decoratedSticker: UIImage = UIImage()
     @Published var comments: [Comment] = []
+    
     @Published var showDeleteConfirmAlert = false
     @Published var showUnauthorizedAlert = false
     @Published var commentToDelete: Comment? = nil
-
-    private var stickerURL: URL?
-    @Published var frontURL: URL?
-    @Published var backURL: URL?
     
     init(postId: String, roomId: String) {
         self.postId = postId
@@ -45,6 +44,60 @@ final class PostViewModel: ObservableObject {
         Task {
             await self.fetchPostData()
             await self.fetchComments()
+        }
+    }
+    
+    func getStickerData() {
+        postRef.getDocument { snapshot, error in
+            if let error = error {
+                print("sticker로 쓸 postId 문서 조회 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            guard
+                let postData = snapshot?.data(),
+                let stickerPostId = postData["stickerPostId"] as? String
+            else {
+                print("stickerPostId 없음")
+                return
+            }
+            
+            // stickerPostId를 이용해 sticker용 post 문서 접근
+            let stickerPostRef = self.db
+                .collection("Rooms")
+                .document(self.roomId)
+                .collection("posts")
+                .document(stickerPostId)
+            
+            stickerPostRef.getDocument { snapshot, error in
+                if let error = error {
+                    print("sticker용 문서 조회 실패: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard
+                    let postData = snapshot?.data(),
+                    let imageUrlString = postData["frontImageURL"] as? String
+                else {
+                    print("frontImageURL 없음")
+                    return
+                }
+                
+                PhotoSaveService.shared.downloadImage(from: imageUrlString) { [weak self] result in
+                    switch result {
+                    case .success(let image):
+                        DispatchQueue.main.async {
+                            self?.decoratedSticker = image
+                            print("recentSticker 이미지 로드 성공")
+                            
+//                            self?.makeStickerAndBordered(from: image)
+//                            self?.emotion = postData["stickerType"] as? String ?? "null"
+                        }
+                    case .failure(let error):
+                        print("이미지 다운로드 실패: \(error.localizedDescription)")
+                    }
+                }
+            }
         }
     }
     
@@ -90,12 +143,12 @@ final class PostViewModel: ObservableObject {
     }
 
     private func loadImages() async {
-        async let sticker = stickerURL != nil ? loadImage(from: stickerURL!) : nil
+//        async let sticker = stickerURL != nil ? loadImage(from: stickerURL!) : nil
 
-        let stickerImage = await sticker
+//        let stickerImage = await sticker
 
         await MainActor.run {
-            if let stickerImage = stickerImage { self.stickerImage = stickerImage }
+//            if let stickerImage = stickerImage { self.stickerImage = stickerImage }
         }
     }
 

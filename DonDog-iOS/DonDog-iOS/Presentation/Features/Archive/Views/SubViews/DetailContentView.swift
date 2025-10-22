@@ -37,10 +37,12 @@ struct DetailContentView: View {
                 }.padding(.vertical, 8)
                 
                 if let sticker = stickerViewModel.borderedStickers[post.id] {
-                    Image(uiImage: sticker)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 110, height: 138)
+                    ZStack{
+                        Image(uiImage: sticker)
+                            .resizable()
+                            .frame(width: 110, height: 138)
+                        Image(stickerDecoString)
+                    }.offset(x: 16, y: -36)
                 }
             }
             .background(.ddWhite)
@@ -59,4 +61,11 @@ struct DetailContentView: View {
             )
         }
     }
+    
+    private var stickerDecoString: String {
+        guard let stickerEmotion = StickerEmotion(rawValue: stickerViewModel.emotions[post.id] ?? "") else {
+                return ""
+            }
+            return stickerEmotion.stickerDecoString
+        }
 }

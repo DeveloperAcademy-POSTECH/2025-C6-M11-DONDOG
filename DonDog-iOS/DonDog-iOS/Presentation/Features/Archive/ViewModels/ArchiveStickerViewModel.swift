@@ -18,7 +18,6 @@ final class ArchiveStickerViewModel: ObservableObject {
     @Published var emotions: [String: String] = [:]
     
     @Published var sticker: UIImage?
-    @Published var emotion: String = "null"
     
     private let db = Firestore.firestore()
     private let imageUtils = ImageUtils()
@@ -55,7 +54,7 @@ final class ArchiveStickerViewModel: ObservableObject {
                 }
                 guard
                     let postData = postSnapshot?.data(),
-                    let emotion = postData["stickerType"] as? String, !emotion.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, emotion.lowercased() != "null"
+                    let emotion = postData["stickerType"] as? String
                 else {
                     print("현재 postId \(postId)에 유효한 stickerType 없음")
                     return
@@ -69,6 +68,7 @@ final class ArchiveStickerViewModel: ObservableObject {
                                 print("스티커 생성 실패")
                                 return
                             }
+                            
                             let borderedSticker = stickerOnly.addBorder(
                                 thickness: 50,
                                 color: self.borderColor(for: emotion)
@@ -82,24 +82,6 @@ final class ArchiveStickerViewModel: ObservableObject {
                         print("스티커 이미지 다운로드 실패:", error.localizedDescription)
                     }
                 }
-            }
-        }
-    }
-    
-    func makeStickerAndBordered(from image: UIImage) {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self = self else { return }
-            
-            let maskImage = self.imageUtils.makeMask(from: image)
-            
-            guard let stickerOnly = self.imageUtils.makeSticker(with: image) else {
-                print("스티커 생성 실패")
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self.mask = maskImage
-                self.sticker = stickerOnly
             }
         }
     }

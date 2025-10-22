@@ -119,7 +119,7 @@ struct PostView: View {
                             }
                         }
                         
-                        Image(uiImage: viewModel.stickerImage)
+                        Image(uiImage: viewModel.decoratedSticker)
                             .resizable()
                             .frame(width: 76, height: 94)
                             .padding(.top, 28)

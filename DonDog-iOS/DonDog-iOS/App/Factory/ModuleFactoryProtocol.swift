@@ -69,6 +69,13 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func makePostView(with postId: String, in roomId: String) -> PostView {
+        // 방어: 빈 값이면 안전하게 빈 화면 반환 (디버그에선 경고)
+        guard !postId.isEmpty, !roomId.isEmpty else {
+            assertionFailure("makePostView called with empty postId or roomId")
+            // 최소한 앱이 죽지 않도록 빈 뷰 반환
+            let vm = PostViewModel(postId: "", roomId: "")
+            return PostView(viewModel: vm)
+        }
         let viewModel = PostViewModel(postId: postId, roomId: roomId)
         let view = PostView(viewModel: viewModel)
         return view
@@ -101,3 +108,4 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
 }
+

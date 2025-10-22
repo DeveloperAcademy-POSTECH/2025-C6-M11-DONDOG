@@ -157,6 +157,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                                     self?.stickerImage = image
                                     print("recentSticker 이미지 로드 성공")
                                     
+                                    self?.makeStickerAndBordered(from: image)
                                     self?.emotion = postData["stickerType"] as? String ?? "null"
                                 }
                             case .failure(let error):
@@ -171,6 +172,35 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
         }
     }
+    
+    func makeStickerAndBordered(from image: UIImage) {
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                guard let self = self else { return }
+                
+                let maskImage = self.imageUtils.makeMask(from: image)
+                
+                guard let stickerOnly = self.imageUtils.makeSticker(with: image) else {
+                    print("스티커 생성 실패")
+                    return
+                }
+                
+                let emotions = ["사랑해", "멋지다", "뭐야?", "화나", "슬퍼"]
+                var borderedDict: [String: UIImage] = [:]
+                
+                for emotion in emotions {
+                    let color = self.borderColor(for: emotion)
+                    if let bordered = stickerOnly.addBorder(thickness: 50, color: color) {
+                        borderedDict[emotion] = bordered
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    self.mask = maskImage
+                    self.sticker = stickerOnly
+                    self.borderedStickers = borderedDict
+                }
+            }
+        }
         
     func sticker(for emotion: String) -> UIImage? {
             return borderedStickers[emotion] ?? sticker

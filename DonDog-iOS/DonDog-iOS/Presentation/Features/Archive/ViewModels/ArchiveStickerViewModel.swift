@@ -28,10 +28,19 @@ final class ArchiveStickerViewModel: ObservableObject {
     }
     
     func getStickerData(stickerPostId: String, for postId: String) {
-        let trimmed = stickerPostId.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, trimmed.lowercased() != "null" else { return }
+        guard !roomId.isEmpty else {
+            assertionFailure("ArchiveStickerViewModel: roomId is empty")
+            return
+        }
+        guard !postId.isEmpty else {
+            assertionFailure("ArchiveStickerViewModel: postId is empty")
+            return
+        }
+        guard !stickerPostId.isEmpty else {
+            return
+        }
         
-        let stickerPostRef = db.collection("Rooms").document(roomId).collection("posts").document(trimmed)
+        let stickerPostRef = db.collection("Rooms").document(roomId).collection("posts").document(stickerPostId)
         stickerPostRef.getDocument { [weak self] stickerSnapshot, error in
             guard let self = self else { return }
             if let error = error {
@@ -42,7 +51,7 @@ final class ArchiveStickerViewModel: ObservableObject {
                 let stickerData = stickerSnapshot?.data(),
                 let imageUrlString = stickerData["frontImageURL"] as? String
             else {
-                print("스티커 frontImageURL 없음 for stickerPostId \(trimmed)")
+                print("스티커 frontImageURL 없음")
                 return
             }
             
@@ -102,5 +111,5 @@ final class ArchiveStickerViewModel: ObservableObject {
             return .ddGray700
         }
     }
-    
 }
+

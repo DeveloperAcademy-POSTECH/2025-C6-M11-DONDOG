@@ -118,11 +118,6 @@ struct PostView: View {
                                 .padding(.horizontal, 20)
                             }
                         }
-                        
-                        Image(uiImage: viewModel.decoratedSticker)
-                            .resizable()
-                            .frame(width: 76, height: 94)
-                            .padding(.top, 28)
                     }
                 }
             }

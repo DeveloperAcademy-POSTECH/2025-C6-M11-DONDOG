@@ -21,6 +21,9 @@ final class SettingViewModel: ObservableObject {
         
         do {
             try Auth.auth().signOut()
+            Task { @MainActor in
+                ConnectStateService.shared.reset()
+            }
             // 메인에서 세션 리셋 + 캐시 제거
             await MainActor.run {
                 ModuleFactory.shared.resetSession()

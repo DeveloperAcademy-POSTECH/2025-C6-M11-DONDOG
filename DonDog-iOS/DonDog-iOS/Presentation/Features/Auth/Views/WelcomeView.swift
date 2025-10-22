@@ -28,6 +28,9 @@ struct WelcomeView: View {
                 Spacer()
                 
                 CustomButton(title: "전화번호로 시작하기", isEnable: true, action: {
+                    Task { @MainActor in
+                        ConnectStateService.shared.reset()
+                    }
                     coordinator.authShowWithdraw = false
                     coordinator.push(.auth)
                 }

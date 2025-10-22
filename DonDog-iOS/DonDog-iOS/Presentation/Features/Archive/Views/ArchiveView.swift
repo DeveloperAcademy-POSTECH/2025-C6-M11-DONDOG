@@ -133,7 +133,7 @@ struct ArchiveView: View {
         }
         .padding(.horizontal, 20)
         .background(.ddWhite)
-        .navigationBarBackButtonHidden(true)
+        .backHiddenSwipeEnabled()
     }
     
     // 일자별 기록으로 이동, 버튼 내부 타입 체커 이슈로 함수로 분리

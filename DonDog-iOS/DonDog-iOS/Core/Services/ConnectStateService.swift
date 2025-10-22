@@ -15,4 +15,9 @@ final class ConnectStateService: ObservableObject {
     
     @Published var isConnected: Bool = false
     @Published var roomId: String? = nil
+    
+    func reset() {
+        self.isConnected = false
+        self.roomId = nil
+    }
 }

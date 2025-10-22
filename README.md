@@ -27,8 +27,16 @@
 
 ## 📱 소개
 
-> 프로젝트의 주요 목적과 사용자가 얻게 될 경험을 설명해주세요.
+> 가족들이 셀카 한 장으로 더 자연스럽게 연락하고, 즐겁게 소통할 수 있는 앱.
 
+팀원들 모두 부모님과 떨어져 지내는 20대입니다. 
+바쁜 일상 속에서 문득 부모님께 연락을 드릴 때, '지금 연락드려도 괜찮을까?', '이런 사소한 일까지 말씀드려도 될까?'와 같은 **고민들** 때문에 연락을 망설이게 될 때가 많습니다.
+결국 "잘 지내시죠?" 같은 상투적인 말만 오가고, 일상의 소소한 교류는 점점 줄어들고 있었습니다. 저희는 이처럼 작은 것이라도 부담 없이 나누기 어려운 상황을 개선하고 싶었습니다.
+그래서 이러한 상황을 자녀와 부모님 모두 익숙한 ‘사진’이라는 매체를 통해 개선해보려 합니다
+- **자녀는 용건 없이도 부담 없이 자신의 일상을 공유하고**
+- **부모님은 보고 싶은 자녀의 모습을 사진으로 바로 확인하며 안심하고**
+- **자녀 또한 부모님의 사진을 보며 멀리서도 서로의 평안을 나눌 수 있도록 말이에요**
+  
 [🔗 테스트플라이드(빌드 4) 링크](https://testflight.apple.com/join/VUU891vx )
 
 
@@ -49,8 +57,6 @@
 - 게시물 업로드하고 소통하기
 - 상대방이 올린 사진에 댓글, 스티커로 반응하기
 - 지난 게시물 둘러보기
-
-> 필요시 이미지, GIF, 혹은 링크 삽입
 
 
 ## 🖼 화면 구성 및 시연
@@ -88,8 +94,12 @@
 
 | 이름 | 역할 | GitHub |
 |------|------|--------|
-| 홍길동 | iOS Developer | [@hong](https://github.com/hong) |
-| 김개발 | PM | [@devkim](https://github.com/devkim) |
+| 체리 | Desinger | [@zz6cherry](https://github.com/zz6cherry) |
+| 앤지 | Desinger | [@legnasy](https://github.com/legnasy) |
+| 현 | iOS Developer | [@nuyhhyun](https://github.com/nuyhhyun) |
+| 유우 | iOS Developer | [@ohcuy](https://github.com/ohcuy) |
+| 이토 | iOS Developer | [@changjaemun](https://github.com/changjaemun) |
+| 주디제이 | iOS Developer | [@JUDYLEE-cloud](https://github.com/JUDYLEE-cloud) |
 
 
 ## 🔖 브랜치 전략

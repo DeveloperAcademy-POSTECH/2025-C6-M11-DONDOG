@@ -79,7 +79,7 @@ struct PostContentView: View {
                 }
                 .padding(.vertical, 8)
                 
-                Image(uiImage: viewModel.borderedSticker ?? UIImage())
+                Image(uiImage: viewModel.stickerImage)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 90, height: 120)

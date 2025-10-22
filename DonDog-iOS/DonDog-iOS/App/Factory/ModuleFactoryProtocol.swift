@@ -16,7 +16,7 @@ protocol ModuleFactoryProtocol {
     func makeInviteView(showSentHint: Bool) -> InviteView
     func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
     func makeFeedView() -> FeedView
-    func makePostView(with postId: String, in roomId: String, for borderedSticker: UIImage) -> PostView
+    func makePostView(with postId: String, in roomId: String) -> PostView
     func makeSettingView() -> SettingView
     func makeEditProfileView() -> EditProfileView
     func makeArchiveView(in roomId: String) -> ArchiveView
@@ -68,8 +68,8 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makePostView(with postId: String, in roomId: String, for borderedSticker: UIImage) -> PostView {
-        let viewModel = PostViewModel(postId: postId, roomId: roomId, borderedSticker: borderedSticker)
+    func makePostView(with postId: String, in roomId: String) -> PostView {
+        let viewModel = PostViewModel(postId: postId, roomId: roomId)
         let view = PostView(viewModel: viewModel)
         return view
     }

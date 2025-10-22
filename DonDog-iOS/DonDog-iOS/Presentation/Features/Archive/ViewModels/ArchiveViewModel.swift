@@ -238,4 +238,3 @@ final class ArchiveViewModel: ObservableObject {
         }
     }
 }
-

@@ -133,7 +133,7 @@
 		8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeService.swift; sourceTree = "<group>"; };
 		8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorView.swift; sourceTree = "<group>"; };
 		8BFC73602EA5D18C00B54F03 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
-		8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStrokeUtils.swift; sourceTree = "<group>"; };
 		8CF9C7502EA129D400EB944A /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		8CF9C7A22EA148BC00EB944A /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
@@ -151,7 +151,6 @@
 		CA9C13DE2EA4855100519748 /* Sticker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sticker.swift; sourceTree = "<group>"; };
 		CA9C13E02EA4879400519748 /* DetailCommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCommentsView.swift; sourceTree = "<group>"; };
 		CA9C13E22EA48A5500519748 /* ArchivePostContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivePostContainer.swift; sourceTree = "<group>"; };
-		CA9C13FB2EA5C26A00519748 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA9C14022EA5CD8C00519748 /* PostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostService.swift; sourceTree = "<group>"; };
 		CA9C140B2EA60BA000519748 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
@@ -365,8 +364,6 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
-				CA9C13FB2EA5C26A00519748 /* DonDog-iOS.app */,
-				8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};

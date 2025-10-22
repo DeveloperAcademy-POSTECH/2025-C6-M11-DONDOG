@@ -24,8 +24,6 @@ final class PostViewModel: ObservableObject {
     @Published var currentUser: String = ""
     @Published var authorName: String = ""
     @Published var createdAt: Date = Date()
-    @Published var frontImage: UIImage = UIImage()
-    @Published var backImage: UIImage = UIImage()
     @Published var caption: String?
     @Published var stickerImage: UIImage = UIImage()
     @Published var comments: [Comment] = []
@@ -34,8 +32,8 @@ final class PostViewModel: ObservableObject {
     @Published var commentToDelete: Comment? = nil
 
     private var stickerURL: URL?
-    private var frontURL: URL?
-    private var backURL: URL?
+    @Published var frontURL: URL?
+    @Published var backURL: URL?
     
     init(postId: String, roomId: String, borderedSticker: UIImage) {
         self.postId = postId
@@ -95,15 +93,11 @@ final class PostViewModel: ObservableObject {
 
     private func loadImages() async {
         async let sticker = stickerURL != nil ? loadImage(from: stickerURL!) : nil
-        async let front = frontURL != nil ? loadImage(from: frontURL!) : nil
-        async let back = backURL != nil ? loadImage(from: backURL!) : nil
 
-        let (stickerImage, frontImage, backImage) = await (sticker, front, back)
+        let stickerImage = await sticker
 
         await MainActor.run {
             if let stickerImage = stickerImage { self.stickerImage = stickerImage }
-            if let frontImage = frontImage { self.frontImage = frontImage }
-            if let backImage = backImage { self.backImage = backImage }
         }
     }
 
@@ -118,18 +112,33 @@ final class PostViewModel: ObservableObject {
     }
     
     func saveComment(of text: String) async {
-        do {
-            let commentData: [String: Any] = [
-                "uid": currentUser,
-                "text": text,
-                "createdAt": Timestamp(date: Date())
-            ]
-            
-            try await commentRef.collection("comments").addDocument(data: commentData)
+        let tempComment = Comment(
+            uid: currentUser,
+            text: text,
+            createdAt: Date()
+        )
 
-            await fetchComments()
-        } catch {
-            print("댓글 업로드 실패: \(error.localizedDescription)")
+        await MainActor.run {
+            comments.append(tempComment)
+        }
+
+        Task {
+            do {
+                let commentData: [String: Any] = [
+                    "uid": currentUser,
+                    "text": text,
+                    "createdAt": Timestamp(date: Date())
+                ]
+                try await commentRef.collection("comments").addDocument(data: commentData)
+
+                await fetchComments()
+            } catch {
+                print("댓글 업로드 실패: \(error.localizedDescription)")
+
+                await MainActor.run {
+                    comments.removeAll { $0.id == tempComment.id }
+                }
+            }
         }
     }
     
@@ -145,12 +154,19 @@ final class PostViewModel: ObservableObject {
         }
     }
     
-    func deleteComment(of comment: Comment) async {
-        do {
-            try await postService.deleteComment(comment, postId: self.postId, in: self.roomId)
-            await fetchComments()
-        } catch {
-            print("댓글 삭제 실패: ", error.localizedDescription)
+    func deleteComment(of comment: Comment) {
+        comments.removeAll { $0.id == comment.id }
+
+        Task {
+            do {
+                try await postService.deleteComment(comment, postId: self.postId, in: self.roomId)
+                await fetchComments()
+            } catch {
+                print("댓글 삭제 실패: ", error.localizedDescription)
+                await MainActor.run {
+                    comments.append(comment)
+                }
+            }
         }
     }
     

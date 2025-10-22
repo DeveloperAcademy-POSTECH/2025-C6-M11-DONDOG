@@ -14,7 +14,7 @@ struct CommentView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 20) {
+            HStack(spacing: 4) {
                 Text(authorName)
                     .font(.system(size: 14))
                 Text(DataUtils.relativeTimeString(from: comment.createdAt))

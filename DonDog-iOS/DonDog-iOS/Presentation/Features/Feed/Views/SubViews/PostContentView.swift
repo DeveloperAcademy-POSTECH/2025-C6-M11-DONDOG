@@ -27,36 +27,52 @@ struct PostContentView: View {
                     Spacer()
                     
                     VStack(alignment: .center) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 348, height: 464)
-                            .cornerRadius(12)
-                            .padding(.vertical, 8)
-                            .onTapGesture {
-                                showingFront.toggle()
-                                image = showingFront ? (viewModel.frontImage) : (viewModel.backImage)
-                            }
-                            .onReceive(viewModel.$frontImage) { newFront in
-                                if showingFront { image = newFront }
-                            }
-                            .onReceive(viewModel.$backImage) { newBack in
-                                if !showingFront { image = newBack }
-                            }
-                        
-                        Text(viewModel.caption ?? "")
-                            .font(.polaroidCaptionRegular20)
-                            .padding(.top, 8)
-                        
-                        HStack(spacing: 4) {
-                            Text(viewModel.authorName)
-                                .font(.captionRegular13)
-                                .foregroundColor(Color.ddGray600)
+                        ZStack {
+                            AsyncPhoto(url: viewModel.frontURL ?? URL(fileURLWithPath: ""))
+                                .opacity(showingFront ? 1.0 : 0.0)
                             
-                            Text(DataUtils.relativeTimeString(from: viewModel.createdAt))
-                                .font(.captionRegular13)
-                                .foregroundColor(Color.ddGray500)
+                            AsyncPhoto(url: viewModel.backURL ?? URL(fileURLWithPath: ""))
+                                .opacity(showingFront ? 0.0 : 1.0)
                         }
+                        .cornerRadius(8)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 20)
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                showingFront.toggle()
+                            }
+                        }
+                        
+                        VStack {
+                            VStack {
+                                if let cap = viewModel.caption, !cap.isEmpty {
+                                    Text(cap)
+                                        .font(.polaroidCaptionRegular20)
+                                        .foregroundStyle(.ddGray1000)
+                                } else {
+                                    Text(" ")
+                                        .hidden()
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 27) // 캡션이 없어도 높이 고정되게
+                            
+                            HStack(spacing: 4) {
+                                if !viewModel.authorName.isEmpty {
+                                    Text(viewModel.authorName)
+                                        .foregroundStyle(.ddGray600)
+                                } else {
+                                    Text("익명")
+                                        .foregroundStyle(.ddGray600)
+                                }
+                                
+                                Text(DataUtils.relativeTimeString(from: viewModel.createdAt))
+                                    .foregroundStyle(.ddGray500)
+                            }
+                            .font(.captionRegular13)
+                        }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 20)
                     }
                     
                     Spacer()
@@ -74,7 +90,6 @@ struct PostContentView: View {
                 ForEach(viewModel.comments) { comment in
                     CommentView(comment: comment, viewModel: viewModel)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 20)
                         .padding(.vertical, 8)
                         .contentShape(Rectangle())
                         .contextMenu {
@@ -85,6 +100,41 @@ struct PostContentView: View {
                                 Image(systemName: "trash")
                             }
                         }
+                }
+            }
+        }
+    }
+    
+    // 추후 분리
+    private struct AsyncPhoto: View {
+        let url: URL
+        var body: some View {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let img):
+                    img
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(3.0/4.0, contentMode: .fit)
+                        .clipped()
+                        .cornerRadius(10)
+                        .transition(.opacity)
+                case .failure:
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.ddGray600)
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(3.0/4.0, contentMode: .fit)
+                        .overlay(Image(systemName: "photo").opacity(0.7))
+                case .empty:
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.ddGray600.opacity(0.2))
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(3.0/4.0, contentMode: .fit)
+                @unknown default:
+                    Color.clear
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(3.0/4.0, contentMode: .fit)
                 }
             }
         }

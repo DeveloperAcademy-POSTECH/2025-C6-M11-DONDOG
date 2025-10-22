@@ -22,6 +22,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var todayBackImage: UIImage?
     @Published var isLoading = false
     @Published var isUploading = false
+    @Published var isAfterUpload = false
     @Published var uploadStatus: String = ""
     @Published var currentRoomId: String = ""
     @Published var selectedPostId: String = "" {
@@ -111,11 +112,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
             
             DispatchQueue.main.async {
-                        if let name = data["name"] as? String {
-                            self.myNickname = name
-                        }
-                    }
-
+                if let name = data["name"] as? String {
+                    self.myNickname = name
+                }
+            }
+            
             self.photoSaveService.getCurrentUserRoomId { result in
                 switch result {
                 case .success(let roomId):
@@ -141,7 +142,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             print("sticker로 쓸 postId 문서 조회 실패: \(error.localizedDescription)")
                             return
                         }
-
+                        
                         guard
                             let postData = snapshot?.data(),
                             let imageUrlString = postData["frontImageURL"] as? String
@@ -149,7 +150,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             print("frontImageURL 없음")
                             return
                         }
-
+                        
                         PhotoSaveService.shared.downloadImage(from: imageUrlString) { [weak self] result in
                             switch result {
                             case .success(let image):
@@ -165,7 +166,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             }
                         }
                     }
-
+                    
                 case .failure(let error):
                     print("roomId 불러오기 실패: \(error.localizedDescription)")
                 }
@@ -174,37 +175,37 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func makeStickerAndBordered(from image: UIImage) {
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                guard let self = self else { return }
-                
-                let maskImage = self.imageUtils.makeMask(from: image)
-                
-                guard let stickerOnly = self.imageUtils.makeSticker(with: image) else {
-                    print("스티커 생성 실패")
-                    return
-                }
-                
-                let emotions = ["사랑해", "멋지다", "뭐야?", "화나", "슬퍼"]
-                var borderedDict: [String: UIImage] = [:]
-                
-                for emotion in emotions {
-                    let color = self.borderColor(for: emotion)
-                    if let bordered = stickerOnly.addBorder(thickness: 50, color: color) {
-                        borderedDict[emotion] = bordered
-                    }
-                }
-                
-                DispatchQueue.main.async {
-                    self.mask = maskImage
-                    self.sticker = stickerOnly
-                    self.borderedStickers = borderedDict
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            
+            let maskImage = self.imageUtils.makeMask(from: image)
+            
+            guard let stickerOnly = self.imageUtils.makeSticker(with: image) else {
+                print("스티커 생성 실패")
+                return
+            }
+            
+            let emotions = ["사랑해", "멋지다", "뭐야?", "화나", "슬퍼"]
+            var borderedDict: [String: UIImage] = [:]
+            
+            for emotion in emotions {
+                let color = self.borderColor(for: emotion)
+                if let bordered = stickerOnly.addBorder(thickness: 50, color: color) {
+                    borderedDict[emotion] = bordered
                 }
             }
+            
+            DispatchQueue.main.async {
+                self.mask = maskImage
+                self.sticker = stickerOnly
+                self.borderedStickers = borderedDict
+            }
         }
-        
+    }
+    
     func sticker(for emotion: String) -> UIImage? {
-            return borderedStickers[emotion] ?? sticker
-        }
+        return borderedStickers[emotion] ?? sticker
+    }
     
     
     func updateStickerData() {
@@ -222,7 +223,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 print("recentPostId 가져오기 실패")
                 return
             }
-
+            
             let postRef = self.db.collection("Rooms")
                 .document(self.currentRoomId)
                 .collection("posts")
@@ -357,18 +358,21 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     // MARK: - CaptionViewModelDelegate
-
+    
     func didUploadPost() {
         print("✅ 게시물 업로드 완료 - FeedView 새로고침")
-        // ⚠️ 여기서 loadTodayPosts() 호출하지 말고, 타이밍 조절을 위해 약간 딜레이
+        
+        isAfterUpload = true
+        
+        // loadTodayPosts() 호출하지 말고, 타이밍 조절을 위해 약간 딜레이
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             self?.loadTodayPosts()
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                self?.getStickerData()
-                print("🔄 새 게시물로 스티커 데이터 갱신")
-            }
+            self?.getStickerData()
+            print("🔄 새 게시물로 스티커 데이터 갱신")
+        }
     }
     
     func loadRoomPosts() {
@@ -391,49 +395,10 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
         }
     }
-
-    
-//    func loadTodayPosts() {
-//        isLoading = true
-//        photoSaveService.getCurrentUserRoomId { [weak self] result in
-//            switch result {
-//            case .success(let roomId):
-//                self?.photoSaveService.fetchTodayRoomPosts(roomId: roomId) { result in
-//                    DispatchQueue.main.async {
-//                        // ⚠️ 여기서 isLoading = false 제거!
-//                        switch result {
-//                        case .success(let todayPosts):
-//                            self?.images = todayPosts
-//                            print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
-//      
-//                            if let firstPost = todayPosts.first {
-//                                self?.selectedPostId = firstPost.postId
-//                                self?.currentPost = firstPost
-//                                self?.currentPostIndex = 0
-//                                self?.downloadAllTodayImages(posts: todayPosts, roomId: roomId)
-//                            } else {
-//                                print("📭 오늘 찍은 게시물이 없습니다")
-//                                self?.displayablePosts = []
-//                                self?.isLoading = false  // ✅ 게시물이 없을 때만 여기서 false
-//                            }
-//                        case .failure(let error):
-//                            print("오늘 posts 로드 실패: \(error.localizedDescription)")
-//                            self?.isLoading = false  // ✅ 실패 시에도 false
-//                        }
-//                    }
-//                }
-//            case .failure(let error):
-//                print("roomId 가져오기 실패: \(error.localizedDescription)")
-//                DispatchQueue.main.async {
-//                    self?.isLoading = false
-//                }
-//            }
-//        }
-//    }
     
     func loadTodayPosts() {
         isLoading = true
-        isUploading = false  // ✅ 추가: 데이터 로딩 시작하면 업로딩 상태 해제
+        isUploading = false
         photoSaveService.getCurrentUserRoomId { [weak self] result in
             switch result {
             case .success(let roomId):
@@ -443,7 +408,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                         case .success(let todayPosts):
                             self?.images = todayPosts
                             print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
-      
+                            
                             if let firstPost = todayPosts.first {
                                 self?.selectedPostId = firstPost.postId
                                 self?.currentPost = firstPost
@@ -473,7 +438,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         print("🖼️ 이미지 다운로드 시작")
         
         let group = DispatchGroup()
-
+        
         group.enter()
         photoSaveService.downloadImage(from: post.frontImageURL) { [weak self] result in
             switch result {
@@ -595,20 +560,26 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         group.notify(queue: .main) {
             let sortedPosts = tempDisplayablePosts.sorted(by: { $0.key < $1.key }).map { $0.value }
-        
             
             let finalSortedPosts = sortedPosts.sorted { post1, post2 in
-                return post1.createdAt > post2.createdAt  // ✅ 최신순만
+                return post1.createdAt > post2.createdAt  // 최신순만
             }
             
             self.displayablePosts = finalSortedPosts
             print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개")
             
-
-            self.currentPostIndex = 0
+            var firstDisplayedPostIndex = 0
+            
+            if finalSortedPosts.count > 1 && self.isAfterUpload{
+                firstDisplayedPostIndex = 1
+            } else {
+                firstDisplayedPostIndex = 0
+            }
+            
+            self.currentPostIndex = firstDisplayedPostIndex
             
             if !finalSortedPosts.isEmpty {
-                let initialPost = finalSortedPosts[0]
+                let initialPost = finalSortedPosts[firstDisplayedPostIndex]
                 self.todayFrontImage = initialPost.frontImage
                 self.todayBackImage = initialPost.backImage
                 self.currentNickname = initialPost.nickname
@@ -653,6 +624,15 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 self.isLoading = false
                 self.isUploading = false
                 print("✅ 로딩 완료!")
+                
+                if self.isAfterUpload && self.displayablePosts.count > 1 && self.currentPostIndex == 1 {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                                self.currentPostIndex = 0
+                            self.isAfterUpload = false
+                        }
+                } else {
+                    self.isAfterUpload = false
+                }
             }
         }
     }

@@ -85,7 +85,6 @@ final class AuthNumberViewModel: ObservableObject {
         Task {
             await MainActor.run {
                 AuthService.isAccountDeletionInProgress = true
-                ConnectStateService.shared.reset()
             }
             
             let success = await deleteUserDataAndAuth()
@@ -93,7 +92,6 @@ final class AuthNumberViewModel: ObservableObject {
             await MainActor.run {
                 AuthService.isAccountDeletionInProgress = false
                 if success {
-                    ConnectStateService.shared.reset()
                     self.coordinator?.replaceRoot(.welcome)
                 }
                 NotificationCenter.default.post(name: .authServiceReconfigureRouting, object: nil)

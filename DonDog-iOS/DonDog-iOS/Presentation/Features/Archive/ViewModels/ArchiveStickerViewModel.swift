@@ -18,7 +18,6 @@ final class ArchiveStickerViewModel: ObservableObject {
     @Published var emotions: [String: String] = [:]
     
     @Published var sticker: UIImage?
-    @Published var emotion: String = "null"
     
     private let db = Firestore.firestore()
     private let imageUtils = ImageUtils()
@@ -29,10 +28,19 @@ final class ArchiveStickerViewModel: ObservableObject {
     }
     
     func getStickerData(stickerPostId: String, for postId: String) {
-        let trimmed = stickerPostId.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, trimmed.lowercased() != "null" else { return }
+        guard !roomId.isEmpty else {
+            assertionFailure("ArchiveStickerViewModel: roomId is empty")
+            return
+        }
+        guard !postId.isEmpty else {
+            assertionFailure("ArchiveStickerViewModel: postId is empty")
+            return
+        }
+        guard !stickerPostId.isEmpty else {
+            return
+        }
         
-        let stickerPostRef = db.collection("Rooms").document(roomId).collection("posts").document(trimmed)
+        let stickerPostRef = db.collection("Rooms").document(roomId).collection("posts").document(stickerPostId)
         stickerPostRef.getDocument { [weak self] stickerSnapshot, error in
             guard let self = self else { return }
             if let error = error {
@@ -43,7 +51,7 @@ final class ArchiveStickerViewModel: ObservableObject {
                 let stickerData = stickerSnapshot?.data(),
                 let imageUrlString = stickerData["frontImageURL"] as? String
             else {
-                print("스티커 frontImageURL 없음 for stickerPostId \(trimmed)")
+                print("스티커 frontImageURL 없음")
                 return
             }
             
@@ -55,7 +63,7 @@ final class ArchiveStickerViewModel: ObservableObject {
                 }
                 guard
                     let postData = postSnapshot?.data(),
-                    let emotion = postData["stickerType"] as? String, !emotion.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, emotion.lowercased() != "null"
+                    let emotion = postData["stickerType"] as? String
                 else {
                     print("현재 postId \(postId)에 유효한 stickerType 없음")
                     return
@@ -69,6 +77,7 @@ final class ArchiveStickerViewModel: ObservableObject {
                                 print("스티커 생성 실패")
                                 return
                             }
+                            
                             let borderedSticker = stickerOnly.addBorder(
                                 thickness: 50,
                                 color: self.borderColor(for: emotion)
@@ -82,24 +91,6 @@ final class ArchiveStickerViewModel: ObservableObject {
                         print("스티커 이미지 다운로드 실패:", error.localizedDescription)
                     }
                 }
-            }
-        }
-    }
-    
-    func makeStickerAndBordered(from image: UIImage) {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self = self else { return }
-            
-            let maskImage = self.imageUtils.makeMask(from: image)
-            
-            guard let stickerOnly = self.imageUtils.makeSticker(with: image) else {
-                print("스티커 생성 실패")
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self.mask = maskImage
-                self.sticker = stickerOnly
             }
         }
     }
@@ -120,5 +111,5 @@ final class ArchiveStickerViewModel: ObservableObject {
             return .ddGray700
         }
     }
-    
 }
+

@@ -16,7 +16,7 @@ protocol ModuleFactoryProtocol {
     func makeInviteView(showSentHint: Bool) -> InviteView
     func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
     func makeFeedView() -> FeedView
-    func makePostView(with postId: String, in roomId: String, for borderedSticker: UIImage) -> PostView
+    func makePostView(with postId: String, in roomId: String) -> PostView
     func makeSettingView() -> SettingView
     func makeEditProfileView() -> EditProfileView
     func makeArchiveView(in roomId: String) -> ArchiveView
@@ -68,8 +68,15 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makePostView(with postId: String, in roomId: String, for borderedSticker: UIImage) -> PostView {
-        let viewModel = PostViewModel(postId: postId, roomId: roomId, borderedSticker: borderedSticker)
+    func makePostView(with postId: String, in roomId: String) -> PostView {
+        // 방어: 빈 값이면 안전하게 빈 화면 반환 (디버그에선 경고)
+        guard !postId.isEmpty, !roomId.isEmpty else {
+            assertionFailure("makePostView called with empty postId or roomId")
+            // 최소한 앱이 죽지 않도록 빈 뷰 반환
+            let vm = PostViewModel(postId: "", roomId: "")
+            return PostView(viewModel: vm)
+        }
+        let viewModel = PostViewModel(postId: postId, roomId: roomId)
         let view = PostView(viewModel: viewModel)
         return view
     }
@@ -100,3 +107,4 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
 }
+

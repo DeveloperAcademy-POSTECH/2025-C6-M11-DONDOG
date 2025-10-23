@@ -13,6 +13,7 @@ import FirebaseStorage
 enum PostServiceError: Error {
     case unauthorized
     case postNotFound
+    case invalidIdentifier
 }
 
 final class PostService {
@@ -23,6 +24,10 @@ final class PostService {
     private let storage = Storage.storage()
     
     func deletePost(postId: String, in roomId: String, by userId: String) async throws {
+        guard !postId.isEmpty, !roomId.isEmpty else {
+            throw PostServiceError.invalidIdentifier
+        }
+        
         let postRef = db.collection("Rooms").document(roomId).collection("posts").document(postId)
         
         let postDocument = try await postRef.getDocument()
@@ -63,6 +68,10 @@ final class PostService {
     }
     
     func deleteComment(_ comment: Comment, postId: String, in roomId: String) async throws {
+        guard !comment.id.isEmpty, !postId.isEmpty, !roomId.isEmpty else {
+            throw PostServiceError.invalidIdentifier
+        }
+        
         let commentRef = db.collection("Rooms")
             .document(roomId)
             .collection("comments")
@@ -73,3 +82,4 @@ final class PostService {
         try await commentRef.delete()
     }
 }
+

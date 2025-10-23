@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DetailContentView: View {
     @StateObject var stickerViewModel: ArchiveStickerViewModel
-
+    
     let post: ArchivePost
     let userNameByUid: [String: String]
     let onDelete: ((Comment) async -> Void)?
@@ -37,10 +37,13 @@ struct DetailContentView: View {
                 }.padding(.vertical, 8)
                 
                 if let sticker = stickerViewModel.borderedStickers[post.id] {
-                    Image(uiImage: sticker)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 110, height: 138)
+                    ZStack{
+                        Image(uiImage: sticker)
+                            .resizable()
+                            .frame(width: 110, height: 138)
+                        Image(stickerDecoString)
+                    }
+                    .offset(y: 5)
                 }
             }
             .background(.ddWhite)
@@ -60,5 +63,12 @@ struct DetailContentView: View {
                 onDelete: onDelete
             )
         }
+    }
+    
+    private var stickerDecoString: String {
+        guard let stickerEmotion = StickerEmotion(rawValue: stickerViewModel.emotions[post.id] ?? "") else {
+            return ""
+        }
+        return stickerEmotion.stickerDecoString
     }
 }

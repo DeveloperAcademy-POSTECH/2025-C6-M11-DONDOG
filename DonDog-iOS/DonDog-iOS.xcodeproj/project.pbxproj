@@ -49,6 +49,7 @@
 		8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */; };
 		8BFC73612EA5D18C00B54F03 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC73602EA5D18C00B54F03 /* NetworkService.swift */; };
 		8CAD89B02EA6284E004318F0 /* TextStrokeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */; };
+		8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */; };
 		8CF9C7512EA129D600EB944A /* StickerSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7502EA129D400EB944A /* StickerSheetView.swift */; };
 		8CF9C7A32EA148C100EB944A /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7A22EA148BC00EB944A /* UIImage+.swift */; };
 		A192F2B12E9E45AC00995DCC /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2B02E9E45A800995DCC /* Color+.swift */; };
@@ -133,8 +134,9 @@
 		8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeService.swift; sourceTree = "<group>"; };
 		8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorView.swift; sourceTree = "<group>"; };
 		8BFC73602EA5D18C00B54F03 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
-		8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStrokeUtils.swift; sourceTree = "<group>"; };
+		8CAD89D72EA9BFF6004318F0 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF9C7502EA129D400EB944A /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		8CF9C7A22EA148BC00EB944A /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		A192F2B02E9E45A800995DCC /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
@@ -351,6 +353,7 @@
 		CAA62D002EA1E3FD00C60E05 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */,
 				8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */,
 				CAA62CFC2EA1E3FD00C60E05 /* DataUtils.swift */,
 				CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */,
@@ -364,6 +367,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
+				8CAD89D72EA9BFF6004318F0 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -641,7 +645,7 @@
 				8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8CAD899D2EA5E1FD004318F0 /* DonDog-iOS.app */;
+			productReference = 8CAD89D72EA9BFF6004318F0 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -744,6 +748,7 @@
 				D2D16C002E9153B7008FB3E2 /* PostViewModel.swift in Sources */,
 				CA957D032E98FD0900AEAB49 /* Font+.swift in Sources */,
 				8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */,
+				8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */,
 				61C9B19E2E9BEC130007C8F4 /* ArchiveView.swift in Sources */,
 				CAA62D912EA2892000C60E05 /* ArchivePost.swift in Sources */,
 				61C9B1A42E9BFC830007C8F4 /* ArchiveDay.swift in Sources */,

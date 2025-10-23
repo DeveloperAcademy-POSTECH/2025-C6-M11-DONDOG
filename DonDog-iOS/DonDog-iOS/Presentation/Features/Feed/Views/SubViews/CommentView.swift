@@ -16,13 +16,13 @@ struct CommentView: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 4) {
                 Text(authorName)
-                    .font(.system(size: 14))
+                    .font(.captionMedium14)
                 Text(DataUtils.relativeTimeString(from: comment.createdAt))
-                    .font(.system(size: 13))
-                    .foregroundStyle(.gray)
+                    .font(.captionRegular13)
+                    .foregroundStyle(Color.ddGray600)
             }
             Text(comment.text)
-                .font(.system(size: 14))
+                .font(.captionRegular14)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 20)

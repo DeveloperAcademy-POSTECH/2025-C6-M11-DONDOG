@@ -13,40 +13,122 @@ import FirebaseStorage
 final class PostViewModel: ObservableObject {
     let postId: String
     let roomId: String
-    let borderedSticker: UIImage?
     
     private let db = Firestore.firestore()
     private let postService = PostService.shared
-    private var postRef: DocumentReference
-    private var commentRef: DocumentReference
+    private var postRef: DocumentReference?
+    private var commentRef: DocumentReference?
+    private var imageUtils = ImageUtils()
+    private var stickerPostId: String = ""
 
     @Published var uid: String = ""
     @Published var currentUser: String = ""
+    @Published var frontURL: URL?
+    @Published var backURL: URL?
     @Published var authorName: String = ""
     @Published var createdAt: Date = Date()
     @Published var caption: String?
-    @Published var stickerImage: UIImage = UIImage()
+    @Published var borderedSticker: UIImage = UIImage()
+    @Published var emotion: String = ""
     @Published var comments: [Comment] = []
+    
     @Published var showDeleteConfirmAlert = false
     @Published var showUnauthorizedAlert = false
     @Published var commentToDelete: Comment? = nil
-
-    private var stickerURL: URL?
-    @Published var frontURL: URL?
-    @Published var backURL: URL?
     
-    init(postId: String, roomId: String, borderedSticker: UIImage) {
+    init(postId: String, roomId: String) {
         self.postId = postId
         self.roomId = roomId
-        self.borderedSticker = borderedSticker
-        let roomRef = db.collection("Rooms").document(roomId)
-        self.postRef = roomRef.collection("posts").document(postId)
-        self.commentRef = roomRef.collection("comments").document(postId)
         self.currentUser = Auth.auth().currentUser?.uid ?? ""
+        
+        // 방어: 빈 경로로 DocumentReference를 만들지 않도록 지연 생성
+        if !roomId.isEmpty, !postId.isEmpty {
+            let roomRef = db.collection("Rooms").document(roomId)
+            self.postRef = roomRef.collection("posts").document(postId)
+            self.commentRef = roomRef.collection("comments").document(postId)
+        } else {
+            assertionFailure("PostViewModel init received empty roomId or postId")
+        }
 
         Task {
             await self.fetchPostData()
             await self.fetchComments()
+        }
+    }
+    
+    func getStickerData() {
+        // stickerPostId가 비어 있으면 아무 것도 하지 않음 (크래시 방지)
+        guard !roomId.isEmpty, !stickerPostId.isEmpty else { return }
+        
+        let stickerPostRef = db.collection("Rooms").document(roomId).collection("posts").document(self.stickerPostId)
+        stickerPostRef.getDocument { [weak self] stickerSnapshot, error in
+            guard let self = self else { return }
+            if let error = error {
+                print("스티커용 post 조회 실패:", error.localizedDescription)
+                return
+            }
+            guard
+                let stickerData = stickerSnapshot?.data(),
+                let imageUrlString = stickerData["frontImageURL"] as? String
+            else {
+                print("스티커 frontImageURL 없음")
+                return
+            }
+            
+            let postRef = self.db.collection("Rooms").document(self.roomId).collection("posts").document(self.postId)
+            postRef.getDocument { postSnapshot, postError in
+                if let postError = postError {
+                    print("현재 postId \(self.postId) 조회 실패:", postError.localizedDescription)
+                    return
+                }
+                guard
+                    let postData = postSnapshot?.data(),
+                    let emotion = postData["stickerType"] as? String
+                else {
+                    print("현재 postId \(self.postId)에 유효한 stickerType 없음")
+                    return
+                }
+                
+                PhotoSaveService.shared.downloadImage(from: imageUrlString) { result in
+                    switch result {
+                    case .success(let image):
+                        DispatchQueue.global(qos: .userInitiated).async {
+                            guard let stickerOnly = self.imageUtils.makeSticker(with: image) else {
+                                print("스티커 생성 실패")
+                                return
+                            }
+                            
+                            let borderedSticker = stickerOnly.addBorder(
+                                thickness: 50,
+                                color: self.borderColor(for: emotion)
+                            )
+                            DispatchQueue.main.async {
+                                self.borderedSticker = borderedSticker ?? UIImage()
+                                self.emotion = emotion
+                            }
+                        }
+                    case .failure(let error):
+                        print("스티커 이미지 다운로드 실패:", error.localizedDescription)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func borderColor(for emotion: String) -> UIColor {
+        switch emotion {
+        case "사랑해":
+            return .ddFeelingPink
+        case "멋지다":
+            return .ddFeelingYellow
+        case "뭐야?":
+            return .ddFeelingGreen
+        case "화나":
+            return .ddFeelingOrange
+        case "슬퍼":
+            return .ddFeelingBlue
+        default:
+            return .ddGray700
         }
     }
     
@@ -66,7 +148,7 @@ final class PostViewModel: ObservableObject {
     }
 
     func fetchPostData() async {
-        guard !roomId.isEmpty, !postId.isEmpty else { return }
+        guard !roomId.isEmpty, !postId.isEmpty, let postRef = self.postRef else { return }
         
         do {
             let postSnapshot = try await postRef.getDocument()
@@ -85,6 +167,13 @@ final class PostViewModel: ObservableObject {
                 self.backURL = URL(string: urlString)
             }
             
+            self.stickerPostId = data["stickerPostId"] as? String ?? ""
+            
+            // stickerPostId가 있을 때만 호출
+            if !self.stickerPostId.isEmpty {
+                self.getStickerData()
+            }
+            
             await loadImages()
         } catch {
             print("Firestore 데이터 로드 실패:", error.localizedDescription)
@@ -92,12 +181,8 @@ final class PostViewModel: ObservableObject {
     }
 
     private func loadImages() async {
-        async let sticker = stickerURL != nil ? loadImage(from: stickerURL!) : nil
-
-        let stickerImage = await sticker
-
         await MainActor.run {
-            if let stickerImage = stickerImage { self.stickerImage = stickerImage }
+            // 이미지 관련 추가 로딩이 필요하면 여기에
         }
     }
 
@@ -112,6 +197,11 @@ final class PostViewModel: ObservableObject {
     }
     
     func saveComment(of text: String) async {
+        guard let commentRef = self.commentRef else {
+            assertionFailure("commentRef is nil (invalid roomId/postId)")
+            return
+        }
+        
         let tempComment = Comment(
             uid: currentUser,
             text: text,
@@ -143,8 +233,9 @@ final class PostViewModel: ObservableObject {
     }
     
     func fetchComments() async {
+        guard let commentRef = self.commentRef else { return }
         do {
-            let snapshot = try await self.commentRef.collection("comments").getDocuments()
+            let snapshot = try await commentRef.collection("comments").getDocuments()
             let fetchedComments = snapshot.documents.compactMap { Comment(doc: $0) }
             await MainActor.run {
                 self.comments = fetchedComments.sorted { $0.createdAt < $1.createdAt }
@@ -183,3 +274,4 @@ final class PostViewModel: ObservableObject {
         }
     }
 }
+

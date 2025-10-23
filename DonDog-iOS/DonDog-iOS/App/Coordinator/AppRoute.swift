@@ -16,7 +16,7 @@ enum AppRoute: Hashable {
     case invite
     case camera
     case feed
-    case post(postId: String, roomId: String, borderedSticker: UIImage)
+    case post(postId: String, roomId: String)
     case setting
     case editprofile
     case archive(roomId: String)

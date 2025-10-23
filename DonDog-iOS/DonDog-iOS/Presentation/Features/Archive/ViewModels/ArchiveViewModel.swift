@@ -103,12 +103,7 @@ final class ArchiveViewModel: ObservableObject {
                     return StickerType(rawValue: s)
                 }()
                 
-                if let sId = stickerPostId {
-                    let trimmed = sId.trimmingCharacters(in: .whitespacesAndNewlines)
-                    if !trimmed.isEmpty, trimmed.lowercased() != "null" {
-                        stickerViewModel.getStickerData(stickerPostId: trimmed, for: doc.documentID)
-                    }
-                }
+                stickerViewModel.getStickerData(stickerPostId: stickerPostId ?? "", for: doc.documentID)
                 
                 let post = ArchivePost(
                     id: doc.documentID,

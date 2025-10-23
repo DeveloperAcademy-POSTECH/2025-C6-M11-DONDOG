@@ -99,8 +99,8 @@ final class AppCoordinator: ObservableObject {
             EmptyView()
         case .feed:
             factory.makeFeedView()
-        case .post(let postId, let roomId, let borderedSticker):
-            factory.makePostView(with: postId, in: roomId, for: borderedSticker)
+        case .post(let postId, let roomId):
+            factory.makePostView(with: postId, in: roomId)
         case .setting:
             factory.makeSettingView()
         case .editprofile:
@@ -132,7 +132,7 @@ final class AppCoordinator: ObservableObject {
             let postId = components?.queryItems?.first(where: { $0.name == "postId" })?.value
             
             if let roomId = roomId, let postId = postId {
-                push(.post(postId: postId, roomId: roomId, borderedSticker: UIImage(named: "StickerExample") ?? UIImage()))
+                push(.post(postId: postId, roomId: roomId))
             }
             
         default:

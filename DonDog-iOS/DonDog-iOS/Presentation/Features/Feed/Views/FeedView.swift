@@ -156,8 +156,7 @@ struct FeedView: View {
                                             let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
                                             coordinator.push(.post(
                                                 postId: currentDisplayable.post.postId,
-                                                roomId: viewModel.currentRoomId,
-                                                borderedSticker: currentDisplayable.stickerImage ?? UIImage()
+                                                roomId: viewModel.currentRoomId
                                             ))
                                         }
                                     }

@@ -171,6 +171,7 @@ struct FeedView: View {
                                     }.padding(.trailing, 20)
                                 }
                             }
+                            .hapticFeedback(.medium)
                             Spacer()
                         }
                         .padding(.top, 23)
@@ -207,6 +208,7 @@ struct FeedView: View {
                                     .font(.captionRegular14)
                             }
                         }
+                        .hapticFeedback(.medium)
                         Spacer()
                         Button{
                             showCameraView = true
@@ -220,6 +222,7 @@ struct FeedView: View {
                                         .frame(width: 72, height: 72)
                                 }
                         }
+                        .hapticFeedback(.medium)
                         Spacer()
                         Button{
                             if !viewModel.displayablePosts.isEmpty {
@@ -253,11 +256,11 @@ struct FeedView: View {
                                 }
                             }
                         }
+                        .hapticFeedback(.medium)
                         Spacer()
                     }.padding(.bottom, 22)
                 }
             }
-            
             if showToastView {
                 VStack {
                     Spacer()

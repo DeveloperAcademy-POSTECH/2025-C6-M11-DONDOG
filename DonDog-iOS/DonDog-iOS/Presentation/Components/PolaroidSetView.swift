@@ -102,7 +102,6 @@ struct PolaroidSetView: View {
     let nickname: String
     let createdAt: String
     let caption: String?
-    //let onStickerButtonTapped: (() -> Void)?
     let selectedStickerEmotion: String?
     let stickerImage: UIImage?  // 이 게시물에 붙은 스티커 이미지 (이미 테두리 적용됨)
     let isMyPost: Bool  // 내 게시물인지 여부

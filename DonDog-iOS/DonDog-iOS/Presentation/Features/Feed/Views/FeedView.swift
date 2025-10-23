@@ -138,6 +138,9 @@ struct FeedView: View {
                         }
                         .frame(height: 520)
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        .transaction { transaction in
+                            transaction.animation = .easeInOut(duration: 0.8)
+                        }
                         .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
                         .onChange(of: viewModel.currentPostIndex) { oldValue, newIndex in
                             withAnimation(.easeInOut(duration: 0.3)) {
@@ -153,8 +156,7 @@ struct FeedView: View {
                                             let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
                                             coordinator.push(.post(
                                                 postId: currentDisplayable.post.postId,
-                                                roomId: viewModel.currentRoomId,
-                                                borderedSticker: currentDisplayable.stickerImage ?? UIImage()
+                                                roomId: viewModel.currentRoomId
                                             ))
                                         }
                                     }

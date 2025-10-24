@@ -25,7 +25,7 @@ struct PostView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            VStack(spacing: 0) {
+            VStack(spacing: 0) { 
                 CustomNavigationBar(
                     leadingType: .back(action: { coordinator.pop() }),
                     centerType: .title(title: titleString),
@@ -43,7 +43,7 @@ struct PostView: View {
                 
                 ScrollViewReader { proxy in
                     ZStack(alignment: .topTrailing) {
-                        Color.white
+                        Color.ddWhite
                             .ignoresSafeArea()
                             .onTapGesture {
                                 isTextFieldFocused = false
@@ -68,7 +68,7 @@ struct PostView: View {
                                 Color.clear
                                     .overlay(
                                         LinearGradient(
-                                            colors: [Color.black.opacity(0.05), .clear],
+                                            colors: [Color.ddBlack.opacity(0.05), .clear],
                                             startPoint: .bottom,
                                             endPoint: .top
                                         )

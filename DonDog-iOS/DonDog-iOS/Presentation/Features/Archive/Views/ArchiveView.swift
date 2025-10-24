@@ -45,8 +45,8 @@ struct ArchiveView: View {
                     navigationColor: .black
                 )
                 
-                // 사진 0장일 때
-                if viewModel.archiveMonths.isEmpty {
+                // 사진 0장일 때 예외처리
+                if !viewModel.isLoading && viewModel.totalPostCount == 0 {
                         Spacer()
                         VStack(spacing: 16){
                             Image(systemName: "photo.on.rectangle.angled")
@@ -94,10 +94,14 @@ struct ArchiveView: View {
                                     
                                     LazyVGrid(columns: grid, spacing: 8) {
                                         ForEach(month.days) { day in
-                                            Button {
-                                                moveDailyArchive(month: month, day: day)
-                                            } label: {
-                                                ArchivePostContainer(url: day.thumbnailURL, day: day.day)
+                                            if viewModel.isLoading {
+                                                archivePlaceholder(height: 100)
+                                            } else {
+                                                Button {
+                                                    moveDailyArchive(month: month, day: day)
+                                                } label: {
+                                                    ArchivePostContainer(url: day.thumbnailURL, day: day.day)
+                                                }
                                             }
                                         }
                                     }
@@ -110,7 +114,7 @@ struct ArchiveView: View {
             }
             
             if viewModel.isLoading {
-                VStack(spacing: 16) {
+                VStack(alignment: .center, spacing: 16) {
                     ProgressView()
                         .scaleEffect(1.2)
                         .tint(.ddPrimaryBlue)
@@ -129,7 +133,7 @@ struct ArchiveView: View {
         }
         .padding(.horizontal, 20)
         .background(.ddWhite)
-        .navigationBarBackButtonHidden(true)
+        .backHiddenSwipeEnabled()
     }
     
     // 일자별 기록으로 이동, 버튼 내부 타입 체커 이슈로 함수로 분리

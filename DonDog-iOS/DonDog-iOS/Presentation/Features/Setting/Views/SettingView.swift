@@ -61,7 +61,7 @@ struct SettingView: View {
             .alert("", isPresented: $viewModel.showLogoutConfirm) {
                 Button("취소", role: .cancel) {}
                 Button("로그아웃", role: .destructive) {
-                    viewModel.logout()
+                    Task { await viewModel.logout() }
                 }
             } message: {
                 Text("로그아웃 하시겠습니까?")

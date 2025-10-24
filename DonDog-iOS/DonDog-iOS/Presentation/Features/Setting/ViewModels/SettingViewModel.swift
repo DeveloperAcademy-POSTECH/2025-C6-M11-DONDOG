@@ -12,8 +12,7 @@ import FirebaseFirestore
 final class SettingViewModel: ObservableObject {
     @Published var showLogoutConfirm = false
     @Published var showDeleteConfirm = false
-    
-    func logout() {
+    func logout() async {
         NotificationService.shared.deleteFCMToken() { error in
             if let error = error {
                 print("FCM 토큰 삭제 실패(로그아웃 계속 진행): \(error.localizedDescription)")
@@ -22,6 +21,10 @@ final class SettingViewModel: ObservableObject {
         
         do {
             try Auth.auth().signOut()
+            // 메인에서 세션 리셋 + 캐시 제거
+            await MainActor.run {
+                URLCache.shared.removeAllCachedResponses()
+            }
             print("로그아웃 성공")
         } catch {
             print("로그아웃 실패: \(error.localizedDescription)")

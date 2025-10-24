@@ -45,7 +45,6 @@ struct ArchivePostContainer: View {
                     Rectangle()
                         .fill(.ddGray600.opacity(0.2))
                         .cornerRadius(8)
-                        .overlay(ProgressView())
                         .frame(width: 75, height: 100)
                     
                 @unknown default:

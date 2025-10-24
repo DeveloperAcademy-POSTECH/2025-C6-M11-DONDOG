@@ -333,7 +333,7 @@ class CustomCameraViewController: UIViewController {
         guard isCaptureButtonEnabled else {
             return
         }
-        
+        HapticManager.shared.heavy()
         isCaptureButtonEnabled = false
         captureButton.isEnabled = false
         captureButton.alpha = 0.5

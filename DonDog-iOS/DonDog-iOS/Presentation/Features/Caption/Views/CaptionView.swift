@@ -66,6 +66,7 @@ struct CaptionView: View {
                             isCaptionFocused = false
                         }
                 }
+                .hapticFeedback(.medium)
                 .padding(.horizontal, 20)
                 
                 Spacer()
@@ -86,6 +87,7 @@ struct CaptionView: View {
                 .disabled(viewModel.isUploading)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 8)
+                .hapticFeedback(.medium)
             }
             //MARK: -- 캡션 남길 때
             if isShowCaptionEditor {

@@ -16,17 +16,15 @@ struct DetailPhotoView: View {
             ZStack {
                 AsyncPhoto(url: front)
                     .opacity(showingFront ? 1.0 : 0.0)
-                    .rotation3DEffect(.degrees(showingFront ? 0 : 180), axis: (x: 0, y: 1, z: 0))
-                
+
                 AsyncPhoto(url: back)
                     .opacity(showingFront ? 0.0 : 1.0)
-                    .rotation3DEffect(.degrees(showingFront ? -180 : 0), axis: (x: 0, y: 1, z: 0))
             }
             .cornerRadius(8)
             .padding(.vertical, 8)
             .padding(.horizontal, 20)
             .onTapGesture {
-                withAnimation(.easeInOut(duration: 0.4)) {
+                withAnimation(.easeInOut(duration: 0.2)) {
                     showingFront.toggle()
                 }
             }
@@ -60,10 +58,9 @@ struct DetailPhotoView: View {
                         .overlay(Image(systemName: "photo").opacity(0.7))
                 case .empty:
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(.ddGray600.opacity(0.08))
+                        .fill(.ddGray600.opacity(0.2))
                         .frame(maxWidth: .infinity)
                         .aspectRatio(3.0/4.0, contentMode: .fit)
-                        .overlay(ProgressView())
                 @unknown default:
                     Color.clear
                         .frame(maxWidth: .infinity)

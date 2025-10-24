@@ -83,8 +83,12 @@ final class AuthNumberViewModel: ObservableObject {
     
     private func performAccountDeletion() {
         Task {
-            await MainActor.run { AuthService.isAccountDeletionInProgress = true }
+            await MainActor.run {
+                AuthService.isAccountDeletionInProgress = true
+            }
+            
             let success = await deleteUserDataAndAuth()
+            
             await MainActor.run {
                 AuthService.isAccountDeletionInProgress = false
                 if success {

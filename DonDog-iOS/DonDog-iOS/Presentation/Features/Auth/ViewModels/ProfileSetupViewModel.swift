@@ -96,6 +96,4 @@ final class ProfileSetupViewModel: ObservableObject {
             }
         }
     }
-    
-    
 }

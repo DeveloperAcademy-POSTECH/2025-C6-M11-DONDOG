@@ -56,6 +56,8 @@ struct DetailContentView: View {
                     stickerViewModel.getStickerData(stickerPostId: sId, for: post.id)
                 }
             }
+            
+            // 댓글
             DetailCommentsView(
                 comments: post.comments.map { ($0, userNameByUid[$0.uid] ?? "익명") },
                 onDelete: onDelete

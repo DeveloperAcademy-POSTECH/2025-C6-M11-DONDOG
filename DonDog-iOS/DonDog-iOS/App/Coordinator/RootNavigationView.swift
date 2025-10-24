@@ -25,8 +25,7 @@ struct RootNavigationView: View {
                             coordinator.build(route)
                         }
                 }
-                .environmentObject(coordinator)
-                .environmentObject(ConnectStateService.shared)
+                .id(coordinator.sessionKey) // 다른 계정으로 로그인 시 전부 재생성
                 .overlay(alignment: .top) {
                     NetworkErrorView(isUnstable: networkService.status != .satisfied)
                         .animation(.easeInOut(duration: 0.25), value: networkService.status)
@@ -43,5 +42,7 @@ struct RootNavigationView: View {
                     }
             }
         }
+        .environmentObject(coordinator)
+        .environmentObject(ConnectStateService.shared)
     }
 }

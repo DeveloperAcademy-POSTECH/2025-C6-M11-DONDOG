@@ -73,11 +73,10 @@ final class ArchiveViewModel: ObservableObject {
     // 월/일 별로 전체 기록 가져오기 -> 일자별 기록 캐싱
     private func fetchAllPosts() async -> [ArchiveMonth] {
         do {
-            let snapshot = try await db.collection("Rooms")
-                .document(roomId)
+            let snapshot = try await db.collection("Rooms").document(roomId)
                 .collection("posts")
                 .order(by: "createdAt", descending: false) // 오래된 것부터
-                .getDocuments()
+                .getDocuments(source: .server)
             
             var monthDict: [String: [Int: ArchiveDay]] = [:]
             var dayDict: [String: [ArchivePost]] = [:]

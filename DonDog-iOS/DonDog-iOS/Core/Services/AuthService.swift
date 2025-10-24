@@ -57,8 +57,7 @@ final class AuthService {
         
         guard let user = Auth.auth().currentUser else {
             Task { @MainActor in
-                ConnectStateService.shared.isConnected = false
-                ConnectStateService.shared.roomId = nil
+                ConnectStateService.shared.reset()
             }
             replaceRootinAuthService(.welcome, coordinator: coordinator)
             self.userDocListenr?.remove()
@@ -72,18 +71,19 @@ final class AuthService {
         }
         
         user.getIDTokenResult(forcingRefresh: true) { _, _ in
-            
             /// 로그인 안됨 -> welcome으로 이동
             guard let refresehUser = Auth.auth().currentUser else {
                 Task { @MainActor in
-                    ConnectStateService.shared.isConnected = false
-                    ConnectStateService.shared.roomId = nil
+                    ConnectStateService.shared.reset()
                 }
                 replaceRootinAuthService(.welcome, coordinator: coordinator)
                 print("[AuthService] IDToken 분실로 current User 찾을 수 없음 → welcome 화면으로 이동")
                 return
             }
             
+            Task { @MainActor in
+                ConnectStateService.shared.reset()
+            }
             let uid = refresehUser.uid
             let userDoc = Firestore.firestore().collection("Users").document(uid)
             
@@ -100,15 +100,13 @@ final class AuthService {
                     if let nsError = error as NSError? {
                         print("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → welcome로 이동")
                         Task { @MainActor in
-                            ConnectStateService.shared.isConnected = false
-                            ConnectStateService.shared.roomId = nil
+                            ConnectStateService.shared.reset()
                         }
                         replaceRootinAuthService(.welcome, coordinator: coordinator)
                     } else {
                         // 오류는 없지만 스냅샷이 nil인 경우: profileSetup으로 이동
                         Task { @MainActor in
-                            ConnectStateService.shared.isConnected = false
-                            ConnectStateService.shared.roomId = nil
+                            ConnectStateService.shared.reset()
                         }
                         replaceRootinAuthService(.profileSetup, coordinator: coordinator)
                     }
@@ -118,8 +116,7 @@ final class AuthService {
                 /// user 문서가 없을때 (가입 후 프로필 미완성) -> profileSetup
                 if userDoc.exists == false {
                     Task { @MainActor in
-                        ConnectStateService.shared.isConnected = false
-                        ConnectStateService.shared.roomId = nil
+                        ConnectStateService.shared.reset()
                     }
                     replaceRootinAuthService(.profileSetup, coordinator: coordinator)
                     return

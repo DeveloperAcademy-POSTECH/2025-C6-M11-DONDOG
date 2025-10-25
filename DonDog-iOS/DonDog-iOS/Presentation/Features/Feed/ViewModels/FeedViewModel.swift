@@ -338,12 +338,12 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    // MARK: - CaptionViewModelDelegate
     func didCaptureImages(frontImage: UIImage, backImage: UIImage) {
         selectedFrontImage = frontImage
         selectedBackImage = backImage
     }
     
+
     func didUploadToRoomPosts(postData: PostData) {
         uploadStatus = "Room posts 업로드 완료: \(postData.uid)"
         loadTodayPosts()
@@ -353,6 +353,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
+    // MARK: - CaptionViewModelDelegate
     func didUploadPost() {
         print("✅ 게시물 업로드 완료 - FeedView 새로고침")
         

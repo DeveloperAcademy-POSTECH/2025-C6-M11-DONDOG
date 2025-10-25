@@ -63,7 +63,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
         }
         loadTodayPosts()
-        self.getStickerData()
+        self.getStickerData() // 스티커 재료를 가져옴 (users의 recentPostId를 가져와 rooms에서 전면 사진을 가져옴)
     }
     
     // 내 게시물인지 확인
@@ -146,10 +146,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             return
                         }
                         
-                        guard
-                            let postData = snapshot?.data(),
-                            let imageUrlString = postData["frontImageURL"] as? String
-                        else {
+                        guard let postData = snapshot?.data() else {
                             print("frontImageURL 없음")
                             return
                         }
@@ -162,7 +159,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             DispatchQueue.main.async {
                                 if let sticker = sticker {
                                     self?.stickerImage = sticker
-                                    self?.sticker = sticker
+                                    self?.makeStickerAndBordered(from: sticker)
                                     print("recentSticker 이미지 로드 성공 (downloadStickerImage)")
                                 } else {
                                     print("recentSticker 이미지 생성 실패")

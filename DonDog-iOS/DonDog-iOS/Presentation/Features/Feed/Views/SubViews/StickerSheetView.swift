@@ -155,6 +155,7 @@ struct StickerContainerView: View {
     let emotion: String
     let isSelected: Bool
     let isOtherSelected: Bool
+    
     private var emotionStrokeColor: Color {
             guard let stickerEmotion = StickerEmotion(rawValue: emotion) else {
                 return .ddBlack

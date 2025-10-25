@@ -10,6 +10,7 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 import UIKit
+import Kingfisher
 
 final class ArchiveStickerViewModel: ObservableObject {
     let roomId: String
@@ -41,7 +42,7 @@ final class ArchiveStickerViewModel: ObservableObject {
         }
         
         let stickerPostRef = db.collection("Rooms").document(roomId).collection("posts").document(stickerPostId)
-        stickerPostRef.getDocument { [weak self] stickerSnapshot, error in
+        stickerPostRef.getDocument(source: .default) { [weak self] stickerSnapshot, error in
             guard let self = self else { return }
             if let error = error {
                 print("스티커용 post 조회 실패:", error.localizedDescription)
@@ -56,7 +57,7 @@ final class ArchiveStickerViewModel: ObservableObject {
             }
             
             let postRef = self.db.collection("Rooms").document(self.roomId).collection("posts").document(postId)
-            postRef.getDocument { postSnapshot, postError in
+            postRef.getDocument(source: .default) { postSnapshot, postError in
                 if let postError = postError {
                     print("현재 postId \(postId) 조회 실패:", postError.localizedDescription)
                     return
@@ -69,26 +70,34 @@ final class ArchiveStickerViewModel: ObservableObject {
                     return
                 }
                 
-                PhotoSaveService.shared.downloadImage(from: imageUrlString) { result in
+                guard let url = URL(string: imageUrlString) else {
+                    print("스티커 이미지 URL 변환 실패")
+                    return
+                }
+                
+                KingfisherManager.shared.retrieveImage(with: url) { result in
                     switch result {
-                    case .success(let image):
+                    case .success(let value):
+                        let image = value.image
+                        let utils = ImageUtils()
+                        let borderColor = self.borderColor(for: emotion)
+                        
                         DispatchQueue.global(qos: .userInitiated).async {
-                            guard let stickerOnly = self.imageUtils.makeSticker(with: image) else {
+                            guard let stickerOnly = utils.makeSticker(with: image) else {
                                 print("스티커 생성 실패")
                                 return
                             }
                             
-                            let borderedSticker = stickerOnly.addBorder(
-                                thickness: 50,
-                                color: self.borderColor(for: emotion)
-                            )
+                            let resultImage = stickerOnly.addBorder(thickness: 50, color: borderColor) ?? stickerOnly
+                            
                             DispatchQueue.main.async {
-                                self.borderedStickers[postId] = borderedSticker
+                                self.borderedStickers[postId] = resultImage
                                 self.emotions[postId] = emotion
                             }
                         }
+                        
                     case .failure(let error):
-                        print("스티커 이미지 다운로드 실패:", error.localizedDescription)
+                        print("KF 스티커 이미지 불러오기 실패:", error.localizedDescription)
                     }
                 }
             }
@@ -112,4 +121,3 @@ final class ArchiveStickerViewModel: ObservableObject {
         }
     }
 }
-

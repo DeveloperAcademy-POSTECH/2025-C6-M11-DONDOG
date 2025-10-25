@@ -9,7 +9,6 @@ import Combine
 import SwiftUI
 import UIKit
 
-
 protocol CameraViewModelDelegate: AnyObject {
     func didCaptureImages(frontImage: UIImage, backImage: UIImage)
     func didUploadToRoomPosts(postData: PostData)

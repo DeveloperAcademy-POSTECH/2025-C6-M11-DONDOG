@@ -9,7 +9,6 @@ import FirebaseAuth
 import PhotosUI
 import SwiftUI
 import UIKit
-import FirebaseCore
 
 struct FeedView: View {
     @EnvironmentObject var coordinator: AppCoordinator
@@ -44,6 +43,7 @@ struct FeedView: View {
                         }
                     }
                 }
+                
                 HStack {
                     Spacer()
                     if !viewModel.displayablePosts.isEmpty && !viewModel.isUploading {
@@ -78,7 +78,7 @@ struct FeedView: View {
                             .foregroundStyle(.ddPrimaryBlue)
                     }
                     .padding(.top, 280)
-                }else if connectState.isConnected == false {
+                } else if connectState.isConnected == false {
                     VStack{
                         Spacer()
                         Image(systemName: "person.fill.xmark")
@@ -108,14 +108,14 @@ struct FeedView: View {
                 }  else if !viewModel.displayablePosts.isEmpty {
                     ZStack{
                         TabView(selection: $viewModel.currentPostIndex) {
-                            ForEach(Array(viewModel.displayablePosts.enumerated()), id: \.element.id) { index, displayablePost in
-                                if let frontImage = displayablePost.frontImage,
-                                   let backImage = displayablePost.backImage {
+                            ForEach(Array(viewModel.displayablePosts.indices), id: \.self) { index in
+                                let displayablePost = viewModel.displayablePosts[index]
+                                if let front = displayablePost.frontImageURL, let back = displayablePost.backImageURL {
                                     HStack {
                                         Spacer()
                                         PolaroidSetView(
-                                            frontImage: frontImage,
-                                            backImage: backImage,
+                                            frontImage: .url(front),
+                                            backImage: .url(back),
                                             nickname: displayablePost.nickname,
                                             createdAt: DataUtils.relativeTimeString(from: displayablePost.createdAt),
                                             caption: displayablePost.caption,
@@ -138,9 +138,6 @@ struct FeedView: View {
                         }
                         .frame(height: 520)
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                        .transaction { transaction in
-                            transaction.animation = .easeInOut(duration: 0.8)
-                        }
                         .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
                         .onChange(of: viewModel.currentPostIndex) { oldValue, newIndex in
                             withAnimation(.easeInOut(duration: 0.3)) {
@@ -235,7 +232,7 @@ struct FeedView: View {
                                     showToastView = true
                                 }
                             }
-                        }label: {
+                        } label: {
                             if !viewModel.displayablePosts.isEmpty{
                                 VStack(spacing: 2){
                                     Image(viewModel.displayablePosts[viewModel.currentPostIndex].isMyPost ?  "AddStickerButtonDisabled" : "AddStickerButtonAbled")
@@ -275,7 +272,8 @@ struct FeedView: View {
                         ))
                 }
             }
-        }.onAppear() {
+        }
+        .onAppear() {
             if !viewModel.isUploading && !viewModel.isLoading {
                 viewModel.loadTodayPosts()
             }

@@ -6,12 +6,12 @@
 //
 
 import Combine
-import UIKit
-import FirebaseAuth
-import FirebaseFirestore
 import CoreImage
 import CoreImage.CIFilterBuiltins
+import FirebaseAuth
+import FirebaseFirestore
 import Kingfisher
+import UIKit
 
 final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionViewModelDelegate {
     @Published var selectedFrontImage: UIImage?
@@ -32,12 +32,12 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    @Published var stickerImage: UIImage? // 원본 사진
-    @Published var sticker: UIImage? // 누끼따진 스티커
+    @Published var stickerImage: UIImage?
+    @Published var sticker: UIImage?
     @Published var myNickname: String = ""
     private var mask: UIImage?
     @Published var frame: UIImage?
-    @Published var borderedStickers: [String: UIImage] = [:] // 테두리까지 씌워진 스티커 스티커
+    @Published var borderedStickers: [String: UIImage] = [:]
     
     @Published var currentPost: PostData?
     @Published var currentNickname: String = ""
@@ -63,10 +63,9 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
         }
         loadTodayPosts()
-        self.getStickerData() // 스티커 재료를 가져옴 (users의 recentPostId를 가져와 rooms에서 전면 사진을 가져옴)
+        self.getStickerData()
     }
     
-    // 내 게시물인지 확인
     func checkIsNotMyPost() {
         guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있음")

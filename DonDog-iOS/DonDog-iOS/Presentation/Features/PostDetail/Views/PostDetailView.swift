@@ -11,6 +11,8 @@ struct PostDetailView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: PostDetailViewModel
     
+    let postType: PostType
+    
     var body: some View {
         CustomNavigationBar(
             leadingType:
@@ -39,7 +41,7 @@ struct PostDetailView: View {
         }
         
         ZStack(alignment: .bottom) {
-            // post 메인 컨텐츠 뷰
+            SetPostOrArchiveView(postType: postType)
             
             ToastView(toastText: "본인이 작성한 글만 삭제할 수 있어요")
                 .padding(.bottom, 80)
@@ -56,4 +58,6 @@ struct PostDetailView: View {
                 ))
         }
     }
+    
+    
 }

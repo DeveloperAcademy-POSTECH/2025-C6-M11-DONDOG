@@ -94,6 +94,8 @@
 		CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */; };
 		CAACD36A2EA0B8970057827D /* ArchiveDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAACD3692EA0B8970057827D /* ArchiveDetailView.swift */; };
 		CAACD36C2EA0C1120057827D /* ArchiveDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAACD36B2EA0C1120057827D /* ArchiveDetailViewModel.swift */; };
+		D219F1E32EAE0A3700BD82B7 /* PostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1E22EAE0A3200BD82B7 /* PostDetailView.swift */; };
+		D219F1E52EAE0A4400BD82B7 /* PostDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1E42EAE0A3D00BD82B7 /* PostDetailViewModel.swift */; };
 		D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */; };
 		D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A52E992CD800D837C8 /* CaptionView.swift */; };
 		D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A32E992CD800D837C8 /* CaptionViewModel.swift */; };
@@ -115,7 +117,6 @@
 		61C9B1A32E9BFC830007C8F4 /* ArchiveDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDay.swift; sourceTree = "<group>"; };
 		61C9B1A52E9BFCBE0007C8F4 /* ArchiveMonth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveMonth.swift; sourceTree = "<group>"; };
 		8B354C7F2EA4A17A0030F9A1 /* ConnectStateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectStateService.swift; sourceTree = "<group>"; };
-		8B3A590C2EAD132900A6C09D /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewModel.swift; sourceTree = "<group>"; };
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -182,6 +183,9 @@
 		CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteViewModel.swift; sourceTree = "<group>"; };
 		CAACD3692EA0B8970057827D /* ArchiveDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDetailView.swift; sourceTree = "<group>"; };
 		CAACD36B2EA0C1120057827D /* ArchiveDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDetailViewModel.swift; sourceTree = "<group>"; };
+		D219F1D92EADF4A500BD82B7 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D219F1E22EAE0A3200BD82B7 /* PostDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailView.swift; sourceTree = "<group>"; };
+		D219F1E42EAE0A3D00BD82B7 /* PostDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewModel.swift; sourceTree = "<group>"; };
 		D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewContainer.swift; sourceTree = "<group>"; };
 		D24402A32E992CD800D837C8 /* CaptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionViewModel.swift; sourceTree = "<group>"; };
 		D24402A52E992CD800D837C8 /* CaptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionView.swift; sourceTree = "<group>"; };
@@ -369,6 +373,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
+				D219F1D92EADF4A500BD82B7 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -538,6 +543,7 @@
 		CAA9AEED2E8FC72E0047A89A /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				D219F1E12EAE0A2B00BD82B7 /* PostDetail */,
 				CAA9AEC72E8FC15C0047A89A /* Auth */,
 				CAA9AEE12E8FC17C0047A89A /* Invite */,
 				CAA9AECC2E8FC15C0047A89A /* Camera */,
@@ -568,6 +574,15 @@
 				CA9C13E02EA4879400519748 /* DetailCommentsView.swift */,
 			);
 			path = SubViews;
+			sourceTree = "<group>";
+		};
+		D219F1E12EAE0A2B00BD82B7 /* PostDetail */ = {
+			isa = PBXGroup;
+			children = (
+				D219F1E42EAE0A3D00BD82B7 /* PostDetailViewModel.swift */,
+				D219F1E22EAE0A3200BD82B7 /* PostDetailView.swift */,
+			);
+			path = PostDetail;
 			sourceTree = "<group>";
 		};
 		D24402A42E992CD800D837C8 /* ViewModels */ = {
@@ -647,7 +662,7 @@
 				8B822D7B2EAB617800D708D7 /* Kingfisher */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8B3A590C2EAD132900A6C09D /* DonDog-iOS.app */;
+			productReference = D219F1D92EADF4A500BD82B7 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -731,6 +746,7 @@
 				CAA9AEDA2E8FC15C0047A89A /* AuthViewModel.swift in Sources */,
 				8B6C6D0D2E99702200D12F61 /* EditProfileViewModel.swift in Sources */,
 				A192F2B12E9E45AC00995DCC /* Color+.swift in Sources */,
+				D219F1E32EAE0A3700BD82B7 /* PostDetailView.swift in Sources */,
 				8BDF768E2E9F498B007F12BB /* WelcomeView.swift in Sources */,
 				8BFC73612EA5D18C00B54F03 /* NetworkService.swift in Sources */,
 				CAA9AEDB2E8FC15C0047A89A /* AuthView.swift in Sources */,
@@ -738,6 +754,7 @@
 				8B6E118D2E976F380082B24C /* EditProfileView.swift in Sources */,
 				D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */,
 				CA9C140C2EA60BA000519748 /* ToastView.swift in Sources */,
+				D219F1E52EAE0A4400BD82B7 /* PostDetailViewModel.swift in Sources */,
 				61C9B1A02E9BED150007C8F4 /* ArchiveViewModel.swift in Sources */,
 				CA9C13DF2EA4855100519748 /* Sticker.swift in Sources */,
 				CAA9AEDC2E8FC15C0047A89A /* CameraViewModel.swift in Sources */,

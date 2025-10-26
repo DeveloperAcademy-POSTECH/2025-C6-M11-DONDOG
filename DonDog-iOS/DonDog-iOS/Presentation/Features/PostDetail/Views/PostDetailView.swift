@@ -10,6 +10,7 @@ import SwiftUI
 struct PostDetailView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: PostDetailViewModel
+    @FocusState private var isTextFieldFocused: Bool
     
     let postType: PostType
     
@@ -39,9 +40,12 @@ struct PostDetailView: View {
         } message: {
             Text("삭제한 사진은 되돌릴 수 없어요")
         }
+        .onTapGesture {
+            isTextFieldFocused = false
+        }
         
         ZStack(alignment: .bottom) {
-            SetPostOrArchiveView(postType: postType)
+            SetPostOrArchiveView(postType: postType, isTextFieldFocused: $isTextFieldFocused)
             
             ToastView(toastText: "본인이 작성한 글만 삭제할 수 있어요")
                 .padding(.bottom, 80)
@@ -58,6 +62,4 @@ struct PostDetailView: View {
                 ))
         }
     }
-    
-    
 }

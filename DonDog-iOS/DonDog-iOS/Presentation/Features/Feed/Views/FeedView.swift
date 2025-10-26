@@ -9,6 +9,7 @@ import FirebaseAuth
 import PhotosUI
 import SwiftUI
 import UIKit
+import Kingfisher
 
 struct FeedView: View {
     @EnvironmentObject var coordinator: AppCoordinator
@@ -30,7 +31,25 @@ struct FeedView: View {
             VStack(spacing: 0){
                 //네비게이션 바
                 HStack{
+                    // 캐시 삭제 버튼 (좌측)
+//                    Button {
+//                        KingfisherManager.shared.downloader.cancelAll()
+//                        ImageCache.default.clearMemoryCache()
+//                        ImageCache.default.clearDiskCache()
+//                    } label: {
+//                        HStack(spacing: 6) {
+//                            Image(systemName: "trash")
+//                                .frame(width: 20, height: 20)
+//                            Text("캐시삭제")
+//                                .font(.captionRegular14)
+//                        }
+//                        .foregroundStyle(Color.ddPrimaryBlue)
+//                        .padding(.vertical, 8)
+//                        .padding(.leading, 20)
+//                    }
+
                     Spacer()
+
                     if connectState.isConnected == false {
                         Button{
                             coordinator.push(.setting)
@@ -138,9 +157,9 @@ struct FeedView: View {
                         }
                         .frame(height: 520)
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                        .transaction { transaction in
-                            transaction.animation = .easeInOut(duration: 0.8)
-                        }
+//                        .transaction { transaction in
+//                            transaction.animation = .easeInOut(duration: 0.8)
+//                        }
                         .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
                         .onChange(of: viewModel.currentPostIndex) { oldValue, newIndex in
                             withAnimation(.easeInOut(duration: 0.3)) {
@@ -268,7 +287,6 @@ struct FeedView: View {
                     Spacer()
                     ToastView(toastText: "스티커는 상대방 게시물에만 붙일 수 있어요!")
                         .padding(.bottom, 114)
-                    
                         .transition(.asymmetric(
                             insertion: .move(edge: .bottom).animation(.spring()),
                             removal: .opacity.animation(.easeOut(duration: 0.7))
@@ -278,6 +296,7 @@ struct FeedView: View {
         }
         .onAppear() {
             if !viewModel.isUploading && !viewModel.isLoading {
+                print("피드뷰모델 이닛 - loadtodayposts")
                 viewModel.loadTodayPosts()
             }
         }
@@ -368,6 +387,5 @@ struct FeedView: View {
                 .ignoresSafeArea()
             }
         }
-        
     }
 }

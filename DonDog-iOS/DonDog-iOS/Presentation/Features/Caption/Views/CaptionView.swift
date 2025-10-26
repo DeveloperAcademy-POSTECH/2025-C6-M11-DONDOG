@@ -73,8 +73,9 @@ struct CaptionView: View {
                     .frame(height: 20)
                 
                 Button{
-                    viewModel.uploadPost()
-                    onUploadComplete()
+                    viewModel.uploadPost {
+                        onUploadComplete() // 업로드 성공 뒤 실행
+                    }
                 }label: {
                         Text("업로드")
                             .font(.bodyRegular18)

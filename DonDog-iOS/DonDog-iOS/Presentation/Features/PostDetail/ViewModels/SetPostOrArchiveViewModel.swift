@@ -11,5 +11,9 @@ final class SetPostOrArchiveViewModel: ObservableObject {
     // TODO: 공통의 Post 구조체 가지도록 설계
     // TODO: ArchivePost들 가져오도록 init
     @Published var posts: [ArchivePost] = []
+    @Published var currentIndex: Int
     
+    init() {
+        currentIndex = 0
+    }
 }

@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 struct DateUtils {
-    static func relativeTimeString(from date: Date) -> String {
+    static func relativeTimeString(from date: Date, for dateFormat: String) -> String {
         let now = Date()
         let diff = now.timeIntervalSince(date)
         
@@ -20,7 +20,7 @@ struct DateUtils {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-        formatter.dateFormat = "MM월 dd일 HH:mm"
+        formatter.dateFormat = dateFormat
         
         switch seconds {
         case 0..<60:

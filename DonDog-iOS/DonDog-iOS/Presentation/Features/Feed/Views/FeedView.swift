@@ -136,7 +136,7 @@ struct FeedView: View {
                                             frontImage: .url(front),
                                             backImage: .url(back),
                                             nickname: displayablePost.nickname,
-                                            createdAt: DateUtils.relativeTimeString(from: displayablePost.createdAt),
+                                            createdAt: DateUtils.relativeTimeString(from: displayablePost.createdAt, for: "HH:mm"),
                                             caption: displayablePost.caption,
                                             selectedStickerEmotion: displayablePost.stickerType,
                                             stickerImage: displayablePost.stickerImage,

@@ -17,7 +17,7 @@ struct DetailCommentRow: View {
                 Text(authorName)
                     .font(.captionMedium14)
                     .foregroundStyle(.ddBlack)
-                Text(DateUtils.relativeTimeString(from: comment.createdAt))
+                Text(DateUtils.relativeTimeString(from: comment.createdAt, for: "MM월 dd일 HH:mm"))
                     .font(.captionRegular13)
                     .foregroundStyle(.ddGray600)
             }

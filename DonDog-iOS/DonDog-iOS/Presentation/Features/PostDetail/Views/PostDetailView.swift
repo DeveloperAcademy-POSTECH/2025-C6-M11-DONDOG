@@ -45,7 +45,7 @@ struct PostDetailView: View {
         }
         
         ZStack(alignment: .bottom) {
-            SetPostOrArchiveView(postType: postType, isTextFieldFocused: $isTextFieldFocused)
+            viewFromPostOrArchive(postType: postType)
             
             ToastView(toastText: "본인이 작성한 글만 삭제할 수 있어요")
                 .padding(.bottom, 80)
@@ -60,6 +60,15 @@ struct PostDetailView: View {
                     insertion: .move(edge: .bottom).animation(.spring()),
                     removal: .opacity.animation(.easeOut(duration: 0.7))
                 ))
+        }
+    }
+    
+    @ViewBuilder
+    private func viewFromPostOrArchive(postType: PostType) -> some View {
+        if postType == .post {
+            PostFromFeedView(isTextFieldFocused: $isTextFieldFocused)
+        } else {
+            PostFromArchiveView()
         }
     }
 }

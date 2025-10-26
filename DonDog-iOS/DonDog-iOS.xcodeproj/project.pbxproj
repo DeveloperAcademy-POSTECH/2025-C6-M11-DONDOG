@@ -96,12 +96,13 @@
 		CAACD36C2EA0C1120057827D /* ArchiveDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAACD36B2EA0C1120057827D /* ArchiveDetailViewModel.swift */; };
 		D219F1E32EAE0A3700BD82B7 /* PostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1E22EAE0A3200BD82B7 /* PostDetailView.swift */; };
 		D219F1E52EAE0A4400BD82B7 /* PostDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1E42EAE0A3D00BD82B7 /* PostDetailViewModel.swift */; };
-		D219F1F32EAE216B00BD82B7 /* SetPostOrArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1F22EAE216300BD82B7 /* SetPostOrArchiveView.swift */; };
 		D219F1F62EAE22D800BD82B7 /* PostType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1F52EAE22D300BD82B7 /* PostType.swift */; };
-		D219F1F92EAE248200BD82B7 /* SetPostOrArchiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1F82EAE247900BD82B7 /* SetPostOrArchiveViewModel.swift */; };
+		D219F1F92EAE248200BD82B7 /* PostFromArchiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1F82EAE247900BD82B7 /* PostFromArchiveViewModel.swift */; };
 		D219F1FB2EAE265D00BD82B7 /* PostDetailContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1FA2EAE265D00BD82B7 /* PostDetailContentView.swift */; };
 		D219F2072EAE7F4500BD82B7 /* CustomCommentEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F2062EAE7F4500BD82B7 /* CustomCommentEditor.swift */; };
 		D219F20B2EAE80CC00BD82B7 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F20A2EAE80C700BD82B7 /* CommentViewModel.swift */; };
+		D219F2172EAE9D5200BD82B7 /* PostFromFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F2162EAE9D5200BD82B7 /* PostFromFeedView.swift */; };
+		D219F21B2EAE9D9800BD82B7 /* PostFromArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F21A2EAE9D9800BD82B7 /* PostFromArchiveView.swift */; };
 		D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */; };
 		D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A52E992CD800D837C8 /* CaptionView.swift */; };
 		D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A32E992CD800D837C8 /* CaptionViewModel.swift */; };
@@ -192,12 +193,13 @@
 		D219F1D92EADF4A500BD82B7 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D219F1E22EAE0A3200BD82B7 /* PostDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailView.swift; sourceTree = "<group>"; };
 		D219F1E42EAE0A3D00BD82B7 /* PostDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewModel.swift; sourceTree = "<group>"; };
-		D219F1F22EAE216300BD82B7 /* SetPostOrArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPostOrArchiveView.swift; sourceTree = "<group>"; };
 		D219F1F52EAE22D300BD82B7 /* PostType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostType.swift; sourceTree = "<group>"; };
-		D219F1F82EAE247900BD82B7 /* SetPostOrArchiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPostOrArchiveViewModel.swift; sourceTree = "<group>"; };
+		D219F1F82EAE247900BD82B7 /* PostFromArchiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFromArchiveViewModel.swift; sourceTree = "<group>"; };
 		D219F1FA2EAE265D00BD82B7 /* PostDetailContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailContentView.swift; sourceTree = "<group>"; };
 		D219F2062EAE7F4500BD82B7 /* CustomCommentEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCommentEditor.swift; sourceTree = "<group>"; };
 		D219F20A2EAE80C700BD82B7 /* CommentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
+		D219F2162EAE9D5200BD82B7 /* PostFromFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFromFeedView.swift; sourceTree = "<group>"; };
+		D219F21A2EAE9D9800BD82B7 /* PostFromArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFromArchiveView.swift; sourceTree = "<group>"; };
 		D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewContainer.swift; sourceTree = "<group>"; };
 		D24402A32E992CD800D837C8 /* CaptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionViewModel.swift; sourceTree = "<group>"; };
 		D24402A52E992CD800D837C8 /* CaptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionView.swift; sourceTree = "<group>"; };
@@ -601,9 +603,10 @@
 		D219F1EB2EAE20B700BD82B7 /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
-				D219F1F22EAE216300BD82B7 /* SetPostOrArchiveView.swift */,
 				D219F1FA2EAE265D00BD82B7 /* PostDetailContentView.swift */,
 				D219F2062EAE7F4500BD82B7 /* CustomCommentEditor.swift */,
+				D219F2162EAE9D5200BD82B7 /* PostFromFeedView.swift */,
+				D219F21A2EAE9D9800BD82B7 /* PostFromArchiveView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -629,7 +632,7 @@
 			isa = PBXGroup;
 			children = (
 				D219F20A2EAE80C700BD82B7 /* CommentViewModel.swift */,
-				D219F1F82EAE247900BD82B7 /* SetPostOrArchiveViewModel.swift */,
+				D219F1F82EAE247900BD82B7 /* PostFromArchiveViewModel.swift */,
 				D219F1E42EAE0A3D00BD82B7 /* PostDetailViewModel.swift */,
 			);
 			path = ViewModels;
@@ -783,7 +786,7 @@
 				A192F2BF2E9F3ADA00995DCC /* PolaroidSetView.swift in Sources */,
 				CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */,
 				61C9B1A62E9BFCBE0007C8F4 /* ArchiveMonth.swift in Sources */,
-				D219F1F92EAE248200BD82B7 /* SetPostOrArchiveViewModel.swift in Sources */,
+				D219F1F92EAE248200BD82B7 /* PostFromArchiveViewModel.swift in Sources */,
 				CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */,
 				8B5F44562E90FA74003137F2 /* ProfileSetupView.swift in Sources */,
 				8B7729072EA73A3000344491 /* InWebSheetView.swift in Sources */,
@@ -839,6 +842,8 @@
 				D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */,
 				D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */,
 				D219F20B2EAE80CC00BD82B7 /* CommentViewModel.swift in Sources */,
+				D219F2172EAE9D5200BD82B7 /* PostFromFeedView.swift in Sources */,
+				D219F21B2EAE9D9800BD82B7 /* PostFromArchiveView.swift in Sources */,
 				619343842E9D3C9B004B5F01 /* NotificationService.swift in Sources */,
 				CAACD36A2EA0B8970057827D /* ArchiveDetailView.swift in Sources */,
 				CAA62D012EA1E3FD00C60E05 /* SwipeBackUtils.swift in Sources */,
@@ -859,7 +864,6 @@
 				D293F3982EA65F2000AECA1A /* ArchiveStickerViewModel.swift in Sources */,
 				CAA62D932EA289E800C60E05 /* DetailContentView.swift in Sources */,
 				8B6E118A2E968E2B0082B24C /* SettingView.swift in Sources */,
-				D219F1F32EAE216B00BD82B7 /* SetPostOrArchiveView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

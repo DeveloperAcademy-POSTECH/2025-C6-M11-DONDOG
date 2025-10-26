@@ -9,7 +9,7 @@ import FirebaseAuth
 import PhotosUI
 import SwiftUI
 import UIKit
-import FirebaseCore
+import Kingfisher
 
 struct FeedView: View {
     @EnvironmentObject var coordinator: AppCoordinator
@@ -31,7 +31,25 @@ struct FeedView: View {
             VStack(spacing: 0){
                 //네비게이션 바
                 HStack{
+                    // 캐시 삭제 버튼 (좌측)
+//                    Button {
+//                        KingfisherManager.shared.downloader.cancelAll()
+//                        ImageCache.default.clearMemoryCache()
+//                        ImageCache.default.clearDiskCache()
+//                    } label: {
+//                        HStack(spacing: 6) {
+//                            Image(systemName: "trash")
+//                                .frame(width: 20, height: 20)
+//                            Text("캐시삭제")
+//                                .font(.captionRegular14)
+//                        }
+//                        .foregroundStyle(Color.ddPrimaryBlue)
+//                        .padding(.vertical, 8)
+//                        .padding(.leading, 20)
+//                    }
+
                     Spacer()
+
                     if connectState.isConnected == false {
                         Button{
                             coordinator.push(.setting)
@@ -44,6 +62,7 @@ struct FeedView: View {
                         }
                     }
                 }
+                
                 HStack {
                     Spacer()
                     if !viewModel.displayablePosts.isEmpty && !viewModel.isUploading {
@@ -78,7 +97,7 @@ struct FeedView: View {
                             .foregroundStyle(.ddPrimaryBlue)
                     }
                     .padding(.top, 280)
-                }else if connectState.isConnected == false {
+                } else if connectState.isConnected == false {
                     VStack{
                         Spacer()
                         Image(systemName: "person.fill.xmark")
@@ -108,14 +127,14 @@ struct FeedView: View {
                 }  else if !viewModel.displayablePosts.isEmpty {
                     ZStack{
                         TabView(selection: $viewModel.currentPostIndex) {
-                            ForEach(Array(viewModel.displayablePosts.enumerated()), id: \.element.id) { index, displayablePost in
-                                if let frontImage = displayablePost.frontImage,
-                                   let backImage = displayablePost.backImage {
+                            ForEach(Array(viewModel.displayablePosts.indices), id: \.self) { index in
+                                let displayablePost = viewModel.displayablePosts[index]
+                                if let front = displayablePost.frontImageURL, let back = displayablePost.backImageURL {
                                     HStack {
                                         Spacer()
                                         PolaroidSetView(
-                                            frontImage: frontImage,
-                                            backImage: backImage,
+                                            frontImage: .url(front),
+                                            backImage: .url(back),
                                             nickname: displayablePost.nickname,
                                             createdAt: DataUtils.relativeTimeString(from: displayablePost.createdAt),
                                             caption: displayablePost.caption,
@@ -138,9 +157,9 @@ struct FeedView: View {
                         }
                         .frame(height: 520)
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                        .transaction { transaction in
-                            transaction.animation = .easeInOut(duration: 0.8)
-                        }
+//                        .transaction { transaction in
+//                            transaction.animation = .easeInOut(duration: 0.8)
+//                        }
                         .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
                         .onChange(of: viewModel.currentPostIndex) { oldValue, newIndex in
                             withAnimation(.easeInOut(duration: 0.3)) {
@@ -235,7 +254,7 @@ struct FeedView: View {
                                     showToastView = true
                                 }
                             }
-                        }label: {
+                        } label: {
                             if !viewModel.displayablePosts.isEmpty{
                                 VStack(spacing: 2){
                                     Image(viewModel.displayablePosts[viewModel.currentPostIndex].isMyPost ?  "AddStickerButtonDisabled" : "AddStickerButtonAbled")
@@ -268,14 +287,14 @@ struct FeedView: View {
                     Spacer()
                     ToastView(toastText: "스티커는 상대방 게시물에만 붙일 수 있어요!")
                         .padding(.bottom, 114)
-                    
                         .transition(.asymmetric(
                             insertion: .move(edge: .bottom).animation(.spring()),
                             removal: .opacity.animation(.easeOut(duration: 0.7))
                         ))
                 }
             }
-        }.onAppear() {
+        }
+        .onAppear() {
             if !viewModel.isUploading && !viewModel.isLoading {
                 viewModel.loadTodayPosts()
             }
@@ -367,6 +386,5 @@ struct FeedView: View {
                 .ignoresSafeArea()
             }
         }
-        
     }
 }

@@ -296,7 +296,6 @@ struct FeedView: View {
         }
         .onAppear() {
             if !viewModel.isUploading && !viewModel.isLoading {
-                print("피드뷰모델 이닛 - loadtodayposts")
                 viewModel.loadTodayPosts()
             }
         }

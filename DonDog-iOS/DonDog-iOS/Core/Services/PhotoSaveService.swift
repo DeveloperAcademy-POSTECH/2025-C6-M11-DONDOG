@@ -90,6 +90,7 @@ final class PhotoSaveService: ObservableObject {
         var uploadError: Error?
         
         group.enter()
+        
         uploadImage(image: frontImage, path: "rooms/\(roomId)/posts/\(postId)/front.jpg") { result in
             switch result {
             case .success(let url):
@@ -235,28 +236,24 @@ final class PhotoSaveService: ObservableObject {
             }
     }
     
-    func downloadImage(from urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
-        guard let url = URL(string: urlString) else {
-            completion(.failure(FirebaseError.invalidURL))
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let data = data, let image = UIImage(data: data) else {
-                completion(.failure(FirebaseError.imageDownloadFailed))
-                return
-            }
-            
-            DispatchQueue.main.async {
-                completion(.success(image))
-            }
-        }.resume()
-    }
+    // url 이미지로 바꾸기
+//    func downloadImage(from url: URL, completion: @escaping (Result<UIImage, Error>) -> Void) {
+//        URLSession.shared.dataTask(with: url) { data, response, error in
+//            if let error = error {
+//                completion(.failure(error))
+//                return
+//            }
+//            
+//            guard let data = data, let image = UIImage(data: data) else {
+//                completion(.failure(FirebaseError.imageDownloadFailed))
+//                return
+//            }
+//            
+//            DispatchQueue.main.async {
+//                completion(.success(image))
+//            }
+//        }.resume()
+//    }
     
     private func uploadImage(image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("🚀 이미지 업로드 시작 - 경로: \(path)")

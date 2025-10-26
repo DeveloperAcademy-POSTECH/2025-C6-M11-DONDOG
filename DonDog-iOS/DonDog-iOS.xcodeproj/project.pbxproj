@@ -96,6 +96,7 @@
 		CAACD36C2EA0C1120057827D /* ArchiveDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAACD36B2EA0C1120057827D /* ArchiveDetailViewModel.swift */; };
 		D219F1E32EAE0A3700BD82B7 /* PostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1E22EAE0A3200BD82B7 /* PostDetailView.swift */; };
 		D219F1E52EAE0A4400BD82B7 /* PostDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1E42EAE0A3D00BD82B7 /* PostDetailViewModel.swift */; };
+		D219F1F32EAE216B00BD82B7 /* PostDetailContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1F22EAE216300BD82B7 /* PostDetailContentView.swift */; };
 		D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */; };
 		D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A52E992CD800D837C8 /* CaptionView.swift */; };
 		D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A32E992CD800D837C8 /* CaptionViewModel.swift */; };
@@ -186,6 +187,7 @@
 		D219F1D92EADF4A500BD82B7 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D219F1E22EAE0A3200BD82B7 /* PostDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailView.swift; sourceTree = "<group>"; };
 		D219F1E42EAE0A3D00BD82B7 /* PostDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewModel.swift; sourceTree = "<group>"; };
+		D219F1F22EAE216300BD82B7 /* PostDetailContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailContentView.swift; sourceTree = "<group>"; };
 		D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewContainer.swift; sourceTree = "<group>"; };
 		D24402A32E992CD800D837C8 /* CaptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionViewModel.swift; sourceTree = "<group>"; };
 		D24402A52E992CD800D837C8 /* CaptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionView.swift; sourceTree = "<group>"; };
@@ -579,10 +581,27 @@
 		D219F1E12EAE0A2B00BD82B7 /* PostDetail */ = {
 			isa = PBXGroup;
 			children = (
+				D219F1EC2EAE20C300BD82B7 /* Views */,
 				D219F1E42EAE0A3D00BD82B7 /* PostDetailViewModel.swift */,
-				D219F1E22EAE0A3200BD82B7 /* PostDetailView.swift */,
 			);
 			path = PostDetail;
+			sourceTree = "<group>";
+		};
+		D219F1EB2EAE20B700BD82B7 /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				D219F1F22EAE216300BD82B7 /* PostDetailContentView.swift */,
+			);
+			path = SubViews;
+			sourceTree = "<group>";
+		};
+		D219F1EC2EAE20C300BD82B7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D219F1EB2EAE20B700BD82B7 /* SubViews */,
+				D219F1E22EAE0A3200BD82B7 /* PostDetailView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		D24402A42E992CD800D837C8 /* ViewModels */ = {
@@ -804,6 +823,7 @@
 				D293F3982EA65F2000AECA1A /* ArchiveStickerViewModel.swift in Sources */,
 				CAA62D932EA289E800C60E05 /* DetailContentView.swift in Sources */,
 				8B6E118A2E968E2B0082B24C /* SettingView.swift in Sources */,
+				D219F1F32EAE216B00BD82B7 /* PostDetailContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

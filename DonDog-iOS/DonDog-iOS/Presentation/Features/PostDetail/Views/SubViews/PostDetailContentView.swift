@@ -13,6 +13,8 @@ struct PostDetailContentView: View {
     let post: Any
     
     var body: some View {
-        // post 메인 컨텐츠 뷰
+        CardView(post: post)
+        // TODO: 실제 postId 전달
+        CommentView(postId: "post.id")
     }
 }

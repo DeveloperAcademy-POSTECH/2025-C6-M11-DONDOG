@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CommentView: View {
+struct CommentdView: View {
     let comment: Comment
     @State private var authorName: String = "익명"
     @StateObject var viewModel: PostViewModel

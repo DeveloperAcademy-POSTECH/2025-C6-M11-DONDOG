@@ -1,5 +1,5 @@
 //
-//  DataUtils.swift
+//  DateUtils.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/9/25.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct DataUtils {
+struct DateUtils {
     static func relativeTimeString(from date: Date) -> String {
         let now = Date()
         let diff = now.timeIntervalSince(date)

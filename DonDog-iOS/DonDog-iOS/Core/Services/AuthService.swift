@@ -10,10 +10,6 @@ import FirebaseAuth
 import FirebaseFirestore
 import FirebaseMessaging
 
-extension Notification.Name {
-    static let authServiceReconfigureRouting = Notification.Name("AuthService.ReconfigureRouting")
-}
-
 final class AuthService {
     static var isAccountDeletionInProgress: Bool = false
     private var authHandle: AuthStateDidChangeListenerHandle?

@@ -209,6 +209,17 @@ final class FirebaseDataManager: DataManagerProtocol {
         try await batch.commit()
     }
     
+    func batchDelete(paths: [String]) async throws {
+        let batch = db.batch()
+        
+        for path in paths {
+            let docRef = try parseFirestorePath(path)
+            batch.deleteDocument(docRef)
+        }
+        
+        try await batch.commit()
+    }
+    
     // MARK: - Storage
     
     func uploadImage(image: UIImage, path: String) async throws -> String {
@@ -241,6 +252,19 @@ final class FirebaseDataManager: DataManagerProtocol {
         }
         
         return image
+    }
+    
+    func deleteStorageFile(urlString: String) async throws {
+        do {
+            let storageRef = storage.reference(forURL: urlString)
+            try await storageRef.delete()
+        } catch {
+            print("❌ Storage 파일 삭제 실패: \(error.localizedDescription)")
+            
+            if (error as NSError).code != StorageErrorCode.objectNotFound.rawValue {
+                throw DataManagerError.downloadFailed
+            }
+        }
     }
     
     // MARK: - Auth

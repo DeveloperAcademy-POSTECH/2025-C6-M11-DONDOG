@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 struct PostDetailView: View {
     @EnvironmentObject var coordinator: AppCoordinator
@@ -19,8 +20,10 @@ struct PostDetailView: View {
             leadingType:
                     .back(action: { coordinator.pop() }),
             centerType:
-                // TODO: Date() 대신 해당 post 작성 날짜 넣기
-                    .title(title: DateUtils.relativeTimeString(from: Date(), for: "MM월 dd일")),
+                .title(title: DateUtils.relativeTimeString(
+                    from: (viewModel.posts.first?.createdAt.dateValue()) ?? Date(),
+                    for: "MM월 dd일"
+                )),
             trailingType: .menu(items: [
                 CustomNavMenuItem("삭제하기", role: .destructive) {
                     viewModel.handleDeleteRequest()
@@ -46,6 +49,7 @@ struct PostDetailView: View {
         
         ZStack(alignment: .bottom) {
             viewFromPostOrArchive(postType: postType)
+                .environmentObject(viewModel)
             
             ToastView(toastText: "본인이 작성한 글만 삭제할 수 있어요")
                 .padding(.bottom, 80)

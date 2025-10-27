@@ -8,32 +8,38 @@
 import SwiftUI
 
 struct PostFromFeedView: View {
+    @EnvironmentObject var viewModel: PostDetailViewModel
+    
     @State private var shouldScrollToBottom: Bool = false
     var isTextFieldFocused: FocusState<Bool>.Binding
     
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                // TODO: FeedView에서 선택한 post의 정보 가져와서 파라미터 변경
-                PostDetailContentView(postType: .post, post: PostData.self)
-                    .onTapGesture {
-                        isTextFieldFocused.wrappedValue = false
-                    }
-                
-                Color.clear
-                    .frame(height: 1)
-                    .id("bottom")
-            }
-            .onChange(of: shouldScrollToBottom) {
-                if shouldScrollToBottom {
-                    withAnimation {
-                        proxy.scrollTo("bottom", anchor: .bottom)
-                        shouldScrollToBottom = false
+        if let post = viewModel.posts.first {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    PostDetailContentView(postType: .post, post: post)
+                        .onTapGesture {
+                            isTextFieldFocused.wrappedValue = false
+                        }
+                    
+                    Color.clear
+                        .frame(height: 1)
+                        .id("bottom")
+                }
+                .onChange(of: shouldScrollToBottom) {
+                    if shouldScrollToBottom {
+                        withAnimation {
+                            proxy.scrollTo("bottom", anchor: .bottom)
+                            shouldScrollToBottom = false
+                        }
                     }
                 }
             }
+            
+            CustomCommentEditor(isTextFieldFocused: isTextFieldFocused, shouldScrollToBottom: $shouldScrollToBottom)
+        } else {
+            // TODO: post를 받아오지 못했을 때, 예외 처리 뷰
+            EmptyView()
         }
-        
-        CustomCommentEditor(isTextFieldFocused: isTextFieldFocused, shouldScrollToBottom: $shouldScrollToBottom)
     }
 }

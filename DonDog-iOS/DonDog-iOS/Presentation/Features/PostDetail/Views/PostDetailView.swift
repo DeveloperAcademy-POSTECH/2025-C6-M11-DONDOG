@@ -72,7 +72,7 @@ struct PostDetailView: View {
         if postType == .post {
             PostFromFeedView(isTextFieldFocused: $isTextFieldFocused)
         } else {
-            PostFromArchiveView()
+            PostFromArchiveView(currentIndex: 0)
         }
     }
 }

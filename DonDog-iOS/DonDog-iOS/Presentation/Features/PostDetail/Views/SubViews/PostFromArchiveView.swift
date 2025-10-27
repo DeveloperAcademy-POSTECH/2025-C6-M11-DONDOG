@@ -8,15 +8,18 @@
 import SwiftUI
 
 struct PostFromArchiveView: View {
-    @StateObject var viewModel = PostFromArchiveViewModel()
+    @EnvironmentObject var viewModel: PostDetailViewModel
+    @State var currentIndex: Int
     
     var body: some View {
-        TabView(selection: $viewModel.currentIndex) {
-            ForEach(Array(viewModel.posts.enumerated()), id: \.offset) { idx, post in
+        let posts = viewModel.posts
+        
+        TabView(selection: $currentIndex) {
+            ForEach(Array(posts.enumerated()), id: \.offset) { idx, post in
                 ScrollView {
                     CustomPageIndicator(
-                        currentIndex: viewModel.currentIndex + 1,
-                        totalCount: viewModel.posts.count
+                        currentIndex: currentIndex + 1,
+                        totalCount: posts.count
                     )
                     .padding(.vertical, 8)
                     

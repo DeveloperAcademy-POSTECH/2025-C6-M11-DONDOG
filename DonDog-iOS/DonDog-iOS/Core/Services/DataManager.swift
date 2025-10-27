@@ -152,6 +152,34 @@ final class FirebaseDataManager: DataManagerProtocol {
         }
     }
     
+    func fetchWhere<T: Decodable>(
+        path: String,
+        field: String,
+        isGreaterThanOrEqualTo value: Any,
+        orderBy: String,
+        descending: Bool
+    ) async throws -> [T] {
+        let collectionRef = try parseCollectionPath(path)
+        let query = collectionRef
+            .whereField(field, isGreaterThanOrEqualTo: value)
+            .order(by: orderBy, descending: descending)
+        let snapshot = try await query.getDocuments()
+
+        return try snapshot.documents.compactMap { document in
+            let data = document.data()
+            let jsonData = try JSONSerialization.data(withJSONObject: data)
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+
+            do {
+                return try decoder.decode(T.self, from: jsonData)
+            } catch {
+                print("❌ 문서 \\(document.documentID) 디코딩 실패: \\(error)")
+                return nil
+            }
+        }
+    }
+    
     // MARK: - Firestore 쓰기
     
     func create(path: String, data: [String: Any]) async throws {

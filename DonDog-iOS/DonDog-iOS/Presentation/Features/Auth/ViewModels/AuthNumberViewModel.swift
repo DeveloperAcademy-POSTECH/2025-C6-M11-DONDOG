@@ -62,6 +62,7 @@ final class AuthNumberViewModel: ObservableObject {
                 if let error = error {
                     print("[Auth][signIn] error: \(error.localizedDescription)")
                     self.codeError = "인증번호를 다시 확인해주세요."
+                    self.isLoading = false
                 } else {
                     self.codeError = nil
                     print("인증 성공")
@@ -76,7 +77,32 @@ final class AuthNumberViewModel: ObservableObject {
                         self.routeAfterSignIn()
                     }
                 }
-                self.isLoading = false
+            }
+        }
+    }
+    
+    private func routeAfterSignIn() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        let docRef = Firestore.firestore().collection("Users").document(uid)
+
+        docRef.getDocument { [weak self] snapshot, error in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("[Auth][routeAfterSignIn] fetch user doc error: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self.coordinator?.push(.profileSetup)
+                }
+                return
+            }
+
+            let exists = (snapshot?.exists == true)
+            DispatchQueue.main.async {
+                if exists {
+                    self.coordinator?.replaceRoot(.feed)
+                } else {
+                    self.coordinator?.replaceRoot(.profileSetup)
+                }
             }
         }
     }
@@ -86,9 +112,7 @@ final class AuthNumberViewModel: ObservableObject {
             await MainActor.run {
                 AuthService.isAccountDeletionInProgress = true
             }
-            
             let success = await deleteUserDataAndAuth()
-            
             await MainActor.run {
                 if success {
                     AuthService.isAccountDeletionInProgress = false
@@ -265,33 +289,4 @@ final class AuthNumberViewModel: ObservableObject {
             return false
         }
     }
-    
-    private func routeAfterSignIn() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let docRef = Firestore.firestore().collection("Users").document(uid)
-
-        docRef.getDocument { [weak self] snapshot, error in
-            guard let self = self else { return }
-
-            if let error = error {
-                print("[Auth][routeAfterSignIn] fetch user doc error: \(error.localizedDescription)")
-                DispatchQueue.main.async {
-                    self.coordinator?.push(.profileSetup)
-                }
-                return
-            }
-
-            let exists = (snapshot?.exists == true)
-            DispatchQueue.main.async {
-                if exists {
-                    self.coordinator?.replaceRoot(.feed)
-                    self.isLoading = false
-                } else {
-                    self.coordinator?.replaceRoot(.profileSetup)
-                    self.isLoading = false
-                }
-            }
-        }
-    }
-    
 }

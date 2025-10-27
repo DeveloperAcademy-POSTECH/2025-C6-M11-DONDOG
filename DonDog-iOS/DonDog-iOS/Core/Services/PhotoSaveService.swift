@@ -79,7 +79,7 @@ final class PhotoSaveService: ObservableObject {
             return
         }
         
-        let uid = currentUser.uid
+        let authorId = currentUser.uid
         let postId = UUID().uuidString
         
         print("📸 전면/후면 이미지 업로드 시작 - Post ID: \(postId)")
@@ -131,7 +131,7 @@ final class PhotoSaveService: ObservableObject {
             
             print("✅ 전면/후면 이미지 업로드 모두 완료")
             
-            let postData = PostData(postId: postId, uid: uid, frontImageURL: frontURL, backImageURL: backURL, caption: caption, stickerPostId: "", stickerType: nil)
+            let postData = PostData(postId: postId, authorId: authorId, frontImageURL: frontURL, backImageURL: backURL, caption: caption, stickerPostId: "", stickerType: nil)
             self.savePostToRoom(roomId: roomId, postId: postId, postData: postData, completion: completion)
         }
     }
@@ -141,14 +141,14 @@ final class PhotoSaveService: ObservableObject {
         
         do {
             var dict = try Firestore.Encoder().encode(postData)
-            dict["uid"] = postData.uid
+            dict["uid"] = postData.authorId
             dict["createdAt"] = FieldValue.serverTimestamp()
             dict["updatedAt"] = FieldValue.serverTimestamp()
             
             let postRef = db.collection("Rooms").document(roomId)
                 .collection("posts").document(postId)
             
-            let userRef = db.collection("Users").document(postData.uid)
+            let userRef = db.collection("Users").document(postData.authorId)
             
             batch.setData(dict, forDocument: postRef, merge: true)
             batch.setData(["recentPostId": postId,

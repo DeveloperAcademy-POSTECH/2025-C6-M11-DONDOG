@@ -1,5 +1,5 @@
 //
-//  CommentView.swift
+//  OriginalCommentView.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/17/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CommentdView: View {
+struct OriginalCommentView: View {
     let comment: Comment
     @State private var authorName: String = "익명"
     @StateObject var viewModel: PostViewModel

@@ -47,7 +47,7 @@ final class CaptionViewModel: ObservableObject {
                 
                 switch result {
                 case .success(let postData):
-                    print("✅ 업로드 성공: \(postData.uid)")
+                    print("✅ 업로드 성공: \(postData.authorId)")
                     print("📝 캡션: \(postData.caption)")
                     self?.delegate?.didUploadPost()
                     onSuccess()

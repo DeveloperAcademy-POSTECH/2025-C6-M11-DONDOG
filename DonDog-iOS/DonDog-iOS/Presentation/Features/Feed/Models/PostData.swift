@@ -10,7 +10,7 @@ import UIKit
 
 struct PostData: Codable {
     let postId: String
-    let uid: String
+    let authorId: String
     let frontImageURL: String
     let backImageURL: String
     let caption: String
@@ -19,9 +19,9 @@ struct PostData: Codable {
     let stickerPostId: String
     let stickerType: String?
     
-    init(postId: String, uid: String, frontImageURL: String, backImageURL: String, caption: String = "", createdAt: Timestamp? = nil, stickerPostId: String, stickerType: String?) {
+    init(postId: String, authorId: String, frontImageURL: String, backImageURL: String, caption: String = "", createdAt: Timestamp? = nil, stickerPostId: String, stickerType: String?) {
         self.postId = postId
-        self.uid = uid
+        self.authorId = authorId
         self.frontImageURL = frontImageURL
         self.backImageURL = backImageURL
         self.caption = caption
@@ -61,7 +61,7 @@ struct DisplayablePost: Identifiable {
     // 편의 속성 - post 데이터에 쉽게 접근
     var caption: String { post.caption }
     var createdAt: Date { post.createdAt.dateValue() }
-    var uid: String { post.uid }
+    var uid: String { post.authorId }
     var postId: String { post.postId }
     var stickerPostId: String { post.stickerPostId }
     var stickerType: String? { post.stickerType }

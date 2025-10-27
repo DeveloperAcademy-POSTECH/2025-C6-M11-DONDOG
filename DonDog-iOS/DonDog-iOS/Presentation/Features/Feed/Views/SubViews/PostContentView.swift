@@ -91,7 +91,7 @@ struct PostContentView: View {
             
             VStack(alignment: .leading) {
                 ForEach(viewModel.comments) { comment in
-                    CommentView(comment: comment, viewModel: viewModel)
+                    OriginalCommentView(comment: comment, viewModel: viewModel)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 8)
                         .contentShape(Rectangle())

@@ -30,7 +30,7 @@ final class AuthNumberViewModel: ObservableObject {
     @Published var codeError: String? = nil
     
     @Published var isNumberWithdraw = false
-    @Published var showAlert = false
+    @Published var showWithdrawErrorAlert = false
     @Published var alertMessage: String? = nil
     
     init(isNumberWithdraw: Bool = false) {
@@ -124,25 +124,16 @@ final class AuthNumberViewModel: ObservableObject {
 
             let deleteTgt = db.batch()
 
-            // Users/{uid} 삭제
-            deleteTgt.deleteDocument(userDoc)
-
-            // Invites 에서 uid가 있는 문서 삭제
-            let invitesDoc = db.collection("Invites")
-            let inviterQuery = invitesDoc.whereField("inviterUid", isEqualTo: uid)
-            let inviterData = try await inviterQuery.getDocuments()
-            for doc in inviterData.documents {
-                deleteTgt.deleteDocument(doc.reference)
-            }
-
             // Rooms
-            // participants에서 제거, 비면 방 삭제
+            // 1-1) participants에서 내가 마지막 유저인지 확인
+            // 1-1-1) 내가 마지막 유저라면 - rooms 모두 삭제, storage 삭제
+            // 1-1-2) 내가 마지막 유저가 아니라면 - participants에서만 나 삭제
             // (Users/{uid}.roomId 필드 기반 우선 처리 + 방어적으로 participants 검색)
             var roomDocToCheck: [DocumentReference] = []
             if let rid = roomId, !rid.isEmpty {
                 roomDocToCheck.append(db.collection("Rooms").document(rid))
             }
-            // participants 배열에 내 uid가 포함된 모든 방을 역으로 검색
+            // 재확인 - participants 배열에 내 uid가 포함된 모든 방을 역으로 검색
             let roomsDoc = db.collection("Rooms").whereField("participants", arrayContains: uid)
             let roomData = try await roomsDoc.getDocuments()
             roomDocToCheck.append(contentsOf: roomData.documents.map { $0.reference })
@@ -224,6 +215,18 @@ final class AuthNumberViewModel: ObservableObject {
                 }
             }
             
+            
+            // 1-2) Invites 에서 uid가 있는 문서 삭제
+            let invitesDoc = db.collection("Invites")
+            let inviterQuery = invitesDoc.whereField("inviterUid", isEqualTo: uid)
+            let inviterData = try await inviterQuery.getDocuments()
+            for doc in inviterData.documents {
+                deleteTgt.deleteDocument(doc.reference)
+            }
+            
+            // 1-3) Users/{uid} 삭제
+            deleteTgt.deleteDocument(userDoc)
+            
             // 2) Firebase Auth 사용자 삭제
             do {
                 try await user.delete()
@@ -233,13 +236,13 @@ final class AuthNumberViewModel: ObservableObject {
                 if nsError.code == AuthErrorCode.requiresRecentLogin.rawValue {
                     print("[회원탈퇴] requiresRecentLogin: 최근 로그인 후 다시 시도 필요")
                     await MainActor.run {
-                        self.showAlert = true
+                        self.showWithdrawErrorAlert = true
                         self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
                     }
                 } else {
                     print("[회원탈퇴] Auth 삭제 중 오류: \(nsError.localizedDescription)")
                     await MainActor.run {
-                        self.showAlert = true
+                        self.showWithdrawErrorAlert = true
                         self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
                     }
                 }
@@ -249,7 +252,7 @@ final class AuthNumberViewModel: ObservableObject {
             let nsError = error as NSError
             print("[회원탈퇴] 오류: \(nsError.localizedDescription)")
             await MainActor.run {
-                self.showAlert = true
+                self.showWithdrawErrorAlert = true
                 self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
             }
             return false

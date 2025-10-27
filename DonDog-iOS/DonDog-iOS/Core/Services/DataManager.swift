@@ -10,7 +10,7 @@ import FirebaseStorage
 import FirebaseAuth
 import UIKit
 
-// MARK: - 에러 타입 명시
+// MARK: - 에러 타입
 enum DataManagerError: LocalizedError {
     case invalidPath
     case documentNotFound
@@ -24,24 +24,15 @@ enum DataManagerError: LocalizedError {
     
     var errorDescription: String? {
         switch self {
-        case .invalidPath:
-            return "잘못된 경로입니다"
-        case .documentNotFound:
-            return "문서를 찾을 수 없습니다"
-        case .decodingFailed:
-            return "데이터 변환에 실패했습니다"
-        case .imageConversionFailed:
-            return "이미지 변환에 실패했습니다"
-        case .uploadFailed:
-            return "업로드에 실패했습니다"
-        case .downloadFailed:
-            return "다운로드에 실패했습니다"
-        case .authenticationRequired:
-            return "로그인이 필요합니다"
-        case .userDocumentNotFound:
-            return "사용자 문서를 찾을 수 없습니다"
-        case .roomIdNotFound:
-            return "roomId를 찾을 수 없습니다"
+        case .invalidPath: return "잘못된 경로입니다"
+        case .documentNotFound: return "문서를 찾을 수 없습니다"
+        case .decodingFailed: return "데이터 변환에 실패했습니다"
+        case .imageConversionFailed: return "이미지 변환에 실패했습니다"
+        case .uploadFailed: return "업로드에 실패했습니다"
+        case .downloadFailed: return "다운로드에 실패했습니다"
+        case .authenticationRequired: return "로그인이 필요합니다"
+        case .userDocumentNotFound: return "사용자 문서를 찾을 수 없습니다"
+        case .roomIdNotFound: return "roomId를 찾을 수 없습니다"
         }
     }
 }
@@ -56,7 +47,6 @@ final class FirebaseDataManager: DataManagerProtocol {
     
     // MARK: - Helper: 경로 파싱
     
-    /// "Rooms/123/posts/456" → DocumentReference
     private func parseFirestorePath(_ path: String) throws -> DocumentReference {
         let components = path.split(separator: "/").map(String.init)
         guard components.count >= 2, components.count % 2 == 0 else {
@@ -81,7 +71,6 @@ final class FirebaseDataManager: DataManagerProtocol {
         return docRef
     }
     
-    /// "Rooms/123/posts" → CollectionReference
     private func parseCollectionPath(_ path: String) throws -> CollectionReference {
         let components = path.split(separator: "/").map(String.init)
         guard components.count % 2 == 1 else {
@@ -118,16 +107,12 @@ final class FirebaseDataManager: DataManagerProtocol {
         let docRef = try parseFirestorePath(path)
         let snapshot = try await docRef.getDocument()
         
-        guard snapshot.exists, let data = snapshot.data() else {
+        guard snapshot.exists else {
             throw DataManagerError.documentNotFound
         }
         
-        let jsonData = try JSONSerialization.data(withJSONObject: data)
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        
         do {
-            return try decoder.decode(T.self, from: jsonData)
+            return try snapshot.data(as: T.self)
         } catch {
             print("❌ 디코딩 실패: \(error)")
             throw DataManagerError.decodingFailed
@@ -138,14 +123,9 @@ final class FirebaseDataManager: DataManagerProtocol {
         let collectionRef = try parseCollectionPath(path)
         let snapshot = try await collectionRef.getDocuments()
         
-        return try snapshot.documents.compactMap { document in
-            let data = document.data()
-            let jsonData = try JSONSerialization.data(withJSONObject: data)
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            
+        return snapshot.documents.compactMap { document in
             do {
-                return try decoder.decode(T.self, from: jsonData)
+                return try document.data(as: T.self)
             } catch {
                 print("❌ 문서 \(document.documentID) 디코딩 실패: \(error)")
                 return nil
@@ -162,14 +142,9 @@ final class FirebaseDataManager: DataManagerProtocol {
         let query = collectionRef.order(by: field, descending: descending)
         let snapshot = try await query.getDocuments()
         
-        return try snapshot.documents.compactMap { document in
-            let data = document.data()
-            let jsonData = try JSONSerialization.data(withJSONObject: data)
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            
+        return snapshot.documents.compactMap { document in
             do {
-                return try decoder.decode(T.self, from: jsonData)
+                return try document.data(as: T.self)
             } catch {
                 print("❌ 문서 \(document.documentID) 디코딩 실패: \(error)")
                 return nil
@@ -214,7 +189,6 @@ final class FirebaseDataManager: DataManagerProtocol {
     // MARK: - Storage
     
     func uploadImage(image: UIImage, path: String) async throws -> String {
-        
         guard let resizedImage = image.resized(maxWidth: 1080) else {
             throw DataManagerError.imageConversionFailed
         }
@@ -227,10 +201,7 @@ final class FirebaseDataManager: DataManagerProtocol {
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
         
-        // 업로드
         _ = try await storageRef.putDataAsync(imageData, metadata: metadata)
-        
-        // 다운로드 URL
         let downloadURL = try await storageRef.downloadURL()
         return downloadURL.absoluteString
     }

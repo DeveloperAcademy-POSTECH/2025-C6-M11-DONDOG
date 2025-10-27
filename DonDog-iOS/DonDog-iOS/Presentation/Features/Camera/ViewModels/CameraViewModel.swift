@@ -10,7 +10,6 @@ import SwiftUI
 import UIKit
 
 protocol CameraViewModelDelegate: AnyObject {
-    func didCaptureImages(frontImage: UIImage, backImage: UIImage)
 }
 
 final class CameraViewModel: ObservableObject {

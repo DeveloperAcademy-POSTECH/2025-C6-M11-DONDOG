@@ -15,17 +15,9 @@ import UIKit
 
 final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionViewModelDelegate {
     
-    @Published var selectedFrontImage: UIImage?
-    @Published var selectedBackImage: UIImage?
-    @Published var postsList: [PostData] = []
-    @Published var images: [PostData] = []
-    @Published var todayPost: PostData?
-    @Published var todayFrontImageURL: URL?
-    @Published var todayBackImageURL: URL?
     @Published var isLoading = false
     @Published var isUploading = false
     @Published var isAfterUpload = false
-    @Published var uploadStatus: String = ""
     @Published var currentRoomId: String = ""
     @Published var selectedPostId: String = "" {
         didSet {
@@ -36,8 +28,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var stickerImage: UIImage?
     @Published var sticker: UIImage?
     @Published var myNickname: String = ""
-    private var mask: UIImage?
-    @Published var frame: UIImage?
     @Published var borderedStickers: [String: UIImage] = [:]
     
     @Published var currentPost: PostData?
@@ -180,8 +170,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
             
-            let maskImage = self.imageUtils.makeMask(from: image)
-            
             guard let stickerOnly = self.imageUtils.makeSticker(with: image) else {
                 print("스티커 생성 실패")
                 return
@@ -198,7 +186,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
             
             DispatchQueue.main.async {
-                self.mask = maskImage
                 self.sticker = stickerOnly
                 self.borderedStickers = borderedDict
             }
@@ -335,10 +322,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    func didCaptureImages(frontImage: UIImage, backImage: UIImage) {
-        selectedFrontImage = frontImage
-        selectedBackImage = backImage
-    }
     
     // MARK: - CaptionViewModelDelegate
     func didUploadPost() {
@@ -368,7 +351,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let todayPosts):
-                            self?.images = todayPosts
+                            
                             print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
                             
                             if let firstPost = todayPosts.first {
@@ -485,8 +468,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             
             if !finalSortedPosts.isEmpty {
                 let initialPost = finalSortedPosts[firstDisplayedPostIndex]
-                self.todayFrontImageURL = initialPost.frontImageURL
-                self.todayBackImageURL  = initialPost.backImageURL
                 self.currentNickname = initialPost.nickname
                 self.selectedPostId = initialPost.postId
                 self.currentPost = initialPost.post
@@ -655,8 +636,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         currentPostIndex = index
         currentPost = displayablePost.post
         selectedPostId = displayablePost.postId
-        todayFrontImageURL = displayablePost.frontImageURL
-        todayBackImageURL  = displayablePost.backImageURL
         currentNickname = displayablePost.nickname
     }
 }

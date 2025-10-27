@@ -164,17 +164,12 @@ final class FirebaseDataManager: DataManagerProtocol {
             .whereField(field, isGreaterThanOrEqualTo: value)
             .order(by: orderBy, descending: descending)
         let snapshot = try await query.getDocuments()
-
-        return try snapshot.documents.compactMap { document in
-            let data = document.data()
-            let jsonData = try JSONSerialization.data(withJSONObject: data)
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-
+        
+        return snapshot.documents.compactMap { document in
             do {
-                return try decoder.decode(T.self, from: jsonData)
+                return try document.data(as: T.self)
             } catch {
-                print("❌ 문서 \\(document.documentID) 디코딩 실패: \\(error)")
+                print("❌ 문서 \(document.documentID) 디코딩 실패: \(error)")
                 return nil
             }
         }

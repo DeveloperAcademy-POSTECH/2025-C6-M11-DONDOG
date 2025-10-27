@@ -12,22 +12,18 @@ struct ArchivePostContainer: View {
     let url: URL
     let day: Int
     
-    @State private var isLoading = false
     @State private var isFailed = false
     
     var body: some View {
         ZStack(alignment: .center) {
             KFImage.url(url)
                 .onProgress { receivedSize,totalSize in
-                    isLoading = true
                     isFailed = false
                 }
                 .onSuccess { _ in
-                    isLoading = false
                     isFailed = false
                 }
                 .onFailure { _ in
-                    isLoading = false
                     isFailed = true
                 }
                 .placeholder {

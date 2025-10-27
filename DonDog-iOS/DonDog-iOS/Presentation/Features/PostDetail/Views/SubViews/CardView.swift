@@ -11,12 +11,15 @@ struct CardView: View {
     let post: PostData
     
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            VStack(spacing: 0) {
-                // CardPhotoView(front: viewModel.frontURL, back: viewModel.backURL)
-                // CardTextView(caption: viewModel.caption, author: viewModel.author, time: viewModel.createdAt)
+        ScrollView {
+            ZStack(alignment: .bottomTrailing) {
+                VStack(spacing: 0) {
+                    CardPhotoView(frontImageURL: post.frontImageURL, backImageURL: post.backImageURL)
+                    
+                    // CardTextView(caption: viewModel.caption, author: viewModel.author, time: viewModel.createdAt)
+                }
+                // StickerView(stickerURL: viewModel.stickerURL)
             }
-            // StickerView(stickerURL: viewModel.stickerURL)
         }
     }
 }

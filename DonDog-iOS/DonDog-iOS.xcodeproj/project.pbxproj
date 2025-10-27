@@ -51,6 +51,7 @@
 		8CAD89B02EA6284E004318F0 /* TextStrokeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */; };
 		8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */; };
 		8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */; };
+		8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD752EAE0EA40050003C /* DataManager.swift */; };
 		8CF9C7512EA129D600EB944A /* StickerSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7502EA129D400EB944A /* StickerSheetView.swift */; };
 		8CF9C7A32EA148C100EB944A /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7A22EA148BC00EB944A /* UIImage+.swift */; };
 		A192F2B12E9E45AC00995DCC /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2B02E9E45A800995DCC /* Color+.swift */; };
@@ -140,6 +141,7 @@
 		8CAD89D72EA9BFF6004318F0 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
+		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		8CF9C7502EA129D400EB944A /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		8CF9C7A22EA148BC00EB944A /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		A192F2B02E9E45A800995DCC /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
@@ -291,6 +293,7 @@
 		8B7377E12E9546120001EFCD /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				8CF3BD752EAE0EA40050003C /* DataManager.swift */,
 				8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */,
 				8B7377DF2E9546030001EFCD /* AuthService.swift */,
 				8BFC73602EA5D18C00B54F03 /* NetworkService.swift */,
@@ -766,6 +769,7 @@
 				8BBE41F22EA1E9CB00057A23 /* AuthNumberViewModel.swift in Sources */,
 				D2C9F7092EA2372500393208 /* CommentView.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
+				8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */,
 				CAACD36C2EA0C1120057827D /* ArchiveDetailViewModel.swift in Sources */,
 				8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */,
 				8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */,

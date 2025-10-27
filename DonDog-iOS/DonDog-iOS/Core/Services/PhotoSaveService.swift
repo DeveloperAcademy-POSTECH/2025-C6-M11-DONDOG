@@ -153,7 +153,6 @@ final class PhotoSaveService: ObservableObject {
         
         Task {
             do {
-                // ✅ DataManager의 fetchWhere 사용 (메서드 추가 필요)
                 let posts: [PostData] = try await dataManager.fetchWhere(
                     path: "Rooms/\(roomId)/posts",
                     field: "createdAt",

@@ -21,46 +21,14 @@ final class PhotoSaveService: ObservableObject {
     // MARK: - : Room의 posts에 저장
     func uploadImagesToRoomPosts(frontImage: UIImage, backImage: UIImage, caption: String, completion: @escaping (Result<PostData, Error>) -> Void) {
         
-        getCurrentUserRoomId { [weak self] result in
-            switch result {
-            case .success(let roomId):
-                print("사용자 roomId: \(roomId)")
-                
-                self?.uploadImagesAndSaveToRoom(frontImage: frontImage, backImage: backImage, caption: caption, roomId: roomId, completion: completion)
-            case .failure(let error):
-                print("roomId 가져오기 실패: \(error.localizedDescription)")
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    func getCurrentUserRoomId(completion: @escaping (Result<String, Error>) -> Void) {
         Task {
             do {
-                guard let uid = dataManager.getCurrentUserId() else {
-                    completion(.failure(DataManagerError.authenticationRequired))
-                    return
-                }
+                let roomId = try await dataManager.getCurrentUserRoomId()
+                print("사용자 roomId: \(roomId)")
                 
-                print("현재 사용자 UID: \(uid)")
-                
-                let user: UserData.RoomIdOnly = try await dataManager.fetch(
-                    path: "Users/\(uid)"
-                )
-                
-                if user.roomId.isEmpty {
-                    print("roomId가 비어있음")
-                    completion(.failure(DataManagerError.roomIdNotFound))
-                    return
-                }
-                
-                print("roomId 가져오기 성공: \(user.roomId)")
-                completion(.success(user.roomId))
-            } catch DataManagerError.documentNotFound {
-                print("❌ 사용자 문서가 존재하지 않음")
-                completion(.failure(DataManagerError.userDocumentNotFound))
+                self.uploadImagesAndSaveToRoom(frontImage: frontImage, backImage: backImage, caption: caption, roomId: roomId, completion: completion)
             } catch {
-                print("❌ 사용자 문서 조회 실패: \(error.localizedDescription)")
+                print("roomId 가져오기 실패: \(error.localizedDescription)")
                 completion(.failure(error))
             }
         }

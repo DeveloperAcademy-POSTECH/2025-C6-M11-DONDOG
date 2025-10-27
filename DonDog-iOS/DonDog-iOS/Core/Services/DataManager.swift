@@ -272,4 +272,18 @@ final class FirebaseDataManager: DataManagerProtocol {
     func getCurrentUserId() -> String? {
         return Auth.auth().currentUser?.uid
     }
+    
+    func getCurrentUserRoomId() async throws -> String {
+        guard let uid = getCurrentUserId() else {
+            throw DataManagerError.authenticationRequired
+        }
+        
+        let user: UserData = try await fetch(path: "Users/\(uid)")
+        
+        guard let roomId = user.roomId, !roomId.isEmpty else {
+            throw DataManagerError.roomIdNotFound
+        }
+        
+        return roomId
+    }
 }

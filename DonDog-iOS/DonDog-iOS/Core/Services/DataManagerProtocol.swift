@@ -56,4 +56,6 @@ protocol DataManagerProtocol {
     
     /// 현재 사용자 ID
     func getCurrentUserId() -> String?
+    
+    func getCurrentUserRoomId() async throws -> String
 }

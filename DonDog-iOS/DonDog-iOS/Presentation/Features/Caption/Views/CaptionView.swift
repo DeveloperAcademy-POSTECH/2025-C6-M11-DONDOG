@@ -33,7 +33,7 @@ struct CaptionView: View {
                     if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
                         HStack{
                             Spacer()
-                            PolaroidSetView(frontImage: frontImage, backImage: backImage, nickname: "", createdAt: "", caption: nil,  selectedStickerEmotion: nil, stickerImage: nil, isMyPost: true)
+                            PolaroidSetView(frontImage: .uiImage(frontImage), backImage: .uiImage(backImage), nickname: "", createdAt: "", caption: nil,  selectedStickerEmotion: nil, stickerImage: nil, isMyPost: true)
                                 .allowsHitTesting(true)
                                 .padding(.trailing, 30)
                         }
@@ -73,8 +73,9 @@ struct CaptionView: View {
                     .frame(height: 20)
                 
                 Button{
-                    viewModel.uploadPost()
-                    onUploadComplete()
+                    viewModel.uploadPost {
+                        onUploadComplete() // 업로드 성공 뒤 실행
+                    }
                 }label: {
                         Text("업로드")
                             .font(.bodyRegular18)

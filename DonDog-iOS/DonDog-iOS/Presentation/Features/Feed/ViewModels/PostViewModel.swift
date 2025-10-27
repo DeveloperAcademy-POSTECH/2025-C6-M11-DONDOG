@@ -9,6 +9,7 @@ import Combine
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
+import Kingfisher
 
 final class PostViewModel: ObservableObject {
     let postId: String
@@ -61,7 +62,7 @@ final class PostViewModel: ObservableObject {
         guard !roomId.isEmpty, !stickerPostId.isEmpty else { return }
         
         let stickerPostRef = db.collection("Rooms").document(roomId).collection("posts").document(self.stickerPostId)
-        stickerPostRef.getDocument { [weak self] stickerSnapshot, error in
+        stickerPostRef.getDocument(source: .default) { [weak self] stickerSnapshot, error in
             guard let self = self else { return }
             if let error = error {
                 print("스티커용 post 조회 실패:", error.localizedDescription)
@@ -76,7 +77,7 @@ final class PostViewModel: ObservableObject {
             }
             
             let postRef = self.db.collection("Rooms").document(self.roomId).collection("posts").document(self.postId)
-            postRef.getDocument { postSnapshot, postError in
+            postRef.getDocument(source: .default) { postSnapshot, postError in
                 if let postError = postError {
                     print("현재 postId \(self.postId) 조회 실패:", postError.localizedDescription)
                     return
@@ -89,26 +90,43 @@ final class PostViewModel: ObservableObject {
                     return
                 }
                 
-                PhotoSaveService.shared.downloadImage(from: imageUrlString) { result in
+                guard let url = URL(string: imageUrlString) else {
+                    print("스티커 이미지 URL 생성 실패")
+                    return
+                }
+                
+                // KF 캐시 우선 조회 후 네트워크 폴백
+                KingfisherManager.shared.retrieveImage(with: url) { result in
                     switch result {
-                    case .success(let image):
+                    case .success(let value):
+                        let image = value.image
+                        
+                        // @Sendable 클로저 내부에서 self 캡처를 줄이기 위해 미리 색상을 계산
+                        let borderColor = self.borderColor(for: emotion)
+                        let utils = self.imageUtils
+                        
                         DispatchQueue.global(qos: .userInitiated).async {
-                            guard let stickerOnly = self.imageUtils.makeSticker(with: image) else {
+                            guard let stickerOnly = utils.makeSticker(with: image) else {
                                 print("스티커 생성 실패")
+                                DispatchQueue.main.async { self.borderedSticker = UIImage() }
                                 return
                             }
                             
-                            let borderedSticker = stickerOnly.addBorder(
-                                thickness: 50,
-                                color: self.borderColor(for: emotion)
-                            )
+                            let resultImage: UIImage
+                            if let bordered = stickerOnly.addBorder(thickness: 50, color: borderColor) {
+                                resultImage = bordered
+                            } else {
+                                print("테두리 추가 실패, 기본 스티커 반환")
+                                resultImage = stickerOnly
+                            }
+                            
                             DispatchQueue.main.async {
-                                self.borderedSticker = borderedSticker ?? UIImage()
+                                self.borderedSticker = resultImage
                                 self.emotion = emotion
                             }
                         }
                     case .failure(let error):
-                        print("스티커 이미지 다운로드 실패:", error.localizedDescription)
+                        print("KF 스티커 이미지 조회 실패:", error.localizedDescription)
                     }
                 }
             }

@@ -28,7 +28,7 @@ final class CaptionViewModel: ObservableObject {
         self.backImage = backImage
     }
     
-    func uploadPost() {
+    func uploadPost(onSuccess: @escaping () -> Void) {
         guard let frontImage = frontImage, let backImage = backImage else {
             print("❌ 전면 또는 후면 이미지가 없습니다")
             return
@@ -50,6 +50,7 @@ final class CaptionViewModel: ObservableObject {
                     print("✅ 업로드 성공: \(postData.uid)")
                     print("📝 캡션: \(postData.caption)")
                     self?.delegate?.didUploadPost()
+                    onSuccess()
                 case .failure(let error):
                     print("❌ 업로드 실패: \(error.localizedDescription)")
                 }

@@ -6,9 +6,15 @@
 //
 
 import SwiftUI
+import Kingfisher
+
+enum DisplayableImage {
+    case url(URL)
+    case uiImage(UIImage)
+}
 
 struct PolaroidFrame: View {
-    let image: UIImage
+    let image: DisplayableImage
     let nickname: String
     let createdAt: String
     let caption: String?
@@ -18,20 +24,32 @@ struct PolaroidFrame: View {
     let stickerImage: UIImage?
     let isMyPost: Bool?
     
+    @ViewBuilder
+    private func imageView(_ source: DisplayableImage) -> some View {
+        switch source {
+        case .url(let url):
+            KFImage(url)
+                .resizable()
+                .scaledToFit()
+        case .uiImage(let img):
+            Image(uiImage: img)
+                .resizable()
+                .scaledToFit()
+        }
+    }
+    
     private var stickerDecoString: String {
         guard let stickerEmotion = StickerEmotion(rawValue: selectedStickerEmotion ?? "") else {
-                return ""
-            }
-            return stickerEmotion.stickerDecoString
+            return ""
         }
+        return stickerEmotion.stickerDecoString
+    }
     
     var body: some View {
         ZStack{
             VStack(spacing: 0) {
                 Spacer()
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
+                imageView(image)
                     .cornerRadius(3)
                     .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
                     .frame(width: 240, height: 320)
@@ -97,8 +115,8 @@ struct PolaroidFrame: View {
 struct PolaroidSetView: View {
     @State var isTopImage = true
     
-    let frontImage: UIImage
-    let backImage: UIImage
+    let frontImage: DisplayableImage
+    let backImage: DisplayableImage
     let nickname: String
     let createdAt: String
     let caption: String?
@@ -147,15 +165,15 @@ struct PolaroidSetView: View {
     }
 }
 
-#Preview(body: {
-    PolaroidSetView(
-        frontImage: UIImage(named: "test1")!,
-        backImage: UIImage(named: "test2")!,
-        nickname: "이토",
-        createdAt: "오전 04:45",
-        caption: "하이디라오 짱맛",
-        selectedStickerEmotion: "사랑해",
-        stickerImage: UIImage(named: "frontTest")!,
-        isMyPost: false  // Preview에서는 다른 사람 게시물로 설정
-    )
-})
+//#Preview(body: {
+//    PolaroidSetView(
+//        frontImage: UIImage(named: "test1")!,
+//        backImage: UIImage(named: "test2")!,
+//        nickname: "이토",
+//        createdAt: "오전 04:45",
+//        caption: "하이디라오 짱맛",
+//        selectedStickerEmotion: "사랑해",
+//        stickerImage: UIImage(named: "frontTest")!,
+//        isMyPost: false  // Preview에서는 다른 사람 게시물로 설정
+//    )
+//})

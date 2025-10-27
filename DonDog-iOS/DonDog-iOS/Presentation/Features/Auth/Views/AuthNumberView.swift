@@ -59,7 +59,9 @@ struct AuthNumberView: View {
         .dismissKeyboard()
         .alert("", isPresented: $viewModel.showWithdrawErrorAlert) {
             Button("확인", role: .cancel) {
-                // coordinator.push(.setting)
+                AuthService.isAccountDeletionInProgress = false
+                coordinator.pop()
+                coordinator.pop()
             }
         } message: {
             Text(viewModel.alertMessage ?? "")

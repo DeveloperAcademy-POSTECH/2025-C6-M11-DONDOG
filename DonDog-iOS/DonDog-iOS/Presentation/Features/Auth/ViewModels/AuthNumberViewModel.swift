@@ -90,8 +90,8 @@ final class AuthNumberViewModel: ObservableObject {
             let success = await deleteUserDataAndAuth()
             
             await MainActor.run {
-                AuthService.isAccountDeletionInProgress = false
                 if success {
+                    AuthService.isAccountDeletionInProgress = false
                     self.coordinator?.replaceRoot(.welcome)
                 }
                 NotificationCenter.default.post(name: .authServiceReconfigureRouting, object: nil)
@@ -114,7 +114,7 @@ final class AuthNumberViewModel: ObservableObject {
 
         do {
             // 1) Firestore 정리
-            // Users/{uid}를 읽어 roomId 등을 확인
+            // Users/{uid}를 읽어 roomId 확인
             let userDoc = db.collection("Users").document(uid)
             let userData = try await userDoc.getDocument()
             var roomId: String? = nil
@@ -122,13 +122,7 @@ final class AuthNumberViewModel: ObservableObject {
                 roomId = rid
             }
 
-            let deleteTgt = db.batch()
-
             // Rooms
-            // 1-1) participants에서 내가 마지막 유저인지 확인
-            // 1-1-1) 내가 마지막 유저라면 - rooms 모두 삭제, storage 삭제
-            // 1-1-2) 내가 마지막 유저가 아니라면 - participants에서만 나 삭제
-            // (Users/{uid}.roomId 필드 기반 우선 처리 + 방어적으로 participants 검색)
             var roomDocToCheck: [DocumentReference] = []
             if let rid = roomId, !rid.isEmpty {
                 roomDocToCheck.append(db.collection("Rooms").document(rid))
@@ -144,33 +138,31 @@ final class AuthNumberViewModel: ObservableObject {
                 uniqueRids[ref.path] = ref
             }
 
-            try await deleteTgt.commit()
-
-            // participants에서 uid 제거 (존재하는 방에 한해 개별 업데이트)
+            // 1-1) participants에서 내가 마지막 유저인지 확인
+            // 1-1-1) 내가 마지막 유저라면 - rooms 모두 삭제, storage 삭제
+            // 1-1-2) 내가 마지막 유저가 아니라면 - participants에서만 나 삭제
+            
+            // 각 Room 처리: 마지막 참가자면 Storage → posts → comments → Room 삭제, 아니면 participants에서 내 uid만 제거
             for (_, ref) in uniqueRids {
-                do {
-                    try await ref.updateData(["participants": FieldValue.arrayRemove([uid])])
-                } catch {
-                    let ns = error as NSError
-                    if ns.domain == FirestoreErrorDomain,
-                       FirestoreErrorCode.Code(rawValue: ns.code) == .notFound {
-                        // 방이 이미 삭제된 경우: 무시하고 계속 진행
-                        continue
-                    } else {
-                        throw error
-                    }
-                }
-            }
-
-            // participants 제거 후 빈 방이면 삭제 방 삭제, 방 내부의 storage 파일 삭제
-            for (_, ref) in uniqueRids {
+                // 최신 스냅샷 확인
                 let snap = try await ref.getDocument()
-                if let data = snap.data(), let parts = data["participants"] as? [String], parts.isEmpty {
-                    let storage = Storage.storage()
-                    let postsDoc = try await ref.collection("posts").getDocuments()
+                guard let data = snap.data(), let parts = data["participants"] as? [String], parts.contains(uid) else { continue }
 
+                if parts.count > 1 {
+                    // 2명이상 → participants에서 내 uid만 제거
+                    try await ref.updateData(["participants": FieldValue.arrayRemove([uid])])
+                    do {
+                        let verifySnap = try await ref.getDocument(source: .server)
+                        _ = (verifySnap.data()?["participants"] as? [String]) ?? []
+                    } catch {
+                        _ = error as NSError
+                    }
+                } else {
+                    // 마지막 1명(본인) → 모든 Rooms 데이터, storage 삭제
+                    // 1) posts storage 삭제
+                    let postsSnap = try await ref.collection("posts").getDocuments()
                     func isFirebaseStorageURL(_ s: String) -> Bool {
-                        return s.hasPrefix("https://firebasestorage.googleapis.com")
+                        s.hasPrefix("https://firebasestorage.googleapis.com") || s.hasPrefix("gs://")
                     }
                     func collectStorageURLs(from any: Any, into result: inout [String]) {
                         switch any {
@@ -184,49 +176,64 @@ final class AuthNumberViewModel: ObservableObject {
                             break
                         }
                     }
-
-                    // 2) 모든 Storage URL 동적 수집 후 삭제
                     var urlsToDelete: [String] = []
-                    for doc in postsDoc.documents {
-                        let data = doc.data()
-                        collectStorageURLs(from: data, into: &urlsToDelete)
-                    }
-                    // 중복 제거
+                    for doc in postsSnap.documents { collectStorageURLs(from: doc.data(), into: &urlsToDelete) }
                     urlsToDelete = Array(Set(urlsToDelete))
-
+                    let storage = Storage.storage()
                     try await withThrowingTaskGroup(of: Void.self) { group in
                         for url in urlsToDelete {
-                            group.addTask {
-                                try await storage.reference(forURL: url).delete()
-                            }
+                            group.addTask { try await storage.reference(forURL: url).delete() }
                         }
                         try await group.waitForAll()
                     }
 
-                    // 3) posts 문서 삭제 (배치)
-                    if !postsDoc.isEmpty {
-                        let deleteTgt = db.batch()
-                        postsDoc.documents.forEach { deleteTgt.deleteDocument($0.reference) }
-                        try await deleteTgt.commit()
+                    // 2) posts 삭제
+                    if !postsSnap.isEmpty {
+                        let batch = db.batch()
+                        postsSnap.documents.forEach { batch.deleteDocument($0.reference) }
+                        try await batch.commit()
                     }
 
-                    // 4) 마지막으로 Rooms/{roomId} 문서 삭제
+                    // 3) comments 삭제
+                    let postIds = postsSnap.documents.map { $0.documentID }
+                    for postId in postIds {
+                        let holderRef = ref.collection("comments").document(postId) // Rooms/{roomId}/comments/{postId}
+                        let subCommentsRef = holderRef.collection("comments")       // Rooms/{roomId}/comments/{postId}/comments
+
+                        if let subCommentsSnap = try? await subCommentsRef.getDocuments(), !subCommentsSnap.isEmpty {
+                            let batch = db.batch()
+                            subCommentsSnap.documents.forEach { batch.deleteDocument($0.reference) }
+                            try? await batch.commit()
+                        }
+                        try? await holderRef.delete()
+                    }
+                    // 4) Room 문서 삭제
                     try await ref.delete()
                 }
             }
-            
             
             // 1-2) Invites 에서 uid가 있는 문서 삭제
             let invitesDoc = db.collection("Invites")
             let inviterQuery = invitesDoc.whereField("inviterUid", isEqualTo: uid)
             let inviterData = try await inviterQuery.getDocuments()
-            for doc in inviterData.documents {
-                deleteTgt.deleteDocument(doc.reference)
+            if !inviterData.isEmpty {
+                let batch = db.batch()
+                inviterData.documents.forEach { batch.deleteDocument($0.reference) }
+                try await batch.commit()
             }
             
-            // 1-3) Users/{uid} 삭제
-            deleteTgt.deleteDocument(userDoc)
-            
+            // 1-3) Users/{uid} 삭제 (하위 fcmTokens 먼저 삭제)
+            do {
+                let tokensSnap = try await userDoc.collection("fcmTokens").getDocuments()
+                if !tokensSnap.isEmpty {
+                    let batch = db.batch()
+                    tokensSnap.documents.forEach { batch.deleteDocument($0.reference) }
+                    try await batch.commit()
+                }
+            }
+            // Users/{uid} 문서 삭제
+            try await userDoc.delete()
+
             // 2) Firebase Auth 사용자 삭제
             do {
                 try await user.delete()

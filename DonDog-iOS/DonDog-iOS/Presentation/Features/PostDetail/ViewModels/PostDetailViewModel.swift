@@ -9,9 +9,14 @@ import Combine
 import FirebaseAuth
 
 final class PostDetailViewModel: ObservableObject {
-    
     @Published var showDeleteConfirmAlert = false
     @Published var showUnauthorizedAlert = false
+    
+    let posts: [PostData]
+    
+    init(posts: [PostData]) {
+        self.posts = posts
+    }
     
     func handleDeleteRequest() {
         // TODO: 해당 게시물의 post 정보 가져오기

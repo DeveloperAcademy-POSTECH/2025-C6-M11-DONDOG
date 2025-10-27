@@ -8,7 +8,7 @@
 import FirebaseCore
 import UIKit
 
-struct PostData: Codable {
+struct PostData: Codable, Hashable {
     let postId: String
     let authorId: String
     let frontImageURL: String

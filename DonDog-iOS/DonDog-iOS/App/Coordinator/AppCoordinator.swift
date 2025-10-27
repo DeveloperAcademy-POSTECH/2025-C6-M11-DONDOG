@@ -111,6 +111,8 @@ final class AppCoordinator: ObservableObject {
                 .id(roomId)
         case .archiveDetail(let roomId, let date, let initialPosts):
             factory.makeArchiveDetailView(in: roomId, date: date, initialPosts: initialPosts)
+        case .postDetail(let posts, let postType):
+            factory.makePostDetailView(with: posts, for: postType)
         }
     }
     

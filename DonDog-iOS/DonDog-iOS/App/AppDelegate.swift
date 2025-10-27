@@ -31,38 +31,35 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         AppCheck.setAppCheckProviderFactory(providerFactory)
         
         FirebaseApp.configure()
+        
         // 알림 권한 요청
         UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, err in
-            print("권한 요청: \(granted), 에러: \(String(describing: err))")
-        }
-        
-        // 원격 알림 등록
-        DispatchQueue.main.async {
-            UIApplication.shared.registerForRemoteNotifications()
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, _ in
+            NSLog("권한 요청: \(granted)")
+            UNUserNotificationCenter.current().getNotificationSettings { s in
+                if s.authorizationStatus == .authorized || s.authorizationStatus == .provisional {
+                    DispatchQueue.main.async { UIApplication.shared.registerForRemoteNotifications() }
+                }
+            }
         }
         
         // FCM 토큰/메시징 델리게이트
         Messaging.messaging().delegate = self
-        
-        // 로그인 상태 변화에도 토큰 업로드
-            Auth.auth().addStateDidChangeListener { _, user in
-                guard user != nil else { return }
-                Messaging.messaging().token { token, _ in
-                    if let token = token {
-                        self.uploadTokenToServer(token)
-                    }
-                }
-            }
-        
-        // 앱이 종료된 상태에서 푸시를 탭하여 실행한 경우 딥링크를 저장
-        if let userInfo = launchOptions?[.remoteNotification] as? [AnyHashable: Any] {
-                if let link = userInfo["link"] as? String {
-                    print("앱 실행 시 딥링크 처리: \(userInfo)")
-                    self.initialDeepLink = link
-                }
+        ensureFCMTokenAndSubscribe()
+    
+        if let storedToken = NotificationService.shared.getTokenFromUserDefaults() {
+            NSLog("UserDefaults에 FCM 토큰 저장: \(storedToken)")
+        } else {
+            NSLog("UserDefaults에 FCM 토큰 없음")
         }
-        
+
+        // 앱이 종료된 상태에서 푸시 알림 실행 시 딥링크를 저장
+        if let userInfo = launchOptions?[.remoteNotification] as? [AnyHashable: Any] {
+            if let link = userInfo["link"] as? String {
+                print("앱 실행 시 딥링크 처리: \(userInfo)")
+                self.initialDeepLink = link
+            }
+        }
         return true
     }
     
@@ -82,22 +79,19 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // APNs device token → Firebase Auth
     func application(_ application: UIApplication,
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        // Firebase Auth (전화번호 인증용)
-        Auth.auth().setAPNSToken(deviceToken, type: .prod)
-        
         // FCM
         Messaging.messaging().apnsToken = deviceToken
-        
-        Messaging.messaging().token { token, error in
-            guard let token = token else { return }
-            print("FCM 토큰 (post-APNs): \(token)")
-            self.uploadTokenToServer(token)
-        }
+
     }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.list, .banner])
+    }
+    
     
     func application(_ application: UIApplication,
                      didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("APNs 등록 실패: \(error.localizedDescription)")
+        NSLog("APNs 등록 실패: \(error.localizedDescription)")
     }
     
     // Handle custom URL scheme for reCAPTCHA callback & deeplinks
@@ -121,47 +115,30 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // FCM MessagingDelegate - FCM이 토큰을 갱신하면 사용, APNs 토큰이 이미 있다면 여기서 구독 시도
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let token = fcmToken else { return }
-        print("FCM 토큰 (delegate): \(token)")
-        self.uploadTokenToServer(token)
-        self.subscribeDailyTopic()
+        NSLog("FCM 토큰 (delegate): \(token)")
+        NotificationService.shared.uploadFCMToken(token)
     }
     
-    // UNUserNotificationCenterDelegate
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                willPresent notification: UNNotification,
-                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .list, .sound])
-    }
-
+    // 푸시 알림을 누르면 포함된 link의 정보를 추출하여 딥링크 수행
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
-
+        
         let userInfo = response.notification.request.content.userInfo
-        print("tapped notification: \(userInfo)")
+        NSLog("tapped notification: \(userInfo)")
         if let link = userInfo["link"] as? String {
             NotificationCenter.default.post(name: .openDeepLink, object: link)
         }
-        completionHandler()
     }
     
-    private func subscribeDailyTopic() {
-        Messaging.messaging().subscribe(toTopic: "daily_random_notification") { error in
-            if let error = error {
-                print("토픽 구독 에러: \(error.localizedDescription)")
-            } else {
-                print("daily_random_notification 구독 성공")
-            }
-        }
-    }
-    
-    private func uploadTokenToServer(_ token: String) {
-            guard let uid = Auth.auth().currentUser?.uid else {
-                print("⚠️ 현재 로그인한 사용자 없음 — 로그인 이후 다시 업로드 필요")
-                return
-            }
-            NotificationService.shared.uploadFCMToken(token)
-            print("Firestore에 FCM 토큰 업로드 완료: \(token)")
-        }
+    private func ensureFCMTokenAndSubscribe() {
+        Messaging.messaging().token { token, error in
+            if let token {
+                NotificationService.shared.uploadFCMToken(token)
 
+            } else if let error {
+                NSLog("초기 토큰 획득 실패: \(error.localizedDescription)")
+            }
+        }
+    }
 }

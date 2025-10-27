@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseMessaging
 
 extension Notification.Name {
     static let authServiceReconfigureRouting = Notification.Name("AuthService.ReconfigureRouting")
@@ -51,7 +52,7 @@ final class AuthService {
                 if coordinator.root == route { return }
                 coordinator.replaceRoot(route)
                 
-                print("[AuthService replaceRootinAuthService함수] 🔄 \(coordinator.root) → \(route)")
+                NSLog("[AuthService replaceRootinAuthService함수] 🔄 \(coordinator.root) → \(route)")
             }
         }
         
@@ -62,7 +63,7 @@ final class AuthService {
             replaceRootinAuthService(.welcome, coordinator: coordinator)
             self.userDocListenr?.remove()
             self.userDocListenr = nil
-            print("[AuthService] currentUser 없음 → welcome 화면으로 이동")
+            NSLog("[AuthService] currentUser 없음 → welcome 화면으로 이동")
             return
         }
         
@@ -77,13 +78,32 @@ final class AuthService {
                     ConnectStateService.shared.reset()
                 }
                 replaceRootinAuthService(.welcome, coordinator: coordinator)
-                print("[AuthService] IDToken 분실로 current User 찾을 수 없음 → welcome 화면으로 이동")
+                NSLog("[AuthService] IDToken 분실로 current User 찾을 수 없음 → welcome 화면으로 이동")
                 return
             }
             
             Task { @MainActor in
                 ConnectStateService.shared.reset()
             }
+            
+            // 현재 기기의 FCM 토큰 firestore에 업로드
+            Messaging.messaging().token { token, error in
+                if let token = token {
+                    NotificationService.shared.uploadFCMToken(token)
+
+                    // 로그인 및 토큰 업로드 성공 후 토픽 구독
+                    Messaging.messaging().subscribe(toTopic: "daily_random_notification") { error in
+                        if let error = error {
+                            NSLog("토픽 구독 실패: \(error.localizedDescription)")
+                        } else {
+                            NSLog("토픽 구독 성공")
+                        }
+                    }
+                } else if let error = error {
+                    NSLog("FCM 토큰 획득 실패 (AuthService): \(error.localizedDescription)")
+                }
+            }
+            
             let uid = refresehUser.uid
             let userDoc = Firestore.firestore().collection("Users").document(uid)
             
@@ -98,7 +118,7 @@ final class AuthService {
                 /// 에러 또는 스냅샷 nil 통합 처리
                 guard error == nil, let userDoc = userDoc else {
                     if let nsError = error as NSError? {
-                        print("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → welcome로 이동")
+                        NSLog("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → welcome로 이동")
                         Task { @MainActor in
                             ConnectStateService.shared.reset()
                         }
@@ -134,10 +154,10 @@ final class AuthService {
                     ConnectStateService.shared.roomId = roomId
                     ConnectStateService.shared.isConnected = (roomId?.isEmpty == false)
                     if let rid = roomId, !rid.isEmpty {
-                        print("[AuthService] 🔗 연결됨 roomId=\(rid)")
+                        NSLog("[AuthService] 🔗 연결됨 roomId=\(rid)")
                         replaceRootinAuthService(.feed, coordinator: coordinator)
                     } else {
-                        print("[AuthService] 🔓 미연결 상태 (roomId 없음)")
+                        NSLog("[AuthService] 🔓 미연결 상태 (roomId 없음)")
                     }
                 }
                 

@@ -6,51 +6,64 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ArchivePostContainer: View {
     let url: URL
     let day: Int
     
+    @State private var isLoading = false
+    @State private var isFailed = false
+    
     var body: some View {
         ZStack(alignment: .center) {
-            AsyncImage(url: url) { state in
-                switch state {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 75, height: 100)
-                        .clipped()
-                        .transition(.opacity)
+            KFImage.url(url)
+                .onProgress { receivedSize,totalSize in
+                    isLoading = true
+                    isFailed = false
+                }
+                .onSuccess { _ in
+                    isLoading = false
+                    isFailed = false
+                }
+                .onFailure { _ in
+                    isLoading = false
+                    isFailed = true
+                }
+                .placeholder {
+                    Rectangle()
+                        .fill(.ddWhite)
                         .cornerRadius(8)
-                        .overlay(
+                        .frame(width: 75, height: 100)
+                }
+                .resizable()
+                .scaledToFill()
+                .frame(width: 75, height: 100)
+                .clipped()
+                .transition(.opacity)
+                .cornerRadius(8)
+                .overlay(
+                    Group {
+                        if isFailed {
+                            ZStack {
+                                Rectangle()
+                                    .fill(.ddGray600)
+                                    .cornerRadius(8)
+                                    .overlay(Image(systemName: "exclamationmark.triangle").foregroundStyle(.white))
+                                    .frame(width: 75, height: 100)
+                            }
+                        } else {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(.ddGray1000.opacity(0.3))
+                                    .fill(.ddBlack30)
                                 
                                 Text("\(day)일")
                                     .font(.subtitleSemiBold16)
                                     .foregroundStyle(.ddWhite)
                             }
-                        )
-                    
-                case .failure:
-                    Rectangle()
-                        .fill(.ddGray600)
-                        .cornerRadius(8)
-                        .overlay(Image(systemName: "photo").opacity(0.7))
-                        .frame(width: 75, height: 100)
-                    
-                case .empty:
-                    Rectangle()
-                        .fill(.ddGray600.opacity(0.2))
-                        .cornerRadius(8)
-                        .frame(width: 75, height: 100)
-                    
-                @unknown default:
-                    Color.clear.frame(width: 75, height: 100)
-                }
-            }
+                        }
+                    }
+                )
         }
     }
 }

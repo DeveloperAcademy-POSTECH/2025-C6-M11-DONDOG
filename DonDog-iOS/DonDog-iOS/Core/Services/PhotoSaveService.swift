@@ -171,35 +171,6 @@ final class PhotoSaveService: ObservableObject {
         }
     }
     
-    func fetchRoomPosts(roomId: String, completion: @escaping (Result<[PostData], Error>) -> Void) {
-        print("📥 Room posts 조회 시작: \(roomId)")
-        
-        db.collection("Rooms").document(roomId).collection("posts")
-            .order(by: "createdAt", descending: true)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    print("❌ Room posts 조회 실패: \(error.localizedDescription)")
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let documents = snapshot?.documents else {
-                    print("📄 posts 문서가 없음")
-                    completion(.success([]))
-                    return
-                }
-                
-                print("📄 \(documents.count)개 posts 문서 발견")
-                
-                let postsList = documents.compactMap { document -> PostData? in
-                    try? document.data(as: PostData.self)
-                }
-                
-                print("✅ \(postsList.count)개 posts 데이터 파싱 완료")
-                completion(.success(postsList))
-            }
-    }
-    
     func fetchTodayRoomPosts(roomId: String, completion: @escaping (Result<[PostData], Error>) -> Void) {
         print("📅 오늘 찍은 Room posts 조회 시작: \(roomId)")
         
@@ -235,26 +206,7 @@ final class PhotoSaveService: ObservableObject {
                 completion(.success(postsList))
             }
     }
-    
-    // url 이미지로 바꾸기
-//    func downloadImage(from url: URL, completion: @escaping (Result<UIImage, Error>) -> Void) {
-//        URLSession.shared.dataTask(with: url) { data, response, error in
-//            if let error = error {
-//                completion(.failure(error))
-//                return
-//            }
-//            
-//            guard let data = data, let image = UIImage(data: data) else {
-//                completion(.failure(FirebaseError.imageDownloadFailed))
-//                return
-//            }
-//            
-//            DispatchQueue.main.async {
-//                completion(.success(image))
-//            }
-//        }.resume()
-//    }
-    
+
     private func uploadImage(image: UIImage, path: String, completion: @escaping (Result<String, Error>) -> Void) {
         print("🚀 이미지 업로드 시작 - 경로: \(path)")
         

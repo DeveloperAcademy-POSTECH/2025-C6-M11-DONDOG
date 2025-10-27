@@ -73,7 +73,7 @@ final class AuthService {
         
         user.getIDTokenResult(forcingRefresh: true) { _, _ in
             /// 로그인 안됨 -> welcome으로 이동
-            guard let refresehUser = Auth.auth().currentUser else {
+            guard let refreshUser = Auth.auth().currentUser else {
                 Task { @MainActor in
                     ConnectStateService.shared.reset()
                 }
@@ -90,7 +90,7 @@ final class AuthService {
             Messaging.messaging().token { token, error in
                 if let token = token {
                     NotificationService.shared.uploadFCMToken(token)
-
+                    
                     // 로그인 및 토큰 업로드 성공 후 토픽 구독
                     Messaging.messaging().subscribe(toTopic: "daily_random_notification") { error in
                         if let error = error {
@@ -104,7 +104,7 @@ final class AuthService {
                 }
             }
             
-            let uid = refresehUser.uid
+            let uid = refreshUser.uid
             let userDoc = Firestore.firestore().collection("Users").document(uid)
             
             self.userDocListenr?.remove()
@@ -146,22 +146,56 @@ final class AuthService {
                 if userDoc.metadata.hasPendingWrites {
                     return
                 }
-
+                
                 /// user 문서가 있을 때 -> feed로 이동
                 let data = userDoc.data() ?? [:]
                 let roomId = data["roomId"] as? String
-                Task { @MainActor in
-                    ConnectStateService.shared.roomId = roomId
-                    ConnectStateService.shared.isConnected = (roomId?.isEmpty == false)
-                    if let rid = roomId, !rid.isEmpty {
-                        NSLog("[AuthService] 🔗 연결됨 roomId=\(rid)")
-                        replaceRootinAuthService(.feed, coordinator: coordinator)
-                    } else {
+                
+                Task {
+                    let state = ConnectStateService.shared
+                    state.myUid = refreshUser.uid
+                    state.myName = data["name"] as? String
+                    
+                    guard let rid = roomId, !rid.isEmpty else {
+                        state.reset()
                         NSLog("[AuthService] 🔓 미연결 상태 (roomId 없음)")
+                        replaceRootinAuthService(.feed, coordinator: coordinator)
+                        return
+                    }
+                    
+                    do {
+                        let db = Firestore.firestore()
+                        let roomDoc = try await db.collection("Rooms").document(rid).getDocument()
+                        
+                        guard let roomData = roomDoc.data(), let participants = roomData["participants"] as? [String] else {
+                            state.reset()
+                            replaceRootinAuthService(.welcome, coordinator: coordinator)
+                            return
+                        }
+                        
+                        if let partnerUid = participants.first(where: { $0 != refreshUser.uid }) {
+                            let partnerDoc = try await db.collection("Users").document(partnerUid).getDocument()
+                            state.partnerUid = partnerUid
+                            state.partnerName = partnerDoc.data()?["name"] as? String
+                            NSLog("[AuthService] Partner Info: uid = \(partnerUid), name = \(state.partnerName ?? "nil")")
+                        } else {
+                            state.partnerUid = nil
+                            state.partnerName = nil
+                        }
+                        
+                        state.roomId = rid
+                        state.isConnected = true
+                        
+                        NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil")")
+                        NSLog("[AuthService] 상태: 연결 상태 =\(state.isConnected), roomId=\(state.roomId ?? "nil")")
+                        replaceRootinAuthService(.feed, coordinator: coordinator)
+                        
+                    } catch {
+                        NSLog("AuthService에서 정보 로딩 중 에러: \(error.localizedDescription)")
+                        state.reset()
+                        replaceRootinAuthService(.welcome, coordinator: coordinator)
                     }
                 }
-                
-                
             }
         }
     }

@@ -20,16 +20,15 @@ final class PhotoSaveService: ObservableObject {
     
     // MARK: - : Room의 posts에 저장
     func uploadImagesToRoomPosts(frontImage: UIImage, backImage: UIImage, caption: String, completion: @escaping (Result<PostData, Error>) -> Void) {
-        print("🏠 Room의 posts에 전면/후면 이미지 업로드 시작")
         
         getCurrentUserRoomId { [weak self] result in
             switch result {
             case .success(let roomId):
-                print("✅ 사용자 roomId: \(roomId)")
+                print("사용자 roomId: \(roomId)")
                 
                 self?.uploadImagesAndSaveToRoom(frontImage: frontImage, backImage: backImage, caption: caption, roomId: roomId, completion: completion)
             case .failure(let error):
-                print("❌ roomId 가져오기 실패: \(error.localizedDescription)")
+                print("roomId 가져오기 실패: \(error.localizedDescription)")
                 completion(.failure(error))
             }
         }
@@ -43,19 +42,19 @@ final class PhotoSaveService: ObservableObject {
                     return
                 }
                 
-                print("👤 현재 사용자 UID: \(uid)")
+                print("현재 사용자 UID: \(uid)")
                 
                 let user: UserData.RoomIdOnly = try await dataManager.fetch(
                     path: "Users/\(uid)"
                 )
                 
                 if user.roomId.isEmpty {
-                    print("❌ roomId가 비어있음")
+                    print("roomId가 비어있음")
                     completion(.failure(DataManagerError.roomIdNotFound))
                     return
                 }
                 
-                print("✅ roomId 가져오기 성공: \(user.roomId)")
+                print("roomId 가져오기 성공: \(user.roomId)")
                 completion(.success(user.roomId))
             } catch DataManagerError.documentNotFound {
                 print("❌ 사용자 문서가 존재하지 않음")
@@ -76,7 +75,7 @@ final class PhotoSaveService: ObservableObject {
                 }
                 
                 let postId = UUID().uuidString
-                print("Refactoring - 전면/후면 이미지 업로드 시작 - Post ID: \(postId)")
+                print("전면/후면 이미지 업로드 시작 - Post ID: \(postId)")
                 
                 async let frontURLTask = dataManager.uploadImage(
                     image: frontImage,
@@ -89,7 +88,7 @@ final class PhotoSaveService: ObservableObject {
                 
                 let (frontURL, backURL) = try await (frontURLTask, backURLTask)
                 
-                print("Refactoring - 전면/후면 이미지 업로드 모두 완료")
+                print("전면/후면 이미지 업로드 모두 완료")
                 
                 let postData = PostData(
                     postId: postId,
@@ -107,7 +106,7 @@ final class PhotoSaveService: ObservableObject {
                     completion(.success(postData))
                 }
             } catch {
-                print("❌ 이미지 업로드 중 오류 발생: \(error.localizedDescription)")
+                print("이미지 업로드 중 오류 발생: \(error.localizedDescription)")
                 await MainActor.run {
                     completion(.failure(error))
                 }
@@ -135,21 +134,20 @@ final class PhotoSaveService: ObservableObject {
                 ]
             )
             
-            print("Refactoring - Room post 저장 성공: \(roomId)/posts/\(postId)")
         } catch {
-            print("❌ Room post 저장 실패: \(error.localizedDescription)")
+            print("Room post 저장 실패: \(error.localizedDescription)")
             throw error
         }
     }
     
     func fetchTodayRoomPosts(roomId: String, completion: @escaping (Result<[PostData], Error>) -> Void) {
-        print("📅 오늘 찍은 Room posts 조회 시작: \(roomId)")
+        print("오늘 찍은 Room posts 조회 시작: \(roomId)")
         
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let todayTimestamp = Timestamp(date: today)
         
-        print("📅 오늘 날짜: \(today)")
+        print("오늘 날짜: \(today)")
         
         Task {
             do {
@@ -161,7 +159,6 @@ final class PhotoSaveService: ObservableObject {
                     descending: true
                 )
                 
-                print("✅ \\(posts.count)개 오늘 posts 데이터 파싱 완료")
                 completion(.success(posts))
             } catch {
                 print("❌ 오늘 posts 조회 실패: \(error.localizedDescription)")

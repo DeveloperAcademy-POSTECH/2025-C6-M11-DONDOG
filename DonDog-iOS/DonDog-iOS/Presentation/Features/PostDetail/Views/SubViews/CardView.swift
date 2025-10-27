@@ -19,7 +19,8 @@ struct CardView: View {
                     
                     CardTextView(caption: post.caption, authorId: post.authorId, createdAt: post.createdAt.dateValue())
                 }
-                // StickerView(stickerURL: viewModel.stickerURL)
+                
+                StickerView(stickerPostId: post.stickerPostId, stickerType: post.stickerType ?? "")
             }
         }
     }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PostFromArchiveView: View {
     @EnvironmentObject var viewModel: PostDetailViewModel
-    @State var currentIndex: Int
+    @Binding var currentIndex: Int
     
     var body: some View {
         let posts = viewModel.posts

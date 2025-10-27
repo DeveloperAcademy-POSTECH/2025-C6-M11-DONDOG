@@ -12,6 +12,7 @@ struct PostDetailView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: PostDetailViewModel
     @FocusState private var isTextFieldFocused: Bool
+    @State private var currentIndex: Int = 0
     
     let postType: PostType
     
@@ -26,7 +27,7 @@ struct PostDetailView: View {
                 )),
             trailingType: .menu(items: [
                 CustomNavMenuItem("삭제하기", role: .destructive) {
-                    viewModel.handleDeleteRequest()
+                    viewModel.handleDeleteRequest(for: viewModel.posts[postType == .post ? 0 : currentIndex])
                 },
             ]),
             navigationColor: .black
@@ -36,7 +37,7 @@ struct PostDetailView: View {
         .alert("사진을 삭제하시겠어요?", isPresented: $viewModel.showDeleteConfirmAlert) {
             Button("확인", role: .cancel) {
                 Task {
-                    await viewModel.deletePost()
+                    await viewModel.deletePost(for: viewModel.posts[postType == .post ? 0 : currentIndex])
                 }
             }
             Button("취소", role: .destructive) { }
@@ -72,7 +73,7 @@ struct PostDetailView: View {
         if postType == .post {
             PostFromFeedView(isTextFieldFocused: $isTextFieldFocused)
         } else {
-            PostFromArchiveView(currentIndex: 0)
+            PostFromArchiveView(currentIndex: $currentIndex)
         }
     }
 }

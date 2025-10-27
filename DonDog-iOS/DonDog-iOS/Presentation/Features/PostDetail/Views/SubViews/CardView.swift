@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct CardView: View {
-    // TODO: PostView와 ArchiveDetailView의 공통된 데이터 구조체로 변경
-    let post: Any
+    let post: PostData
     
     var body: some View {
         ZStack(alignment: .bottomTrailing) {

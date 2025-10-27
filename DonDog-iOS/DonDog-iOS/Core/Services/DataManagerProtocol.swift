@@ -18,6 +18,9 @@ protocol DataManagerProtocol {
     /// 정렬된 컬렉션 조회
     func fetchCollection<T: Decodable>(path: String, orderBy field: String, descending: Bool) async throws -> [T]
     
+    /// 날짜 지정 컬렉션 조회
+    func fetchWhere<T: Decodable>(path: String, field: String, isGreaterThanOrEqualTo value: Any, orderBy: String, descending: Bool) async throws -> [T]
+    
     // MARK: - Firestore 쓰기
     
     /// 문서 생성 (ID 지정)
@@ -35,6 +38,9 @@ protocol DataManagerProtocol {
     /// Batch 업데이트
     func batchUpdate(updates: [(path: String, data: [String: Any])]) async throws
     
+    /// Batch 삭제
+    func batchDelete(paths: [String]) async throws
+    
     // MARK: - Storage
     
     /// 이미지 업로드
@@ -42,6 +48,9 @@ protocol DataManagerProtocol {
     
     /// 이미지 다운로드
     func downloadImage(from urlString: String) async throws -> UIImage
+    
+    /// 스토리지 삭제
+    func deleteStorageFile(urlString: String) async throws
     
     // MARK: - Auth
     

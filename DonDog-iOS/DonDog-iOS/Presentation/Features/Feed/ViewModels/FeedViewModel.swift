@@ -14,6 +14,7 @@ import Kingfisher
 import UIKit
 
 final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionViewModelDelegate {
+    
     @Published var selectedFrontImage: UIImage?
     @Published var selectedBackImage: UIImage?
     @Published var postsList: [PostData] = []
@@ -204,10 +205,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    func sticker(for emotion: String) -> UIImage? {
-        return borderedStickers[emotion] ?? sticker
-    }
-    
     func updateStickerData() {
         guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있어 업데이트 불가")
@@ -343,16 +340,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         selectedBackImage = backImage
     }
     
-
-    func didUploadToRoomPosts(postData: PostData) {
-        uploadStatus = "Room posts 업로드 완료: \(postData.uid)"
-        loadTodayPosts()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.uploadStatus = ""
-        }
-    }
-    
     // MARK: - CaptionViewModelDelegate
     func didUploadPost() {
         print("✅ 게시물 업로드 완료 - FeedView 새로고침")
@@ -406,21 +393,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     self?.isLoading = false
                 }
             }
-        }
-    }
-    
-    private func downloadTodayImages(from post: PostData) {
-        print("🖼️ 이미지 다운로드 시작")
-        
-        let group = DispatchGroup()
-        
-        group.enter()
-        
-        self.todayFrontImageURL = post.frontURL
-        self.todayBackImageURL  = post.backURL
-        
-        group.notify(queue: .main) {
-            print("🎉 오늘 이미지 다운로드 완료")
         }
     }
     
@@ -658,22 +630,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
     }
     
-    private func makeStroke(from mask: CIImage, width: CGFloat, color: CIColor) -> CIImage? {
-        let dilateFilter = CIFilter.morphologyMaximum()
-        dilateFilter.inputImage = mask
-        dilateFilter.radius = Float(width)
-        
-        guard let dilated = dilateFilter.outputImage else { return nil }
-        
-        let edge = dilated.applyingFilter("CISubtractBlendMode", parameters: ["inputBackgroundImage": mask])
-        
-        let colorFilter = CIFilter.multiplyCompositing()
-        colorFilter.inputImage = CIImage(color: color).cropped(to: edge.extent)
-        colorFilter.backgroundImage = edge
-        
-        return colorFilter.outputImage
-    }
-    
     static func borderColor(for emotion: String) -> UIColor {
         switch emotion {
         case "사랑해":
@@ -688,32 +644,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             return .ddFeelingBlue
         default:
             return .ddGray700
-        }
-    }
-    
-    func getUserName(uid: String) {
-        db.collection("Users").document(uid).getDocument { [weak self] snapshot, error in
-            if let error = error {
-                print("사용자 이름 가져오기 실패: \(error.localizedDescription)")
-                DispatchQueue.main.async {
-                    self?.currentNickname = "익명"
-                }
-                return
-            }
-            
-            guard let data = snapshot?.data(),
-                  let name = data["name"] as? String else {
-                print("사용자 이름 필드 없음")
-                DispatchQueue.main.async {
-                    self?.currentNickname = "익명"
-                }
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self?.currentNickname = name
-                print("✅ 사용자 이름 가져오기 성공: \(name)")
-            }
         }
     }
     

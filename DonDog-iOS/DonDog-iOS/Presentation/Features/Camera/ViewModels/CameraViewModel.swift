@@ -11,7 +11,6 @@ import UIKit
 
 protocol CameraViewModelDelegate: AnyObject {
     func didCaptureImages(frontImage: UIImage, backImage: UIImage)
-    func didUploadToRoomPosts(postData: PostData)
 }
 
 final class CameraViewModel: ObservableObject {

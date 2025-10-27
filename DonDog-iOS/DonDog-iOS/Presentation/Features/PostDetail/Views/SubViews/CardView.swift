@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseCore
 
 struct CardView: View {
     let post: PostData
@@ -16,7 +17,7 @@ struct CardView: View {
                 VStack(spacing: 0) {
                     CardPhotoView(frontImageURL: post.frontImageURL, backImageURL: post.backImageURL)
                     
-                    // CardTextView(caption: viewModel.caption, author: viewModel.author, time: viewModel.createdAt)
+                    CardTextView(caption: post.caption, authorId: post.authorId, createdAt: post.createdAt.dateValue())
                 }
                 // StickerView(stickerURL: viewModel.stickerURL)
             }

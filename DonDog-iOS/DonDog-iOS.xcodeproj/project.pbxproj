@@ -110,6 +110,7 @@
 		D219F2272EAEA32100BD82B7 /* CommentRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F2262EAEA32100BD82B7 /* CommentRow.swift */; };
 		D219F22C2EAF637500BD82B7 /* OriginalCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F22B2EAF637500BD82B7 /* OriginalCommentView.swift */; };
 		D219F2342EAF787600BD82B7 /* CardPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F2332EAF787600BD82B7 /* CardPhotoView.swift */; };
+		D219F2382EB028E500BD82B7 /* CardTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F2372EB028E500BD82B7 /* CardTextView.swift */; };
 		D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */; };
 		D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A52E992CD800D837C8 /* CaptionView.swift */; };
 		D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A32E992CD800D837C8 /* CaptionViewModel.swift */; };
@@ -214,6 +215,7 @@
 		D219F2262EAEA32100BD82B7 /* CommentRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRow.swift; sourceTree = "<group>"; };
 		D219F22B2EAF637500BD82B7 /* OriginalCommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OriginalCommentView.swift; sourceTree = "<group>"; };
 		D219F2332EAF787600BD82B7 /* CardPhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPhotoView.swift; sourceTree = "<group>"; };
+		D219F2372EB028E500BD82B7 /* CardTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardTextView.swift; sourceTree = "<group>"; };
 		D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewContainer.swift; sourceTree = "<group>"; };
 		D24402A32E992CD800D837C8 /* CaptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionViewModel.swift; sourceTree = "<group>"; };
 		D24402A52E992CD800D837C8 /* CaptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionView.swift; sourceTree = "<group>"; };
@@ -636,6 +638,7 @@
 				D219F2222EAEA25500BD82B7 /* CommentView.swift */,
 				D219F2262EAEA32100BD82B7 /* CommentRow.swift */,
 				D219F2332EAF787600BD82B7 /* CardPhotoView.swift */,
+				D219F2372EB028E500BD82B7 /* CardTextView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -884,6 +887,7 @@
 				D219F1F62EAE22D800BD82B7 /* PostType.swift in Sources */,
 				D219F1FB2EAE265D00BD82B7 /* PostDetailContentView.swift in Sources */,
 				CAA62D022EA1E3FD00C60E05 /* DateUtils.swift in Sources */,
+				D219F2382EB028E500BD82B7 /* CardTextView.swift in Sources */,
 				CAA62D032EA1E3FD00C60E05 /* ImageUtils.swift in Sources */,
 				CAA62D042EA1E3FD00C60E05 /* KeyboardUtils.swift in Sources */,
 				CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */,

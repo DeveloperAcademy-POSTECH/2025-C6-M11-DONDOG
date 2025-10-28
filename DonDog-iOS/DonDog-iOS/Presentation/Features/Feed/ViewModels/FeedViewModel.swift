@@ -303,7 +303,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             do {
                 let roomId = try await dataManager.getCurrentUserRoomId()
                 
-                self.photoSaveService.fetchTodayRoomPosts(roomId: roomId) { result in
+                self.fetchTodayRoomPosts(roomId: roomId) { result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let todayPosts):
@@ -330,6 +330,33 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 DispatchQueue.main.async {
                     self.isLoading = false
                 }
+            }
+        }
+    }
+    
+    private func fetchTodayRoomPosts(roomId: String, completion: @escaping (Result<[PostData], Error>) -> Void) {
+        print("오늘 찍은 Room posts 조회 시작: \(roomId)")
+        
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let todayTimestamp = Timestamp(date: today)
+        
+        print("오늘 날짜: \(today)")
+        
+        Task {
+            do {
+                let posts: [PostData] = try await dataManager.fetchWhere(
+                    path: "Rooms/\(roomId)/posts",
+                    field: "createdAt",
+                    isGreaterThanOrEqualTo: todayTimestamp,
+                    orderBy: "createdAt",
+                    descending: true
+                )
+                
+                completion(.success(posts))
+            } catch {
+                print("❌ 오늘 posts 조회 실패: \(error.localizedDescription)")
+                completion(.failure(error))
             }
         }
     }

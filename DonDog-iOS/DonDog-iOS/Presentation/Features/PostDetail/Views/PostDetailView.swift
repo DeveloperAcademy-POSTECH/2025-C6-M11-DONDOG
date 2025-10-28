@@ -27,7 +27,9 @@ struct PostDetailView: View {
                 )),
             trailingType: .menu(items: [
                 CustomNavMenuItem("삭제하기", role: .destructive) {
-                    viewModel.handleDeleteRequest(for: viewModel.posts[postType == .post ? 0 : currentIndex])
+                    if !viewModel.showUnauthorizedAlert {
+                        viewModel.handleDeleteRequest(for: viewModel.posts[postType == .post ? 0 : currentIndex])
+                    }
                 },
             ]),
             navigationColor: .black
@@ -47,24 +49,29 @@ struct PostDetailView: View {
         .onTapGesture {
             isTextFieldFocused = false
         }
+        .onAppear {
+            viewModel.checkIfItsMyPost(of: postType == .post ? 0 : currentIndex)
+        }
         
         ZStack(alignment: .bottom) {
             viewFromPostOrArchive(postType: postType)
                 .environmentObject(viewModel)
             
-            ToastView(toastText: "본인이 작성한 글만 삭제할 수 있어요")
-                .padding(.bottom, 80)
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        withAnimation {
-                            viewModel.showUnauthorizedAlert = false
+            if viewModel.showUnauthorizedAlert {
+                ToastView(toastText: "본인이 작성한 글만 삭제할 수 있어요")
+                    .padding(.bottom, 80)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            withAnimation {
+                                viewModel.showUnauthorizedAlert = false
+                            }
                         }
                     }
-                }
-                .transition(.asymmetric(
-                    insertion: .move(edge: .bottom).animation(.spring()),
-                    removal: .opacity.animation(.easeOut(duration: 0.7))
-                ))
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .bottom).animation(.spring()),
+                        removal: .opacity.animation(.easeOut(duration: 0.7))
+                    ))
+            }
         }
     }
     

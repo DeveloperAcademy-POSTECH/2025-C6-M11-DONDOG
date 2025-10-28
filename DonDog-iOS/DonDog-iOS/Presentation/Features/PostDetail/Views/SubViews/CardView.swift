@@ -12,16 +12,26 @@ struct CardView: View {
     let post: PostData
     
     var body: some View {
-        ScrollView {
-            ZStack(alignment: .bottomTrailing) {
-                VStack(spacing: 0) {
-                    CardPhotoView(frontImageURL: post.frontImageURL, backImageURL: post.backImageURL)
-                    
-                    CardTextView(caption: post.caption, authorId: post.authorId, createdAt: post.createdAt.dateValue())
-                }
+        ZStack(alignment: .bottomTrailing) {
+            
+            Color.ddWhite
+                .overlay(
+                    LinearGradient(
+                        colors: [.ddBlack.opacity(0.05), .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 3),
+                    alignment: .bottom
+                )
+            
+            VStack(spacing: 0) {
+                CardPhotoView(frontImageURL: post.frontImageURL, backImageURL: post.backImageURL)
                 
-                StickerView(stickerPostId: post.stickerPostId, stickerType: post.stickerType ?? "")
+                CardTextView(caption: post.caption, authorId: post.authorId, createdAt: post.createdAt.dateValue())
             }
+            
+            StickerView(stickerPostId: post.stickerPostId, stickerType: post.stickerType ?? "")
         }
     }
 }

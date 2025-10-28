@@ -16,6 +16,16 @@ final class PostDetailViewModel: ObservableObject {
     
     init(posts: [PostData]) {
         self.posts = posts
+        
+    }
+    
+    func checkIfItsMyPost(of index: Int) {
+        // TODO: currentUser 정보 User Singleton에서 가져오기
+        guard let currentUser = Auth.auth().currentUser else {
+            print("사용자 정보에 문제가 있습니다.")
+            return
+        }
+        showUnauthorizedAlert = posts[index].authorId != currentUser.uid
     }
     
     func handleDeleteRequest(for post: PostData) {

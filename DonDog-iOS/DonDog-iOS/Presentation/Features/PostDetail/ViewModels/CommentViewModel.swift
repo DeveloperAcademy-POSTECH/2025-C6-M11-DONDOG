@@ -59,29 +59,4 @@ final class CommentViewModel: ObservableObject {
         
         return roomId
     }
-    
-    private func getCurrentUserRoomId(completion: @escaping (Result<String, Error>) -> Void) {
-        guard let currentUser = Auth.auth().currentUser else {
-            print("사용자 정보에 문제가 있습니다.")
-            return
-        }
-        
-        let uid = currentUser.uid
-        
-        db.collection("Users").document(uid).getDocument { document, error in
-            if error != nil {
-                print("사용자 문서를 가져오지 못했습니다.")
-                return
-            }
-            
-            guard let document = document,
-                  let roomId = document.get("roomId") as? String,
-                  !roomId.isEmpty else {
-                print("roomId를 가져오지 못했습니다.")
-                return
-            }
-            
-            completion(.success(roomId))
-        }
-    }
 }

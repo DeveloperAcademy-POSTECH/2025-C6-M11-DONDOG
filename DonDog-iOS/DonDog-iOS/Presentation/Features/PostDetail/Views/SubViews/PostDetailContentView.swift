@@ -12,7 +12,9 @@ struct PostDetailContentView: View {
     let post: PostData
     
     var body: some View {
-        CardView(post: post)
-        CommentView(postId: post.postId)
+        ScrollView {
+            CardView(post: post)
+            CommentView(postId: post.postId)
+        }
     }
 }

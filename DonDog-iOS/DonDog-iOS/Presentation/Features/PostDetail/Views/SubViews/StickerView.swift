@@ -14,18 +14,10 @@ struct StickerView: View {
     let stickerType: String
     
     var body: some View {
-        Group {
-            if let uiImage = viewModel.borderedStickers[stickerPostId] {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Rectangle()
-                    .foregroundColor(.gray.opacity(0.2))
-                    .overlay(
-                        ProgressView()
-                    )
-            }
+        if let uiImage = viewModel.borderedStickers[stickerPostId] {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFit()
         }
     }
 }

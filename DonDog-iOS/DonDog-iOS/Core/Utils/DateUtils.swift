@@ -22,14 +22,18 @@ struct DateUtils {
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
         formatter.dateFormat = dateFormat
         
-        switch seconds {
-        case 0..<60:
-            return "지금"
-        case 60..<3600:
-            return "\(minutes)분 전"
-        case 3600..<(3600 * 24):
-            return "\(hours)시간 전"
-        default:
+        if dateFormat != "MM월 dd일" {
+            switch seconds {
+            case 0..<60:
+                return "지금"
+            case 60..<3600:
+                return "\(minutes)분 전"
+            case 3600..<(3600 * 24):
+                return "\(hours)시간 전"
+            default:
+                return formatter.string(from: date)
+            }
+        } else {
             return formatter.string(from: date)
         }
     }

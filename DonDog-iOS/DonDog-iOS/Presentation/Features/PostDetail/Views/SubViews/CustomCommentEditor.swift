@@ -26,7 +26,7 @@ struct CustomCommentEditor: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            Color.clear
+            Color.ddWhite
                 .overlay(
                     LinearGradient(
                         colors: [.ddBlack.opacity(0.05), .clear],

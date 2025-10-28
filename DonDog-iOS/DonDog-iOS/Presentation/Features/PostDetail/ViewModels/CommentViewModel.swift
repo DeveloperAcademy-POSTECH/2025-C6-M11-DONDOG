@@ -40,7 +40,7 @@ final class CommentViewModel: ObservableObject {
     private func getCurrentUserRoomId() async throws -> String {
         guard let currentUser = Auth.auth().currentUser else {
             print("사용자 정보가 잘못되었습니다.")
-            throw FirebaseError.userNotAuthenticated
+            return ""
         }
         
         let uid = currentUser.uid
@@ -48,13 +48,13 @@ final class CommentViewModel: ObservableObject {
         
         guard document.exists else {
             print("사용자 문서를 가져오지 못했습니다.")
-            throw FirebaseError.userDocumentNotFound
+            return ""
         }
         
         let roomId = document.get("roomId") as? String ?? ""
         guard !roomId.isEmpty else {
             print("roomId를 가져오지 못했습니다.")
-            throw FirebaseError.roomIdNotFound
+            return ""
         }
         
         return roomId
@@ -62,7 +62,7 @@ final class CommentViewModel: ObservableObject {
     
     private func getCurrentUserRoomId(completion: @escaping (Result<String, Error>) -> Void) {
         guard let currentUser = Auth.auth().currentUser else {
-            completion(.failure(FirebaseError.userNotAuthenticated))
+            print("사용자 정보에 문제가 있습니다.")
             return
         }
         

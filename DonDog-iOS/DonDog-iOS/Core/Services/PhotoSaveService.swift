@@ -92,7 +92,7 @@ final class PhotoSaveService: ObservableObject {
                 
                 let postData = PostData(
                     postId: postId,
-                    uid: uid,
+                    authorId: uid,
                     frontImageURL: frontURL,
                     backImageURL: backURL,
                     caption: caption,
@@ -127,7 +127,7 @@ final class PhotoSaveService: ObservableObject {
             )
             
             try await dataManager.update(
-                path: "Users/\(postData.uid)",
+                path: "Users/\(postData.authorId)",
                 data: [
                     "recentPostId": postId,
                     "updatedAt": FieldValue.serverTimestamp()

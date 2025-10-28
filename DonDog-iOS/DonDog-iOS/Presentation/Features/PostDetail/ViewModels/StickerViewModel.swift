@@ -38,7 +38,7 @@ final class StickerViewModel: ObservableObject {
     
     private func getCurrentUserRoomId(completion: @escaping (Result<String, Error>) -> Void) {
         guard let currentUser = Auth.auth().currentUser else {
-            completion(.failure(FirebaseError.userNotAuthenticated))
+            print("사용자 정보에 문제가 있습니다.")
             return
         }
         
@@ -46,14 +46,14 @@ final class StickerViewModel: ObservableObject {
         
         db.collection("Users").document(uid).getDocument { document, error in
             if let error = error {
-                completion(.failure(error))
+                print("사용자 문서를 가져오지 못했습니다: \(error)")
                 return
             }
             
             guard let document = document,
                   let roomId = document.get("roomId") as? String,
                   !roomId.isEmpty else {
-                completion(.failure(FirebaseError.roomIdNotFound))
+                print("roomId를 찾지 못했습니다.")
                 return
             }
             
@@ -89,7 +89,6 @@ final class StickerViewModel: ObservableObject {
                 case .success(let value):
                     DispatchQueue.main.async {
                         let emotion = StickerType(rawValue: stickerType) ?? .none
-                        let borderColor = emotion?.strokeColor
                         
                         DispatchQueue.global(qos: .userInitiated).async {
                             guard let resultImage = self.imageUtils.makeSticker(with: value.image) else {

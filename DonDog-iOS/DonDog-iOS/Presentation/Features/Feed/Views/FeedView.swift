@@ -216,7 +216,7 @@ struct FeedView: View {
                     HStack{
                         Spacer()
                         Button{
-                            coordinator.push(.archive(roomId: viewModel.currentRoomId))
+                            coordinator.push(.archive)
                         }label: {
                             VStack(spacing: 2){
                                 Image("CalendarButton")

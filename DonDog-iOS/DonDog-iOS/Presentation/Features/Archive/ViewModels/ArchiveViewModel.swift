@@ -13,15 +13,15 @@ import UIKit
 import SwiftUI
 
 final class ArchiveViewModel: ObservableObject {
+    let connectState = ConnectStateService.shared
+    var stickerViewModel: ArchiveStickerViewModel
+    private weak var coordinator: AppCoordinator?
+    
     @Published var archiveMonths: [ArchiveMonth] = []
     @Published var dailyPosts: [String: [ArchivePost]] = [:]
     @Published var totalPostCount: Int = 0
     @Published var isLoading = false
-    @Published var myNickname: String = ""
-    @Published var partnerNickname: String = ""
-    var stickerViewModel: ArchiveStickerViewModel
     
-    let roomId: String
     private let db = Firestore.firestore()
     private let calendar = Calendar(identifier: .gregorian)
     private let timezone = TimeZone(identifier: "Asia/Seoul") ?? .current
@@ -34,20 +34,52 @@ final class ArchiveViewModel: ObservableObject {
         df.dateFormat = "yyyy-MM-dd"
         return df
     }()
-
+    
+    init(stickerViewModel: ArchiveStickerViewModel) {
+        self.stickerViewModel = stickerViewModel
+    }
+    
+    func attach(coordinator: AppCoordinator) {
+        self.coordinator = coordinator
+    }
+    
+    func onAppear() {
+        Task {
+            await fetchMonthlyArchives()
+        }
+        NSLog("[ArchiveViewModel] roomId = \(connectState.roomId ?? "roomId 비어있음")")
+    }
+    
     func dayKey(from date: Date) -> String {
         let startOfDay = calendar.startOfDay(for: date)
         return dayKeyFormatter.string(from: startOfDay)
     }
-
     
-    init(roomId: String, stickerViewModel: ArchiveStickerViewModel) {
-        self.roomId = roomId
-        self.stickerViewModel = stickerViewModel
-        Task {
-            await fetchMonthlyArchives()
-            await fetchPartnerNicknames()
-        }
+    // 날짜 포매팅
+    private func getDate(from month: ArchiveMonth, day: ArchiveDay) -> Date? {
+        var calendar = self.calendar
+        calendar.timeZone = self.timezone
+        let components = DateComponents(
+            year: month.year,
+            month: month.month,
+            day: day.day,
+            hour: 0,
+            minute: 0,
+            second: 0
+        )
+        return calendar.date(from: components)
+    }
+    
+    // 일자별 기록으로 이동
+    func moveDailyArchive(month: ArchiveMonth, day: ArchiveDay) {
+        guard let selectedDate = getDate(from: month, day: day) else { return }
+        
+        let key = dayKey(from: selectedDate)
+        let initial = dailyPosts[key] ?? []
+        
+        coordinator?.push(
+            .archiveDetail(roomId: connectState.roomId ?? "", date: selectedDate, initialPosts: initial)
+        )
     }
     
     // 전체 기록 가져오기
@@ -63,17 +95,11 @@ final class ArchiveViewModel: ObservableObject {
             self.totalPostCount = totalCount
             self.isLoading = false }
     }
-
-    func fetchPartnerNicknames() async {
-        guard let result = await fetchPartnerNickname() else { return }
-        self.myNickname = result.myNickname
-        self.partnerNickname = result.partnerNickname
-    }
     
     // 월/일 별로 전체 기록 가져오기 -> 일자별 기록 캐싱
     private func fetchAllPosts() async -> [ArchiveMonth] {
         do {
-            let snapshot = try await db.collection("Rooms").document(roomId)
+            let snapshot = try await db.collection("Rooms").document(connectState.roomId ?? "")
                 .collection("posts")
                 .order(by: "createdAt", descending: false) // 오래된 것부터
                 .getDocuments(source: .server)
@@ -135,7 +161,6 @@ final class ArchiveViewModel: ObservableObject {
                         thumbnailURL: thumbnail,
                         postId: doc.documentID
                     )
-                    
 #if DEBUG
                     print("""
                     썸네일
@@ -180,7 +205,7 @@ final class ArchiveViewModel: ObservableObject {
     // 게시물 개수 조회
     private func fetchPostCount() async -> Int {
         do {
-            let countQuery = db.collection("Rooms").document(roomId).collection("posts")
+            let countQuery = db.collection("Rooms").document(connectState.roomId ?? "").collection("posts")
                 .count
             
             let snapshot = try await countQuery.getAggregation(source: .server)
@@ -189,46 +214,6 @@ final class ArchiveViewModel: ObservableObject {
         } catch {
             print("Count 쿼리 실패: \(error.localizedDescription)")
             return 0
-        }
-    }
-    
-    // 상대방 닉네임 조회
-    func fetchPartnerNickname() async -> (myNickname: String, partnerNickname: String)? {
-        guard let uid = Auth.auth().currentUser?.uid else { return nil }
-        
-        do {
-            // 1. User 조회
-            let userSnap = try await db.collection("Users").document(uid).getDocument()
-            guard
-                let data = userSnap.data(),
-                let myNickname = data["name"] as? String,
-                let roomId = data["roomId"] as? String
-            else { return nil }
-            
-            // 2. Room 조회
-            let roomSnap = try await db.collection("Rooms")
-                .document(roomId)
-                .getDocument()
-            guard
-                let roomData = roomSnap.data(),
-                let participants = roomData["participants"] as? [String]
-            else { return nil }
-            
-            // 3. 현재 uid와 다른 참여자를 상대방으로 지정
-            let partnerUid = participants.first(where: { $0 != uid })
-            guard
-                let partnerUid = partnerUid, partnerUid != uid
-            else {
-                return (myNickname, "상대방")
-            }
-            
-            // 4. 상대방 닉네임 지정
-            let partnerSnap = try await db.collection("Users").document(partnerUid).getDocument()
-            let partnerNickname = partnerSnap.data()?["name"] as? String ?? "상대방"
-            return (myNickname, partnerNickname)
-        } catch {
-            print("이름 불러오기 실패:", error.localizedDescription)
-            return nil
         }
     }
 }

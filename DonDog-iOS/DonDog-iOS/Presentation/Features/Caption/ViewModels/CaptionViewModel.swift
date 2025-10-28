@@ -20,7 +20,7 @@ final class CaptionViewModel: ObservableObject {
     @Published var isUploading: Bool = false
     
     weak var delegate: CaptionViewModelDelegate?
-    private let dataManager = FirebaseDataManager.shared
+    private let dataManager: DataManagerProtocol = FirebaseDataManager.shared
     
     var frontImage: UIImage?
     var backImage: UIImage?
@@ -39,31 +39,9 @@ final class CaptionViewModel: ObservableObject {
         print("📤 업로드 시작 - 캡션: \(caption)")
         isUploading = true
         
-        uploadImagesToRoomPosts(
-            frontImage: frontImage,
-            backImage: backImage,
-            caption: caption
-        ) { [weak self] result in
-            DispatchQueue.main.async {
-                self?.isUploading = false
-                
-                switch result {
-                case .success(let postData):
-                    print("✅ 업로드 성공: \(postData.uid)")
-                    print("📝 캡션: \(postData.caption)")
-                    self?.delegate?.didUploadPost()
-                    onSuccess()
-                case .failure(let error):
-                    print("❌ 업로드 실패: \(error.localizedDescription)")
-                }
-                
-                
-            }
-        }
-    }
-    
-    private func uploadImagesToRoomPosts(frontImage: UIImage, backImage: UIImage, caption: String, completion: @escaping (Result<PostData, Error>) -> Void) {
         Task {
+            let captionSnapshot = await MainActor.run { self.caption }
+            
             do {
                 // 1) RoomId 확보
                 let roomId = try await dataManager.getCurrentUserRoomId()
@@ -96,7 +74,7 @@ final class CaptionViewModel: ObservableObject {
                     uid: uid,
                     frontImageURL: frontURL,
                     backImageURL: backURL,
-                    caption: caption,
+                    caption: captionSnapshot,
                     stickerPostId: "",
                     stickerType: nil
                 )
@@ -122,13 +100,20 @@ final class CaptionViewModel: ObservableObject {
                 )
 
                 // 7) 완료 콜백
-                await MainActor.run { completion(.success(postData)) }
+                await MainActor.run {
+                    self.isUploading = false
+                    print("✅ 업로드 성공: \(postData.uid)")
+                    print("📝 캡션: \(postData.caption)")
+                    self.delegate?.didUploadPost()
+                    onSuccess()
+                }
             } catch {
-                print("이미지 업로드/저장 중 오류 발생: \(error.localizedDescription)")
-                await MainActor.run { completion(.failure(error)) }
+                await MainActor.run {
+                    self.isUploading = false
+                    print("❌ 업로드 실패: \(error.localizedDescription)")
+                }
             }
         }
     }
     
 }
-

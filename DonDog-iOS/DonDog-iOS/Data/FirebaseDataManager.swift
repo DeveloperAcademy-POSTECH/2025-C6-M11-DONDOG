@@ -1,5 +1,5 @@
 //
-//  DataManager.swift
+//  FirebaseDataManager.swift
 //  DonDog-iOS
 //
 //  Created by Ito on 10/26/25.
@@ -39,7 +39,7 @@ enum DataManagerError: LocalizedError {
 
 final class FirebaseDataManager: DataManagerProtocol {
     static let shared = FirebaseDataManager()
-    private init() {}
+    init() {}
     
     private let db = Firestore.firestore()
     private let storage = Storage.storage()

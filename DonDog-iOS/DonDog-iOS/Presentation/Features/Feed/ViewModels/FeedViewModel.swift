@@ -34,7 +34,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var emotion: String = "null"
     @Published var isNotMyPost = false
     
-    private let dataManager = FirebaseDataManager.shared
+    private let dataManager: DataManagerProtocol = FirebaseDataManager.shared
     private let imageUtils = ImageUtils()
     
     init() {
@@ -191,31 +191,33 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     roomId: self.currentRoomId,
                     stickerType: self.emotion
                 ) { stickerImage in
-                    guard let index = self.displayablePosts.firstIndex(where: { $0.postId == self.selectedPostId }) else {
-                        print("게시물을 찾을 수 없습니다")
-                        return
+                    DispatchQueue.main.async {
+                        guard let index = self.displayablePosts.firstIndex(where: { $0.postId == self.selectedPostId }) else {
+                            print("게시물을 찾을 수 없습니다")
+                            return
+                        }
+                        
+                        let existingPost = self.displayablePosts[index]
+                        let newPostData = PostData(
+                            postId: existingPost.postId,
+                            uid: existingPost.uid,
+                            frontImageURL: existingPost.post.frontImageURL,
+                            backImageURL: existingPost.post.backImageURL,
+                            caption: existingPost.caption,
+                            createdAt: existingPost.post.createdAt,
+                            stickerPostId: recentPostId,
+                            stickerType: self.emotion
+                        )
+                        
+                        self.displayablePosts[index] = DisplayablePost(
+                            post: newPostData,
+                            frontImage: existingPost.frontImageURL,
+                            backImage: existingPost.backImageURL,
+                            stickerImage: stickerImage,
+                            nickname: existingPost.nickname,
+                            isMyPost: existingPost.isMyPost
+                        )
                     }
-                    
-                    let existingPost = self.displayablePosts[index]
-                    let newPostData = PostData(
-                        postId: existingPost.postId,
-                        uid: existingPost.uid,
-                        frontImageURL: existingPost.post.frontImageURL,
-                        backImageURL: existingPost.post.backImageURL,
-                        caption: existingPost.caption,
-                        createdAt: existingPost.post.createdAt,
-                        stickerPostId: recentPostId,
-                        stickerType: self.emotion
-                    )
-                    
-                    self.displayablePosts[index] = DisplayablePost(
-                        post: newPostData,
-                        frontImage: existingPost.frontImageURL,
-                        backImage: existingPost.backImageURL,
-                        stickerImage: stickerImage,
-                        nickname: existingPost.nickname,
-                        isMyPost: existingPost.isMyPost
-                    )
                 }
             } catch {
                 print("스티커 업데이트 실패: \(error.localizedDescription)")
@@ -297,68 +299,47 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     func loadTodayPosts() {
         isLoading = true
         isUploading = false
-        
+
         Task {
             do {
                 let roomId = try await dataManager.getCurrentUserRoomId()
-                
-                self.fetchTodayRoomPosts(roomId: roomId) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let todayPosts):
-                            print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
-                            
-                            if let firstPost = todayPosts.first {
-                                self.selectedPostId = firstPost.postId
-                                self.currentPost = firstPost
-                                self.currentPostIndex = 0
-                                self.downloadAllTodayImages(posts: todayPosts, roomId: roomId)
-                            } else {
-                                print("📭 오늘 찍은 게시물이 없습니다")
-                                self.displayablePosts = []
-                                self.isLoading = false
-                            }
-                        case .failure(let error):
-                            print("오늘 posts 로드 실패: \(error.localizedDescription)")
-                            self.isLoading = false
-                        }
-                    }
-                }
-            } catch {
-                print("roomId 가져오기 실패: \(error.localizedDescription)")
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                }
-            }
-        }
-    }
-    
-    private func fetchTodayRoomPosts(roomId: String, completion: @escaping (Result<[PostData], Error>) -> Void) {
-        print("오늘 찍은 Room posts 조회 시작: \(roomId)")
-        
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let todayTimestamp = Timestamp(date: today)
-        
-        print("오늘 날짜: \(today)")
-        
-        Task {
-            do {
-                let posts: [PostData] = try await dataManager.fetchWhere(
+                print("오늘 찍은 Room posts 조회 시작: \(roomId)")
+
+                let calendar = Calendar.current
+                let today = calendar.startOfDay(for: Date())
+                let todayTimestamp = Timestamp(date: today)
+                print("오늘 날짜: \(today)")
+
+                let todayPosts: [PostData] = try await dataManager.fetchWhere(
                     path: "Rooms/\(roomId)/posts",
                     field: "createdAt",
                     isGreaterThanOrEqualTo: todayTimestamp,
                     orderBy: "createdAt",
                     descending: true
                 )
-                
-                completion(.success(posts))
+
+                await MainActor.run {
+                    print("📅 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
+                    if let firstPost = todayPosts.first {
+                        self.selectedPostId = firstPost.postId
+                        self.currentPost = firstPost
+                        self.currentPostIndex = 0
+                        self.downloadAllTodayImages(posts: todayPosts, roomId: roomId)
+                    } else {
+                        print("📭 오늘 찍은 게시물이 없습니다")
+                        self.displayablePosts = []
+                        self.isLoading = false
+                    }
+                }
             } catch {
-                print("❌ 오늘 posts 조회 실패: \(error.localizedDescription)")
-                completion(.failure(error))
+                print("오늘 posts 로드 실패 또는 roomId 가져오기 실패: \(error.localizedDescription)")
+                await MainActor.run {
+                    self.isLoading = false
+                }
             }
         }
     }
+    
     
     private func downloadAllTodayImages(posts: [PostData], roomId: String) {
         print("🖼️ 모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")

@@ -370,26 +370,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    func loadRoomPosts() {
-        photoSaveService.getCurrentUserRoomId { [weak self] result in
-            switch result {
-            case .success(let roomId):
-                self?.photoSaveService.fetchRoomPosts(roomId: roomId) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let postsList):
-                            self?.postsList = postsList
-                            print("Room posts에서 \(postsList.count)개 게시물 로드 완료")
-                        case .failure(let error):
-                            print("Room posts 로드 실패: \(error.localizedDescription)")
-                        }
-                    }
-                }
-            case .failure(let error):
-                print("roomId 가져오기 실패: \(error.localizedDescription)")
-            }
-        }
-    }
     
     func loadTodayPosts() {
         isLoading = true

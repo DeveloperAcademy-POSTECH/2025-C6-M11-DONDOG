@@ -8,14 +8,19 @@
 import SwiftUI
 
 struct CommentView: View {
+    @StateObject var viewModel = CommentViewModel()
     let postId: String
     
     var body: some View {
         VStack(spacing: 0) {
-            // TODO: 댓글뷰 구현
-//            ForEach() {
-                CommentRow()
-//            }
+            ForEach(viewModel.comments, id: \.createdAt) { comment in
+                CommentRow(comment: comment)
+            }
+        }
+        .onAppear {
+            Task {
+                await viewModel.fetchComments(postId: postId)
+            }
         }
     }
 }

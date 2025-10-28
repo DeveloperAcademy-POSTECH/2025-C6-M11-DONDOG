@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StickerView: View {
-    @StateObject var viewModel: StickerViewModel
+    @StateObject var viewModel = StickerViewModel()
     
     let stickerPostId: String
     let stickerType: String

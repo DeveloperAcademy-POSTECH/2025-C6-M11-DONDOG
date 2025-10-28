@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct CustomCommentEditor: View {
-    @StateObject var viewModel = CommentViewModel()
+    @StateObject private var viewModel = CustomCommentEditorViewModel()
     @Binding var shouldScrollToBottom: Bool
     var isTextFieldFocused: FocusState<Bool>.Binding
     
     @State private var isLineChanged: Bool
-    @State private var isTextSaveable: Bool
+    @State private var isTextSaveable: Bool;
+    
+    @State var text = ""
     
     init(isTextFieldFocused: FocusState<Bool>.Binding, shouldScrollToBottom: Binding<Bool>) {
         self.isTextFieldFocused = isTextFieldFocused
@@ -37,7 +39,7 @@ struct CustomCommentEditor: View {
                 .frame(height: isLineChanged ? 92 : 59)
             
             HStack(spacing: 4) {
-                TextField("댓글을 입력해 주세요...", text: $viewModel.text, axis: .vertical)
+                TextField("댓글을 입력해 주세요...", text: $text, axis: .vertical)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .scrollContentBackground(.hidden)
@@ -47,7 +49,7 @@ struct CustomCommentEditor: View {
                             .fill(.ddGray100)
                             .frame(height: isLineChanged ? 73 : 40)
                     )
-                    .onChange(of: viewModel.text) { _, _ in
+                    .onChange(of: text) { _, _ in
                         checkIfLineChanged()
                         checkIfTextSaveable()
                     }
@@ -59,7 +61,7 @@ struct CustomCommentEditor: View {
                         
                         if isTextSaveable {
                             await viewModel.saveComment()
-                            viewModel.text = ""
+                            text = ""
                             shouldScrollToBottom = true
                         }
                     }
@@ -67,9 +69,9 @@ struct CustomCommentEditor: View {
                     Image(systemName: "paperplane.circle.fill")
                         .resizable()
                         .frame(width: 40, height: 40)
-                        .foregroundStyle(viewModel.text.isEmpty ? .ddSecondaryBlue : .ddPrimaryBlue)
+                        .foregroundStyle(text.isEmpty ? .ddSecondaryBlue : .ddPrimaryBlue)
                 }
-                .animation(.spring(), value: viewModel.text)
+                .animation(.spring(), value: text)
             }
             .padding(.bottom, 8)
             .padding(.horizontal, 20)
@@ -77,7 +79,7 @@ struct CustomCommentEditor: View {
     }
     
     private func checkIfLineChanged() {
-        if viewModel.text.count > 30 {
+        if text.count > 30 {
             isLineChanged = true
         } else {
             isLineChanged = false
@@ -85,7 +87,7 @@ struct CustomCommentEditor: View {
     }
     
     private func checkIfTextSaveable() {
-        let trimmedText = viewModel.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if trimmedText.isEmpty {
             isTextSaveable = false
@@ -94,4 +96,3 @@ struct CustomCommentEditor: View {
         }
     }
 }
-

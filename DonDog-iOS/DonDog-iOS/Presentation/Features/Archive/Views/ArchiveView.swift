@@ -149,8 +149,11 @@ struct ArchiveView: View {
         let key = viewModel.dayKey(from: selectedDate)
         let initial = viewModel.dailyPosts[key] ?? []
         
+//        coordinator.push(
+//            .archiveDetail(roomId: viewModel.roomId, date: selectedDate, initialPosts: initial)
+//        )
         coordinator.push(
-            .archiveDetail(roomId: viewModel.roomId, date: selectedDate, initialPosts: initial)
+            .postDetail(posts: viewModel.postsForDate(selectedDate), postType: .archive)
         )
     }
 }

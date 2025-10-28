@@ -231,4 +231,27 @@ final class ArchiveViewModel: ObservableObject {
             return nil
         }
     }
+    
+    func postsForDate(_ date: Date) -> [PostData] {
+        let key = dayKey(from: date)
+        guard let posts = dailyPosts[key] else { return [] }
+        
+        return posts.compactMap { archivePost in
+            guard
+                let authorId = archivePost.authorUid,
+                let frontURL = archivePost.frontImageURL?.absoluteString ?? archivePost.backImageURL?.absoluteString
+            else { return nil }
+            
+            return PostData(
+                postId: archivePost.id,
+                authorId: authorId,
+                frontImageURL: archivePost.frontImageURL?.absoluteString ?? "",
+                backImageURL: archivePost.backImageURL?.absoluteString ?? "",
+                caption: archivePost.caption ?? "",
+                createdAt: Timestamp(date: archivePost.createdAt),
+                stickerPostId: archivePost.stickerPostId ?? "",
+                stickerType: archivePost.stickerType?.rawValue
+            )
+        }
+    }
 }

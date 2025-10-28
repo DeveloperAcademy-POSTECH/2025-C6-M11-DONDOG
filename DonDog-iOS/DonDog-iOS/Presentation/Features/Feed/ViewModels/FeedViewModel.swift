@@ -34,7 +34,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var emotion: String = "null"
     @Published var isNotMyPost = false
     
-    private let photoSaveService = PhotoSaveService.shared
     private let dataManager = FirebaseDataManager.shared
     private let imageUtils = ImageUtils()
     

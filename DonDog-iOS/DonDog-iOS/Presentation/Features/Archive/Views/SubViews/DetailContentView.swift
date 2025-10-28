@@ -64,7 +64,7 @@ struct DetailContentView: View {
     }
     
     private var stickerDecoString: String {
-        guard let stickerEmotion = StickerEmotion(rawValue: stickerViewModel.emotions[post.id] ?? "") else {
+        guard let stickerEmotion = StickerType(rawValue: stickerViewModel.emotions[post.id] ?? "") else {
             return ""
         }
         return stickerEmotion.stickerDecoString

@@ -119,14 +119,14 @@ struct StickerContainerView: View {
     let isOtherSelected: Bool
     
     private var emotionStrokeColor: Color {
-            guard let stickerEmotion = StickerEmotion(rawValue: emotion) else {
+            guard let stickerEmotion = StickerType(rawValue: emotion) else {
                 return .ddBlack
             }
             return stickerEmotion.strokeColor
         }
     
     private var stickerDecoString: String {
-            guard let stickerEmotion = StickerEmotion(rawValue: emotion) else {
+            guard let stickerEmotion = StickerType(rawValue: emotion) else {
                 return ""
             }
             return stickerEmotion.stickerDecoString

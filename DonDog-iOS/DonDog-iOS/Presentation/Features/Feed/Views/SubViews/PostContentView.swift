@@ -83,7 +83,7 @@ struct PostContentView: View {
                     Image(uiImage: viewModel.borderedSticker)
                         .resizable()
                         .frame(width: 110, height: 138)
-                    Image(stickerDecoString)
+                    Image(StickerType(rawValue: viewModel.emotion)?.stickerDecoString ?? "")
                 }
                 .offset(y: 5)
             }
@@ -141,12 +141,5 @@ struct PostContentView: View {
                 }
             }
         }
-    }
-    
-    private var stickerDecoString: String {
-        guard let stickerEmotion = StickerEmotion(rawValue: viewModel.emotion) else {
-            return ""
-        }
-        return stickerEmotion.stickerDecoString
     }
 }

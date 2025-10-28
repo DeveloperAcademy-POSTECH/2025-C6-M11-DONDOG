@@ -20,7 +20,6 @@ final class StickerViewModel: ObservableObject {
     private var roomId: String?
     private let db = Firestore.firestore()
     private let imageUtils = ImageUtils()
-    private let stickerUtils = StickerUtils()
     
     func getStickerData(stickerPostId: String, stickerType: String) {
         getCurrentUserRoomId { [weak self] result in
@@ -89,16 +88,14 @@ final class StickerViewModel: ObservableObject {
                 switch result {
                 case .success(let value):
                     DispatchQueue.main.async {
-                        let emotion = StickerUtils.EmotionType(rawValue: stickerType) ?? .none
-                        let borderColor = emotion.borderColor
+                        let emotion = StickerType(rawValue: stickerType) ?? .none
+                        let borderColor = emotion?.strokeColor
                         
                         DispatchQueue.global(qos: .userInitiated).async {
-                            guard let stickerOnly = self.imageUtils.makeSticker(with: value.image) else {
+                            guard let resultImage = self.imageUtils.makeSticker(with: value.image) else {
                                 print("스티커 생성에 실패했습니다")
                                 return
                             }
-                            
-                            let resultImage = stickerOnly.addBorder(thickness: 50, color: borderColor) ?? stickerOnly
                             
                             DispatchQueue.main.async {
                                 self.sticker = resultImage

@@ -13,38 +13,26 @@ import UIKit
 
 final class PhotoSaveService: ObservableObject {
     static let shared = PhotoSaveService()
-    
     private let dataManager = FirebaseDataManager.shared
-    
     private init() {}
     
     // MARK: - : Room의 posts에 저장
     func uploadImagesToRoomPosts(frontImage: UIImage, backImage: UIImage, caption: String, completion: @escaping (Result<PostData, Error>) -> Void) {
-        
         Task {
             do {
+                // 1) RoomId 확보
                 let roomId = try await dataManager.getCurrentUserRoomId()
                 print("사용자 roomId: \(roomId)")
-                
-                self.uploadImagesAndSaveToRoom(frontImage: frontImage, backImage: backImage, caption: caption, roomId: roomId, completion: completion)
-            } catch {
-                print("roomId 가져오기 실패: \(error.localizedDescription)")
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    private func uploadImagesAndSaveToRoom(frontImage: UIImage, backImage: UIImage, caption: String, roomId: String, completion: @escaping (Result<PostData, Error>) -> Void) {
-        Task {
-            do {
+
+                // 2) 사용자 UID 확보
                 guard let uid = dataManager.getCurrentUserId() else {
-                    completion(.failure(DataManagerError.authenticationRequired))
-                    return
+                    throw DataManagerError.authenticationRequired
                 }
-                
+
+                // 3) 스토리지 업로드
                 let postId = UUID().uuidString
                 print("전면/후면 이미지 업로드 시작 - Post ID: \(postId)")
-                
+
                 async let frontURLTask = dataManager.uploadImage(
                     image: frontImage,
                     path: "rooms/\(roomId)/posts/\(postId)/front.jpg"
@@ -53,11 +41,11 @@ final class PhotoSaveService: ObservableObject {
                     image: backImage,
                     path: "rooms/\(roomId)/posts/\(postId)/back.jpg"
                 )
-                
+
                 let (frontURL, backURL) = try await (frontURLTask, backURLTask)
-                
                 print("전면/후면 이미지 업로드 모두 완료")
-                
+
+                // 4) Firestore 저장을 위한 모델 구성
                 let postData = PostData(
                     postId: postId,
                     uid: uid,
@@ -67,44 +55,33 @@ final class PhotoSaveService: ObservableObject {
                     stickerPostId: "",
                     stickerType: nil
                 )
-                
-                try await self.savePostToRoom(roomId: roomId, postId: postId, postData: postData)
-                
-                await MainActor.run {
-                    completion(.success(postData))
-                }
+
+                // 5) Firestore 문서 쓰기 (Rooms/{roomId}/posts/{postId})
+                var dict = try Firestore.Encoder().encode(postData)
+                dict["uid"] = postData.uid
+                dict["createdAt"] = FieldValue.serverTimestamp()
+                dict["updatedAt"] = FieldValue.serverTimestamp()
+
+                try await dataManager.create(
+                    path: "Rooms/\(roomId)/posts/\(postId)",
+                    data: dict
+                )
+
+                // 6) 사용자 문서 갱신 (Users/{uid})
+                try await dataManager.update(
+                    path: "Users/\(uid)",
+                    data: [
+                        "recentPostId": postId,
+                        "updatedAt": FieldValue.serverTimestamp()
+                    ]
+                )
+
+                // 7) 완료 콜백
+                await MainActor.run { completion(.success(postData)) }
             } catch {
-                print("이미지 업로드 중 오류 발생: \(error.localizedDescription)")
-                await MainActor.run {
-                    completion(.failure(error))
-                }
+                print("이미지 업로드/저장 중 오류 발생: \(error.localizedDescription)")
+                await MainActor.run { completion(.failure(error)) }
             }
-        }
-    }
-    
-    private func savePostToRoom(roomId: String, postId: String, postData: PostData) async throws {
-        do {
-            var dict = try Firestore.Encoder().encode(postData)
-            dict["uid"] = postData.uid
-            dict["createdAt"] = FieldValue.serverTimestamp()
-            dict["updatedAt"] = FieldValue.serverTimestamp()
-            
-            try await dataManager.create(
-                path: "Rooms/\(roomId)/posts/\(postId)",
-                data: dict
-            )
-            
-            try await dataManager.update(
-                path: "Users/\(postData.uid)",
-                data: [
-                    "recentPostId": postId,
-                    "updatedAt": FieldValue.serverTimestamp()
-                ]
-            )
-            
-        } catch {
-            print("Room post 저장 실패: \(error.localizedDescription)")
-            throw error
         }
     }
     

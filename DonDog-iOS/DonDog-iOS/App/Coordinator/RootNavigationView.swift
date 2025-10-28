@@ -43,6 +43,6 @@ struct RootNavigationView: View {
             }
         }
         .environmentObject(coordinator)
-        .environmentObject(ConnectStateService.shared)
+        .environmentObject(UserPairingStore.shared)
     }
 }

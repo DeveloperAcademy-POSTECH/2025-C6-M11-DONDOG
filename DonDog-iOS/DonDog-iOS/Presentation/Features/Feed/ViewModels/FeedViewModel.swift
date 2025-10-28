@@ -13,7 +13,6 @@ import Kingfisher
 import UIKit
 
 final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionViewModelDelegate {
-    
     @Published var isLoading = false
     @Published var isUploading = false
     @Published var isAfterUpload = false
@@ -295,7 +294,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             print("🔄 새 게시물로 스티커 데이터 갱신")
         }
     }
-    
     
     func loadTodayPosts() {
         isLoading = true

@@ -33,7 +33,10 @@ final class EditProfileViewModel: ObservableObject {
     func fetchCurrentProfile() {
         errorMessage = nil
 
-        guard let uid = connectUserInfo.myUid else { return }
+        guard let uid = connectUserInfo.myUid else {
+            self.errorMessage = "로그인 상태가 아닙니다. 다시 로그인해 주세요."
+            return
+        }
 
         let docRef = db.collection("Users").document(uid)
         docRef.getDocument { [weak self] snap, err in
@@ -69,7 +72,10 @@ final class EditProfileViewModel: ObservableObject {
             errorMessage = "닉네임을 입력해 주세요."
             return
         }
-        guard let uid = connectUserInfo.myUid else { return }
+        guard let uid = connectUserInfo.myUid else {
+            errorMessage = "로그인 상태가 아닙니다. 다시 로그인해주세요"
+            return
+        }
 
         let userDoc = db.collection("Users").document(uid)
         userDoc.setData([

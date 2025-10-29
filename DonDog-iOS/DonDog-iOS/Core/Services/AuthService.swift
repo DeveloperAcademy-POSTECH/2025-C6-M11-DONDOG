@@ -58,7 +58,7 @@ final class AuthService {
         
         guard let user = Auth.auth().currentUser else {
             Task { @MainActor in
-                ConnectStateService.shared.reset()
+                UserPairingStore.shared.reset()
             }
             replaceRootinAuthService(.welcome, coordinator: coordinator)
             self.userDocListenr?.remove()
@@ -75,7 +75,7 @@ final class AuthService {
             /// 로그인 안됨 -> welcome으로 이동
             guard let refreshUser = Auth.auth().currentUser else {
                 Task { @MainActor in
-                    ConnectStateService.shared.reset()
+                    UserPairingStore.shared.reset()
                 }
                 replaceRootinAuthService(.welcome, coordinator: coordinator)
                 NSLog("[AuthService] IDToken 분실로 current User 찾을 수 없음 → welcome 화면으로 이동")
@@ -83,7 +83,7 @@ final class AuthService {
             }
             
             Task { @MainActor in
-                ConnectStateService.shared.reset()
+                UserPairingStore.shared.reset()
             }
             
             // 현재 기기의 FCM 토큰 firestore에 업로드
@@ -120,13 +120,13 @@ final class AuthService {
                     if let nsError = error as NSError? {
                         NSLog("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → welcome로 이동")
                         Task { @MainActor in
-                            ConnectStateService.shared.reset()
+                            UserPairingStore.shared.reset()
                         }
                         replaceRootinAuthService(.welcome, coordinator: coordinator)
                     } else {
                         // 오류는 없지만 스냅샷이 nil인 경우: profileSetup으로 이동
                         Task { @MainActor in
-                            ConnectStateService.shared.reset()
+                            UserPairingStore.shared.reset()
                         }
                         replaceRootinAuthService(.profileSetup, coordinator: coordinator)
                     }
@@ -136,7 +136,7 @@ final class AuthService {
                 /// user 문서가 없을때 (가입 후 프로필 미완성) -> profileSetup
                 if userDoc.exists == false {
                     Task { @MainActor in
-                        ConnectStateService.shared.reset()
+                        UserPairingStore.shared.reset()
                     }
                     replaceRootinAuthService(.profileSetup, coordinator: coordinator)
                     return
@@ -152,7 +152,7 @@ final class AuthService {
                 let roomId = data["roomId"] as? String
                 
                 Task {
-                    let state = ConnectStateService.shared
+                    let state = UserPairingStore.shared
                     state.myUid = refreshUser.uid
                     state.myName = data["name"] as? String
                     

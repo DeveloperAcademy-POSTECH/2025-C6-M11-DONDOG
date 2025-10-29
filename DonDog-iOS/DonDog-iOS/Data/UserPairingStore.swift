@@ -1,5 +1,5 @@
 //
-//  ConnectState.swift
+//  UserPairingStore.swift
 //  DonDog-iOS
 //
 //  Created by 이주현 on 10/19/25.
@@ -9,8 +9,8 @@ import Combine
 import Foundation
 
 @MainActor
-final class ConnectStateService: ObservableObject {
-    static let shared = ConnectStateService()
+final class UserPairingStore: ObservableObject {
+    static let shared = UserPairingStore()
     private init() {}
     
     @Published var isConnected: Bool = false

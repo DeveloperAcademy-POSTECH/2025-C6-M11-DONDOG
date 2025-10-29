@@ -17,7 +17,8 @@ struct InviteView: View {
             CustomNavigationBar(leadingType: viewModel.showSentHint ? .none : .back(action: coordinator.pop), centerType: .title(title: "가족 연결"), trailingType: .none, navigationColor: .black)
             
             HStack {
-                Text(UserPairingStore.shared.myName ?? "")
+                Text("\(viewModel.userName ?? "") ")
+                    .font(.titleBold20)
                 + Text("님\n")
                 + Text("이제 가족과 연결해 보세요")
                 
@@ -103,7 +104,7 @@ struct InviteView: View {
             
             Spacer()
             
-            CustomButton(title: "연결하기", isEnable: !viewModel.inputInviteCode.isEmpty && !viewModel.isLoading, action: { Task { await viewModel.connectWithInviteCode() }})
+            CustomButton(title: "연결하기", isEnable: !viewModel.inputInviteCode.isEmpty && !viewModel.isLoading, action: viewModel.connectWithInviteCode)
                 .padding(.bottom, viewModel.showSentHint ? (keyboard.keyboardHeight == 0 ? 0 : -10) : 0)
             
             if viewModel.showSentHint {
@@ -120,9 +121,7 @@ struct InviteView: View {
         .padding(.horizontal, 20)
         .backHiddenSwipeEnabled()
         .dismissKeyboard()
-        .task {
-            viewModel.fetchInviteCodeandExpireDate()
-        }
+        .task { viewModel.fetchInviteCodeandExpireDate() }
         .onChange(of: viewModel.connectSucceeded) {
             coordinator.replaceRoot(.feed)
         }

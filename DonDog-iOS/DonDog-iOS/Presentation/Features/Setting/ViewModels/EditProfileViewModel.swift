@@ -20,6 +20,7 @@ final class EditProfileViewModel: ObservableObject {
     @Published private(set) var didChangeFromInitial: Bool = false
 
     private let db = Firestore.firestore()
+    private let connectUserInfo = UserPairingStore.shared
     private var initialName: String = ""
     private var initialRole: Role? = nil
 
@@ -32,10 +33,7 @@ final class EditProfileViewModel: ObservableObject {
     func fetchCurrentProfile() {
         errorMessage = nil
 
-        guard let uid = Auth.auth().currentUser?.uid else {
-            self.errorMessage = "로그인 상태가 아닙니다. 다시 로그인해 주세요."
-            return
-        }
+        guard let uid = connectUserInfo.myUid else { return }
 
         let docRef = db.collection("Users").document(uid)
         docRef.getDocument { [weak self] snap, err in
@@ -71,10 +69,7 @@ final class EditProfileViewModel: ObservableObject {
             errorMessage = "닉네임을 입력해 주세요."
             return
         }
-        guard let uid = Auth.auth().currentUser?.uid else {
-            errorMessage = "로그인 상태가 아닙니다. 다시 로그인해 주세요."
-            return
-        }
+        guard let uid = connectUserInfo.myUid else { return }
 
         let userDoc = db.collection("Users").document(uid)
         userDoc.setData([

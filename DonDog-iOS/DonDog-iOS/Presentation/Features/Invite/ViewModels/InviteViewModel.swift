@@ -24,7 +24,6 @@ final class InviteViewModel: ObservableObject {
     @Published var showSentHint: Bool = false
     
     private let db = Firestore.firestore()
-    private let connectUserInfo = UserPairingStore.shared
     private let generateInviteCodeService: GenerateCodeService
     private var timerCancellable: AnyCancellable?
     
@@ -35,42 +34,47 @@ final class InviteViewModel: ObservableObject {
         self.generateInviteCodeService = generateInviteCodeService
     }
     
-//    private var currentUserUID: String? {
-//        guard let myUid = Auth.auth().currentUser?.myUid else {
-//            self.message = "로그인이 필요합니다"
-//            self.isLoading = false
-//            return nil
-//        }
-//        return myUid
-//    }
+    private var currentUserUID: String? {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            self.message = "로그인이 필요합니다"
+            self.isLoading = false
+            return nil
+        }
+        return uid
+    }
     
     // MARK: - 내 초대코드 띄우기
     func fetchInviteCodeandExpireDate() {
+        guard let uid = currentUserUID else { return }
         self.isLoading = true
-        guard let myUid = connectUserInfo.myUid else { return }
-        db.collection("Invites").whereField("inviterUid", isEqualTo: myUid).getDocuments { [weak self] result, error in
-            guard let self = self else { return }
-            let docCount = result?.documents.count ?? 0
-            if let first = result?.documents.first {
-                let expireTS = first.data()["expireDate"] as? Timestamp
+
+        db.collection("Users").document(uid).getDocument { [weak self] snap, err in
+            guard self != nil else { return }
+            guard let data = snap?.data(), let snap = snap, snap.exists else {
+                return
             }
+            DispatchQueue.main.async {
+                self?.userName = (data["name"] as? String) ?? ""
+            }
+        }
+        
+        db.collection("Invites").whereField("inviterUid", isEqualTo: uid).getDocuments { [weak self] result, error in
+            guard let self = self else { return }
             DispatchQueue.main.async {
                 if let document = result?.documents.first {
                     self.inviteCode = document.documentID
+                    
                     if let lefttime = document.data()["expireDate"] as? Timestamp {
                         self.expireDate = lefttime.dateValue()
                     } else {
                         self.expireDate = nil
                     }
                     self.stagedInviteText = "\(self.inviteCode ?? "")"
-                    self.inviteText = self.stagedInviteText
+                    self.inviteText = ""
                     self.startTimer()
                 } else {
                     self.inviteText = "초대코드를 불러오지 못했습니다."
                 }
-                
-                print("[InviteViewModel] end UI assign | inviteText=\(self.inviteText), remain=\(self.remainTimeText)")
-                
                 self.isLoading = false
             }
         }
@@ -110,13 +114,11 @@ final class InviteViewModel: ObservableObject {
     }
     
     // MARK: - 다른 사람 초대코드 입력
-    func connectWithInviteCode() async {
+    func connectWithInviteCode() {
         message = ""
         connectSucceeded = false
         isLoading = true
         allowInviteCodeError = false
-        
-        guard let myUid = connectUserInfo.myUid else { return }
         
         let inputcode = inputInviteCode.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -191,8 +193,9 @@ final class InviteViewModel: ObservableObject {
                 let inviterRoomId = inviterDoc?.data()? ["roomId"] as? String
                 // A) 초대자의 유저 문서에 roomId가 있는 경우 → 기존 방에 내 uid를 참가자로 추가하고, 내 Users 문서에 roomId/createdAt 저장
                 if let existingRoomId = inviterRoomId, !existingRoomId.isEmpty {
-                    let roomDoc = self.db.collection("Rooms").document(existingRoomId)
-                    let myUserDoc = self.db.collection("Users").document(myUid)
+                        let roomDoc = self.db.collection("Rooms").document(existingRoomId)
+                        guard let myUid = self.currentUserUID else { return }
+                        let myUserDoc = self.db.collection("Users").document(myUid)
                         
                     self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: nil, roomId: existingRoomId, participantUids: [myUid]) { err in
                         if let err = err {
@@ -228,6 +231,7 @@ final class InviteViewModel: ObservableObject {
                                 return
                             }
                             
+                            guard let myUid = self.currentUserUID else { return }
                             let myUserDoc = self.db.collection("Users").document(myUid)
                             self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: inviterUserDoc, roomId: candidate, participantUids: [inviterUid, myUid]) { err in
                                 if let err = err {
@@ -254,7 +258,7 @@ final class InviteViewModel: ObservableObject {
     
     private func commitRoomJoin(roomDoc: DocumentReference, myUserDoc: DocumentReference, inviterUserDoc: DocumentReference?, roomId: String, participantUids: [String], completion: @escaping (Error?) -> Void) {
         let saveTgt = db.batch()
-        /// Rooms/{roomId}의 participants에 myUid 추가
+        /// Rooms/{roomId}의 participants에 uid 추가
         saveTgt.setData([
             "participants": participantUids,
             "createdAt": FieldValue.serverTimestamp()
@@ -276,6 +280,7 @@ final class InviteViewModel: ObservableObject {
     
     func refreshInviteCode() {
         self.isLoading = true
+        guard let uid = Auth.auth().currentUser?.uid else { return }
         guard let code = self.inviteCode, !code.isEmpty else { return }
 
         db.collection("Invites").document(code).delete { [weak self] error in
@@ -289,39 +294,36 @@ final class InviteViewModel: ObservableObject {
 
             print("[초대코드 재발급] 기존 코드 삭제 완료")
 
-            DispatchQueue.main.async {
-                self.generateInviteCodeService.generateUniqueInviteCode { [self] result in
-                    switch result {
-                    case .failure(let err):
-                        print("[초대코드 재발급] 재발급 실패: \(err.localizedDescription)")
-                        self.isLoading = false
-                        
-                    case .success(let newCode):
-                        let expireDate = Date().addingTimeInterval(24 * 60 * 60)
-                        let inviteDoc = self.db.collection("Invites").document(newCode)
+            self.generateInviteCodeService.generateUniqueInviteCode { result in
+                switch result {
+                case .failure(let err):
+                    print("[초대코드 재발급] 재발급 실패: \(err.localizedDescription)")
+                    self.isLoading = false
+                    
+                case .success(let newCode):
+                    let expireDate = Date().addingTimeInterval(24 * 60 * 60)
+                    let inviteDoc = self.db.collection("Invites").document(newCode)
 
-                        inviteDoc.setData([
-                            "inviterUid": self.connectUserInfo.myUid ?? "",
-                            "expireDate": expireDate
-                        ]) { err in
-                            if let err = err {
-                                print("[초대코드 재발급] 저장 실패: \(err.localizedDescription)")
-                                self.isLoading = false
-                                return
-                            }
-
-                            print("[초대코드 재발급] 완료 ✅ \(newCode)")
-                            self.inviteCode = newCode
-                            self.stagedInviteText = newCode
-                            self.expireDate = expireDate
-                            self.inviteText = ""
-                            self.startTimer()
-                            // self.isLoading = false
+                    inviteDoc.setData([
+                        "inviterUid": uid,
+                        "expireDate": expireDate
+                    ]) { err in
+                        if let err = err {
+                            print("[초대코드 재발급] 저장 실패: \(err.localizedDescription)")
+                            self.isLoading = false
+                            return
                         }
+
+                        print("[초대코드 재발급] 완료 ✅ \(newCode)")
+                        self.inviteCode = newCode
+                        self.stagedInviteText = newCode
+                        self.expireDate = expireDate
+                        self.inviteText = ""
+                        self.startTimer()
+                        // self.isLoading = false
                     }
                 }
             }
-            
         }
     }
 }

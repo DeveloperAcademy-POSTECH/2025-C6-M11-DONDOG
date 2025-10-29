@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CustomCommentEditor: View {
     @StateObject private var viewModel = CustomCommentEditorViewModel()
-    @Binding var shouldScrollToBottom: Bool
+    @Binding var newCommentSaved: Bool
     var isTextFieldFocused: FocusState<Bool>.Binding
     let post: PostData
     
@@ -18,9 +18,9 @@ struct CustomCommentEditor: View {
     
     @State var text = ""
     
-    init(isTextFieldFocused: FocusState<Bool>.Binding, shouldScrollToBottom: Binding<Bool>, post: PostData) {
+    init(isTextFieldFocused: FocusState<Bool>.Binding, newCommentSaved: Binding<Bool>, post: PostData) {
         self.isTextFieldFocused = isTextFieldFocused
-        self._shouldScrollToBottom = shouldScrollToBottom
+        self._newCommentSaved = newCommentSaved
         isLineChanged = false
         isTextSaveable = false
         self.post = post
@@ -64,7 +64,7 @@ struct CustomCommentEditor: View {
                         if isTextSaveable {
                             await viewModel.saveComment(of: text, for: post)
                             text = ""
-                            shouldScrollToBottom = true
+                            newCommentSaved = true
                         }
                     }
                 } label: {

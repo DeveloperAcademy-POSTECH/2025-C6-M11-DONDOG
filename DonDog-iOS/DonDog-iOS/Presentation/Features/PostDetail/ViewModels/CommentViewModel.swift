@@ -23,14 +23,24 @@ final class CommentViewModel: ObservableObject {
             let snapshot = try await db
                 .collection("Rooms")
                 .document(roomId)
-                .collection("Comments")
+                .collection("comments")
                 .document(postId)
                 .collection("comments")
                 .getDocuments()
             
-            let fetched = snapshot.documents.compactMap { Comment(doc: $0) }
+            let fetched: [CommentData] = snapshot.documents.compactMap { doc in
+                guard let uid = doc["uid"] as? String,
+                      let text = doc["text"] as? String,
+                      let createdAt = doc["createdAt"] as? Timestamp else {
+                    return nil
+                }
+                let isDeleted = doc["isDeleted"] as? Bool ?? false
+                let updatedAt = doc["updatedAt"] as? Timestamp ?? createdAt
+                return CommentData(authorId: uid, text: text, createdAt: createdAt, isDeleted: isDeleted, updatedAt: updatedAt)
+            }
+            
             await MainActor.run {
-                self.comments = fetched.sorted { $0.createdAt < $1.createdAt } as! [CommentData]
+                self.comments = fetched.sorted { $0.createdAt.dateValue() < $1.createdAt.dateValue() }
             }
         } catch {
             print("댓글 불러오기에 실패했습니다: \(error.localizedDescription)")

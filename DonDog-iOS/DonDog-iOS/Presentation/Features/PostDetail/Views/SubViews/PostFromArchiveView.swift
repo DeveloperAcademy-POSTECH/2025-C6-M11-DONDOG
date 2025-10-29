@@ -10,6 +10,7 @@ import SwiftUI
 struct PostFromArchiveView: View {
     @EnvironmentObject var viewModel: PostDetailViewModel
     @Binding var currentIndex: Int
+    @State private var shouldBeUpdated: Bool = false
     
     var body: some View {
         let posts = viewModel.posts
@@ -23,7 +24,8 @@ struct PostFromArchiveView: View {
                     )
                     .padding(.vertical, 8)
                     
-                    PostDetailContentView(postType: .archive, post: post)
+                    // TODO: update 방식 변경 필요 여부 확인
+                    PostDetailContentView(postType: .archive, post: post, shouldBeUpdated: $shouldBeUpdated)
                         .tag(idx)
                 }
             }

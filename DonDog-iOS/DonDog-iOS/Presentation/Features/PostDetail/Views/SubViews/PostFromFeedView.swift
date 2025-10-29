@@ -10,14 +10,15 @@ import SwiftUI
 struct PostFromFeedView: View {
     @EnvironmentObject var viewModel: PostDetailViewModel
     
-    @State private var shouldScrollToBottom: Bool = false
+    @State private var newCommentSaved: Bool = false
     var isTextFieldFocused: FocusState<Bool>.Binding
     
     var body: some View {
         if let post = viewModel.posts.first {
             ScrollViewReader { proxy in
                 ScrollView {
-                    PostDetailContentView(postType: .post, post: post)
+                    // TODO: update 방식 변경 필요 여부 확인
+                    PostDetailContentView(postType: .post, post: post, shouldBeUpdated: $newCommentSaved)
                         .onTapGesture {
                             isTextFieldFocused.wrappedValue = false
                         }
@@ -26,21 +27,24 @@ struct PostFromFeedView: View {
                         .frame(height: 1)
                         .id("bottom")
                 }
-                .onChange(of: shouldScrollToBottom) {
-                    if shouldScrollToBottom {
-                        withAnimation {
-                            proxy.scrollTo("bottom", anchor: .bottom)
-                            shouldScrollToBottom = false
+                .onChange(of: newCommentSaved) { _, newValue in
+                    if newValue {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            withAnimation {
+                                proxy.scrollTo("bottom", anchor: .bottom)
+                            }
+                            
+                            newCommentSaved = false
                         }
                     }
                 }
+                
+                CustomCommentEditor(
+                    isTextFieldFocused: isTextFieldFocused,
+                    newCommentSaved: $newCommentSaved,
+                    post: post
+                )
             }
-            
-            CustomCommentEditor(
-                isTextFieldFocused: isTextFieldFocused,
-                shouldScrollToBottom: $shouldScrollToBottom,
-                post: post
-            )
         } else {
             // TODO: post를 받아오지 못했을 때, 예외 처리 뷰
             EmptyView()

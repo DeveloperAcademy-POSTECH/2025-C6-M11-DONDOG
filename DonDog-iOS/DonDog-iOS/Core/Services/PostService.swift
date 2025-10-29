@@ -24,8 +24,10 @@ final class PostService {
     private let storage = Storage.storage()
     
     func deletePost(postId: String, in roomId: String, by userId: String) async throws {
+        print("시작")
         guard !postId.isEmpty, !roomId.isEmpty else {
-            throw PostServiceError.invalidIdentifier
+            print("postId 혹은 roomId가 비어있습니다.")
+            return
         }
         
         let postRef = db.collection("Rooms").document(roomId).collection("posts").document(postId)
@@ -33,11 +35,13 @@ final class PostService {
         let postDocument = try await postRef.getDocument()
         
         guard let postData = postDocument.data(), postDocument.exists else {
-            throw PostServiceError.postNotFound
+            print("post를 붙러오지 못했습니다.")
+            return
         }
         
-        guard let authorUid = postData["uid"] as? String, authorUid == userId else {
-            throw PostServiceError.unauthorized
+        guard let authorUid = postData["authorId"] as? String, authorUid == userId else {
+            print("authorId를 불러오지 못했습니다.")
+            return
         }
         
         let commentDocRef = db.collection("Rooms").document(roomId).collection("comments").document(postId)
@@ -69,7 +73,8 @@ final class PostService {
     
     func deleteComment(_ comment: Comment, postId: String, in roomId: String) async throws {
         guard !comment.id.isEmpty, !postId.isEmpty, !roomId.isEmpty else {
-            throw PostServiceError.invalidIdentifier
+            print("commentId, postId, roomId 중 하나 이상이 비어 있습니다.")
+            return
         }
         
         let commentRef = db.collection("Rooms")

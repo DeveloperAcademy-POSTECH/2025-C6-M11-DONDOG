@@ -39,15 +39,17 @@ struct PostDetailView: View {
                 Task {
                     await viewModel.deletePost(for: viewModel.posts[currentIndex])
                     
-                    if postType == .post {
-                        coordinator.pop()
-                    } else {
-                        if currentIndex > 0 {
-                            currentIndex -= 1
-                        } else if viewModel.posts.count > 1 {
-                            currentIndex = 0
-                        } else {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        if postType == .post {
                             coordinator.pop()
+                        } else {
+                            if currentIndex > 0 {
+                                currentIndex -= 1
+                            } else if viewModel.posts.count > 1 {
+                                currentIndex = 0
+                            } else {
+                                coordinator.pop()
+                            }
                         }
                     }
                 }

@@ -26,15 +26,6 @@ final class ArchiveViewModel: ObservableObject {
     private let calendar = Calendar(identifier: .gregorian)
     private let timezone = TimeZone(identifier: "Asia/Seoul") ?? .current
     
-    private lazy var dayKeyFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.calendar = calendar
-        df.timeZone = timezone
-        df.locale = Locale(identifier: "ko_KR")
-        df.dateFormat = "yyyy-MM-dd"
-        return df
-    }()
-    
     init(stickerViewModel: ArchiveStickerViewModel) {
         self.stickerViewModel = stickerViewModel
     }
@@ -52,7 +43,7 @@ final class ArchiveViewModel: ObservableObject {
     
     func dayKey(from date: Date) -> String {
         let startOfDay = calendar.startOfDay(for: date)
-        return dayKeyFormatter.string(from: startOfDay)
+        return DateUtils.string(from: startOfDay, format: .dayKey)
     }
     
     // 날짜 포매팅
@@ -107,13 +98,6 @@ final class ArchiveViewModel: ObservableObject {
             var monthDict: [String: [Int: ArchiveDay]] = [:]
             var dayDict: [String: [ArchivePost]] = [:]
             
-            // 디버깅용 날짜 포매팅
-            let fmt = DateFormatter()
-            fmt.calendar = calendar
-            fmt.timeZone = timezone
-            fmt.locale = Locale(identifier: "ko_KR")
-            fmt.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            
             for doc in snapshot.documents {
                 let data = doc.data()
                 guard let tsCreated = data["createdAt"] as? Timestamp else { continue }
@@ -164,7 +148,7 @@ final class ArchiveViewModel: ObservableObject {
 #if DEBUG
                     print("""
                     썸네일
-                    - 날짜: \(fmt.string(from: date))) (\(y)-\(m)-\(d))
+                    - 날짜: \(DateUtils.string(from: date, format: .full))) (\(y)-\(m)-\(d))
                     - id: \(doc.documentID)
                     - url: \(thumbnail.absoluteString)
                     """)

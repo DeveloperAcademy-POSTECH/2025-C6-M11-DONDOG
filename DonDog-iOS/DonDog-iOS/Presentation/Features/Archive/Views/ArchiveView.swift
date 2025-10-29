@@ -88,7 +88,7 @@ struct ArchiveView: View {
                             
                             ForEach(viewModel.archiveMonths) { month in
                                 VStack(alignment: .leading) {
-                                    Text(String("\(month.year)년 \(month.month)월"))
+                                    Text(DateUtils.string(from: month.date, format: .yearMonth))
                                         .font(.subtitleSemiBold16)
                                         .padding(.vertical, 8)
                                     

@@ -1,5 +1,5 @@
 //
-//  DataUtils.swift
+//  DateUtils.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/9/25.
@@ -8,7 +8,24 @@
 import Foundation
 import UIKit
 
-struct DataUtils {
+struct DateUtils {
+    enum DateFormat: String {
+        case yearMonth = "yyyy년 M월"
+        case monthDay = "MM월 dd일"
+        case day = "d"
+        case full = "yyyy-MM-dd HH:mm:ss"
+        case dayKey = "yyyy-MM-dd"
+    }
+
+    static func string(from date: Date, format: DateFormat) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        formatter.dateFormat = format.rawValue
+        return formatter.string(from: date)
+    }
+
+    // 상대 시간
     static func relativeTimeString(from date: Date) -> String {
         let now = Date()
         let diff = now.timeIntervalSince(date)

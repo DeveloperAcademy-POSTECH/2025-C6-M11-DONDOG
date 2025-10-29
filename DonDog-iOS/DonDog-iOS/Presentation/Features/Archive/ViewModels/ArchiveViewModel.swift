@@ -13,7 +13,7 @@ import UIKit
 import SwiftUI
 
 final class ArchiveViewModel: ObservableObject {
-    let connectState = ConnectStateService.shared
+    let connectUserInfo = UserPairingStore.shared
     var stickerViewModel: ArchiveStickerViewModel
     private weak var coordinator: AppCoordinator?
     
@@ -47,7 +47,7 @@ final class ArchiveViewModel: ObservableObject {
         Task {
             await fetchMonthlyArchives()
         }
-        NSLog("[ArchiveViewModel] roomId = \(connectState.roomId ?? "roomId 비어있음")")
+        NSLog("[ArchiveViewModel] roomId = \(connectUserInfo.roomId ?? "roomId 비어있음")")
     }
     
     func dayKey(from date: Date) -> String {
@@ -78,7 +78,7 @@ final class ArchiveViewModel: ObservableObject {
         let initial = dailyPosts[key] ?? []
         
         coordinator?.push(
-            .archiveDetail(roomId: connectState.roomId ?? "", date: selectedDate, initialPosts: initial)
+            .archiveDetail(roomId: connectUserInfo.roomId ?? "", date: selectedDate, initialPosts: initial)
         )
     }
     
@@ -99,7 +99,7 @@ final class ArchiveViewModel: ObservableObject {
     // 월/일 별로 전체 기록 가져오기 -> 일자별 기록 캐싱
     private func fetchAllPosts() async -> [ArchiveMonth] {
         do {
-            let snapshot = try await db.collection("Rooms").document(connectState.roomId ?? "")
+            let snapshot = try await db.collection("Rooms").document(connectUserInfo.roomId ?? "")
                 .collection("posts")
                 .order(by: "createdAt", descending: false) // 오래된 것부터
                 .getDocuments(source: .server)
@@ -169,10 +169,6 @@ final class ArchiveViewModel: ObservableObject {
                     - url: \(thumbnail.absoluteString)
                     """)
 #endif
-                } else {
-#if DEBUG
-                    print("사진들 \(fmt.string(from: date)) docId=\(doc.documentID)")
-#endif
                 }
             }
             
@@ -205,7 +201,7 @@ final class ArchiveViewModel: ObservableObject {
     // 게시물 개수 조회
     private func fetchPostCount() async -> Int {
         do {
-            let countQuery = db.collection("Rooms").document(connectState.roomId ?? "").collection("posts")
+            let countQuery = db.collection("Rooms").document(connectUserInfo.roomId ?? "").collection("posts")
                 .count
             
             let snapshot = try await countQuery.getAggregation(source: .server)

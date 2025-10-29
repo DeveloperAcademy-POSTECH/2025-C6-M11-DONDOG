@@ -13,7 +13,7 @@ import UIKit
 import Kingfisher
 
 final class ArchiveStickerViewModel: ObservableObject {
-    private let connectState = ConnectStateService.shared
+    private let connectUserInfo = UserPairingStore.shared
     
     @Published var borderedStickers: [String: UIImage] = [:]
     @Published var emotions: [String: String] = [:]
@@ -24,7 +24,7 @@ final class ArchiveStickerViewModel: ObservableObject {
     private var mask: UIImage?
     
     func getStickerData(stickerPostId: String, for postId: String) {
-        guard let roomId = connectState.roomId, !roomId.isEmpty else {
+        guard let roomId = connectUserInfo.roomId, !roomId.isEmpty else {
             assertionFailure("ArchiveStickerViewModel: roomId is empty")
             return
         }

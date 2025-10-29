@@ -66,10 +66,11 @@ struct ArchiveView: View {
                             if viewModel.totalPostCount > 0 {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 4) {
+                                        // 이름 없을 때 예외처리 추후 수정
                                         HStack(spacing: 0) {
-                                            Text(viewModel.connectState.partnerName ?? "상대방").bold()
+                                            Text(viewModel.connectUserInfo.partnerName ?? "상대방").bold()
                                             Text("님과 ")
-                                            Text(viewModel.connectState.myName ?? "나").bold()
+                                            Text(viewModel.connectUserInfo.myName ?? "나").bold()
                                             Text("님만의 추억이")
                                         }
                                         HStack(spacing: 0) {

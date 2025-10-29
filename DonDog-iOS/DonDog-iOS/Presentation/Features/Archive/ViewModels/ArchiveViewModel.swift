@@ -34,13 +34,6 @@ final class ArchiveViewModel: ObservableObject {
         self.coordinator = coordinator
     }
     
-    func onAppear() {
-        Task {
-            await fetchMonthlyArchives()
-        }
-        NSLog("[ArchiveViewModel] roomId = \(connectUserInfo.roomId ?? "roomId 비어있음")")
-    }
-    
     func dayKey(from date: Date) -> String {
         let startOfDay = calendar.startOfDay(for: date)
         return DateUtils.string(from: startOfDay, format: .dayKey)
@@ -68,9 +61,11 @@ final class ArchiveViewModel: ObservableObject {
         let key = dayKey(from: selectedDate)
         let initial = dailyPosts[key] ?? []
         
-        coordinator?.push(
-            .archiveDetail(roomId: connectUserInfo.roomId ?? "", date: selectedDate, initialPosts: initial)
-        )
+        DispatchQueue.main.async {
+            self.coordinator?.push(
+                .archiveDetail(roomId: self.connectUserInfo.roomId ?? "", date: selectedDate, initialPosts: initial)
+            )
+        }
     }
     
     // 전체 기록 가져오기
@@ -185,7 +180,7 @@ final class ArchiveViewModel: ObservableObject {
     // 게시물 개수 조회
     private func fetchPostCount() async -> Int {
         do {
-            let countQuery = db.collection("Rooms").document(connectUserInfo.roomId ?? "").collection("posts")
+            let countQuery = await db.collection("Rooms").document(connectUserInfo.roomId ?? "").collection("posts")
                 .count
             
             let snapshot = try await countQuery.getAggregation(source: .server)

@@ -134,11 +134,9 @@ struct ArchiveView: View {
         .padding(.horizontal, 20)
         .background(.ddWhite)
         .backHiddenSwipeEnabled()
-        .onAppear {
-            viewModel.onAppear()
-        }
         .task {
             viewModel.attach(coordinator: coordinator)
+            await viewModel.fetchMonthlyArchives()
         }
     }
 }

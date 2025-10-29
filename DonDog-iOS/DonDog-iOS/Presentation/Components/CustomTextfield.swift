@@ -12,17 +12,17 @@ struct CustomTextField: View {
     var placeholder: String
     @Binding var text: String
     var keyboard: UIKeyboardType = .default
-    var contentType: UITextContentType? = nil
-    var onCommit: (() -> Void)? = nil
-    var errorMessage: String? = nil
-    var errorText: Binding<String?>? = nil
-    var showExternalError: Binding<Bool>? = nil
-    var softMaxLength: Int? = nil
-    var softMaxErrorText: String? = nil
+    var contentType: UITextContentType?
+    var onCommit: (() -> Void)?
+    var errorMessage: String?
+    var errorText: Binding<String?>?
+    var showExternalError: Binding<Bool>?
+    var softMaxLength: Int?
+    var softMaxErrorText: String?
     var isDisabled: Bool = false
 
     @FocusState private var isFocused: Bool
-    @State private var localValidationError: String? = nil
+    @State private var localValidationError: String?
     @State private var suppressExternalError: Bool = false
 
     private var externalErrorMessage: String? {

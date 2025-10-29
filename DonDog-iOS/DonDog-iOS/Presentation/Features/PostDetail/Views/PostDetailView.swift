@@ -39,9 +39,22 @@ struct PostDetailView: View {
         .alert("사진을 삭제하시겠어요?", isPresented: $viewModel.showDeleteConfirmAlert) {
             Button("확인", role: .cancel) {
                 Task {
-                    await viewModel.deletePost(for: viewModel.posts[postType == .post ? 0 : currentIndex])
+                    await viewModel.deletePost(for: viewModel.posts[currentIndex])
+                    
+                    if postType == .post {
+                        coordinator.pop()
+                    } else {
+                        if currentIndex > 0 {
+                            currentIndex -= 1
+                        } else if viewModel.posts.count > 1 {
+                            currentIndex = 0
+                        } else {
+                            coordinator.pop()
+                        }
+                    }
                 }
             }
+            
             Button("취소", role: .destructive) { }
         } message: {
             Text("삭제한 사진은 되돌릴 수 없어요")

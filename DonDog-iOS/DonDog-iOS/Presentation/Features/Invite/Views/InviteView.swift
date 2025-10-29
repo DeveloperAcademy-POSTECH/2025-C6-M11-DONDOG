@@ -17,8 +17,7 @@ struct InviteView: View {
             CustomNavigationBar(leadingType: viewModel.showSentHint ? .none : .back(action: coordinator.pop), centerType: .title(title: "가족 연결"), trailingType: .none, navigationColor: .black)
             
             HStack {
-                Text("\(viewModel.userName ?? "") ")
-                    .font(.titleBold20)
+                Text(UserPairingStore.shared.myName ?? "")
                 + Text("님\n")
                 + Text("이제 가족과 연결해 보세요")
                 
@@ -121,8 +120,8 @@ struct InviteView: View {
         .padding(.horizontal, 20)
         .backHiddenSwipeEnabled()
         .dismissKeyboard()
-        .task { viewModel.fetchInviteCodeandExpireDate()
-            print("myUid=\(UserPairingStore.shared.myUid)")
+        .task {
+            viewModel.fetchInviteCodeandExpireDate()
         }
         .onChange(of: viewModel.connectSucceeded) {
             coordinator.replaceRoot(.feed)

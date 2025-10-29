@@ -77,16 +77,9 @@ final class AuthService {
                 NSLog("[AuthService] IDToken 분실로 current User 찾을 수 없음 → welcome 화면으로 이동")
                 return
             }
-
+            
             Task { @MainActor in
-                let state = UserPairingStore.shared
-                state.myUid = refreshUser.uid
-                state.myName = nil
-                state.roomId = nil
-                state.partnerUid = nil
-                state.partnerName = nil
-                state.isConnected = false
-                NSLog("[AuthService] 🚀 Primed UserPairingStore with myUid early: uid=\(state.myUid ?? "nil")")
+                UserPairingStore.shared.reset()
             }
             
             // 현재 기기의 FCM 토큰 firestore에 업로드
@@ -154,14 +147,18 @@ final class AuthService {
                 let data = userDoc.data() ?? [:]
                 let roomId = data["roomId"] as? String
                 
-                Task { @MainActor in
+                Task {
                     let state = UserPairingStore.shared
-                    if state.myUid == nil { state.myUid = refreshUser.uid }
+                    state.myUid = refreshUser.uid
                     state.myName = data["name"] as? String
                     
                     guard let rid = roomId, !rid.isEmpty else {
                         state.reset()
+                        state.myUid = refreshUser.uid
+                        state.myName = data["name"] as? String
+                        
                         NSLog("[AuthService] 🔓 미연결 상태 (roomId 없음)")
+                        
                         replaceRootinAuthService(.feed, coordinator: coordinator)
                         return
                     }

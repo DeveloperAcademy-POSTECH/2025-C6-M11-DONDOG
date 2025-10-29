@@ -44,57 +44,33 @@ final class InviteViewModel: ObservableObject {
 //        return myUid
 //    }
     
-    // MARK: - Debug helpers
-    private func debugLog(_ message: String) {
-        print("[InviteViewModel] \(message) | myUid=\(String(describing: connectUserInfo.myUid)) roomId=\(String(describing: connectUserInfo.roomId)))")
-    }
-
-    /// Ensures we never pass an empty path to Firestore's `document("")` which would crash.
-    /// Returns a non-empty myUid or handles UI state and logs, then returns nil.
-    private func ensureMyUid(context: String) -> String? {
-        let uid = connectUserInfo.myUid ?? ""
-        guard !uid.isEmpty else {
-            self.message = "로그인이 필요합니다. 다시 시도해 주세요."
-            self.isLoading = false
-            debugLog("❌ [\(context)] myUid is empty. Preventing empty document path.")
-            return nil
-        }
-        return uid
-    }
-    
     // MARK: - 내 초대코드 띄우기
     func fetchInviteCodeandExpireDate() {
         self.isLoading = true
-        
-        debugLog("▶️ fetchInviteCodeandExpireDate: fetching user doc \(connectUserInfo.myUid)")
-
-        db.collection("Users").document(connectUserInfo.myUid ?? "").getDocument { [weak self] snap, err in
-            guard self != nil else { return }
-            guard let data = snap?.data(), let snap = snap, snap.exists else {
-                return
-            }
-            DispatchQueue.main.async {
-                self?.userName = (data["name"] as? String) ?? ""
-            }
-        }
-        
-        db.collection("Invites").whereField("inviterUid", isEqualTo: connectUserInfo.myUid ?? "").getDocuments { [weak self] result, error in
+        guard let myUid = connectUserInfo.myUid else { return }
+        db.collection("Invites").whereField("inviterUid", isEqualTo: myUid).getDocuments { [weak self] result, error in
             guard let self = self else { return }
+            let docCount = result?.documents.count ?? 0
+            if let first = result?.documents.first {
+                let expireTS = first.data()["expireDate"] as? Timestamp
+            }
             DispatchQueue.main.async {
                 if let document = result?.documents.first {
                     self.inviteCode = document.documentID
-                    
                     if let lefttime = document.data()["expireDate"] as? Timestamp {
                         self.expireDate = lefttime.dateValue()
                     } else {
                         self.expireDate = nil
                     }
                     self.stagedInviteText = "\(self.inviteCode ?? "")"
-                    self.inviteText = ""
+                    self.inviteText = self.stagedInviteText
                     self.startTimer()
                 } else {
                     self.inviteText = "초대코드를 불러오지 못했습니다."
                 }
+                
+                print("[InviteViewModel] end UI assign | inviteText=\(self.inviteText), remain=\(self.remainTimeText)")
+                
                 self.isLoading = false
             }
         }
@@ -139,6 +115,8 @@ final class InviteViewModel: ObservableObject {
         connectSucceeded = false
         isLoading = true
         allowInviteCodeError = false
+        
+        guard let myUid = connectUserInfo.myUid else { return }
         
         let inputcode = inputInviteCode.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -213,10 +191,10 @@ final class InviteViewModel: ObservableObject {
                 let inviterRoomId = inviterDoc?.data()? ["roomId"] as? String
                 // A) 초대자의 유저 문서에 roomId가 있는 경우 → 기존 방에 내 uid를 참가자로 추가하고, 내 Users 문서에 roomId/createdAt 저장
                 if let existingRoomId = inviterRoomId, !existingRoomId.isEmpty {
-                        let roomDoc = self.db.collection("Rooms").document(existingRoomId)
-                    let myUserDoc = self.db.collection("Users").document(self.connectUserInfo.myUid ?? "")
+                    let roomDoc = self.db.collection("Rooms").document(existingRoomId)
+                    let myUserDoc = self.db.collection("Users").document(myUid)
                         
-                    self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: nil, roomId: existingRoomId, participantUids: [self.connectUserInfo.myUid ?? ""]) { err in
+                    self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: nil, roomId: existingRoomId, participantUids: [myUid]) { err in
                         if let err = err {
                             DispatchQueue.main.async {
                                 self.message = "유효하지 않은 초대코드입니다. \(err.localizedDescription)"
@@ -250,8 +228,8 @@ final class InviteViewModel: ObservableObject {
                                 return
                             }
                             
-                            let myUserDoc = self.db.collection("Users").document(self.connectUserInfo.myUid ?? "")
-                            self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: inviterUserDoc, roomId: candidate, participantUids: [inviterUid, self.connectUserInfo.myUid ?? ""]) { err in
+                            let myUserDoc = self.db.collection("Users").document(myUid)
+                            self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: inviterUserDoc, roomId: candidate, participantUids: [inviterUid, myUid]) { err in
                                 if let err = err {
                                     DispatchQueue.main.async {
                                         self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(err.localizedDescription)"

@@ -36,7 +36,11 @@ struct PostFromFeedView: View {
                 }
             }
             
-            CustomCommentEditor(isTextFieldFocused: isTextFieldFocused, shouldScrollToBottom: $shouldScrollToBottom)
+            CustomCommentEditor(
+                isTextFieldFocused: isTextFieldFocused,
+                shouldScrollToBottom: $shouldScrollToBottom,
+                post: post
+            )
         } else {
             // TODO: post를 받아오지 못했을 때, 예외 처리 뷰
             EmptyView()

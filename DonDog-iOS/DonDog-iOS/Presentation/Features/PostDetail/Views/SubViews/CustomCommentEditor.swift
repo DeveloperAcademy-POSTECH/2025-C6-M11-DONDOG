@@ -11,17 +11,19 @@ struct CustomCommentEditor: View {
     @StateObject private var viewModel = CustomCommentEditorViewModel()
     @Binding var shouldScrollToBottom: Bool
     var isTextFieldFocused: FocusState<Bool>.Binding
+    let post: PostData
     
     @State private var isLineChanged: Bool
     @State private var isTextSaveable: Bool;
     
     @State var text = ""
     
-    init(isTextFieldFocused: FocusState<Bool>.Binding, shouldScrollToBottom: Binding<Bool>) {
+    init(isTextFieldFocused: FocusState<Bool>.Binding, shouldScrollToBottom: Binding<Bool>, post: PostData) {
         self.isTextFieldFocused = isTextFieldFocused
         self._shouldScrollToBottom = shouldScrollToBottom
         isLineChanged = false
         isTextSaveable = false
+        self.post = post
     }
     
     var body: some View {
@@ -60,7 +62,7 @@ struct CustomCommentEditor: View {
                         isTextFieldFocused.wrappedValue = false
                         
                         if isTextSaveable {
-                            await viewModel.saveComment()
+                            await viewModel.saveComment(of: text, for: post)
                             text = ""
                             shouldScrollToBottom = true
                         }

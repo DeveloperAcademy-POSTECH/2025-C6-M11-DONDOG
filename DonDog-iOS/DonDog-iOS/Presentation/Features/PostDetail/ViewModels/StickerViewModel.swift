@@ -22,7 +22,7 @@ final class StickerViewModel: ObservableObject {
     private let imageUtils = ImageUtils()
     
     func getStickerData(stickerPostId: String, stickerType: String) {
-        getCurrentUserRoomId { [weak self] result in
+        fetchCurrentUserRoomId { [weak self] result in
             guard let self = self else { return }
             
             switch result {
@@ -36,7 +36,8 @@ final class StickerViewModel: ObservableObject {
         }
     }
     
-    private func getCurrentUserRoomId(completion: @escaping (Result<String, Error>) -> Void) {
+    // TODO: User 싱글톤에서 roomId 가져오기
+    private func fetchCurrentUserRoomId(completion: @escaping (Result<String, Error>) -> Void) {
         guard let currentUser = Auth.auth().currentUser else {
             print("사용자 정보에 문제가 있습니다.")
             return

@@ -17,7 +17,7 @@ final class CommentViewModel: ObservableObject {
     
     func fetchComments(postId: String) async {
         do {
-            let roomId = try await getCurrentUserRoomId()
+            let roomId = try await fetchCurrentUserRoomId()
             self.roomId = roomId
             
             let snapshot = try await db
@@ -37,7 +37,8 @@ final class CommentViewModel: ObservableObject {
         }
     }
     
-    private func getCurrentUserRoomId() async throws -> String {
+    // TODO: User 싱글톤에서 roomId 가져오기
+    private func fetchCurrentUserRoomId() async throws -> String {
         guard let currentUser = Auth.auth().currentUser else {
             print("사용자 정보가 잘못되었습니다.")
             return ""

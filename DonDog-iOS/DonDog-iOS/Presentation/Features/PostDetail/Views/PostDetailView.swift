@@ -25,6 +25,8 @@ struct PostDetailView: View {
                 )),
             trailingType: .menu(items: [
                 CustomNavMenuItem("삭제하기", role: .destructive) {
+                    viewModel.checkIfItsMyPost(of: postType == .post ? 0 : currentIndex)
+                    
                     if !viewModel.showUnauthorizedAlert {
                         viewModel.handleDeleteRequest(for: viewModel.posts[postType == .post ? 0 : currentIndex])
                     }
@@ -61,9 +63,6 @@ struct PostDetailView: View {
         }
         .onTapGesture {
             isTextFieldFocused = false
-        }
-        .onAppear {
-            viewModel.checkIfItsMyPost(of: postType == .post ? 0 : currentIndex)
         }
         
         ZStack(alignment: .bottom) {

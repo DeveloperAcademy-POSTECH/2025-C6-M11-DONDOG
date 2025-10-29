@@ -29,14 +29,28 @@ final class CommentViewModel: ObservableObject {
                 .getDocuments()
             
             let fetched: [CommentData] = snapshot.documents.compactMap { doc in
-                guard let uid = doc["uid"] as? String,
-                      let text = doc["text"] as? String,
-                      let createdAt = doc["createdAt"] as? Timestamp else {
+                let data = doc.data()
+                
+                guard
+                    let commentId = data["commentId"] as? String ?? doc.documentID as String?,
+                    let authorId = data["authorId"] as? String ?? data["uid"] as? String,
+                    let text = data["text"] as? String,
+                    let createdAt = data["createdAt"] as? Timestamp
+                else {
                     return nil
                 }
-                let isDeleted = doc["isDeleted"] as? Bool ?? false
-                let updatedAt = doc["updatedAt"] as? Timestamp ?? createdAt
-                return CommentData(authorId: uid, text: text, createdAt: createdAt, isDeleted: isDeleted, updatedAt: updatedAt)
+                
+                let isDeleted = data["isDeleted"] as? Bool ?? false
+                let updatedAt = (data["updatedAt"] as? Timestamp) ?? createdAt
+                
+                return CommentData(
+                    commentId: commentId,
+                    authorId: authorId,
+                    text: text,
+                    createdAt: createdAt,
+                    isDeleted: isDeleted,
+                    updatedAt: updatedAt
+                )
             }
             
             await MainActor.run {
@@ -69,5 +83,24 @@ final class CommentViewModel: ObservableObject {
         }
         
         return roomId
+    }
+    
+    
+    // TODO: DB Manager로 교체
+    func deleteComment(for comment: CommentData, in postId: String) async throws {
+        let roomId = try await fetchCurrentUserRoomId()
+        
+        guard !comment.commentId.isEmpty, !postId.isEmpty, !roomId.isEmpty else {
+            throw PostServiceError.invalidIdentifier
+        }
+        
+        let commentRef = Firestore.firestore().collection("Rooms")
+            .document(roomId)
+            .collection("comments")
+            .document(postId)
+            .collection("comments")
+            .document(comment.commentId)
+        
+        try await commentRef.delete()
     }
 }

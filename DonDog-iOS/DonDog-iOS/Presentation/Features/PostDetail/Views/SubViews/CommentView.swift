@@ -16,6 +16,21 @@ struct CommentView: View {
         VStack(spacing: 0) {
             ForEach(viewModel.comments, id: \.createdAt) { comment in
                 CommentRow(comment: comment)
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            Task {
+                                do {
+                                    try await viewModel.deleteComment(for: comment, in: postId)
+                                    shouldBeUpdated = true
+                                } catch {
+                                    print("댓글 삭제에 실패했습니다: \(error)")
+                                }
+                            }
+                        } label: {
+                            Text("삭제")
+                            Image(systemName: "trash")
+                        }
+                    }
             }
         }
         .task(id: shouldBeUpdated) {

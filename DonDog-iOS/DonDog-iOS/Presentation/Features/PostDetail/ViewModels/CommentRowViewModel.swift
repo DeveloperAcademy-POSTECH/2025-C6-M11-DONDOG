@@ -7,6 +7,7 @@
 
 import Combine
 import FirebaseFirestore
+import FirebaseAuth
 
 final class CommentRowViewModel: ObservableObject {
     @Published var name: String = "익명"

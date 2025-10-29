@@ -28,6 +28,7 @@ struct CommentRow: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
+        .contentShape(Rectangle())
         .onAppear {
             viewModel.setCommentData(comment: comment)
         }

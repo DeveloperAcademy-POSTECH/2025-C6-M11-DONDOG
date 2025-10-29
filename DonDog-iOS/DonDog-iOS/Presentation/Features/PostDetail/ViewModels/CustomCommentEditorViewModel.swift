@@ -31,6 +31,7 @@ final class CustomCommentEditorViewModel: ObservableObject {
         }
 
         let tempComment = CommentData(
+            commentId: UUID().uuidString,
             authorId: currentUser.uid,
             text: text,
             createdAt: Timestamp(date: Date()),

@@ -19,23 +19,23 @@ final class ArchiveDetailViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var showDeleteConfirmAlert = false
     @Published var showUnauthorizedAlert = false
-    
+
     let roomId: String
     let date: Date
-    
-    private let db = Firestore.firestore()
+
+    private let database = Firestore.firestore()
     private let postService = PostService.shared
     private var calendar: Calendar = {
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = TimeZone(identifier: "Asia/Seoul") ?? .current
         return cal
     }()
-    
+
     init(roomId: String, date: Date, initialPosts: [ArchivePost]? = nil) {
         self.roomId = roomId
         self.date = date
         if let initialPosts { self.posts = initialPosts }
-        
+
         Task {
             if initialPosts != nil {
                 await loadPostDetails() // 댓글 + 이름만 추가로 가져옴
@@ -44,14 +44,14 @@ final class ArchiveDetailViewModel: ObservableObject {
             }
         }
     }
-    
+
     // 본인 게시물이 아닐 때 분기 처리
     func handleDeleteRequest(at index: Int) {
         guard index >= 0 && index < posts.count else { return }
-        
+
         let post = posts[index]
         let currentUserId = Auth.auth().currentUser!.uid
-        
+
         if post.authorUid == currentUserId {
             // 본인 게시물이면 삭제 확인 알림
             showDeleteConfirmAlert = true
@@ -60,75 +60,73 @@ final class ArchiveDetailViewModel: ObservableObject {
             showUnauthorizedAlert = true
         }
     }
-    
+
     func loadPostDetails() async {
         isLoading = true
         defer { isLoading = false }
-        
+
         var updated: [ArchivePost] = []
         var uidSet = Set<String>()
-        
-        for p in posts {
-            let comments = await fetchComments(for: p.id)
+
+        for post in posts {
+            let comments = await fetchComments(for: post.id)
             comments.forEach { uidSet.insert($0.uid) }
-            
-            if let au = p.authorUid { uidSet.insert(au) }
+
+            if let author = post.authorUid { uidSet.insert(author) }
             
             let loadData = ArchivePost(
-                id: p.id,
-                createdAt: p.createdAt,
-                updatedAt: p.updatedAt,
-                authorUid: p.authorUid,
-                authorName: p.authorName,
-                frontImageURL: p.frontImageURL,
-                backImageURL: p.backImageURL,
-                caption: p.caption,
-                stickerPostId: p.stickerPostId,
-                stickerType: p.stickerType,
+                id: post.id,
+                createdAt: post.createdAt,
+                updatedAt: post.updatedAt,
+                authorUid: post.authorUid,
+                authorName:post.authorName,
+                frontImageURL: post.frontImageURL,
+                backImageURL: post.backImageURL,
+                caption: post.caption,
+                stickerPostId: post.stickerPostId,
+                stickerType: post.stickerType,
                 comments: comments
             )
             updated.append(loadData)
         }
-        
+
         self.posts = updated
         self.userNameByUid = await fetchUserNamesIndividually(uids: Array(uidSet))
     }
-    
+
     func fetchDailyPosts() async {
         isLoading = true
         defer { isLoading = false }
-        
+
         do {
             let startOfDay = calendar.startOfDay(for: date)
             guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else { return }
-            
-            let snapshot = try await db.collection("Rooms")
+
+            let snapshot = try await database.collection("Rooms")
                 .document(roomId)
                 .collection("posts")
                 .whereField("createdAt", isGreaterThanOrEqualTo: Timestamp(date: startOfDay))
                 .whereField("createdAt", isLessThan: Timestamp(date: endOfDay))
                 .order(by: "createdAt", descending: false)
                 .getDocuments()
-            
+
             var fetched: [ArchivePost] = []
             var uidSet = Set<String>()
-            
+
             for doc in snapshot.documents {
                 let data = doc.data()
                 let tsCreated = data["createdAt"] as? Timestamp
                 let tsUpdated = data["updatedAt"] as? Timestamp
-                
                 let caption = data["caption"] as? String
                 let stickerPostId = data["stickerPostId"] as? String
                 let stickerTypeString = (data["stickerType"] as? String)?.lowercased()
                 let stickerType = stickerTypeString.flatMap { StickerType(rawValue: $0) }
-                
                 let authorUid = data["uid"] as? String
                 if let authorUid { uidSet.insert(authorUid) }
                 
                 let comments = await fetchComments(for: doc.documentID)
                 comments.forEach { uidSet.insert($0.uid) }
-                
+
                 fetched.append(
                     ArchivePost(
                         id: doc.documentID,
@@ -145,23 +143,23 @@ final class ArchiveDetailViewModel: ObservableObject {
                     )
                 )
             }
-            
+
             self.posts = fetched
             self.userNameByUid = await fetchUserNamesIndividually(uids: Array(uidSet))
         } catch {
             self.errorMessage = error.localizedDescription
         }
     }
-    
+
     func fetchUserNamesIndividually(uids: [String]) async -> [String: String] {
         let unique = Array(Set(uids))
         guard !unique.isEmpty else { return [:] }
-        
+
         return await withTaskGroup(of: (String, String?).self, returning: [String: String].self) { group in
             for uid in unique {
-                group.addTask { [db] in
+                group.addTask { [database] in
                     do {
-                        let snap = try await db.collection("Users").document(uid).getDocument()
+                        let snap = try await database.collection("Users").document(uid).getDocument()
                         let name = snap.data()?["name"] as? String
                         return (uid, name)
                     } catch {
@@ -169,7 +167,7 @@ final class ArchiveDetailViewModel: ObservableObject {
                     }
                 }
             }
-            
+
             var result: [String: String] = [:]
             for await (uid, name) in group {
                 result[uid] = (name?.isEmpty == false) ? name! : "익명"
@@ -180,21 +178,21 @@ final class ArchiveDetailViewModel: ObservableObject {
     
     func fetchComments(for postId: String) async -> [Comment] {
         do {
-            let snap = try await db.collection("Rooms")
+            let snap = try await database.collection("Rooms")
                 .document(roomId)
                 .collection("comments")
                 .document(postId)
                 .collection("comments")
                 .order(by: "createdAt", descending: false)
                 .getDocuments()
-            
+
             return snap.documents.compactMap { Comment(doc: $0) }
         } catch {
             print("댓글 로드 실패:", error.localizedDescription)
             return []
         }
     }
-    
+
     func deleteComment(_ comment: Comment, from post: ArchivePost) async {
         let currentUserId = Auth.auth().currentUser!.uid
         guard comment.uid == currentUserId else {
@@ -211,15 +209,15 @@ final class ArchiveDetailViewModel: ObservableObject {
             self.errorMessage = "댓글 삭제 실패"
         }
     }
-    
+
     func deletePost(at index: Int) async {
         let userId = Auth.auth().currentUser!.uid
         let postToDelete = posts[index]
         let postId = postToDelete.id
-        
+
         isLoading = true
         defer { isLoading = false }
-        
+
         do {
             try await postService.deletePost(postId: postId, in: roomId, by: userId)
             posts.remove(at: index)

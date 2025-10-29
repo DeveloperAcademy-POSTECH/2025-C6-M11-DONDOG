@@ -24,7 +24,7 @@ struct FeedView: View {
     @State private var showToastView = false
     @State private var toastWorkItem: DispatchWorkItem?
     
-    @EnvironmentObject var connectState: ConnectStateService
+    @EnvironmentObject var connectState: UserPairingStore
     
     var body: some View {
         ZStack{

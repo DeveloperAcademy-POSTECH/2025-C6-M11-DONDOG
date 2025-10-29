@@ -15,20 +15,12 @@ struct PostView: View {
     @FocusState private var isTextFieldFocused: Bool
     @State private var textLineCount: Int = 0
     
-    private var titleString: String {
-        let fmt = DateFormatter()
-        fmt.locale = Locale(identifier: "ko_KR")
-        fmt.timeZone = TimeZone(identifier: "Asia/Seoul")
-        fmt.dateFormat = "MM월 dd일"
-        return fmt.string(from: viewModel.createdAt)
-    }
-    
     var body: some View {
         ZStack(alignment: .top) {
             VStack(spacing: 0) { 
                 CustomNavigationBar(
                     leadingType: .back(action: { coordinator.pop() }),
-                    centerType: .title(title: titleString),
+                    centerType: .title(title: DateUtils.string(from: viewModel.createdAt, format: .monthDay)),
                     trailingType: .menu(items: [
                         CustomNavMenuItem("삭제하기", role: .destructive) {
                             viewModel.handleDeleteRequest()

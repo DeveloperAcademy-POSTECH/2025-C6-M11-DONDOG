@@ -18,7 +18,7 @@ struct CommentRow: View {
             HStack(spacing: 4) {
                 Text(viewModel.name)
                     .font(.captionMedium14)
-                Text(DateUtils.relativeTimeString(from: viewModel.createdAt, for: "MM월 dd일 HH:mm"))
+                Text(DateUtils.relativeTimeString(from: viewModel.createdAt))
                     .font(.captionRegular13)
                     .foregroundStyle(Color.ddGray600)
             }

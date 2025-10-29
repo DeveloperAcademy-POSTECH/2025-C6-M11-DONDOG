@@ -35,7 +35,7 @@ struct CardTextView: View {
                 Text(name)
                     .foregroundStyle(.ddGray600)
                 
-                Text(DateUtils.relativeTimeString(from: createdAt, for: "HH:mm"))
+                Text(DateUtils.relativeTimeString(from: createdAt))
                     .foregroundStyle(.ddGray500)
             }
             .font(.captionRegular13)

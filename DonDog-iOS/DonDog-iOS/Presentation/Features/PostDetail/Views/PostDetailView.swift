@@ -21,9 +21,7 @@ struct PostDetailView: View {
             leadingType:
                     .back(action: { coordinator.pop() }),
             centerType:
-                .title(title: DateUtils.relativeTimeString(
-                    from: (viewModel.posts.first?.createdAt.dateValue()) ?? Date(),
-                    for: "MM월 dd일"
+                    .title(title: DateUtils.string(from: (viewModel.posts.first?.createdAt.dateValue()) ?? Date(), format: .monthDay
                 )),
             trailingType: .menu(items: [
                 CustomNavMenuItem("삭제하기", role: .destructive) {

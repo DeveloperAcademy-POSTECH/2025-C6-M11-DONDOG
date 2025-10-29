@@ -9,7 +9,23 @@ import Foundation
 import UIKit
 
 struct DateUtils {
-    static func relativeTimeString(from date: Date, for dateFormat: String) -> String {
+    enum DateFormat: String {
+        case yearMonth = "yyyy년 M월"
+        case monthDay = "MM월 dd일"
+        case day = "d"
+        case full = "MM월 dd일 HH:mm"
+        case dayKey = "yyyy-MM-dd"
+    }
+    
+    static func string(from date: Date, format: DateFormat) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        formatter.dateFormat = format.rawValue
+        return formatter.string(from: date)
+    }
+    
+    static func relativeTimeString(from date: Date) -> String {
         let now = Date()
         let diff = now.timeIntervalSince(date)
         
@@ -20,20 +36,16 @@ struct DateUtils {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-        formatter.dateFormat = dateFormat
+        formatter.dateFormat = DateFormat.full.rawValue
         
-        if dateFormat != "MM월 dd일" {
-            switch seconds {
-            case 0..<60:
-                return "지금"
-            case 60..<3600:
-                return "\(minutes)분 전"
-            case 3600..<(3600 * 24):
-                return "\(hours)시간 전"
-            default:
-                return formatter.string(from: date)
-            }
-        } else {
+        switch seconds {
+        case 0..<60:
+            return "지금"
+        case 60..<3600:
+            return "\(minutes)분 전"
+        case 3600..<(3600 * 24):
+            return "\(hours)시간 전"
+        default:
             return formatter.string(from: date)
         }
     }

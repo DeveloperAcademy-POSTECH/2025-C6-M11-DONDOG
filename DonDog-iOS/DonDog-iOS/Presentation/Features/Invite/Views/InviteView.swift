@@ -104,7 +104,7 @@ struct InviteView: View {
             
             Spacer()
             
-            CustomButton(title: "연결하기", isEnable: !viewModel.inputInviteCode.isEmpty && !viewModel.isLoading, action: viewModel.connectWithInviteCode)
+            CustomButton(title: "연결하기", isEnable: !viewModel.inputInviteCode.isEmpty && !viewModel.isLoading, action: { Task { await viewModel.connectWithInviteCode() }})
                 .padding(.bottom, viewModel.showSentHint ? (keyboard.keyboardHeight == 0 ? 0 : -10) : 0)
             
             if viewModel.showSentHint {
@@ -121,7 +121,9 @@ struct InviteView: View {
         .padding(.horizontal, 20)
         .backHiddenSwipeEnabled()
         .dismissKeyboard()
-        .task { viewModel.fetchInviteCodeandExpireDate() }
+        .task { viewModel.fetchInviteCodeandExpireDate()
+            print("myUid=\(UserPairingStore.shared.myUid)")
+        }
         .onChange(of: viewModel.connectSucceeded) {
             coordinator.replaceRoot(.feed)
         }

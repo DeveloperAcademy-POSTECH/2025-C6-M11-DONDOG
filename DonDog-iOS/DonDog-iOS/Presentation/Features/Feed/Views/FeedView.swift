@@ -136,7 +136,7 @@ struct FeedView: View {
                                             frontImage: .url(front),
                                             backImage: .url(back),
                                             nickname: displayablePost.nickname,
-                                            createdAt: DataUtils.relativeTimeString(from: displayablePost.createdAt),
+                                            createdAt: DateUtils.relativeTimeString(from: displayablePost.createdAt),
                                             caption: displayablePost.caption,
                                             selectedStickerEmotion: displayablePost.stickerType,
                                             stickerImage: displayablePost.stickerImage,
@@ -216,7 +216,7 @@ struct FeedView: View {
                     HStack{
                         Spacer()
                         Button{
-                            coordinator.push(.archive(roomId: viewModel.currentRoomId))
+                            coordinator.push(.archive)
                         }label: {
                             VStack(spacing: 2){
                                 Image("CalendarButton")

@@ -9,4 +9,5 @@ import Foundation
 
 extension Notification.Name {
     static let openDeepLink = Notification.Name("openDeepLink")
+    static let authServiceReconfigureRouting = Notification.Name("AuthService.ReconfigureRouting")
 }

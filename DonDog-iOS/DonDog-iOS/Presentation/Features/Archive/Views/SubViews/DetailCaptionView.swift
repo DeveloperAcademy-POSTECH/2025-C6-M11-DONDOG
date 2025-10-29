@@ -41,7 +41,7 @@ struct DetailCaptionView: View {
                         .foregroundStyle(.ddGray600)
                 }
                 
-                Text(DataUtils.relativeTimeString(from: post.createdAt))
+                Text(DateUtils.relativeTimeString(from: post.createdAt))
                     .foregroundStyle(.ddGray500)
             }
             .font(.captionRegular13)

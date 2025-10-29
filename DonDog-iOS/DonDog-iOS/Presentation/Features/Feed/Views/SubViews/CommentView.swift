@@ -17,7 +17,7 @@ struct CommentView: View {
             HStack(spacing: 4) {
                 Text(authorName)
                     .font(.captionMedium14)
-                Text(DataUtils.relativeTimeString(from: comment.createdAt))
+                Text(DateUtils.relativeTimeString(from: comment.createdAt))
                     .font(.captionRegular13)
                     .foregroundStyle(Color.ddGray600)
             }

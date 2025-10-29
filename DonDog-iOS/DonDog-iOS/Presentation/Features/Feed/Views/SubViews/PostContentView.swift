@@ -66,7 +66,7 @@ struct PostContentView: View {
                                         .foregroundStyle(.ddGray600)
                                 }
                                 
-                                Text(DataUtils.relativeTimeString(from: viewModel.createdAt))
+                                Text(DateUtils.relativeTimeString(from: viewModel.createdAt))
                                     .foregroundStyle(.ddGray500)
                             }
                             .font(.captionRegular13)

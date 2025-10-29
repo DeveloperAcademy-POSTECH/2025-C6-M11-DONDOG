@@ -11,16 +11,7 @@ import SwiftUI
 struct ArchiveDetailView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: ArchiveDetailViewModel
-    
     @State private var currentIndex: Int = 0
-    
-    private var titleString: String {
-        let fmt = DateFormatter()
-        fmt.locale = Locale(identifier: "ko_KR")
-        fmt.timeZone = TimeZone(identifier: "Asia/Seoul")
-        fmt.dateFormat = "MM월 dd일"
-        return fmt.string(from: viewModel.date)
-    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -30,7 +21,7 @@ struct ArchiveDetailView: View {
                     leadingType:
                             .back(action: { coordinator.pop() }),
                     centerType:
-                            .title(title: titleString),
+                            .title(title: DateUtils.string(from: viewModel.date, format: .monthDay)),
                     trailingType: .menu(items: [
                         CustomNavMenuItem("삭제하기", role: .destructive) {
                             viewModel.handleDeleteRequest(at: currentIndex)
@@ -44,7 +35,7 @@ struct ArchiveDetailView: View {
                 TabView(selection: $currentIndex) {
                     ForEach(Array(viewModel.posts.enumerated()), id: \.offset) { idx, post in
                         DetailContentView(
-                            stickerViewModel: ArchiveStickerViewModel(roomId: viewModel.roomId), post: post,
+                            stickerViewModel: ArchiveStickerViewModel(), post: post,
                             userNameByUid: viewModel.userNameByUid,
                             onDelete: { comment in
                                 await viewModel.deleteComment(comment, from: post)

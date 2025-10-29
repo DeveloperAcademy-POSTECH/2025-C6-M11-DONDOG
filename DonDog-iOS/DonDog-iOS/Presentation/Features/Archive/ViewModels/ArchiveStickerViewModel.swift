@@ -14,23 +14,18 @@ import Kingfisher
 import SwiftUI
 
 final class ArchiveStickerViewModel: ObservableObject {
-    let roomId: String
+    private let connectUserInfo = UserPairingStore.shared
     
     @Published var borderedStickers: [String: UIImage] = [:]
     @Published var emotions: [String: String] = [:]
-    
     @Published var sticker: UIImage?
     
     private let db = Firestore.firestore()
     private let imageUtils = ImageUtils()
     private var mask: UIImage?
     
-    init(roomId: String) {
-        self.roomId = roomId
-    }
-    
     func getStickerData(stickerPostId: String, for postId: String) {
-        guard !roomId.isEmpty else {
+        guard let roomId = connectUserInfo.roomId, !roomId.isEmpty else {
             assertionFailure("ArchiveStickerViewModel: roomId is empty")
             return
         }
@@ -57,7 +52,7 @@ final class ArchiveStickerViewModel: ObservableObject {
                 return
             }
             
-            let postRef = self.db.collection("Rooms").document(self.roomId).collection("posts").document(postId)
+            let postRef = self.db.collection("Rooms").document(roomId).collection("posts").document(postId)
             postRef.getDocument(source: .default) { postSnapshot, postError in
                 if let postError = postError {
                     print("현재 postId \(postId) 조회 실패:", postError.localizedDescription)
@@ -104,7 +99,7 @@ final class ArchiveStickerViewModel: ObservableObject {
                         }
                         
                     case .failure(let error):
-                        print("KF 스티커 이미지 불러오기 실패:", error.localizedDescription)
+                        print("스티커 이미지 불러오기 실패:", error.localizedDescription)
                     }
                 }
             }

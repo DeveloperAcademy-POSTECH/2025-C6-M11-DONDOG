@@ -19,7 +19,7 @@ protocol ModuleFactoryProtocol {
     func makePostView(with postId: String, in roomId: String) -> PostView
     func makeSettingView() -> SettingView
     func makeEditProfileView() -> EditProfileView
-    func makeArchiveView(in roomId: String) -> ArchiveView
+    func makeArchiveView() -> ArchiveView
     func makeArchiveDetailView(in roomId: String, date: Date, initialPosts: [ArchivePost]?) -> ArchiveDetailView
     func makePostDetailView(with posts: [PostData], for postType: PostType) -> PostDetailView
 }
@@ -94,12 +94,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeArchiveView(in roomId: String) -> ArchiveView {
-        let stickerViewModel = ArchiveStickerViewModel(roomId: roomId)
-        let viewModel = ArchiveViewModel(roomId: roomId, stickerViewModel: stickerViewModel)
+    func makeArchiveView() -> ArchiveView {
+        let stickerViewModel = ArchiveStickerViewModel()
+        let viewModel = ArchiveViewModel(stickerViewModel: stickerViewModel)
         let view = ArchiveView(viewModel: viewModel)
         return view
-    }
+    }   
     
     @MainActor
     func makeArchiveDetailView(in roomId: String, date: Date, initialPosts: [ArchivePost]? = nil) -> ArchiveDetailView {

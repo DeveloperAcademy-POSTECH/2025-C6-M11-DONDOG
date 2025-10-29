@@ -1,5 +1,5 @@
 //
-//  DataManager.swift
+//  FirebaseDataManager.swift
 //  DonDog-iOS
 //
 //  Created by Ito on 10/26/25.
@@ -38,15 +38,13 @@ enum DataManagerError: LocalizedError {
 }
 
 final class FirebaseDataManager: DataManagerProtocol {
-    
     static let shared = FirebaseDataManager()
-    private init() {}
+    init() {}
     
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
     
     // MARK: - Helper: 경로 파싱
-    
     private func parseFirestorePath(_ path: String) throws -> DocumentReference {
         let components = path.split(separator: "/").map(String.init)
         guard components.count >= 2, components.count % 2 == 0 else {
@@ -102,7 +100,6 @@ final class FirebaseDataManager: DataManagerProtocol {
     }
     
     // MARK: - Firestore 읽기
-    
     func fetch<T: Decodable>(path: String) async throws -> T {
         let docRef = try parseFirestorePath(path)
         let snapshot = try await docRef.getDocument()
@@ -176,7 +173,6 @@ final class FirebaseDataManager: DataManagerProtocol {
     }
     
     // MARK: - Firestore 쓰기
-    
     func create(path: String, data: [String: Any]) async throws {
         let docRef = try parseFirestorePath(path)
         try await docRef.setData(data, merge: true)
@@ -221,7 +217,6 @@ final class FirebaseDataManager: DataManagerProtocol {
     }
     
     // MARK: - Storage
-    
     func uploadImage(image: UIImage, path: String) async throws -> String {
         guard let resizedImage = image.resized(maxWidth: 1080) else {
             throw DataManagerError.imageConversionFailed
@@ -268,8 +263,21 @@ final class FirebaseDataManager: DataManagerProtocol {
     }
     
     // MARK: - Auth
-    
     func getCurrentUserId() -> String? {
         return Auth.auth().currentUser?.uid
+    }
+    
+    func getCurrentUserRoomId() async throws -> String {
+        guard let uid = getCurrentUserId() else {
+            throw DataManagerError.authenticationRequired
+        }
+        
+        let user: UserData = try await fetch(path: "Users/\(uid)")
+        
+        guard let roomId = user.roomId, !roomId.isEmpty else {
+            throw DataManagerError.roomIdNotFound
+        }
+        
+        return roomId
     }
 }

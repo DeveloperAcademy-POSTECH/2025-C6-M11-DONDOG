@@ -48,7 +48,7 @@ struct ArchiveView: View {
                 // 사진 0장일 때 예외처리
                 if !viewModel.isLoading && viewModel.totalPostCount == 0 {
                         Spacer()
-                        VStack(spacing: 16){
+                        VStack(spacing: 16) {
                             Image(systemName: "photo.on.rectangle.angled")
                                 .resizable()
                                 .foregroundStyle(.ddSecondaryBlue)
@@ -66,10 +66,11 @@ struct ArchiveView: View {
                             if viewModel.totalPostCount > 0 {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 4) {
+                                        // 이름 없을 때 예외처리 추후 수정
                                         HStack(spacing: 0) {
-                                            Text(viewModel.partnerNickname).bold()
+                                            Text(viewModel.connectUserInfo.partnerName ?? "상대방").bold()
                                             Text("님과 ")
-                                            Text(viewModel.myNickname).bold()
+                                            Text(viewModel.connectUserInfo.myName ?? "나").bold()
                                             Text("님만의 추억이")
                                         }
                                         HStack(spacing: 0) {
@@ -82,13 +83,12 @@ struct ArchiveView: View {
                                     
                                     Spacer()
                                 }
-                                
                                 Divider().padding(.vertical, 8)
                             }
                             
                             ForEach(viewModel.archiveMonths) { month in
                                 VStack(alignment: .leading) {
-                                    Text(String("\(month.year)년 \(month.month)월"))
+                                    Text(DateUtils.string(from: month.date, format: .yearMonth))
                                         .font(.subtitleSemiBold16)
                                         .padding(.vertical, 8)
                                     
@@ -98,7 +98,7 @@ struct ArchiveView: View {
                                                 archivePlaceholder(height: 100)
                                             } else {
                                                 Button {
-                                                    moveDailyArchive(month: month, day: day)
+                                                    viewModel.moveDailyArchive(month: month, day: day)
                                                 } label: {
                                                     ArchivePostContainer(url: day.thumbnailURL, day: day.day)
                                                 }
@@ -134,26 +134,9 @@ struct ArchiveView: View {
         .padding(.horizontal, 20)
         .background(.ddWhite)
         .backHiddenSwipeEnabled()
-    }
-    
-    // 일자별 기록으로 이동, 버튼 내부 타입 체커 이슈로 함수로 분리
-    func moveDailyArchive(month: ArchiveMonth, day: ArchiveDay) {
-        var cal = Calendar(identifier: .gregorian)
-        cal.timeZone = TimeZone(identifier: "Asia/Seoul") ?? .current
-        let comp = DateComponents(
-            year: month.year, month: month.month, day: day.day,
-            hour: 0, minute: 0, second: 0
-        )
-        guard let selectedDate = cal.date(from: comp) else { return }
-        
-        let key = viewModel.dayKey(from: selectedDate)
-        let initial = viewModel.dailyPosts[key] ?? []
-        
-//        coordinator.push(
-//            .archiveDetail(roomId: viewModel.roomId, date: selectedDate, initialPosts: initial)
-//        )
-        coordinator.push(
-            .postDetail(posts: viewModel.postsForDate(selectedDate), postType: .archive)
-        )
+        .task {
+            viewModel.attach(coordinator: coordinator)
+            await viewModel.fetchMonthlyArchives()
+        }
     }
 }

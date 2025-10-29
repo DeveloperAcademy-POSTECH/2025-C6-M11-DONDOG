@@ -49,16 +49,8 @@ struct CameraView: UIViewControllerRepresentable {
         }
         
         func didCompleteBothPhotos() {
-            if let frontImage = parent.viewModel.frontImage,
-               let backImage = parent.viewModel.backImage {
-                parent.viewModel.delegate?.didCaptureImages(
-                    frontImage: frontImage, 
-                    backImage: backImage
-                )
-
-                DispatchQueue.main.async {
-                    self.parent.viewModel.showCaptionView = true
-                }
+            DispatchQueue.main.async {
+                self.parent.viewModel.showCaptionView = true
             }
         }
         

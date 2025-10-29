@@ -24,7 +24,7 @@ struct FeedView: View {
     @State private var showToastView = false
     @State private var toastWorkItem: DispatchWorkItem?
     
-    @EnvironmentObject var connectState: ConnectStateService
+    @EnvironmentObject var connectState: UserPairingStore
     
     var body: some View {
         ZStack{
@@ -216,7 +216,7 @@ struct FeedView: View {
                     HStack{
                         Spacer()
                         Button{
-                            coordinator.push(.archive(roomId: viewModel.currentRoomId))
+                            coordinator.push(.archive)
                         }label: {
                             VStack(spacing: 2){
                                 Image("CalendarButton")

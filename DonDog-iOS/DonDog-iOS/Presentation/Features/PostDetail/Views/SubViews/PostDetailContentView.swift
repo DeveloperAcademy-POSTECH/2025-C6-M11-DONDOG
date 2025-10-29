@@ -13,9 +13,7 @@ struct PostDetailContentView: View {
     @Binding var shouldBeUpdated: Bool
     
     var body: some View {
-        ScrollView {
-            CardView(post: post)
-            CommentView(postId: post.postId, shouldBeUpdated: $shouldBeUpdated)
-        }
+        CardView(post: post)
+        CommentView(postId: post.postId, shouldBeUpdated: $shouldBeUpdated)
     }
 }

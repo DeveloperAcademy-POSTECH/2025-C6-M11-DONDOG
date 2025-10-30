@@ -155,7 +155,6 @@ final class AuthService {
                     guard let rid = roomId, !rid.isEmpty else {
                         state.reset()
                         NSLog("[AuthService] 🔓 미연결 상태 (roomId 없음)")
-                        replaceRootinAuthService(.feed, coordinator: coordinator)
                         return
                     }
                     

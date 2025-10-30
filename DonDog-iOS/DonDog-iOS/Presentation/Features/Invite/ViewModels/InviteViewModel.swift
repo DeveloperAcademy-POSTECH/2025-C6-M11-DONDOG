@@ -23,7 +23,6 @@ final class InviteViewModel: ObservableObject {
     
     @Published var showSentHint: Bool = false
     
-    
     private let db = Firestore.firestore()
     private let generateInviteCodeService: GenerateCodeService
     private var timerCancellable: AnyCancellable?

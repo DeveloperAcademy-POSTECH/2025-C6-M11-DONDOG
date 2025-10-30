@@ -122,5 +122,8 @@ struct InviteView: View {
         .backHiddenSwipeEnabled()
         .dismissKeyboard()
         .task { viewModel.fetchInviteCodeandExpireDate() }
+        .onChange(of: viewModel.connectSucceeded) {
+            coordinator.replaceRoot(.feed)
+        }
     }
 }

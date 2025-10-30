@@ -203,6 +203,7 @@ final class DataManager: DataManagerProtocol {
             case let .upsert(path, data):
                 let ref = try parseFirestorePath(path)
                 batch.setData(data, forDocument: ref, merge: true)
+            }
         }
         try await batch.commit()
     }

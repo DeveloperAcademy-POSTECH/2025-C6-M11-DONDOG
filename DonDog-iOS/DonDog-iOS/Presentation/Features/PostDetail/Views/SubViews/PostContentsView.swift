@@ -1,5 +1,5 @@
 //
-//  CardView.swift
+//  PostContentsView.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/27/25.
@@ -8,12 +8,11 @@
 import SwiftUI
 import FirebaseCore
 
-struct CardView: View {
+struct PostContentsView: View {
     let post: PostData
     
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            
             Color.ddWhite
                 .overlay(
                     LinearGradient(

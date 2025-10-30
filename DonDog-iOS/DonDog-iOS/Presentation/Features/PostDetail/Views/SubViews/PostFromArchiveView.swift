@@ -24,9 +24,13 @@ struct PostFromArchiveView: View {
                     )
                     .padding(.vertical, 8)
                     
-                    // TODO: update 방식 변경 필요 여부 확인
-                    PostDetailContentView(postType: .archive, post: post, shouldBeUpdated: $shouldBeUpdated)
-                        .tag(idx)
+                    VStack(spacing: 0) {
+                        PostContentsView(post: post)
+                        
+                        // TODO: update 방식 변경 필요 여부 확인
+                        CommentView(postId: post.postId, shouldBeUpdated: $shouldBeUpdated)
+                    }
+                    .tag(idx)
                 }
             }
         }

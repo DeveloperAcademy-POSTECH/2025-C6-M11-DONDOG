@@ -1,5 +1,5 @@
 //
-//  CardTextView.swift
+//  TextView.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/28/25.
@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 
-struct CardTextView: View {
+struct TextView: View {
     @StateObject var viewModel = CardTextViewModel()
     
     let caption: String

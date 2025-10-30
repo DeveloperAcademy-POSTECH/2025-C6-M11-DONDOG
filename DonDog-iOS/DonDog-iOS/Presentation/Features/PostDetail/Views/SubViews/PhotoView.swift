@@ -1,5 +1,5 @@
 //
-//  CardPhotoView.swift
+//  PhotoView.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/27/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CardPhotoView: View {
+struct PhotoView: View {
     let frontImageURL: String
     let backImageURL: String
     

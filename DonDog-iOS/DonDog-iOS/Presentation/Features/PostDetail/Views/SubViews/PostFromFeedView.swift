@@ -17,11 +17,10 @@ struct PostFromFeedView: View {
         if let post = viewModel.posts.first {
             ScrollViewReader { proxy in
                 ScrollView {
+                    PostContentsView(post: post)
+                    
                     // TODO: update 방식 변경 필요 여부 확인
-                    PostDetailContentView(postType: .post, post: post, shouldBeUpdated: $newCommentSaved)
-                        .onTapGesture {
-                            isTextFieldFocused.wrappedValue = false
-                        }
+                    CommentView(postId: post.postId, shouldBeUpdated: $newCommentSaved)
                     
                     Color.clear
                         .frame(height: 1)
@@ -37,6 +36,9 @@ struct PostFromFeedView: View {
                             newCommentSaved = false
                         }
                     }
+                }
+                .onTapGesture {
+                    isTextFieldFocused.wrappedValue = false
                 }
                 
                 CustomCommentEditor(

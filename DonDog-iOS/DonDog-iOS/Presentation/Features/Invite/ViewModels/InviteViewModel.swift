@@ -231,9 +231,10 @@ final class InviteViewModel: ObservableObject {
 
         if participantUids.count == 1 {
             // A) 기존 방: participants에 내 uid만 추가 (덮어쓰기 금지)
-            ops.append(.update(path: roomPath, data: [
+            // 배치 업데이트로 잘못된 set/merge 동작이 일어나지 않도록 직접 업데이트합니다.
+            try await roomDoc.updateData([
                 "participants": FieldValue.arrayUnion(participantUids)
-            ]))
+            ])
         } else {
             // B) 새 방: 두 명으로 설정 + createdAt 기록
             ops.append(.upsert(path: roomPath, data: [

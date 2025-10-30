@@ -24,7 +24,6 @@ final class PostService {
     private let storage = Storage.storage()
     
     func deletePost(postId: String, in roomId: String, by userId: String) async throws {
-        print("시작")
         guard !postId.isEmpty, !roomId.isEmpty else {
             print("postId 혹은 roomId가 비어있습니다.")
             return
@@ -35,12 +34,17 @@ final class PostService {
         let postDocument = try await postRef.getDocument()
         
         guard let postData = postDocument.data(), postDocument.exists else {
-            print("post를 붙러오지 못했습니다.")
+            print("post를 불러오지 못했습니다.")
             return
         }
         
-        guard let authorUid = postData["authorId"] as? String, authorUid == userId else {
+        guard let authorUid = postData["authorId"] as? String else {
             print("authorId를 불러오지 못했습니다.")
+            return
+        }
+        
+        guard authorUid == userId else {
+            print("권한이 없습니다. (작성자가 아닙니다)")
             return
         }
         

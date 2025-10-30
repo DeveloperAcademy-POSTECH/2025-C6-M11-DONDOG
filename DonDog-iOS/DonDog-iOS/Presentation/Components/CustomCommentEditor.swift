@@ -14,7 +14,7 @@ struct CustomCommentEditor: View {
     let post: PostData
     
     @State private var isLineChanged: Bool
-    @State private var isTextSaveable: Bool;
+    @State private var isTextSaveable: Bool
     
     @State var text = ""
     

@@ -88,17 +88,15 @@ final class StickerViewModel: ObservableObject {
             KingfisherManager.shared.retrieveImage(with: url) { result in
                 switch result {
                 case .success(let value):
-                    DispatchQueue.main.async {
-                        DispatchQueue.global(qos: .userInitiated).async {
-                            guard let resultImage = self.imageUtils.makeSticker(with: value.image) else {
-                                print("스티커 생성에 실패했습니다")
-                                return
-                            }
-                            
-                            DispatchQueue.main.async {
-                                self.sticker = resultImage
-                                self.borderedStickers[stickerPostId] = resultImage
-                            }
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        guard let resultImage = self.imageUtils.makeSticker(with: value.image) else {
+                            print("스티커 생성에 실패했습니다")
+                            return
+                        }
+                        
+                        DispatchQueue.main.async {
+                            self.sticker = resultImage
+                            self.borderedStickers[stickerPostId] = resultImage
                         }
                     }
                     

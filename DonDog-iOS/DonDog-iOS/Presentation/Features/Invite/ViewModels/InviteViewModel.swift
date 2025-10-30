@@ -23,11 +23,11 @@ final class InviteViewModel: ObservableObject {
     
     @Published var showSentHint: Bool = false
     
-    
     private let db = Firestore.firestore()
+    private let dataManager: DataManagerProtocol = DataManager.shared
     private let generateInviteCodeService: GenerateCodeService
-    private var timerCancellable: AnyCancellable?
     
+    private var timerCancellable: AnyCancellable?
     private var stagedInviteText: String = ""
     
     init(showSentHint: Bool = false, generateInviteCodeService: GenerateCodeService = GenerateCodeService()) {
@@ -36,8 +36,8 @@ final class InviteViewModel: ObservableObject {
     }
     
     private var currentUserUID: String? {
-        guard let uid = Auth.auth().currentUser?.uid else {
-            self.message = "로그인이 필요합니다"
+        guard let uid = dataManager.getCurrentUserId() else {
+            self.inviteText = "로그인이 필요합니다"
             self.isLoading = false
             return nil
         }
@@ -49,14 +49,10 @@ final class InviteViewModel: ObservableObject {
         guard let uid = currentUserUID else { return }
         self.isLoading = true
 
-        db.collection("Users").document(uid).getDocument { [weak self] snap, err in
-            guard self != nil else { return }
-            guard let data = snap?.data(), let snap = snap, snap.exists else {
-                return
-            }
-            DispatchQueue.main.async {
-                self?.userName = (data["name"] as? String) ?? ""
-            }
+        Task { [weak self] in
+            guard let self = self,
+                  let user: UserData = try? await self.dataManager.fetch(path: "Users/\(uid)") else { return }
+            await MainActor.run { self.userName = user.name }
         }
         
         db.collection("Invites").whereField("inviterUid", isEqualTo: uid).getDocuments { [weak self] result, error in
@@ -79,6 +75,15 @@ final class InviteViewModel: ObservableObject {
                 self.isLoading = false
             }
         }
+        
+        Task { [weak self] in
+            guard let self = self else { return }
+            
+            
+        }
+        
+        
+        
     }
     
     private func startTimer() {
@@ -281,46 +286,33 @@ final class InviteViewModel: ObservableObject {
     
     func refreshInviteCode() {
         self.isLoading = true
-        print("[InviteViewModel][refresh] ▶️ called | inviteCode=\(self.inviteCode ?? "nil") | remain=\(self.remainTimeText) | isLoading=\(self.isLoading)")
-        guard let uid = Auth.auth().currentUser?.uid else {
-            print("[InviteViewModel][refresh] ❌ no uid (not logged in). Aborting reissue.")
+        guard let uid = dataManager.getCurrentUserId() else {
             self.isLoading = false
             return
         }
         
         func createNewInvite() {
-            print("[InviteViewModel][refresh] 🔧 createNewInvite() begin | uid=\(uid)")
             generateInviteCodeService.generateUniqueInviteCode { result in
                 switch result {
                 case .failure(let err):
-                    print("[초대코드 재발급] 재발급 실패: \(err.localizedDescription)")
-                    print("[InviteViewModel][refresh] ❌ generateUniqueInviteCode failed | isLoading=false")
                     self.isLoading = false
                     
                 case .success(let newCode):
-                    print("[InviteViewModel][refresh] ✅ newCode=\(newCode)")
                     let expireDate = Date().addingTimeInterval(24 * 60 * 60)
                     let inviteDoc = self.db.collection("Invites").document(newCode)
-                    print("[InviteViewModel][refresh] 📝 setData begin | path=Invites/\(newCode) | expireDate=\(expireDate)")
                     inviteDoc.setData([
                         "inviterUid": uid,
                         "expireDate": expireDate
                     ]) { err in
                         if let err = err {
-                            print("[초대코드 재발급] 저장 실패: \(err.localizedDescription)")
-                            print("[InviteViewModel][refresh] ❌ setData failed | error=\(err.localizedDescription)")
                             self.isLoading = false
                             return
                         }
-                        print("[InviteViewModel][refresh] ✅ setData success | updating UI states")
-                        print("[초대코드 재발급] 완료 ✅ \(newCode)")
                         self.inviteCode = newCode
                         self.stagedInviteText = newCode
                         self.expireDate = expireDate
                         self.inviteText = ""
                         self.startTimer()
-                        print("[InviteViewModel][refresh] ⏱️ startTimer() called | inviteText=\(self.inviteText) | remain=\(self.remainTimeText)")
-                        // self.isLoading = false
                     }
                 }
             }
@@ -328,16 +320,12 @@ final class InviteViewModel: ObservableObject {
         
         if let oldCode = inviteCode, !oldCode.isEmpty {
             db.collection("Invites").document(oldCode).delete { error in
-                print("[InviteViewModel][refresh] 🗑️ delete old invite | oldCode=\(oldCode)")
                 if let error = error {
-                    print("[InviteViewModel][refresh] ❌ delete old invite failed (will continue) | error=\(error.localizedDescription)")
-                } else {
-                    print("[InviteViewModel][refresh] ✅ delete old invite success")
+                    self.inviteText = "다시 시도해주세요"
                 }
                 createNewInvite()
             }
         } else {
-            print("[InviteViewModel][refresh] ℹ️ no old inviteCode → will create a new invite (this path is currently unreachable due to the guard above)")
             createNewInvite()
         }
     }

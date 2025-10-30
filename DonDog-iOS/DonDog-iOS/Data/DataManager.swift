@@ -189,6 +189,11 @@ final class DataManager: DataManagerProtocol {
         try await docRef.updateData(data)
     }
     
+    func delete(path: String) async throws {
+        let docRef = try parseFirestorePath(path)
+        try await docRef.delete()
+    }
+    
     func batchUpdate(updates: [(path: String, data: [String: Any])]) async throws {
         let batch = db.batch()
         
@@ -198,12 +203,6 @@ final class DataManager: DataManagerProtocol {
         }
         
         try await batch.commit()
-    }
-    
-    // MARK: - Firestore 삭제
-    func delete(path: String) async throws {
-        let docRef = try parseFirestorePath(path)
-        try await docRef.delete()
     }
     
     func batchDelete(paths: [String]) async throws {

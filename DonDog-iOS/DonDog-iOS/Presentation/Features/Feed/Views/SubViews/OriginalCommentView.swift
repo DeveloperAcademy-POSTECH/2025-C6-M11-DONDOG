@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// 새로 생긴 PostDetail 안의 CommentView와 이름이 중복되는데, PostDetail pr 승인 후에는 삭제될 파일이라 임시로 변경해두었습니다.
 struct OriginalCommentView: View {
     let comment: Comment
     @State private var authorName: String = "익명"

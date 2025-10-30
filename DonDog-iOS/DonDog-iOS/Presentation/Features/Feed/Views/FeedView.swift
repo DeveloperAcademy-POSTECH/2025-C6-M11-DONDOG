@@ -171,6 +171,7 @@ struct FeedView: View {
                                         print("현재 post가 없습니다.")
                                         return
                                     }
+                                    // TODO: PostDetail pr 승인 후 제거 예정 (+ 관련 파일들까지)
                                     //                                        if !viewModel.displayablePosts.isEmpty {
                                     //                                            let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
                                     //                                            coordinator.push(.post(

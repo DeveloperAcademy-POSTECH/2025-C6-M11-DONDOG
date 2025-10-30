@@ -81,6 +81,7 @@ final class ArchiveViewModel: ObservableObject {
             self.coordinator?.push(
                 .postDetail(posts: posts, postType: .archive)
             )
+            // TODO: PostDetail pr 승인 후 제거 예정 (+ 관련 파일들까지)
 //            self.coordinator?.push(
 //                .archiveDetail(roomId: self.connectUserInfo.roomId ?? "", date: selectedDate, initialPosts: initial)
 //            )

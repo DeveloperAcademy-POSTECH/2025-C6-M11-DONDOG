@@ -20,7 +20,7 @@ final class CaptionViewModel: ObservableObject {
     @Published var isUploading: Bool = false
     
     weak var delegate: CaptionViewModelDelegate?
-    private let dataManager: DataManagerProtocol = FirebaseDataManager.shared
+    private let dataManager: DataManagerProtocol = DataManager.shared
     
     var frontImage: UIImage?
     var backImage: UIImage?

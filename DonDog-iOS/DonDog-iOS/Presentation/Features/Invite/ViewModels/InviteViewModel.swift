@@ -281,50 +281,64 @@ final class InviteViewModel: ObservableObject {
     
     func refreshInviteCode() {
         self.isLoading = true
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        guard let code = self.inviteCode, !code.isEmpty else { return }
-
-        db.collection("Invites").document(code).delete { [weak self] error in
-            guard let self = self else { return }
-
-            if let error = error {
-                print("[초대코드 재발급] 삭제 실패: \(error.localizedDescription)")
-                self.isLoading = false
-                return
-            }
-
-            print("[초대코드 재발급] 기존 코드 삭제 완료")
-
-            self.generateInviteCodeService.generateUniqueInviteCode { result in
+        print("[InviteViewModel][refresh] ▶️ called | inviteCode=\(self.inviteCode ?? "nil") | remain=\(self.remainTimeText) | isLoading=\(self.isLoading)")
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("[InviteViewModel][refresh] ❌ no uid (not logged in). Aborting reissue.")
+            self.isLoading = false
+            return
+        }
+        
+        func createNewInvite() {
+            print("[InviteViewModel][refresh] 🔧 createNewInvite() begin | uid=\(uid)")
+            generateInviteCodeService.generateUniqueInviteCode { result in
                 switch result {
                 case .failure(let err):
                     print("[초대코드 재발급] 재발급 실패: \(err.localizedDescription)")
+                    print("[InviteViewModel][refresh] ❌ generateUniqueInviteCode failed | isLoading=false")
                     self.isLoading = false
                     
                 case .success(let newCode):
+                    print("[InviteViewModel][refresh] ✅ newCode=\(newCode)")
                     let expireDate = Date().addingTimeInterval(24 * 60 * 60)
                     let inviteDoc = self.db.collection("Invites").document(newCode)
-
+                    print("[InviteViewModel][refresh] 📝 setData begin | path=Invites/\(newCode) | expireDate=\(expireDate)")
                     inviteDoc.setData([
                         "inviterUid": uid,
                         "expireDate": expireDate
                     ]) { err in
                         if let err = err {
                             print("[초대코드 재발급] 저장 실패: \(err.localizedDescription)")
+                            print("[InviteViewModel][refresh] ❌ setData failed | error=\(err.localizedDescription)")
                             self.isLoading = false
                             return
                         }
-
+                        print("[InviteViewModel][refresh] ✅ setData success | updating UI states")
                         print("[초대코드 재발급] 완료 ✅ \(newCode)")
                         self.inviteCode = newCode
                         self.stagedInviteText = newCode
                         self.expireDate = expireDate
                         self.inviteText = ""
                         self.startTimer()
+                        print("[InviteViewModel][refresh] ⏱️ startTimer() called | inviteText=\(self.inviteText) | remain=\(self.remainTimeText)")
                         // self.isLoading = false
                     }
                 }
             }
+        }
+        
+        if let oldCode = inviteCode, !oldCode.isEmpty {
+            db.collection("Invites").document(oldCode).delete { error in
+                print("[InviteViewModel][refresh] 🗑️ delete old invite | oldCode=\(oldCode)")
+                if let error = error {
+                    print("[InviteViewModel][refresh] ❌ delete old invite failed (will continue) | error=\(error.localizedDescription)")
+                } else {
+                    print("[InviteViewModel][refresh] ✅ delete old invite success")
+                }
+                createNewInvite()
+            }
+        } else {
+            print("[InviteViewModel][refresh] ℹ️ no old inviteCode → will create a new invite (this path is currently unreachable due to the guard above)")
+            createNewInvite()
         }
     }
 }

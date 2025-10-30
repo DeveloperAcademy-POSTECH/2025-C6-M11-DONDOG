@@ -25,9 +25,9 @@ struct PostContentsView: View {
                 )
             
             VStack(spacing: 0) {
-                CardPhotoView(frontImageURL: post.frontImageURL, backImageURL: post.backImageURL)
+                PhotoView(frontImageURL: post.frontImageURL, backImageURL: post.backImageURL)
                 
-                CardTextView(caption: post.caption, authorId: post.authorId, createdAt: post.createdAt.dateValue())
+                TextView(caption: post.caption, authorId: post.authorId, createdAt: post.createdAt.dateValue())
             }
             
             StickerView(stickerPostId: post.stickerPostId, stickerType: post.stickerType ?? "")

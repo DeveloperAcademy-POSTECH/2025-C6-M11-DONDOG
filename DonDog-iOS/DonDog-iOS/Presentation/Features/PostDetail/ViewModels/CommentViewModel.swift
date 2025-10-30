@@ -16,8 +16,6 @@ final class CommentViewModel: ObservableObject {
     private var roomId: String?
     
     @Published var name: String = "익명"
-    @Published var createdAt: Date = Date()
-    @Published var text: String = ""
     
     func fetchComments(postId: String) async {
         do {
@@ -89,33 +87,8 @@ final class CommentViewModel: ObservableObject {
         return roomId
     }
     
-    
-    // TODO: DB Manager로 교체
-    func deleteComment(for comment: CommentData, in postId: String) async throws {
-        let roomId = try await fetchCurrentUserRoomId()
-        
-        guard !comment.commentId.isEmpty, !postId.isEmpty, !roomId.isEmpty else {
-            throw PostServiceError.invalidIdentifier
-        }
-        
-        let commentRef = Firestore.firestore().collection("Rooms")
-            .document(roomId)
-            .collection("comments")
-            .document(postId)
-            .collection("comments")
-            .document(comment.commentId)
-        
-        try await commentRef.delete()
-    }
-    
-    func setCommentData(comment: CommentData) {
-        fetchUserName(of: comment.authorId)
-        createdAt = comment.createdAt.dateValue()
-        text = comment.text
-    }
-    
     // TODO: User 싱글톤으로 대체
-    private func fetchUserName(of authorId: String) {
+    func fetchUserName(of authorId: String) {
         Firestore.firestore()
             .collection("Users")
             .document(authorId)
@@ -139,5 +112,23 @@ final class CommentViewModel: ObservableObject {
                     }
                 }
             }
+    }
+    
+    // TODO: DB Manager로 교체
+    func deleteComment(for comment: CommentData, in postId: String) async throws {
+        let roomId = try await fetchCurrentUserRoomId()
+        
+        guard !comment.commentId.isEmpty, !postId.isEmpty, !roomId.isEmpty else {
+            throw PostServiceError.invalidIdentifier
+        }
+        
+        let commentRef = Firestore.firestore().collection("Rooms")
+            .document(roomId)
+            .collection("comments")
+            .document(postId)
+            .collection("comments")
+            .document(comment.commentId)
+        
+        try await commentRef.delete()
     }
 }

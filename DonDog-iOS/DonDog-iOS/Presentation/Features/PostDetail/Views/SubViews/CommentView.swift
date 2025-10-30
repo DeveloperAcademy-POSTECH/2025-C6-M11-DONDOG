@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseCore
 
 struct CommentView: View {
     @StateObject var viewModel = CommentViewModel()
@@ -19,11 +20,11 @@ struct CommentView: View {
                     HStack(spacing: 4) {
                         Text(viewModel.name)
                             .font(.captionMedium14)
-                        Text(DateUtils.relativeTimeString(from: viewModel.createdAt))
+                        Text(DateUtils.relativeTimeString(from: comment.createdAt.dateValue()))
                             .font(.captionRegular13)
                             .foregroundStyle(Color.ddGray600)
                     }
-                    Text(viewModel.text)
+                    Text(comment.text)
                         .font(.captionRegular14)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -31,7 +32,7 @@ struct CommentView: View {
                 .padding(.vertical, 8)
                 .contentShape(Rectangle())
                 .onAppear {
-                    viewModel.setCommentData(comment: comment)
+                    viewModel.fetchUserName(of: comment.authorId)
                 }
                 .contextMenu {
                     Button(role: .destructive) {

@@ -93,8 +93,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 
                 // stickerPostId 선택
                 let postIdToFetch: String
-                if let currentPost = self.currentPost,
-                   !currentPost.stickerPostId.isEmpty {
+                if let currentPost = self.currentPost, !currentPost.stickerPostId.isEmpty {
                     postIdToFetch = currentPost.stickerPostId
                 } else if !recentPostId.isEmpty {
                     postIdToFetch = recentPostId
@@ -225,7 +224,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    
     func removeStickerData() {
         guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있어 삭제 불가")
@@ -278,7 +276,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
         }
     }
-    
     
     // MARK: - CaptionViewModelDelegate
     func didUploadPost() {
@@ -340,7 +337,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    
     private func downloadAllTodayImages(posts: [PostData], roomId: String) {
         print("🖼️ 모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")
         displayablePosts = []
@@ -356,8 +352,8 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             let isMyPost = (post.uid == currentUserUid)
             let imageGroup = DispatchGroup()
             
-            var frontImageURL: URL? = nil
-            var backImageURL: URL? = nil
+            var frontImageURL: URL?
+            var backImageURL: URL?
             var nickname: String = "익명"
             
             frontImageURL = post.frontURL
@@ -420,7 +416,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             
             var firstDisplayedPostIndex = 0
             
-            if finalSortedPosts.count > 1 && self.isAfterUpload{
+            if finalSortedPosts.count > 1 && self.isAfterUpload {
                 firstDisplayedPostIndex = 1
             } else {
                 firstDisplayedPostIndex = 0

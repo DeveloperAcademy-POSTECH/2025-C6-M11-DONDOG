@@ -142,7 +142,7 @@ struct CustomTextField: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-                isFocused = true
+            isFocused = true
         }
     }
 }
@@ -155,13 +155,13 @@ struct PreviewUnderlineTextFieldWrapper: View {
     var body: some View {
         VStack(spacing: 24) {
             CustomTextField(
-                            title: "휴대폰 번호",
-                            placeholder: "휴대폰 번호를 입력해 주세요",
-                            text: $phone,
-                            keyboard: .numberPad,
-                            contentType: .telephoneNumber,
-                            errorMessage: "형식이 올바르지 않습니다."
-                        )
+                title: "휴대폰 번호",
+                placeholder: "휴대폰 번호를 입력해 주세요",
+                text: $phone,
+                keyboard: .numberPad,
+                contentType: .telephoneNumber,
+                errorMessage: "형식이 올바르지 않습니다."
+            )
             CustomTextField(
                 title: "휴대폰 번호",
                 placeholder: "휴대폰 번호를 입력해 주세요",

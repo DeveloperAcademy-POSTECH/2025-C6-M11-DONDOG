@@ -23,7 +23,6 @@ final class InviteViewModel: ObservableObject {
     
     @Published var showSentHint: Bool = false
     
-    
     private let db = Firestore.firestore()
     private let generateInviteCodeService: GenerateCodeService
     private var timerCancellable: AnyCancellable?
@@ -49,7 +48,7 @@ final class InviteViewModel: ObservableObject {
         guard let uid = currentUserUID else { return }
         self.isLoading = true
 
-        db.collection("Users").document(uid).getDocument { [weak self] snap, err in
+        db.collection("Users").document(uid).getDocument { [weak self] snap, _ in
             guard self != nil else { return }
             guard let data = snap?.data(), let snap = snap, snap.exists else {
                 return
@@ -59,7 +58,7 @@ final class InviteViewModel: ObservableObject {
             }
         }
         
-        db.collection("Invites").whereField("inviterUid", isEqualTo: uid).getDocuments { [weak self] result, error in
+        db.collection("Invites").whereField("inviterUid", isEqualTo: uid).getDocuments { [weak self] result, _ in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 if let document = result?.documents.first {
@@ -194,11 +193,11 @@ final class InviteViewModel: ObservableObject {
                 let inviterRoomId = inviterDoc?.data()? ["roomId"] as? String
                 // A) 초대자의 유저 문서에 roomId가 있는 경우 → 기존 방에 내 uid를 참가자로 추가하고, 내 Users 문서에 roomId/createdAt 저장
                 if let existingRoomId = inviterRoomId, !existingRoomId.isEmpty {
-                        let roomDoc = self.db.collection("Rooms").document(existingRoomId)
-                        guard let myUid = self.currentUserUID else { return }
-                        let myUserDoc = self.db.collection("Users").document(myUid)
+                    let roomDoc = self.db.collection("Rooms").document(existingRoomId)
+                    guard let myUid = self.currentUserUID else { return }
+                    let myUserDoc = self.db.collection("Users").document(myUid)
                         
-                    self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: nil, roomId: existingRoomId, participantUids: [myUid]) { err in
+                    self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: nil, participantUids: [myUid]) { err in
                         if let err = err {
                             DispatchQueue.main.async {
                                 self.message = "유효하지 않은 초대코드입니다. \(err.localizedDescription)"
@@ -234,7 +233,7 @@ final class InviteViewModel: ObservableObject {
                             
                             guard let myUid = self.currentUserUID else { return }
                             let myUserDoc = self.db.collection("Users").document(myUid)
-                            self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: inviterUserDoc, roomId: candidate, participantUids: [inviterUid, myUid]) { err in
+                            self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: inviterUserDoc, participantUids: [inviterUid, myUid]) { err in
                                 if let err = err {
                                     DispatchQueue.main.async {
                                         self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(err.localizedDescription)"
@@ -257,7 +256,8 @@ final class InviteViewModel: ObservableObject {
         }
     }
     
-    private func commitRoomJoin(roomDoc: DocumentReference, myUserDoc: DocumentReference, inviterUserDoc: DocumentReference?, roomId: String, participantUids: [String], completion: @escaping (Error?) -> Void) {
+    private func commitRoomJoin(roomDoc: DocumentReference, myUserDoc: DocumentReference, inviterUserDoc: DocumentReference?, participantUids: [String], completion: @escaping (Error?) -> Void) {
+        let roomId = roomDoc.documentID
         let saveTgt = db.batch()
         /// Rooms/{roomId}의 participants에 uid 추가
         saveTgt.setData([

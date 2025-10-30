@@ -18,7 +18,7 @@ struct PostData: Codable {
     let stickerPostId: String
     let stickerType: String?
     
-    init(postId: String, uid: String, frontImageURL: String, backImageURL: String, caption: String , createdAt: Timestamp? = nil, stickerPostId: String, stickerType: String?) {
+    init(postId: String, uid: String, frontImageURL: String, backImageURL: String, caption: String, createdAt: Timestamp? = nil, stickerPostId: String, stickerType: String?) {
         self.postId = postId
         self.uid = uid
         self.frontImageURL = frontImageURL
@@ -33,5 +33,5 @@ struct PostData: Codable {
 
 extension PostData {
     var frontURL: URL? { URL(string: frontImageURL) }
-    var backURL: URL?  { URL(string: backImageURL) }
+    var backURL: URL? { URL(string: backImageURL) }
 }

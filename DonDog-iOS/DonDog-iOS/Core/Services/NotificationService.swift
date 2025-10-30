@@ -36,7 +36,6 @@ final class NotificationService {
 #else
         env = "prod"
 #endif
-        
         let info: [String: Any] = [
             "env": env,
             "updatedAt": FieldValue.serverTimestamp()

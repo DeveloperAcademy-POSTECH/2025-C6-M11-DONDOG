@@ -26,7 +26,7 @@ struct NetworkErrorView: View {
                         .font(.bodyMedium16)
                     Button {
                         if let url = URL(string: UIApplication.openSettingsURLString),
-                           UIApplication.shared.canOpenURL(url) {
+                            UIApplication.shared.canOpenURL(url) {
                             UIApplication.shared.open(url)
                         }
                     } label: {
@@ -45,7 +45,6 @@ struct NetworkErrorView: View {
 
                 }
                 .foregroundStyle(Color.ddPrimaryBlue)
-                //.ignoresSafeArea()
                 .transition(.opacity)
             }
         }

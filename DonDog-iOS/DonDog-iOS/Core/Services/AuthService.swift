@@ -5,10 +5,10 @@
 //  Created by 이주현 on 10/5/25.
 //
 
-import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseMessaging
+import Foundation
 
 final class AuthService {
     static var isAccountDeletionInProgress: Bool = false
@@ -109,12 +109,11 @@ final class AuthService {
 
             self.userDocListenr?.remove()
             self.userDocListenr = userDoc.addSnapshotListener(includeMetadataChanges: true) { userDoc, error in
-
                 /// 계정 삭제 중일 때 (탈퇴) -> welcome으로 이동
                 if AuthService.isAccountDeletionInProgress {
                     return
                 }
-
+                
                 /// 에러 또는 스냅샷 nil 통합 처리
                 guard error == nil, let userDoc = userDoc else {
                     if let nsError = error as NSError? {

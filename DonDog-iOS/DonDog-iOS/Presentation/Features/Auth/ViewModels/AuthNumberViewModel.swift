@@ -6,10 +6,10 @@
 //
 
 import Combine
-import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
+import SwiftUI
 
 final class AuthNumberViewModel: ObservableObject {
     private weak var coordinator: AppCoordinator?
@@ -27,11 +27,11 @@ final class AuthNumberViewModel: ObservableObject {
     
     @Published var message: String = ""
     @Published var isLoading: Bool = false
-    @Published var codeError: String? = nil
+    @Published var codeError: String?
     
     @Published var isNumberWithdraw = false
     @Published var showWithdrawErrorAlert = false
-    @Published var alertMessage: String? = nil
+    @Published var alertMessage: String?
     
     init(isNumberWithdraw: Bool = false) {
         self.isNumberWithdraw = isNumberWithdraw
@@ -55,7 +55,7 @@ final class AuthNumberViewModel: ObservableObject {
             verificationCode: self.verificationCode
         )
         
-        Auth.auth().signIn(with: credential) { [weak self] result, error in
+        Auth.auth().signIn(with: credential) { [weak self] _, error in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 
@@ -141,7 +141,7 @@ final class AuthNumberViewModel: ObservableObject {
             // Users/{uid}를 읽어 roomId 확인
             let userDoc = db.collection("Users").document(uid)
             let userData = try await userDoc.getDocument()
-            var roomId: String? = nil
+            var roomId: String?
             if let data = userData.data(), let rid = data["roomId"] as? String, !rid.isEmpty {
                 roomId = rid
             }

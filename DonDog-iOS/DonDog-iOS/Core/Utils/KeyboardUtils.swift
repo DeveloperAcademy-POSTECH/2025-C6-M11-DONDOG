@@ -5,9 +5,9 @@
 //  Created by 이주현 on 10/14/25.
 //
 
+import Combine
 import Foundation
 import SwiftUI
-import Combine
 
 extension View {
     /// 텍스트 입력 중 화면을 탭하면 키보드를 내리는 커스텀 Modifier

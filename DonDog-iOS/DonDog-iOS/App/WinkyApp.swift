@@ -5,8 +5,8 @@
 //  Created by 조유진 on 10/3/25.
 //
 
-import SwiftUI
 import FirebaseAuth
+import SwiftUI
 
 @main
 struct WinkyApp: App {

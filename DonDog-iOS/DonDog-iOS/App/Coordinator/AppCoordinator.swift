@@ -5,10 +5,10 @@
 //  Created by 조유진 on 10/3/25.
 //
 
-import SwiftUI
 import Combine
 import FirebaseAuth
 import FirebaseFirestore
+import SwiftUI
 
 @MainActor
 final class AppCoordinator: ObservableObject {
@@ -43,8 +43,7 @@ final class AppCoordinator: ObservableObject {
         }
         
         DispatchQueue.main.async {
-            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-               let deepLink = appDelegate.initialDeepLink {
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate, let deepLink = appDelegate.initialDeepLink {
                 print("저장된 딥링크 처리: \(deepLink)")
                 self.handleDeepLink(deepLink)
                 
@@ -91,7 +90,7 @@ final class AppCoordinator: ObservableObject {
         case .auth:
             factory.makeAuthView(isWithDraw: authShowWithdraw)
         case .authNumber:
-            factory.makeAuthNumberView(isNumberWithdraw :authNumberShowWithdraw)
+            factory.makeAuthNumberView(isNumberWithdraw: authNumberShowWithdraw)
         case .profileSetup:
             factory.makeProfileSetupView()
         case .invite:
@@ -114,9 +113,7 @@ final class AppCoordinator: ObservableObject {
     }
     
     func handleDeepLink(_ urlString: String) {
-        guard let url = URL(string: urlString),
-              let scheme = url.scheme,
-              scheme == "dondog" else { return }
+        guard let url = URL(string: urlString), let scheme = url.scheme, scheme == "dondog" else { return }
         
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         

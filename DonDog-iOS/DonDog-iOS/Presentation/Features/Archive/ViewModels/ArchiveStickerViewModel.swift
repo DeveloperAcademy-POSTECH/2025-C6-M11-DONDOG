@@ -6,11 +6,11 @@
 //
 
 import Combine
-import Foundation
 import FirebaseAuth
 import FirebaseFirestore
-import UIKit
+import Foundation
 import Kingfisher
+import UIKit
 
 final class ArchiveStickerViewModel: ObservableObject {
     private let connectUserInfo = UserPairingStore.shared

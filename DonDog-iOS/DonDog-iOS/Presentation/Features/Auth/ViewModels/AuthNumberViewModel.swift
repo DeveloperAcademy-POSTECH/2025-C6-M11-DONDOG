@@ -89,7 +89,7 @@ final class AuthNumberViewModel: ObservableObject {
             struct ExistsUserDoc: Decodable {}
             let exists: Bool
             do {
-                let _: ExistsUserDoc = try await dataManager.fetch(path: "Users\(uid)")
+                let _: ExistsUserDoc = try await dataManager.fetch(path: "Users/\(uid)")
                 exists = true
             } catch {
                 exists = false
@@ -201,11 +201,9 @@ final class AuthNumberViewModel: ObservableObject {
                     var urlsToDelete: [String] = []
                     for doc in postsSnap.documents { collectStorageURLs(from: doc.data(), into: &urlsToDelete) }
                     urlsToDelete = Array(Set(urlsToDelete))
-                    // let storage = Storage.storage()
                     try await withThrowingTaskGroup(of: Void.self) { group in
                         for url in urlsToDelete {
-                            group.addTask { try await self.dataManager.deleteStorageFile(urlString: url)
-                            }
+                            group.addTask { try await self.dataManager.deleteStorageFile(urlString: url) }
                         }
                         try await group.waitForAll()
                     }

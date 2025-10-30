@@ -48,7 +48,7 @@ final class InviteViewModel: ObservableObject {
     func fetchInviteCodeandExpireDate() {
         guard let uid = currentUserUID else { return }
         self.isLoading = true
-
+        
         Task { [weak self] in
             guard let self = self,
                   let user: UserData = try? await self.dataManager.fetch(path: "Users/\(uid)") else { return }
@@ -75,15 +75,6 @@ final class InviteViewModel: ObservableObject {
                 self.isLoading = false
             }
         }
-        
-        Task { [weak self] in
-            guard let self = self else { return }
-            
-            
-        }
-        
-        
-        
     }
     
     private func startTimer() {
@@ -322,6 +313,8 @@ final class InviteViewModel: ObservableObject {
             db.collection("Invites").document(oldCode).delete { error in
                 if let error = error {
                     self.inviteText = "다시 시도해주세요"
+                    self.isLoading = false
+                    return
                 }
                 createNewInvite()
             }

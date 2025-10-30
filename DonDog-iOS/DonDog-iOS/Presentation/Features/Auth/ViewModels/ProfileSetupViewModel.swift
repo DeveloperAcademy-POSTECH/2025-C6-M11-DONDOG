@@ -33,8 +33,15 @@ final class ProfileSetupViewModel: ObservableObject {
     
     private let db = Firestore.firestore()
     private let generateInviteCodeService: GenerateCodeService
-    init(generateInviteCodeService: GenerateCodeService = GenerateCodeService()) {
+    
+    private weak var coordinator: AppCoordinator?
+    func attach(coordinator: AppCoordinator) {
+        self.coordinator = coordinator
+    }
+    
+    init(generateInviteCodeService: GenerateCodeService = GenerateCodeService(), coordinator: AppCoordinator? = nil) {
         self.generateInviteCodeService = generateInviteCodeService
+        self.coordinator = coordinator
     }
     
     func saveUserProfile() {
@@ -58,6 +65,8 @@ final class ProfileSetupViewModel: ObservableObject {
                 }
             case .success(let inviteCode):
                 self.saveProfile(inviteCode: inviteCode, uid: uid)
+                coordinator?.inviteShowSentHint = true
+                coordinator?.replaceRoot(.invite)
             }
         }
     }

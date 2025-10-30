@@ -55,11 +55,8 @@ struct ProfileSetupView: View {
         .padding(.horizontal, 20)
         .dismissKeyboard()
         .backHiddenSwipeEnabled()
-        .onChange(of: viewModel.didComplete, initial: true) { _, newValue in
-            if newValue {
-                coordinator.inviteShowSentHint = true
-                coordinator.replaceRoot(.invite)
-            }
+        .task {
+            viewModel.attach(coordinator: coordinator)
         }
     }
 }

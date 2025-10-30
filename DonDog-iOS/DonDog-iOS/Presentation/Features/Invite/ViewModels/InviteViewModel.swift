@@ -133,148 +133,132 @@ final class InviteViewModel: ObservableObject {
             return
         }
 
-        let inviteDoc = db.collection("Invites").document(inputcode)
-        inviteDoc.getDocument { [weak self] result, error in
+        Task { [weak self] in
             guard let self = self else { return }
-            /// 초대코드가 db에 있는지 찾음
-            if let error = error {
-                DispatchQueue.main.async {
-                    self.message = "초대 코드를 다시 확인해 주세요. \(error.localizedDescription)"
-                    self.allowInviteCodeError = true
-                    self.isLoading = false
-                }
-                return
-            }
-            guard let doc = result, doc.exists else {
-                DispatchQueue.main.async {
-                    self.message = "유효하지 않은 초대코드입니다."
-                    self.allowInviteCodeError = true
-                    self.isLoading = false
-                }
-                return
-            }
-            /// 찾은 후 문서 내 데이터를 딕셔너리 형태로 가져온 후, expireDate 확인
-            let inviteData = doc.data() ?? [:]
-            if let expireDateFromDoc = inviteData["expireDate"] as? Timestamp {
-                let expire = expireDateFromDoc.dateValue()
-                if expire < Date() {
-                    DispatchQueue.main.async {
+            do {
+                /// 초대코드가 db에 있는지 찾음
+                let invitedoc: InviteDoc = try await dataManager.fetch(path: "Invites/\(inputcode)")
+                /// 만료 시간 확인
+                if let ts = invitedoc.expireDate, ts.dateValue() < Date() {
+                    await MainActor.run {
                         self.message = "유효하지 않은 초대코드입니다."
                         self.allowInviteCodeError = true
                         self.isLoading = false
                     }
                     return
                 }
-            }
-            /// 초대자의 Uid 확인
-            guard let inviterUid = inviteData["inviterUid"] as? String, !inviterUid.isEmpty else {
-                DispatchQueue.main.async {
-                    self.message = "유효하지 않은 초대코드입니다."
-                    self.allowInviteCodeError = true
-                    self.isLoading = false
-                }
-                return
-            }
-            /// 초대자의 roomId 확인
-            let inviterUserDoc = self.db.collection("Users").document(inviterUid)
-            inviterUserDoc.getDocument { inviterDoc, inviterErr in
-                if let inviterErr = inviterErr {
-                    DispatchQueue.main.async {
-                        self.message = "유효하지 않은 초대코드입니다. \(inviterErr.localizedDescription)"
-                        self.allowInviteCodeError = true
-                        self.isLoading = false
-                    }
-                    return
-                }
-
-                let inviterRoomId = inviterDoc?.data()? ["roomId"] as? String
-                // A) 초대자의 유저 문서에 roomId가 있는 경우 → 기존 방에 내 uid를 참가자로 추가하고, 내 Users 문서에 roomId/createdAt 저장
-                if let existingRoomId = inviterRoomId, !existingRoomId.isEmpty {
-                        let roomDoc = self.db.collection("Rooms").document(existingRoomId)
-                        guard let myUid = self.currentUserUID else { return }
-                        let myUserDoc = self.db.collection("Users").document(myUid)
-                        
-                    self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: nil, roomId: existingRoomId, participantUids: [myUid]) { err in
-                        if let err = err {
-                            DispatchQueue.main.async {
-                                self.message = "유효하지 않은 초대코드입니다. \(err.localizedDescription)"
-                                self.allowInviteCodeError = true
-                                self.isLoading = false
-                            }
-                            return
-                        }
-                        DispatchQueue.main.async {
+                /// 초대자 uid 확인
+                let inviterUid = invitedoc.inviterUid
+                let inviterUser: UserData = try await self.dataManager.fetch(path: "Users/\(inviterUid)")
+                guard let myUid = self.currentUserUID else { return }
+                let myUserDoc = self.db.collection("Users").document(myUid)
+                let inviterUserDoc = self.db.collection("Users").document(inviterUid)
+                
+                /// A) 초대자의 유저 문서에 roomId가 있는 경우 → 기존 방에 내 uid를 참가자로 추가하고, 내 Users 문서에 roomId/createdAt 저장
+                if let inviterRoomId = inviterUser.roomId, !inviterRoomId.isEmpty {
+                    let roomDoc = self.db.collection("Rooms").document(inviterRoomId)
+                    do {
+                        try await self.commitRoomJoin(
+                            roomDoc: roomDoc,
+                            myUserDoc: myUserDoc,
+                            inviterUserDoc: inviterUserDoc,
+                            roomId: inviterRoomId,
+                            participantUids: [myUid]
+                        )
+                        await MainActor.run {
                             self.isLoading = false
                             self.connectSucceeded = true
                         }
+                    } catch {
+                        await MainActor.run {
+                            self.message = "유효하지 않은 초대코드입니다. \(error.localizedDescription)"
+                            self.allowInviteCodeError = true
+                            self.isLoading = false
+                        }
                     }
                 } else {
-                    // B) 초대자의 유저 문서에 roomId가 없는 경우 → 고유 roomId 생성 → Rooms 생성 → participants에 초대자/나 모두 추가 → 두 사용자 문서에 roomId/createdAt 저장
-                    func attemptGenerateUniqueRoomIdAndSave() {
-                        let candidate = UUID().uuidString
-                        let roomDoc = self.db.collection("Rooms").document(candidate)
-                        
-                        roomDoc.getDocument { doc, err in
-                            if let err = err {
-                                DispatchQueue.main.async {
-                                    self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(err.localizedDescription)"
+                    /// B) 초대자의 유저 문서에 roomId가 없는 경우 → 고유 roomId 생성 → Rooms 생성 → participants에 초대자/나 모두 추가 → 두 사용자 문서에 roomId/createdAt 저장
+                    func attemptGenerateUniqueRoomIdAndSave() async {
+                        while true {
+                            let candidate = UUID().uuidString
+                            let roomDoc = await self.db.collection("Rooms").document(candidate)
+                            do {
+                                let snap = try await roomDoc.getDocument()
+                                if snap.exists {
+                                    continue
+                                }
+                                try await self.commitRoomJoin(
+                                    roomDoc: roomDoc,
+                                    myUserDoc: myUserDoc,
+                                    inviterUserDoc: inviterUserDoc,
+                                    roomId: candidate,
+                                    participantUids: [inviterUid, myUid]
+                                )
+                                await MainActor.run {
+                                    self.isLoading = false
+                                    self.connectSucceeded = true
+                                }
+                                break
+                            } catch {
+                                await MainActor.run {
+                                    self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(error.localizedDescription)"
                                     self.allowInviteCodeError = true
                                     self.isLoading = false
                                 }
                                 return
                             }
-                            if let s = doc, s.exists {
-                                attemptGenerateUniqueRoomIdAndSave()
-                                return
-                            }
-                            
-                            guard let myUid = self.currentUserUID else { return }
-                            let myUserDoc = self.db.collection("Users").document(myUid)
-                            self.commitRoomJoin(roomDoc: roomDoc, myUserDoc: myUserDoc, inviterUserDoc: inviterUserDoc, roomId: candidate, participantUids: [inviterUid, myUid]) { err in
-                                if let err = err {
-                                    DispatchQueue.main.async {
-                                        self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(err.localizedDescription)"
-                                        self.allowInviteCodeError = true
-                                        self.isLoading = false
-                                    }
-                                    return
-                                }
-                                DispatchQueue.main.async {
-                                    self.isLoading = false
-                                    self.connectSucceeded = true
-                                }
-                            }
                         }
                     }
-                    // 고유 roomId가 확보될 때까지 재시도하며 저장
-                    attemptGenerateUniqueRoomIdAndSave()
+                    Task {
+                        await attemptGenerateUniqueRoomIdAndSave()
+                    }
                 }
             }
         }
     }
     
-    private func commitRoomJoin(roomDoc: DocumentReference, myUserDoc: DocumentReference, inviterUserDoc: DocumentReference?, roomId: String, participantUids: [String], completion: @escaping (Error?) -> Void) {
-        let saveTgt = db.batch()
-        /// Rooms/{roomId}의 participants에 uid 추가
-        saveTgt.setData([
-            "participants": participantUids,
-            "createdAt": FieldValue.serverTimestamp()
-        ], forDocument: roomDoc, merge: true)
-        /// 내 유저 문서에 roomId 추가
-        saveTgt.setData([
-            "roomId": roomId,
-            "createdAt": FieldValue.serverTimestamp()
-        ], forDocument: myUserDoc, merge: true)
-        /// 초대자 유저 문서에 roomId 추가
-        if let inviterUserDoc = inviterUserDoc {
-            saveTgt.setData([
-                "roomId": roomId,
+    private func commitRoomJoin(
+        roomDoc: DocumentReference,
+        myUserDoc: DocumentReference,
+        inviterUserDoc: DocumentReference?,
+        roomId: String,
+        participantUids: [String]
+    ) async throws {
+        let roomPath = roomDoc.path
+        let myUserPath = myUserDoc.path
+
+        var ops: [DataManager.BatchOption] = []
+
+        if participantUids.count == 1 {
+            // A) 기존 방: participants에 내 uid만 추가 (덮어쓰기 금지)
+            ops.append(.update(path: roomPath, data: [
+                "participants": FieldValue.arrayUnion(participantUids)
+            ]))
+        } else {
+            // B) 새 방: 두 명으로 설정 + createdAt 기록
+            ops.append(.upsert(path: roomPath, data: [
+                "participants": participantUids,
                 "createdAt": FieldValue.serverTimestamp()
-            ], forDocument: inviterUserDoc, merge: true)
+            ]))
         }
-        saveTgt.commit(completion: completion)
+        // 초대자 유저 문서는 B 케이스에서만 업서트
+        if participantUids.count > 1, let inviterPath = inviterUserDoc?.path {
+            ops.append(.upsert(path: inviterPath, data: [
+                "roomId": roomId,
+                "updatedAt": FieldValue.serverTimestamp()
+            ]))
+        }
+        
+        // 내 유저 문서 roomId 업서트
+        ops.append(.upsert(path: myUserPath, data: [
+            "roomId": roomId,
+            "updatedAt": FieldValue.serverTimestamp()
+        ]))
+
+        try await dataManager.batchUpdate(ops)
     }
     
+    // MARK: - 내 초대코드 재생성
     func refreshInviteCode() {
         self.isLoading = true
         guard let uid = dataManager.getCurrentUserId() else {
@@ -285,7 +269,7 @@ final class InviteViewModel: ObservableObject {
         func createNewInvite() {
             generateInviteCodeService.generateUniqueInviteCode { result in
                 switch result {
-                case .failure(let err):
+                case .failure(_):
                     self.isLoading = false
                     
                 case .success(let newCode):
@@ -294,8 +278,8 @@ final class InviteViewModel: ObservableObject {
                     inviteDoc.setData([
                         "inviterUid": uid,
                         "expireDate": expireDate
-                    ]) { err in
-                        if let err = err {
+                    ]) { error in
+                        if error != nil {
                             self.isLoading = false
                             return
                         }
@@ -310,13 +294,17 @@ final class InviteViewModel: ObservableObject {
         }
         
         if let oldCode = inviteCode, !oldCode.isEmpty {
-            db.collection("Invites").document(oldCode).delete { error in
-                if let error = error {
-                    self.inviteText = "다시 시도해주세요"
-                    self.isLoading = false
-                    return
+            Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    try await self.dataManager.delete(path: "Invites/\(oldCode)")
+                    createNewInvite()
+                } catch {
+                    await MainActor.run {
+                        self.inviteText = "다시 시도해주세요"
+                        self.isLoading = false
+                    }
                 }
-                createNewInvite()
             }
         } else {
             createNewInvite()

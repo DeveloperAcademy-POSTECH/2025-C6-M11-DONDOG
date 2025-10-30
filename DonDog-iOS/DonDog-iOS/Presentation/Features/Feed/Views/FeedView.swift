@@ -31,29 +31,12 @@ struct FeedView: View {
             VStack(spacing: 0){
                 //네비게이션 바
                 HStack{
-                    // 캐시 삭제 버튼 (좌측)
-//                    Button {
-//                        KingfisherManager.shared.downloader.cancelAll()
-//                        ImageCache.default.clearMemoryCache()
-//                        ImageCache.default.clearDiskCache()
-//                    } label: {
-//                        HStack(spacing: 6) {
-//                            Image(systemName: "trash")
-//                                .frame(width: 20, height: 20)
-//                            Text("캐시삭제")
-//                                .font(.captionRegular14)
-//                        }
-//                        .foregroundStyle(Color.ddPrimaryBlue)
-//                        .padding(.vertical, 8)
-//                        .padding(.leading, 20)
-//                    }
-
                     Spacer()
 
                     if connectState.isConnected == false {
                         Button{
                             coordinator.push(.setting)
-                        }label: {
+                        } label: {
                             Image(systemName: "gear")
                                 .frame(width: 24, height: 24)
                                 .foregroundStyle(Color.ddPrimaryBlue)

@@ -10,7 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct TextView: View {
-    @StateObject var viewModel = CardTextViewModel()
+    @StateObject var viewModel = TextViewModel()
     
     let caption: String
     let authorId: String

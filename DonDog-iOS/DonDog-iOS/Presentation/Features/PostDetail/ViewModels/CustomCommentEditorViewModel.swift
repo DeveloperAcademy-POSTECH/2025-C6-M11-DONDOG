@@ -13,6 +13,7 @@ final class CustomCommentEditorViewModel: ObservableObject {
     @Published var comments: [CommentData] = []
     @Published var name: String = "익명"
     
+    //TODO: data manager로 대체
     func saveComment(of text: String, for post: PostData) async {
         guard let roomId = try? await fetchCurrentUserRoomId(), !roomId.isEmpty else {
             print("roomId를 가져오지 못했습니다.")

@@ -1,5 +1,5 @@
 //
-//  CardTextViewModel.swift
+//  TextViewModel.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/29/25.
@@ -9,7 +9,7 @@ import Combine
 import FirebaseAuth
 import FirebaseFirestore
 
-final class CardTextViewModel: ObservableObject {
+final class TextViewModel: ObservableObject {
     // TODO: User 싱글톤 사용
     @Published var name: String = "익명"
     

@@ -93,7 +93,7 @@ final class AppCoordinator: ObservableObject {
         case .authNumber:
             factory.makeAuthNumberView(isNumberWithdraw :authNumberShowWithdraw)
         case .profileSetup:
-            factory.makeProfileSetupView()
+            factory.makeProfileView(mode: .setup)
         case .invite:
             factory.makeInviteView(showSentHint: inviteShowSentHint)
         case .camera:
@@ -105,7 +105,7 @@ final class AppCoordinator: ObservableObject {
         case .setting:
             factory.makeSettingView()
         case .editprofile:
-            factory.makeEditProfileView()
+            factory.makeProfileView(mode: .edit)
         case .archive:
             factory.makeArchiveView()
         case .archiveDetail(let roomId, let date, let initialPosts):

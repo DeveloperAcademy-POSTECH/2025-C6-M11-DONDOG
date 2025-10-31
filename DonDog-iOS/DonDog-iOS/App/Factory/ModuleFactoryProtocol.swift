@@ -12,13 +12,12 @@ protocol ModuleFactoryProtocol {
     func makeWelcomeView() -> WelcomeView
     func makeAuthView(isWithDraw: Bool) -> AuthView
     func makeAuthNumberView(isNumberWithdraw: Bool) -> AuthNumberView
-    func makeProfileSetupView() -> ProfileSetupView
+    func makeProfileView(mode: ProfileFormMode) -> ProfileView
     func makeInviteView(showSentHint: Bool) -> InviteView
     func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
     func makeFeedView() -> FeedView
     func makePostView(with postId: String, in roomId: String) -> PostView
     func makeSettingView() -> SettingView
-    func makeEditProfileView() -> EditProfileView
     func makeArchiveView() -> ArchiveView
     func makeArchiveDetailView(in roomId: String, date: Date, initialPosts: [ArchivePost]?) -> ArchiveDetailView
 }
@@ -44,9 +43,9 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeProfileSetupView() -> ProfileSetupView {
-        let viewModel = ProfileSetupViewModel()
-        let view = ProfileSetupView(viewModel: viewModel)
+    func makeProfileView(mode: ProfileFormMode) -> ProfileView {
+        let viewModel = ProfileViewModel(mode: mode)
+        let view = ProfileView(viewModel: viewModel)
         return view
     }
     
@@ -87,18 +86,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeEditProfileView() -> EditProfileView {
-        let viewModel = EditProfileViewModel()
-        let view = EditProfileView(viewModel: viewModel)
-        return view
-    }
-    
     func makeArchiveView() -> ArchiveView {
         let stickerViewModel = ArchiveStickerViewModel()
         let viewModel = ArchiveViewModel(stickerViewModel: stickerViewModel)
         let view = ArchiveView(viewModel: viewModel)
         return view
-    }   
+    }
     
     @MainActor
     func makeArchiveDetailView(in roomId: String, date: Date, initialPosts: [ArchivePost]? = nil) -> ArchiveDetailView {
@@ -107,4 +100,3 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
 }
-

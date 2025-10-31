@@ -13,6 +13,7 @@ struct DateUtils {
         case yearMonth = "yyyy년 M월"
         case monthDay = "MM월 dd일"
         case day = "d"
+        case time = "HH:mm"
         case full = "MM월 dd일 HH:mm"
         case dayKey = "yyyy-MM-dd"
     }
@@ -36,7 +37,7 @@ struct DateUtils {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-        formatter.dateFormat = DateFormat.full.rawValue
+        formatter.dateFormat = DateFormat.time.rawValue
         
         switch seconds {
         case 0..<60:

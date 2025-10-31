@@ -1,5 +1,5 @@
 //
-//  PostDetailViewModel.swift
+//  PostViewModel.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/26/25.
@@ -9,7 +9,7 @@ import Combine
 import FirebaseAuth
 import FirebaseFirestore
 
-final class PostDetailViewModel: ObservableObject {
+final class PostViewModel: ObservableObject {
     @Published var showDeleteConfirmAlert = false
     @Published var showUnauthorizedAlert = false
     @Published var posts: [PostData]

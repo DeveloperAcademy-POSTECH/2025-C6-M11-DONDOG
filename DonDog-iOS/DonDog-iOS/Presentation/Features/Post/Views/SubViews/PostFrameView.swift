@@ -10,7 +10,7 @@ import FirebaseCore
 
 struct PostFrameView: View {
     @Binding var currentIndex: Int
-    @StateObject var viewModel: PostDetailViewModel
+    @StateObject var viewModel: PostViewModel
     @State private var shouldBeUpdated: Bool = false
     
     var isTextFieldFocused: FocusState<Bool>.Binding

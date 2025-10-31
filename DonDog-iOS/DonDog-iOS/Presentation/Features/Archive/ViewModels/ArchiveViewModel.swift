@@ -14,7 +14,6 @@ import SwiftUI
 
 final class ArchiveViewModel: ObservableObject {
     let connectUserInfo = UserPairingStore.shared
-    var stickerViewModel: ArchiveStickerViewModel
     private weak var coordinator: AppCoordinator?
     
     @Published var archiveMonths: [ArchiveMonth] = []
@@ -25,10 +24,6 @@ final class ArchiveViewModel: ObservableObject {
     private let db = Firestore.firestore()
     private let calendar = Calendar(identifier: .gregorian)
     private let timezone = TimeZone(identifier: "Asia/Seoul") ?? .current
-    
-    init(stickerViewModel: ArchiveStickerViewModel) {
-        self.stickerViewModel = stickerViewModel
-    }
     
     func attach(coordinator: AppCoordinator) {
         self.coordinator = coordinator
@@ -126,8 +121,6 @@ final class ArchiveViewModel: ObservableObject {
                     guard let s = stickerTypeString, s != "null" else { return nil }
                     return StickerType(rawValue: s)
                 }()
-                
-                stickerViewModel.getStickerData(stickerPostId: stickerPostId ?? "", for: doc.documentID)
                 
                 let post = ArchivePost(
                     id: doc.documentID,

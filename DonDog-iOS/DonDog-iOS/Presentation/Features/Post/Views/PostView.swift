@@ -1,5 +1,5 @@
 //
-//  PostDetailView.swift
+//  PostView.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/26/25.
@@ -8,9 +8,9 @@
 import SwiftUI
 import FirebaseFirestore
 
-struct PostDetailView: View {
+struct PostView: View {
     @EnvironmentObject var coordinator: AppCoordinator
-    @StateObject var viewModel: PostDetailViewModel
+    @StateObject var viewModel: PostViewModel
     @FocusState private var isTextFieldFocused: Bool
     @State private var currentIndex: Int = 0
     

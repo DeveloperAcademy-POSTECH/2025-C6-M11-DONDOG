@@ -7,9 +7,9 @@
 
 import FirebaseCore
 
-struct PostData: Codable {
+struct PostData: Codable, Hashable {
     let postId: String
-    let uid: String
+    let authorId: String
     let frontImageURL: String
     let backImageURL: String
     let caption: String
@@ -18,9 +18,9 @@ struct PostData: Codable {
     let stickerPostId: String
     let stickerType: String?
     
-    init(postId: String, uid: String, frontImageURL: String, backImageURL: String, caption: String, createdAt: Timestamp? = nil, stickerPostId: String, stickerType: String?) {
+    init(postId: String, authorId: String, frontImageURL: String, backImageURL: String, caption: String , createdAt: Timestamp? = nil, stickerPostId: String, stickerType: String?) {
         self.postId = postId
-        self.uid = uid
+        self.authorId = authorId
         self.frontImageURL = frontImageURL
         self.backImageURL = backImageURL
         self.caption = caption
@@ -33,5 +33,5 @@ struct PostData: Codable {
 
 extension PostData {
     var frontURL: URL? { URL(string: frontImageURL) }
-    var backURL: URL? { URL(string: backImageURL) }
+    var backURL: URL?  { URL(string: backImageURL) }
 }

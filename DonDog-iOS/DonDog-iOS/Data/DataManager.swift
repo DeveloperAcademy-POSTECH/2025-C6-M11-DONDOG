@@ -5,9 +5,9 @@
 //  Created by Ito on 10/26/25.
 //
 
-import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
+import FirebaseAuth
 import UIKit
 
 // MARK: - 에러 타입
@@ -21,7 +21,7 @@ enum DataManagerError: LocalizedError {
     case authenticationRequired
     case userDocumentNotFound
     case roomIdNotFound
-
+    
     var errorDescription: String? {
         switch self {
         case .invalidPath: return "잘못된 경로입니다"
@@ -37,77 +37,77 @@ enum DataManagerError: LocalizedError {
     }
 }
 
-final class FirebaseDataManager: DataManagerProtocol {
-    static let shared = FirebaseDataManager()
+final class DataManager: DataManagerProtocol {
+    static let shared = DataManager()
     init() {}
-
-    private let database = Firestore.firestore()
+    
+    private let db = Firestore.firestore()
     private let storage = Storage.storage()
-
+    
     // MARK: - Helper: 경로 파싱
     private func parseFirestorePath(_ path: String) throws -> DocumentReference {
         let components = path.split(separator: "/").map(String.init)
         guard components.count >= 2, components.count % 2 == 0 else {
             throw DataManagerError.invalidPath
         }
-
+        
         var reference: DocumentReference?
         for i in stride(from: 0, to: components.count, by: 2) {
             let collectionName = components[i]
             let documentId = components[i + 1]
-
+            
             if i == 0 {
-                reference = database.collection(collectionName).document(documentId)
+                reference = db.collection(collectionName).document(documentId)
             } else {
                 reference = reference?.collection(collectionName).document(documentId)
             }
         }
-
+        
         guard let docRef = reference else {
             throw DataManagerError.invalidPath
         }
         return docRef
     }
-
+    
     private func parseCollectionPath(_ path: String) throws -> CollectionReference {
         let components = path.split(separator: "/").map(String.init)
         guard components.count % 2 == 1 else {
             throw DataManagerError.invalidPath
         }
-
+        
         if components.count == 1 {
-            return database.collection(components[0])
+            return db.collection(components[0])
         }
-
+        
         var docRef: DocumentReference?
         for i in stride(from: 0, to: components.count - 1, by: 2) {
             let collectionName = components[i]
             let documentId = components[i + 1]
-
+            
             if i == 0 {
-                docRef = database.collection(collectionName).document(documentId)
+                docRef = db.collection(collectionName).document(documentId)
             } else {
                 docRef = docRef?.collection(collectionName).document(documentId)
             }
         }
-
+        
         let finalCollectionName = components[components.count - 1]
         if let docRef = docRef {
             return docRef.collection(finalCollectionName)
         } else {
-            return database.collection(finalCollectionName)
+            return db.collection(finalCollectionName)
         }
     }
-
+    
     // MARK: - Firestore 읽기
     func fetch<T: Decodable>(path: String) async throws -> T {
         let docRef = try parseFirestorePath(path)
         let snapshot = try await docRef.getDocument()
-
+        
         guard snapshot.exists else {
             throw DataManagerError.documentNotFound
         }
-
+        
         do {
             return try snapshot.data(as: T.self)
         } catch {
@@ -115,11 +115,11 @@ final class FirebaseDataManager: DataManagerProtocol {
             throw DataManagerError.decodingFailed
         }
     }
-
+    
     func fetchCollection<T: Decodable>(path: String) async throws -> [T] {
         let collectionRef = try parseCollectionPath(path)
         let snapshot = try await collectionRef.getDocuments()
-
+        
         return snapshot.documents.compactMap { document in
             do {
                 return try document.data(as: T.self)
@@ -129,7 +129,7 @@ final class FirebaseDataManager: DataManagerProtocol {
             }
         }
     }
-
+    
     func fetchCollection<T: Decodable>(
         path: String,
         orderBy field: String,
@@ -138,7 +138,7 @@ final class FirebaseDataManager: DataManagerProtocol {
         let collectionRef = try parseCollectionPath(path)
         let query = collectionRef.order(by: field, descending: descending)
         let snapshot = try await query.getDocuments()
-
+        
         return snapshot.documents.compactMap { document in
             do {
                 return try document.data(as: T.self)
@@ -148,7 +148,7 @@ final class FirebaseDataManager: DataManagerProtocol {
             }
         }
     }
-
+    
     func fetchWhere<T: Decodable>(
         path: String,
         field: String,
@@ -161,7 +161,7 @@ final class FirebaseDataManager: DataManagerProtocol {
             .whereField(field, isGreaterThanOrEqualTo: value)
             .order(by: orderBy, descending: descending)
         let snapshot = try await query.getDocuments()
-
+        
         return snapshot.documents.compactMap { document in
             do {
                 return try document.data(as: T.self)
@@ -171,113 +171,122 @@ final class FirebaseDataManager: DataManagerProtocol {
             }
         }
     }
-
+    
     // MARK: - Firestore 쓰기
     func create(path: String, data: [String: Any]) async throws {
         let docRef = try parseFirestorePath(path)
         try await docRef.setData(data, merge: true)
     }
-
+    
     func createWithAutoId(path: String, data: [String: Any]) async throws -> String {
         let collectionRef = try parseCollectionPath(path)
         let docRef = try await collectionRef.addDocument(data: data)
         return docRef.documentID
     }
-
+    
     func update(path: String, data: [String: Any]) async throws {
         let docRef = try parseFirestorePath(path)
         try await docRef.updateData(data)
     }
-
+    
+    enum BatchOption {
+        case update(path: String, data: [String: Any]) // 기존 문서에 업데이트, 문서가 없다면 누락
+        case upsert(path: String, data: [String: Any]) // 기존 문서에 업데이트, 없다면 문서 생성
+    }
+    func batchUpdate(_ option: [BatchOption]) async throws {
+        let batch = db.batch()
+        for option in option {
+            switch option {
+            case let .update(path, data):
+                let ref = try parseFirestorePath(path)
+                batch.updateData(data, forDocument: ref)
+            case let .upsert(path, data):
+                let ref = try parseFirestorePath(path)
+                batch.setData(data, forDocument: ref, merge: true)
+            }
+        }
+        try await batch.commit()
+    }
+    
+    // MARK: - Firestore 삭제
     func delete(path: String) async throws {
         let docRef = try parseFirestorePath(path)
         try await docRef.delete()
     }
-
-    func batchUpdate(updates: [(path: String, data: [String: Any])]) async throws {
-        let batch = database.batch()
-
-        for update in updates {
-            let docRef = try parseFirestorePath(update.path)
-            batch.updateData(update.data, forDocument: docRef)
-        }
-
-        try await batch.commit()
-    }
-
+    
     func batchDelete(paths: [String]) async throws {
-        let batch = database.batch()
-
+        let batch = db.batch()
+        
         for path in paths {
             let docRef = try parseFirestorePath(path)
             batch.deleteDocument(docRef)
         }
-
+        
         try await batch.commit()
     }
-
+    
     // MARK: - Storage
     func uploadImage(image: UIImage, path: String) async throws -> String {
         guard let resizedImage = image.resized(maxWidth: 1080) else {
             throw DataManagerError.imageConversionFailed
         }
-
+        
         guard let imageData = resizedImage.jpegData(compressionQuality: 0.8) else {
             throw DataManagerError.imageConversionFailed
         }
-
+        
         let storageRef = storage.reference().child(path)
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
-
+        
         _ = try await storageRef.putDataAsync(imageData, metadata: metadata)
         let downloadURL = try await storageRef.downloadURL()
         return downloadURL.absoluteString
     }
-
+    
     func downloadImage(from urlString: String) async throws -> UIImage {
         guard let url = URL(string: urlString) else {
             throw DataManagerError.invalidPath
         }
-
+        
         let (data, _) = try await URLSession.shared.data(from: url)
-
+        
         guard let image = UIImage(data: data) else {
             throw DataManagerError.downloadFailed
         }
-
+        
         return image
     }
-
+    
     func deleteStorageFile(urlString: String) async throws {
         do {
             let storageRef = storage.reference(forURL: urlString)
             try await storageRef.delete()
         } catch {
             print("❌ Storage 파일 삭제 실패: \(error.localizedDescription)")
-
+            
             if (error as NSError).code != StorageErrorCode.objectNotFound.rawValue {
                 throw DataManagerError.downloadFailed
             }
         }
     }
-
+    
     // MARK: - Auth
     func getCurrentUserId() -> String? {
         return Auth.auth().currentUser?.uid
     }
-
+    
     func getCurrentUserRoomId() async throws -> String {
         guard let uid = getCurrentUserId() else {
             throw DataManagerError.authenticationRequired
         }
-
+        
         let user: UserData = try await fetch(path: "Users/\(uid)")
-
+        
         guard let roomId = user.roomId, !roomId.isEmpty else {
             throw DataManagerError.roomIdNotFound
         }
-
+        
         return roomId
     }
 }

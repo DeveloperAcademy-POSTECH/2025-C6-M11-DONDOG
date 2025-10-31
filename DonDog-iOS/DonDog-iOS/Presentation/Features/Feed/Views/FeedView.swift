@@ -31,23 +31,6 @@ struct FeedView: View {
             VStack(spacing: 0){
                 //네비게이션 바
                 HStack{
-                    // 캐시 삭제 버튼 (좌측)
-//                    Button {
-//                        KingfisherManager.shared.downloader.cancelAll()
-//                        ImageCache.default.clearMemoryCache()
-//                        ImageCache.default.clearDiskCache()
-//                    } label: {
-//                        HStack(spacing: 6) {
-//                            Image(systemName: "trash")
-//                                .frame(width: 20, height: 20)
-//                            Text("캐시삭제")
-//                                .font(.captionRegular14)
-//                        }
-//                        .foregroundStyle(Color.ddPrimaryBlue)
-//                        .padding(.vertical, 8)
-//                        .padding(.leading, 20)
-//                    }
-
                     Spacer()
 
                     if connectState.isConnected == false {
@@ -157,9 +140,6 @@ struct FeedView: View {
                         }
                         .frame(height: 520)
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-//                        .transaction { transaction in
-//                            transaction.animation = .easeInOut(duration: 0.8)
-//                        }
                         .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
                         .onChange(of: viewModel.currentPostIndex) { oldValue, newIndex in
                             withAnimation(.easeInOut(duration: 0.3)) {
@@ -170,15 +150,19 @@ struct FeedView: View {
                             HStack{
                                 Spacer()
                                 Button {
-                                    if viewModel.currentPost != nil {
-                                        if !viewModel.displayablePosts.isEmpty {
-                                            let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
-                                            coordinator.push(.post(
-                                                postId: currentDisplayable.post.postId,
-                                                roomId: viewModel.currentRoomId
-                                            ))
-                                        }
+                                    guard let post = viewModel.currentPost else {
+                                        print("현재 post가 없습니다.")
+                                        return
                                     }
+                                    // TODO: PostDetail pr 승인 후 제거 예정 (+ 관련 파일들까지)
+                                    //                                        if !viewModel.displayablePosts.isEmpty {
+                                    //                                            let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
+                                    //                                            coordinator.push(.post(
+                                    //                                                postId: currentDisplayable.post.postId,
+                                    //                                                roomId: viewModel.currentRoomId
+                                    //                          l                  ))
+                                    //                                        }
+                                    coordinator.push(.postDetail(posts: [post], postType: .post))
                                 } label: {
                                     ZStack {
                                         Image("DetailViewButton")

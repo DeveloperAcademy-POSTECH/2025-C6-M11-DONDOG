@@ -20,7 +20,7 @@ final class CaptionViewModel: ObservableObject {
     @Published var isUploading: Bool = false
     
     weak var delegate: CaptionViewModelDelegate?
-    private let dataManager: DataManagerProtocol = FirebaseDataManager.shared
+    private let dataManager: DataManagerProtocol = DataManager.shared
     
     var frontImage: UIImage?
     var backImage: UIImage?
@@ -71,7 +71,7 @@ final class CaptionViewModel: ObservableObject {
                 // 4) Firestore 저장을 위한 모델 구성
                 let postData = PostData(
                     postId: postId,
-                    uid: uid,
+                    authorId: uid,
                     frontImageURL: frontURL,
                     backImageURL: backURL,
                     caption: captionSnapshot,
@@ -81,7 +81,7 @@ final class CaptionViewModel: ObservableObject {
 
                 // 5) Firestore 문서 쓰기 (Rooms/{roomId}/posts/{postId})
                 var dict = try Firestore.Encoder().encode(postData)
-                dict["uid"] = postData.uid
+                dict["authorId"] = postData.authorId
                 dict["createdAt"] = FieldValue.serverTimestamp()
                 dict["updatedAt"] = FieldValue.serverTimestamp()
 
@@ -102,7 +102,7 @@ final class CaptionViewModel: ObservableObject {
                 // 7) 완료 콜백
                 await MainActor.run {
                     self.isUploading = false
-                    print("✅ 업로드 성공: \(postData.uid)")
+                    print("✅ 업로드 성공: \(postData.authorId)")
                     print("📝 캡션: \(postData.caption)")
                     self.delegate?.didUploadPost()
                     onSuccess()

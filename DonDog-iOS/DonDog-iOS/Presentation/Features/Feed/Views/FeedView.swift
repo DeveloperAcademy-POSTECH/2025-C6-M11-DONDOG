@@ -24,33 +24,16 @@ struct FeedView: View {
     @State private var showToastView = false
     @State private var toastWorkItem: DispatchWorkItem?
     
-    @EnvironmentObject var connectState: UserPairingStore
+    //@EnvironmentObject var connectState: UserPairingStore
     
     var body: some View {
         ZStack{
             VStack(spacing: 0){
                 //네비게이션 바
                 HStack{
-                    // 캐시 삭제 버튼 (좌측)
-//                    Button {
-//                        KingfisherManager.shared.downloader.cancelAll()
-//                        ImageCache.default.clearMemoryCache()
-//                        ImageCache.default.clearDiskCache()
-//                    } label: {
-//                        HStack(spacing: 6) {
-//                            Image(systemName: "trash")
-//                                .frame(width: 20, height: 20)
-//                            Text("캐시삭제")
-//                                .font(.captionRegular14)
-//                        }
-//                        .foregroundStyle(Color.ddPrimaryBlue)
-//                        .padding(.vertical, 8)
-//                        .padding(.leading, 20)
-//                    }
-
                     Spacer()
 
-                    if connectState.isConnected == false {
+                    if viewModel.connectUserInfo.isConnected == false {
                         Button{
                             coordinator.push(.setting)
                         }label: {
@@ -97,7 +80,7 @@ struct FeedView: View {
                             .foregroundStyle(.ddPrimaryBlue)
                     }
                     .padding(.top, 280)
-                } else if connectState.isConnected == false {
+                } else if viewModel.connectUserInfo.isConnected == false {
                     VStack{
                         Spacer()
                         Image(systemName: "person.fill.xmark")
@@ -157,9 +140,6 @@ struct FeedView: View {
                         }
                         .frame(height: 520)
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-//                        .transaction { transaction in
-//                            transaction.animation = .easeInOut(duration: 0.8)
-//                        }
                         .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
                         .onChange(of: viewModel.currentPostIndex) { oldValue, newIndex in
                             withAnimation(.easeInOut(duration: 0.3)) {
@@ -173,9 +153,10 @@ struct FeedView: View {
                                     if viewModel.currentPost != nil {
                                         if !viewModel.displayablePosts.isEmpty {
                                             let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
+                                            guard let roomId = viewModel.connectUserInfo.roomId else { return }
                                             coordinator.push(.post(
                                                 postId: currentDisplayable.post.postId,
-                                                roomId: viewModel.currentRoomId
+                                                roomId: roomId
                                             ))
                                         }
                                     }
@@ -212,7 +193,7 @@ struct FeedView: View {
                     .padding(.top, 280)
                 }
                 Spacer()
-                if connectState.isConnected == true{
+                if viewModel.connectUserInfo.isConnected == true{
                     HStack{
                         Spacer()
                         Button{
@@ -327,7 +308,7 @@ struct FeedView: View {
             )
         }
         .sheet(isPresented: $showStickerSheet) {
-            if let sticker = viewModel.sticker {
+            if let sticker = viewModel.sticker, let name = viewModel.connectUserInfo.myName {
                 let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
                 StickerSheetView(
                     stickerImage: sticker,
@@ -340,7 +321,7 @@ struct FeedView: View {
                             viewModel.removeStickerData()
                         }
                     },
-                    borderedStickers: viewModel.borderedStickers, nickname: viewModel.myNickname
+                    borderedStickers: viewModel.borderedStickers, nickname: name
                 )
                 .presentationDetents([.height(392)])
                 .presentationDragIndicator(.visible)

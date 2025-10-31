@@ -16,7 +16,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var isLoading = false
     @Published var isUploading = false
     @Published var isAfterUpload = false
-    @Published var currentRoomId: String = ""
     @Published var selectedPostId: String = "" {
         didSet {
             checkIsNotMyPost()
@@ -24,7 +23,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     @Published var stickerImage: UIImage?
     @Published var sticker: UIImage?
-    @Published var myNickname: String = ""
     @Published var borderedStickers: [String: UIImage] = [:]
     
     @Published var currentPost: PostData?
@@ -34,24 +32,17 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var emotion: String = "null"
     @Published var isNotMyPost = false
     
+    let connectUserInfo = UserPairingStore.shared
     private let dataManager: DataManagerProtocol = FirebaseDataManager.shared
     private let imageUtils = ImageUtils()
     
     init() {
-        Task {
-            do {
-                self.currentRoomId = try await dataManager.getCurrentUserRoomId()
-                print("currentRoomId 초기화 완료: \(self.currentRoomId)")
-            } catch {
-                print("roomId 가져오기 실패: \(error.localizedDescription)")
-            }
-        }
         loadTodayPosts()
         self.getStickerData()
     }
     
     func checkIsNotMyPost() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+        guard let roomId = connectUserInfo.roomId, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있음")
             return
         }
@@ -59,13 +50,13 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         Task {
             do {
                 let postData: PostData = try await dataManager.fetch(
-                    path: "Rooms/\(currentRoomId)/posts/\(selectedPostId)"
+                    path: "Rooms/\(roomId)/posts/\(selectedPostId)"
                 )
                 
-                guard let currentUid = dataManager.getCurrentUserId() else { return }
+                guard let uid = connectUserInfo.myUid else { return }
                 
                 await MainActor.run {
-                    self.isNotMyPost = postData.uid != currentUid
+                    self.isNotMyPost = postData.uid != uid
                 }
             } catch {
                 print("문서 조회 실패: \(error.localizedDescription)")
@@ -74,7 +65,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func getStickerData() {
-        guard let uid = dataManager.getCurrentUserId() else { return }
+        guard let uid = connectUserInfo.myUid, let roomId = connectUserInfo.roomId else { return }
         
         Task {
             do {
@@ -84,13 +75,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     print("recentPostId 없음")
                     return
                 }
-                
-                await MainActor.run {
-                    self.myNickname = user.name
-                }
-                
-                let roomId = try await dataManager.getCurrentUserRoomId()
-                
+          
                 // stickerPostId 선택
                 let postIdToFetch: String
                 if let currentPost = self.currentPost,
@@ -156,23 +141,23 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func updateStickerData() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+        guard let roomId = connectUserInfo.roomId, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있어 업데이트 불가")
             return
         }
         
-        guard let currentUid = dataManager.getCurrentUserId() else { return }
+        guard let uid = connectUserInfo.myUid else { return }
         
         Task {
             do {
-                let user: UserData = try await dataManager.fetch(path: "Users/\(currentUid)")
+                let user: UserData = try await dataManager.fetch(path: "Users/\(uid)")
                 guard let recentPostId = user.recentPostId else {
                     print("recentPostId 없음")
                     return
                 }
                 
                 try await dataManager.update(
-                    path: "Rooms/\(currentRoomId)/posts/\(selectedPostId)",
+                    path: "Rooms/\(roomId)/posts/\(selectedPostId)",
                     data: [
                         "stickerPostId": recentPostId,
                         "stickerType": emotion,
@@ -181,14 +166,14 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 )
                 
                 let updatedPost: PostData = try await dataManager.fetch(
-                    path: "Rooms/\(currentRoomId)/posts/\(selectedPostId)"
+                    path: "Rooms/\(roomId)/posts/\(selectedPostId)"
                 )
                 
                 let stickerPostId = updatedPost.stickerPostId
                 
                 self.downloadStickerImage(
                     stickerPostId: stickerPostId,
-                    roomId: self.currentRoomId,
+                    roomId: roomId,
                     stickerType: self.emotion
                 ) { stickerImage in
                     DispatchQueue.main.async {
@@ -227,7 +212,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     
     
     func removeStickerData() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+        guard let roomId = connectUserInfo.roomId, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있어 삭제 불가")
             return
         }
@@ -235,7 +220,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         Task {
             do {
                 try await dataManager.update(
-                    path: "Rooms/\(currentRoomId)/posts/\(selectedPostId)",
+                    path: "Rooms/\(roomId)/posts/\(selectedPostId)",
                     data: [
                         "stickerPostId": "",
                         "stickerType": FieldValue.delete(),
@@ -300,9 +285,10 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         isLoading = true
         isUploading = false
 
+        guard let roomId = connectUserInfo.roomId else { return }
+        
         Task {
             do {
-                let roomId = try await dataManager.getCurrentUserRoomId()
                 print("오늘 찍은 Room posts 조회 시작: \(roomId)")
 
                 let calendar = Calendar.current
@@ -345,7 +331,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         print("🖼️ 모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")
         displayablePosts = []
         
-        guard let currentUserUid = dataManager.getCurrentUserId() else { return }
+        guard let uid = connectUserInfo.myUid else { return }
         
         let group = DispatchGroup()
         var tempDisplayablePosts: [Int: DisplayablePost] = [:]
@@ -353,7 +339,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         for (index, post) in posts.enumerated() {
             group.enter()
             
-            let isMyPost = (post.uid == currentUserUid)
+            let isMyPost = (post.uid == uid)
             let imageGroup = DispatchGroup()
             
             var frontImageURL: URL? = nil

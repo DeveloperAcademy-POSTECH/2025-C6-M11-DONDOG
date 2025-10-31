@@ -13,6 +13,7 @@ import FirebaseStorage
 
 final class AuthNumberViewModel: ObservableObject {
     private weak var coordinator: AppCoordinator?
+    private let dataManager: DataManagerProtocol = DataManager.shared
 
     init(coordinator: AppCoordinator? = nil) {
         self.coordinator = coordinator
@@ -65,39 +66,36 @@ final class AuthNumberViewModel: ObservableObject {
                     self.isLoading = false
                 } else {
                     self.codeError = nil
-                    print("인증 성공")
+                    print("[Auth][signIn] 인증 성공")
                     if let user = Auth.auth().currentUser {
                         print("전화번호:", user.phoneNumber ?? "없음")
                     }
                     if self.isNumberWithdraw == true {
-                        print("탈퇴 시작")
+                        print("[Auth][signIn] 탈퇴 시작")
                         self.performAccountDeletion()
                     } else {
-                        print("로그인 성공")
-                        self.routeAfterSignIn()
+                        print("[Auth][signIn] 로그인 성공")
+                        self.routeAfterLogin()
                     }
                 }
             }
         }
     }
     
-    private func routeAfterSignIn() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let docRef = Firestore.firestore().collection("Users").document(uid)
-
-        docRef.getDocument { [weak self] snapshot, error in
-            guard let self = self else { return }
-
-            if let error = error {
-                print("[Auth][routeAfterSignIn] fetch user doc error: \(error.localizedDescription)")
-                DispatchQueue.main.async {
-                    self.coordinator?.push(.profileSetup)
-                }
-                return
+    private func routeAfterLogin() {
+        Task {
+            guard let uid = dataManager.getCurrentUserId(), !uid.isEmpty else { return }
+            
+            struct ExistsUserDoc: Decodable {}
+            let exists: Bool
+            do {
+                let _: ExistsUserDoc = try await dataManager.fetch(path: "Users/\(uid)")
+                exists = true
+            } catch {
+                exists = false
             }
-
-            let exists = (snapshot?.exists == true)
-            DispatchQueue.main.async {
+            
+            await MainActor.run {
                 if exists {
                     self.coordinator?.replaceRoot(.feed)
                 } else {
@@ -115,7 +113,6 @@ final class AuthNumberViewModel: ObservableObject {
             let success = await deleteUserDataAndAuth()
             await MainActor.run {
                 if success {
-                    AuthService.isAccountDeletionInProgress = false
                     self.coordinator?.replaceRoot(.welcome)
                 }
                 NotificationCenter.default.post(name: .authServiceReconfigureRouting, object: nil)
@@ -158,8 +155,8 @@ final class AuthNumberViewModel: ObservableObject {
 
             // 중복된 후보 제거
             var uniqueRids = [String: DocumentReference]()
-            for ref in roomDocToCheck {
-                uniqueRids[ref.path] = ref
+            for roomDoc in roomDocToCheck {
+                uniqueRids[roomDoc.path] = roomDoc
             }
 
             // 1-1) participants에서 내가 마지막 유저인지 확인
@@ -167,16 +164,16 @@ final class AuthNumberViewModel: ObservableObject {
             // 1-1-2) 내가 마지막 유저가 아니라면 - participants에서만 나 삭제
             
             // 각 Room 처리: 마지막 참가자면 Storage → posts → comments → Room 삭제, 아니면 participants에서 내 uid만 제거
-            for (_, ref) in uniqueRids {
+            for (_, roomDoc) in uniqueRids {
                 // 최신 스냅샷 확인
-                let snap = try await ref.getDocument()
+                let snap = try await roomDoc.getDocument()
                 guard let data = snap.data(), let parts = data["participants"] as? [String], parts.contains(uid) else { continue }
 
                 if parts.count > 1 {
                     // 2명이상 → participants에서 내 uid만 제거
-                    try await ref.updateData(["participants": FieldValue.arrayRemove([uid])])
+                    try await dataManager.update(path: roomDoc.path, data: ["participants": FieldValue.arrayRemove([uid])])
                     do {
-                        let verifySnap = try await ref.getDocument(source: .server)
+                        let verifySnap = try await roomDoc.getDocument(source: .server)
                         _ = (verifySnap.data()?["participants"] as? [String]) ?? []
                     } catch {
                         _ = error as NSError
@@ -184,7 +181,7 @@ final class AuthNumberViewModel: ObservableObject {
                 } else {
                     // 마지막 1명(본인) → 모든 Rooms 데이터, storage 삭제
                     // 1) posts storage 삭제
-                    let postsSnap = try await ref.collection("posts").getDocuments()
+                    let postsSnap = try await roomDoc.collection("posts").getDocuments()
                     func isFirebaseStorageURL(_ s: String) -> Bool {
                         s.hasPrefix("https://firebasestorage.googleapis.com") || s.hasPrefix("gs://")
                     }
@@ -200,39 +197,38 @@ final class AuthNumberViewModel: ObservableObject {
                             break
                         }
                     }
+                    
                     var urlsToDelete: [String] = []
                     for doc in postsSnap.documents { collectStorageURLs(from: doc.data(), into: &urlsToDelete) }
                     urlsToDelete = Array(Set(urlsToDelete))
-                    let storage = Storage.storage()
                     try await withThrowingTaskGroup(of: Void.self) { group in
                         for url in urlsToDelete {
-                            group.addTask { try await storage.reference(forURL: url).delete() }
+                            group.addTask { try await self.dataManager.deleteStorageFile(urlString: url) }
                         }
                         try await group.waitForAll()
                     }
 
                     // 2) posts 삭제
                     if !postsSnap.isEmpty {
-                        let batch = db.batch()
-                        postsSnap.documents.forEach { batch.deleteDocument($0.reference) }
-                        try await batch.commit()
+                        let postPaths = postsSnap.documents.map { $0.reference.path }
+                        try await dataManager.batchDelete(paths: postPaths)
                     }
 
                     // 3) comments 삭제
                     let postIds = postsSnap.documents.map { $0.documentID }
                     for postId in postIds {
-                        let holderRef = ref.collection("comments").document(postId) // Rooms/{roomId}/comments/{postId}
-                        let subCommentsRef = holderRef.collection("comments")       // Rooms/{roomId}/comments/{postId}/comments
+                        let commentRef = roomDoc.collection("comments").document(postId) // Rooms/{roomId}/comments/{postId}
+                        let subCommentsRef = commentRef.collection("comments")       // Rooms/{roomId}/comments/{postId}/comments
 
                         if let subCommentsSnap = try? await subCommentsRef.getDocuments(), !subCommentsSnap.isEmpty {
-                            let batch = db.batch()
-                            subCommentsSnap.documents.forEach { batch.deleteDocument($0.reference) }
-                            try? await batch.commit()
+                            let subCommentsPaths = subCommentsSnap.documents.map { $0.reference.path }
+                            try await dataManager.batchDelete(paths: subCommentsPaths)
                         }
-                        try? await holderRef.delete()
+                        
+                        try await dataManager.delete(path: commentRef.path)
                     }
                     // 4) Room 문서 삭제
-                    try await ref.delete()
+                    try await dataManager.delete(path: roomDoc.path)
                 }
             }
             
@@ -241,22 +237,20 @@ final class AuthNumberViewModel: ObservableObject {
             let inviterQuery = invitesDoc.whereField("inviterUid", isEqualTo: uid)
             let inviterData = try await inviterQuery.getDocuments()
             if !inviterData.isEmpty {
-                let batch = db.batch()
-                inviterData.documents.forEach { batch.deleteDocument($0.reference) }
-                try await batch.commit()
+                let invitePaths = inviterData.documents.map { $0.reference.path }
+                try await dataManager.batchDelete(paths: invitePaths)
             }
             
             // 1-3) Users/{uid} 삭제 (하위 fcmTokens 먼저 삭제)
             do {
                 let tokensSnap = try await userDoc.collection("fcmTokens").getDocuments()
                 if !tokensSnap.isEmpty {
-                    let batch = db.batch()
-                    tokensSnap.documents.forEach { batch.deleteDocument($0.reference) }
-                    try await batch.commit()
+                    let tokenPaths = tokensSnap.documents.map { $0.reference.path }
+                    try await dataManager.batchDelete(paths: tokenPaths)
                 }
             }
             // Users/{uid} 문서 삭제
-            try await userDoc.delete()
+            try await dataManager.delete(path: userDoc.path)
 
             // 2) Firebase Auth 사용자 삭제
             do {

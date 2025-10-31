@@ -138,11 +138,6 @@ final class AuthService {
                     return
                 }
                 
-                /// 보류 중 쓰기 -> 대기
-                if userDoc.metadata.hasPendingWrites {
-                    return
-                }
-                
                 /// user 문서가 있을 때 -> feed로 이동
                 let data = userDoc.data() ?? [:]
                 let roomId = data["roomId"] as? String

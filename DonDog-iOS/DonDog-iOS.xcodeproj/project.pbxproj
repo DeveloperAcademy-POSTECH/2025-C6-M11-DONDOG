@@ -29,6 +29,7 @@
 		8B354C802EA4A17A0030F9A1 /* UserPairingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B354C7F2EA4A17A0030F9A1 /* UserPairingStore.swift */; };
 		8B5F44562E90FA74003137F2 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */; };
 		8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */; };
+		8B6624472EB34706006BDF4A /* InviteDoc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6624462EB34706006BDF4A /* InviteDoc.swift */; };
 		8B6C6D0D2E99702200D12F61 /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6C6D0C2E99702200D12F61 /* EditProfileViewModel.swift */; };
 		8B6E118A2E968E2B0082B24C /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E11892E968E2B0082B24C /* SettingView.swift */; };
 		8B6E118D2E976F380082B24C /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E118C2E976F380082B24C /* EditProfileView.swift */; };
@@ -50,7 +51,7 @@
 		8CAD89B02EA6284E004318F0 /* TextStrokeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */; };
 		8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */; };
 		8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */; };
-		8CF3BD762EAE0EAB0050003C /* FirebaseDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD752EAE0EA40050003C /* FirebaseDataManager.swift */; };
+		8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD752EAE0EA40050003C /* DataManager.swift */; };
 		8CF3BD7D2EAF1C710050003C /* PostData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD7C2EAF1C6F0050003C /* PostData.swift */; };
 		8CF3BD7F2EAF1C770050003C /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD7E2EAF1C740050003C /* UserData.swift */; };
 		8CF3BD812EAF1D180050003C /* CommentData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD802EAF1D150050003C /* CommentData.swift */; };
@@ -129,11 +130,12 @@
 		61C9B19D2E9BEC130007C8F4 /* ArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveView.swift; sourceTree = "<group>"; };
 		61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveViewModel.swift; sourceTree = "<group>"; };
 		61C9B1A52E9BFCBE0007C8F4 /* ArchiveDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDate.swift; sourceTree = "<group>"; };
-		8B003FDA2EB1DF68005C808E /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
+		8B0107BF2EB3947D00D030BD /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8B354C7F2EA4A17A0030F9A1 /* UserPairingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPairingStore.swift; sourceTree = "<group>"; };
 		8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewModel.swift; sourceTree = "<group>"; };
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8B6624462EB34706006BDF4A /* InviteDoc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteDoc.swift; sourceTree = "<group>"; };
 		8B6C6D0C2E99702200D12F61 /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		8B6E11892E968E2B0082B24C /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		8B6E118C2E976F380082B24C /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
@@ -154,7 +156,7 @@
 		8CAD89AF2EA62846004318F0 /* TextStrokeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextStrokeUtils.swift; sourceTree = "<group>"; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
-		8CF3BD752EAE0EA40050003C /* FirebaseDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDataManager.swift; sourceTree = "<group>"; };
+		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		8CF3BD7C2EAF1C6F0050003C /* PostData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostData.swift; sourceTree = "<group>"; };
 		8CF3BD7E2EAF1C740050003C /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		8CF3BD802EAF1D150050003C /* CommentData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentData.swift; sourceTree = "<group>"; };
@@ -354,7 +356,7 @@
 			isa = PBXGroup;
 			children = (
 				8CF3BD792EAF1C2B0050003C /* Models */,
-				8CF3BD752EAE0EA40050003C /* FirebaseDataManager.swift */,
+				8CF3BD752EAE0EA40050003C /* DataManager.swift */,
 				8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */,
 				8B354C7F2EA4A17A0030F9A1 /* UserPairingStore.swift */,
 			);
@@ -365,6 +367,7 @@
 			isa = PBXGroup;
 			children = (
 				8CF3BD802EAF1D150050003C /* CommentData.swift */,
+				8B6624462EB34706006BDF4A /* InviteDoc.swift */,
 				8CF3BD7E2EAF1C740050003C /* UserData.swift */,
 				8CF3BD7C2EAF1C6F0050003C /* PostData.swift */,
 			);
@@ -766,7 +769,7 @@
 				8B822D7B2EAB617800D708D7 /* Kingfisher */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8B003FDA2EB1DF68005C808E /* DonDog-iOS.app */;
+			productReference = 8B0107BF2EB3947D00D030BD /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -842,6 +845,7 @@
 				8B5F44562E90FA74003137F2 /* ProfileSetupView.swift in Sources */,
 				8CF3BD8B2EAF215A0050003C /* Color+.swift in Sources */,
 				8CF3BD8C2EAF215A0050003C /* Notification+.swift in Sources */,
+				8B6624472EB34706006BDF4A /* InviteDoc.swift in Sources */,
 				8CF3BD8D2EAF215A0050003C /* Font+.swift in Sources */,
 				8CF3BD8E2EAF215A0050003C /* UIImage+.swift in Sources */,
 				8B7729072EA73A3000344491 /* InWebSheetView.swift in Sources */,
@@ -889,7 +893,7 @@
 				8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */,
 				8BBE41F22EA1E9CB00057A23 /* AuthNumberViewModel.swift in Sources */,
 				CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */,
-				8CF3BD762EAE0EAB0050003C /* FirebaseDataManager.swift in Sources */,
+				8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */,
 				CAACD36C2EA0C1120057827D /* ArchiveDetailViewModel.swift in Sources */,
 				8B5F44582E90FA99003137F2 /* ProfileSetupViewModel.swift in Sources */,
 				8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */,

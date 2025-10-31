@@ -37,8 +37,8 @@ enum DataManagerError: LocalizedError {
     }
 }
 
-final class FirebaseDataManager: DataManagerProtocol {
-    static let shared = FirebaseDataManager()
+final class DataManager: DataManagerProtocol {
+    static let shared = DataManager()
     init() {}
     
     private let db = Firestore.firestore()
@@ -189,20 +189,29 @@ final class FirebaseDataManager: DataManagerProtocol {
         try await docRef.updateData(data)
     }
     
+    enum BatchOption {
+        case update(path: String, data: [String: Any]) // 기존 문서에 업데이트, 문서가 없다면 누락
+        case upsert(path: String, data: [String: Any]) // 기존 문서에 업데이트, 없다면 문서 생성
+    }
+    func batchUpdate(_ option: [BatchOption]) async throws {
+        let batch = db.batch()
+        for option in option {
+            switch option {
+            case let .update(path, data):
+                let ref = try parseFirestorePath(path)
+                batch.updateData(data, forDocument: ref)
+            case let .upsert(path, data):
+                let ref = try parseFirestorePath(path)
+                batch.setData(data, forDocument: ref, merge: true)
+            }
+        }
+        try await batch.commit()
+    }
+    
+    // MARK: - Firestore 삭제
     func delete(path: String) async throws {
         let docRef = try parseFirestorePath(path)
         try await docRef.delete()
-    }
-    
-    func batchUpdate(updates: [(path: String, data: [String: Any])]) async throws {
-        let batch = db.batch()
-        
-        for update in updates {
-            let docRef = try parseFirestorePath(update.path)
-            batch.updateData(update.data, forDocument: docRef)
-        }
-        
-        try await batch.commit()
     }
     
     func batchDelete(paths: [String]) async throws {

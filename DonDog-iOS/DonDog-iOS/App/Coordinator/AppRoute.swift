@@ -21,4 +21,5 @@ enum AppRoute: Hashable {
     case editprofile
     case archive
     case archiveDetail(roomId: String, date: Date, initialPosts: [ArchivePost])
+    case postDetail(posts: [PostData], postType: PostType)
 }

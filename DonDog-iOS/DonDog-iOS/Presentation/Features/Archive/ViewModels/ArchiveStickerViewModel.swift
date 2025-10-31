@@ -11,6 +11,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import UIKit
 import Kingfisher
+import SwiftUI
 
 final class ArchiveStickerViewModel: ObservableObject {
     private let connectUserInfo = UserPairingStore.shared
@@ -75,7 +76,7 @@ final class ArchiveStickerViewModel: ObservableObject {
                     case .success(let value):
                         let image = value.image
                         let utils = ImageUtils()
-                        let borderColor = self.borderColor(for: emotion)
+                        let borderColor = StickerType(rawValue: emotion)?.strokeColor
                         
                         DispatchQueue.global(qos: .userInitiated).async {
                             guard let stickerOnly = utils.makeSticker(with: image) else {
@@ -83,7 +84,13 @@ final class ArchiveStickerViewModel: ObservableObject {
                                 return
                             }
                             
-                            let resultImage = stickerOnly.addBorder(thickness: 50, color: borderColor) ?? stickerOnly
+                            let resultImage: UIImage
+                            if let stickerType = StickerType(rawValue: emotion) {
+                                let borderColor = UIColor(stickerType.strokeColor)
+                                resultImage = stickerOnly.addBorder(thickness: 50, color: borderColor) ?? stickerOnly
+                            } else {
+                                resultImage = stickerOnly
+                            }
                             
                             DispatchQueue.main.async {
                                 self.borderedStickers[postId] = resultImage
@@ -96,23 +103,6 @@ final class ArchiveStickerViewModel: ObservableObject {
                     }
                 }
             }
-        }
-    }
-    
-    private func borderColor(for emotion: String) -> UIColor {
-        switch emotion {
-        case "사랑해":
-            return .ddFeelingPink
-        case "멋지다":
-            return .ddFeelingYellow
-        case "뭐야?":
-            return .ddFeelingGreen
-        case "화나":
-            return .ddFeelingOrange
-        case "슬퍼":
-            return .ddFeelingBlue
-        default:
-            return .ddGray700
         }
     }
 }

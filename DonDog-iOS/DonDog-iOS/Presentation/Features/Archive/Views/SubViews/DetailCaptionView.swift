@@ -33,7 +33,7 @@ struct DetailCaptionView: View {
                    !name.isEmpty {
                     Text(name)
                         .foregroundStyle(.ddGray600)
-                } else if let author = post.authorName, !author.isEmpty {
+                } else if let author = post.authorUid, !author.isEmpty {
                     Text(author)
                         .foregroundStyle(.ddGray600)
                 } else {

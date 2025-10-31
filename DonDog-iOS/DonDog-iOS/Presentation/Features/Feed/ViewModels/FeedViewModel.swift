@@ -65,7 +65,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 guard let currentUid = dataManager.getCurrentUserId() else { return }
                 
                 await MainActor.run {
-                    self.isNotMyPost = postData.uid != currentUid
+                    self.isNotMyPost = postData.authorId != currentUid
                 }
             } catch {
                 print("문서 조회 실패: \(error.localizedDescription)")
@@ -200,7 +200,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                         let existingPost = self.displayablePosts[index]
                         let newPostData = PostData(
                             postId: existingPost.postId,
-                            uid: existingPost.uid,
+                            authorId: existingPost.uid,
                             frontImageURL: existingPost.post.frontImageURL,
                             backImageURL: existingPost.post.backImageURL,
                             caption: existingPost.caption,
@@ -254,7 +254,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     let existingPost = self.displayablePosts[index]
                     let newPostData = PostData(
                         postId: existingPost.postId,
-                        uid: existingPost.uid,
+                        authorId: existingPost.uid,
                         frontImageURL: existingPost.post.frontImageURL,
                         backImageURL: existingPost.post.backImageURL,
                         caption: existingPost.caption,
@@ -353,7 +353,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         for (index, post) in posts.enumerated() {
             group.enter()
             
-            let isMyPost = (post.uid == currentUserUid)
+            let isMyPost = (post.authorId == currentUserUid)
             let imageGroup = DispatchGroup()
             
             var frontImageURL: URL? = nil
@@ -364,7 +364,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             backImageURL = post.backURL
             
             imageGroup.enter()
-            getUserName(uid: post.uid) { name in
+            getUserName(uid: post.authorId) { name in
                 nickname = name
                 imageGroup.leave()
             }

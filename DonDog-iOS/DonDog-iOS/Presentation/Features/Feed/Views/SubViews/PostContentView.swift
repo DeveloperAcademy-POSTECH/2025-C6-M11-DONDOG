@@ -83,7 +83,7 @@ struct PostContentView: View {
                     Image(uiImage: viewModel.borderedSticker)
                         .resizable()
                         .frame(width: 110, height: 138)
-                    Image(stickerDecoString)
+                    Image(StickerType(rawValue: viewModel.emotion)?.stickerDecoString ?? "")
                 }
                 .offset(y: 5)
             }
@@ -91,7 +91,7 @@ struct PostContentView: View {
             
             VStack(alignment: .leading) {
                 ForEach(viewModel.comments) { comment in
-                    CommentView(comment: comment, viewModel: viewModel)
+                    OriginalCommentView(comment: comment, viewModel: viewModel)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.vertical, 8)
                         .contentShape(Rectangle())
@@ -141,12 +141,5 @@ struct PostContentView: View {
                 }
             }
         }
-    }
-    
-    private var stickerDecoString: String {
-        guard let stickerEmotion = StickerEmotion(rawValue: viewModel.emotion) else {
-            return ""
-        }
-        return stickerEmotion.stickerDecoString
     }
 }

@@ -39,7 +39,7 @@ struct PolaroidFrame: View {
     }
     
     private var stickerDecoString: String {
-        guard let stickerEmotion = StickerEmotion(rawValue: selectedStickerEmotion ?? "") else {
+        guard let stickerEmotion = StickerType(rawValue: selectedStickerEmotion ?? "") else {
             return ""
         }
         return stickerEmotion.stickerDecoString

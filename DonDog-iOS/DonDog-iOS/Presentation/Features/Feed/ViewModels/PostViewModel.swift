@@ -102,22 +102,14 @@ final class PostViewModel: ObservableObject {
                         let image = value.image
                         
                         // @Sendable 클로저 내부에서 self 캡처를 줄이기 위해 미리 색상을 계산
-                        let borderColor = self.borderColor(for: emotion)
+                        let borderColor = StickerType(rawValue: emotion)?.strokeColor
                         let utils = self.imageUtils
                         
                         DispatchQueue.global(qos: .userInitiated).async {
-                            guard let stickerOnly = utils.makeSticker(with: image) else {
+                            guard let resultImage = utils.makeSticker(with: image) else {
                                 print("스티커 생성 실패")
                                 DispatchQueue.main.async { self.borderedSticker = UIImage() }
                                 return
-                            }
-                            
-                            let resultImage: UIImage
-                            if let bordered = stickerOnly.addBorder(thickness: 50, color: borderColor) {
-                                resultImage = bordered
-                            } else {
-                                print("테두리 추가 실패, 기본 스티커 반환")
-                                resultImage = stickerOnly
                             }
                             
                             DispatchQueue.main.async {
@@ -130,23 +122,6 @@ final class PostViewModel: ObservableObject {
                     }
                 }
             }
-        }
-    }
-    
-    private func borderColor(for emotion: String) -> UIColor {
-        switch emotion {
-        case "사랑해":
-            return .ddFeelingPink
-        case "멋지다":
-            return .ddFeelingYellow
-        case "뭐야?":
-            return .ddFeelingGreen
-        case "화나":
-            return .ddFeelingOrange
-        case "슬퍼":
-            return .ddFeelingBlue
-        default:
-            return .ddGray700
         }
     }
     

@@ -22,9 +22,7 @@ struct DetailContentView: View {
             if totalCount > 1 {
                 CustomPageIndicator(
                     currentIndex: currentIndex + 1,
-                    totalCount: totalCount,
-                    backgroundColor: .ddGray100,
-                    textColor: .ddGray500
+                    totalCount: totalCount
                 )
                 .padding(.vertical, 4)
             }
@@ -66,7 +64,7 @@ struct DetailContentView: View {
     }
     
     private var stickerDecoString: String {
-        guard let stickerEmotion = StickerEmotion(rawValue: stickerViewModel.emotions[post.id] ?? "") else {
+        guard let stickerEmotion = StickerType(rawValue: stickerViewModel.emotions[post.id] ?? "") else {
             return ""
         }
         return stickerEmotion.stickerDecoString

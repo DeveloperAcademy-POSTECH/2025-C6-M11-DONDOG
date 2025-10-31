@@ -12,8 +12,8 @@ struct UserData: Codable {
     let role: String
     let roomId: String?
     let recentPostId: String?
-    let createdAt: Timestamp
-    let updatedAt: Timestamp
+    let createdAt: Timestamp?
+    let updatedAt: Timestamp?
 
     init(name: String, role: String, roomId: String? = nil, recentPostId: String? = nil, createdAt: Timestamp? = nil, updatedAt: Timestamp? = nil) {
         self.name = name

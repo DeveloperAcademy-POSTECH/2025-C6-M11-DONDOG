@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 struct DateUtils {
     enum DateFormat: String {

@@ -11,6 +11,7 @@
 		61C9B19E2E9BEC130007C8F4 /* ArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B19D2E9BEC130007C8F4 /* ArchiveView.swift */; };
 		61C9B1A02E9BED150007C8F4 /* ArchiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */; };
 		61C9B1A62E9BFCBE0007C8F4 /* ArchiveDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A52E9BFCBE0007C8F4 /* ArchiveDate.swift */; };
+		8B0108012EB656E900D030BD /* SitckerCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0108002EB656E900D030BD /* SitckerCollectionView.swift */; };
 		8B1EB7932EA07F7A00F720CF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
@@ -117,6 +118,7 @@
 		61C9B19D2E9BEC130007C8F4 /* ArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveView.swift; sourceTree = "<group>"; };
 		61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveViewModel.swift; sourceTree = "<group>"; };
 		61C9B1A52E9BFCBE0007C8F4 /* ArchiveDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDate.swift; sourceTree = "<group>"; };
+		8B0108002EB656E900D030BD /* SitckerCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitckerCollectionView.swift; sourceTree = "<group>"; };
 		8B5F44552E90FA74003137F2 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		8B5F44572E90FA99003137F2 /* ProfileSetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupViewModel.swift; sourceTree = "<group>"; };
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -182,7 +184,7 @@
 		CAA9AEE42E8FC1B40047A89A /* InviteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteView.swift; sourceTree = "<group>"; };
 		CAA9AEEF2E8FE2990047A89A /* ModuleFactoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleFactoryProtocol.swift; sourceTree = "<group>"; };
 		CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteViewModel.swift; sourceTree = "<group>"; };
-		CAB6B1DE2EB5073800F778EC /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAB6B1DE2EB5073800F778EC /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		CAB6B1E12EB5082D00F778EC /* UserPairingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPairingStore.swift; sourceTree = "<group>"; };
 		CAB6B1E32EB5089600F778EC /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		D219F1E22EAE0A3200BD82B7 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
@@ -266,6 +268,14 @@
 				CAA62D902EA2892000C60E05 /* ArchivePost.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		8B0107FF2EB656CB00D030BD /* Sticker */ = {
+			isa = PBXGroup;
+			children = (
+				8B0108002EB656E900D030BD /* SitckerCollectionView.swift */,
+			);
+			path = Sticker;
 			sourceTree = "<group>";
 		};
 		8B6E118B2E976F2C0082B24C /* Setting */ = {
@@ -398,7 +408,6 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
-				CAB6B1DE2EB5073800F778EC /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -575,6 +584,7 @@
 				D24402A72E992CD800D837C8 /* Caption */,
 				61C9B19A2E9BEBEB0007C8F4 /* Archive */,
 				8B6E118B2E976F2C0082B24C /* Setting */,
+				8B0107FF2EB656CB00D030BD /* Sticker */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -840,6 +850,7 @@
 				CAA9AED92E8FC15C0047A89A /* WinkyApp.swift in Sources */,
 				CAA9AEDA2E8FC15C0047A89A /* AuthViewModel.swift in Sources */,
 				D297CE862EB05DFE00F28395 /* StickerType.swift in Sources */,
+				8B0108012EB656E900D030BD /* SitckerCollectionView.swift in Sources */,
 				8B6C6D0D2E99702200D12F61 /* EditProfileViewModel.swift in Sources */,
 				D219F1E32EAE0A3700BD82B7 /* PostView.swift in Sources */,
 				8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */,

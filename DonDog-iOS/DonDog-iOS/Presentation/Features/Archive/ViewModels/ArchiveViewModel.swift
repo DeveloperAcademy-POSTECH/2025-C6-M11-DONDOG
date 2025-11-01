@@ -14,7 +14,6 @@ import SwiftUI
 
 final class ArchiveViewModel: ObservableObject {
     let connectUserInfo = UserPairingStore.shared
-    var stickerViewModel: ArchiveStickerViewModel
     private weak var coordinator: AppCoordinator?
     
     @Published var archiveMonths: [ArchiveMonth] = []
@@ -25,10 +24,6 @@ final class ArchiveViewModel: ObservableObject {
     private let db = Firestore.firestore()
     private let calendar = Calendar(identifier: .gregorian)
     private let timezone = TimeZone(identifier: "Asia/Seoul") ?? .current
-    
-    init(stickerViewModel: ArchiveStickerViewModel) {
-        self.stickerViewModel = stickerViewModel
-    }
     
     func attach(coordinator: AppCoordinator) {
         self.coordinator = coordinator
@@ -54,17 +49,37 @@ final class ArchiveViewModel: ObservableObject {
         return calendar.date(from: components)
     }
     
+    private func convertToPostData(_ archivePosts: [ArchivePost]) -> [PostData] {
+        return archivePosts.map { archivePost in
+            return PostData(
+                postId: archivePost.id,
+                authorId: archivePost.authorUid ?? "",
+                frontImageURL: archivePost.frontImageURL?.absoluteString ?? "",
+                backImageURL: archivePost.backImageURL?.absoluteString ?? "",
+                caption: archivePost.caption ?? "",
+                createdAt: Timestamp(date: archivePost.createdAt),
+                stickerPostId: archivePost.stickerPostId ?? "",
+                stickerType: archivePost.stickerType?.rawValue
+            )
+        }
+    }
+    
     // 일자별 기록으로 이동
     func moveDailyArchive(month: ArchiveMonth, day: ArchiveDay) {
         guard let selectedDate = getDate(from: month, day: day) else { return }
         
         let key = dayKey(from: selectedDate)
         let initial = dailyPosts[key] ?? []
+        let posts = convertToPostData(initial)
         
         DispatchQueue.main.async {
             self.coordinator?.push(
-                .archiveDetail(roomId: self.connectUserInfo.roomId ?? "", date: selectedDate, initialPosts: initial)
+                .postDetail(posts: posts, postType: .archive)
             )
+            // TODO: PostDetail pr 승인 후 제거 예정 (+ 관련 파일들까지)
+//            self.coordinator?.push(
+//                .archiveDetail(roomId: self.connectUserInfo.roomId ?? "", date: selectedDate, initialPosts: initial)
+//            )
         }
     }
     
@@ -107,13 +122,11 @@ final class ArchiveViewModel: ObservableObject {
                     return StickerType(rawValue: s)
                 }()
                 
-                stickerViewModel.getStickerData(stickerPostId: stickerPostId ?? "", for: doc.documentID)
-                
                 let post = ArchivePost(
                     id: doc.documentID,
                     createdAt: tsCreated.dateValue(),
                     updatedAt: (data["updatedAt"] as? Timestamp)?.dateValue() ?? tsCreated.dateValue(),
-                    authorUid: data["uid"] as? String,
+                    authorUid: data["authorId"] as? String,
                     authorName: (data["authorName"] as? String) ?? (data["authorId"] as? String),
                     frontImageURL: (data["frontImageURL"] as? String).flatMap(URL.init(string:)),
                     backImageURL:  (data["backImageURL"]  as? String).flatMap(URL.init(string:)),

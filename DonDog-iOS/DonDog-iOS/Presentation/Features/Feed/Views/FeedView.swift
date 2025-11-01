@@ -36,7 +36,7 @@ struct FeedView: View {
                     if viewModel.connectUserInfo.isConnected == false {
                         Button{
                             coordinator.push(.setting)
-                        }label: {
+                        } label: {
                             Image(systemName: "gear")
                                 .frame(width: 24, height: 24)
                                 .foregroundStyle(Color.ddPrimaryBlue)
@@ -150,16 +150,19 @@ struct FeedView: View {
                             HStack{
                                 Spacer()
                                 Button {
-                                    if viewModel.currentPost != nil {
-                                        if !viewModel.displayablePosts.isEmpty {
-                                            let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
-                                            guard let roomId = viewModel.connectUserInfo.roomId else { return }
-                                            coordinator.push(.post(
-                                                postId: currentDisplayable.post.postId,
-                                                roomId: roomId
-                                            ))
-                                        }
+                                    guard let post = viewModel.currentPost else {
+                                        print("현재 post가 없습니다.")
+                                        return
                                     }
+                                    // TODO: PostDetail pr 승인 후 제거 예정 (+ 관련 파일들까지)
+                                    //                                        if !viewModel.displayablePosts.isEmpty {
+                                    //                                            let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
+                                    //                                            coordinator.push(.post(
+                                    //                                                postId: currentDisplayable.post.postId,
+                                    //                                                roomId: viewModel.currentRoomId
+                                    //                          l                  ))
+                                    //                                        }
+                                    coordinator.push(.postDetail(posts: [post], postType: .post))
                                 } label: {
                                     ZStack {
                                         Image("DetailViewButton")

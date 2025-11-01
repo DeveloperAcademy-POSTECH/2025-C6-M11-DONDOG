@@ -36,7 +36,7 @@ protocol DataManagerProtocol {
     func delete(path: String) async throws
     
     /// Batch 업데이트
-    func batchUpdate(updates: [(path: String, data: [String: Any])]) async throws
+    func batchUpdate(_ option: [DataManager.BatchOption]) async throws
     
     /// Batch 삭제
     func batchDelete(paths: [String]) async throws

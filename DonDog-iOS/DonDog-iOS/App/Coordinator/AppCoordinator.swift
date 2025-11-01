@@ -100,16 +100,14 @@ final class AppCoordinator: ObservableObject {
             EmptyView()
         case .feed:
             factory.makeFeedView()
-        case .post(let postId, let roomId):
-            factory.makePostView(with: postId, in: roomId)
         case .setting:
             factory.makeSettingView()
         case .editprofile:
             factory.makeEditProfileView()
         case .archive:
             factory.makeArchiveView()
-        case .archiveDetail(let roomId, let date, let initialPosts):
-            factory.makeArchiveDetailView(in: roomId, date: date, initialPosts: initialPosts)
+        case .postDetail(let posts, let postType):
+            factory.makePostView(with: posts, for: postType)
         }
     }
     
@@ -128,13 +126,13 @@ final class AppCoordinator: ObservableObject {
         }
         
         switch url.host {
-        case "post":
-            let roomId = components?.queryItems?.first(where: { $0.name == "roomId" })?.value
-            let postId = components?.queryItems?.first(where: { $0.name == "postId" })?.value
-            
-            if let roomId = roomId, let postId = postId {
-                push(.post(postId: postId, roomId: roomId))
-            }
+//        case "post":
+//            let roomId = components?.queryItems?.first(where: { $0.name == "roomId" })?.value
+//            let postId = components?.queryItems?.first(where: { $0.name == "postId" })?.value
+//            
+//            if let roomId = roomId, let postId = postId {
+//                push(.post(postId: postId, roomId: roomId))
+//            }
             
         default:
             // 처리할 수 없는 host일 경우 피드로 이동

@@ -28,38 +28,29 @@ struct ArchiveView: View {
         ZStack {
             VStack {
                 CustomNavigationBar(
-                    leadingType:
-                            .back(
-                                action: {
-                                    coordinator.pop()
-                                }
-                            ),
-                    centerType:
-                            .title(title: "아카이브"),
-                    trailingType:
-                            .setting(
-                                action: {
-                                    coordinator.push(.setting)
-                                }
-                            ),
+                    leadingType: .back(action: { coordinator.pop() }),
+                    centerType: .title(title: "아카이브"),
+                    trailingType: .setting(action: { coordinator.push(.setting) }),
                     navigationColor: .black
                 )
                 
                 // 사진 0장일 때 예외처리
                 if !viewModel.isLoading && viewModel.totalPostCount == 0 {
-                        Spacer()
-                        VStack(spacing: 16) {
-                            Image(systemName: "photo.on.rectangle.angled")
-                                .resizable()
-                                .foregroundStyle(.ddSecondaryBlue)
-                                .scaledToFit()
-                                .frame(width: 57, height: 48)
-                            Text("아직 사진이 없어요\n지금 순간을 사진으로 남겨보세요")
-                                .multilineTextAlignment(.center)
-                                .font(.bodyMedium16)
-                                .foregroundStyle(.ddSecondaryBlue)
-                        }
-                        Spacer()
+                    Spacer()
+                    
+                    VStack(spacing: 16) {
+                        Image(systemName: "photo.on.rectangle.angled")
+                            .resizable()
+                            .foregroundStyle(.ddSecondaryBlue)
+                            .scaledToFit()
+                            .frame(width: 57, height: 48)
+                        Text("아직 사진이 없어요\n지금 순간을 사진으로 남겨보세요")
+                            .multilineTextAlignment(.center)
+                            .font(.bodyMedium16)
+                            .foregroundStyle(.ddSecondaryBlue)
+                    }
+                    
+                    Spacer()
                 } else {
                     ScrollView {
                         VStack {

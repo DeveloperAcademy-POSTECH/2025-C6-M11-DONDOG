@@ -1,5 +1,5 @@
 //
-//  TextStrokeUtils.swift
+//  TextUtils.swift
 //  DonDog-iOS
 //
 //  Created by Changjae Mun on 10/20/25.
@@ -7,18 +7,18 @@
 import SwiftUI
 import UIKit
 
-struct StrokeText: UIViewRepresentable {
+struct TextUtils: UIViewRepresentable {
     let text: String
     let font: UIFont
     let textColor: UIColor
-    let strokeColor: UIColor
-    let strokeWidth: CGFloat
+    let outlineColor: UIColor
+    let outlineWidth: CGFloat
     
     func makeUIView(context: Context) -> UILabel {
         let label = UILabel()
         let attributes: [NSAttributedString.Key: Any] = [
-            .strokeColor: strokeColor,
-            .strokeWidth: strokeWidth,
+            .strokeColor: outlineColor,
+            .strokeWidth: outlineWidth,
             .font: font,
             .foregroundColor: textColor
         ]
@@ -30,8 +30,8 @@ struct StrokeText: UIViewRepresentable {
     
     func updateUIView(_ uiView: UILabel, context: Context) {
         let attributes: [NSAttributedString.Key: Any] = [
-            .strokeColor: strokeColor,
-            .strokeWidth: strokeWidth,
+            .strokeColor: outlineColor,
+            .strokeWidth: outlineWidth,
             .font: font,
             .foregroundColor: textColor
         ]
@@ -41,21 +41,21 @@ struct StrokeText: UIViewRepresentable {
     }
 }
 
-struct StrokeTextView: View {
+struct OutlineTextView: View {
     let text: String
     let textColor: Color
     let fontName: String
     let fontSize: CGFloat
-    let strokeColor: Color
-    let strokeWidth: CGFloat
+    let outlineColor: Color
+    let outlineWidth: CGFloat
     
     var body: some View {
-        StrokeText(
+        TextUtils(
             text: text,
             font: UIFont(name: fontName, size: fontSize) ?? UIFont.systemFont(ofSize: fontSize),
             textColor: UIColor(textColor),
-            strokeColor: UIColor(strokeColor),
-            strokeWidth: strokeWidth
+            outlineColor: UIColor(outlineColor),
+            outlineWidth: outlineWidth
         )
     }
 }

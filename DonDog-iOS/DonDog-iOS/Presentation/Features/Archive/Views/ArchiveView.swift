@@ -37,6 +37,7 @@ struct ArchiveView: View {
                 // 사진 0장일 때 예외처리
                 if !viewModel.isLoading && viewModel.totalPostCount == 0 {
                     Spacer()
+                    
                     VStack(spacing: 16) {
                         Image(systemName: "photo.on.rectangle.angled")
                             .resizable()
@@ -48,6 +49,7 @@ struct ArchiveView: View {
                             .font(.bodyMedium16)
                             .foregroundStyle(.ddSecondaryBlue)
                     }
+                    
                     Spacer()
                 } else {
                     ScrollView {

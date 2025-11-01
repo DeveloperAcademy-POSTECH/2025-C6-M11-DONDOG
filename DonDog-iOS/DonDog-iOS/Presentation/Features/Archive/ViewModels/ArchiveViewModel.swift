@@ -15,16 +15,12 @@ import UIKit
 final class ArchiveViewModel: ObservableObject {
     let connectUserInfo = UserPairingStore.shared
     private weak var coordinator: AppCoordinator?
-    private let dataManager: DataManagerProtocol
+    private let dataManager: DataManagerProtocol = DataManager.shared
     
     @Published var archiveMonths: [ArchiveMonth] = []
     @Published var allPosts: [PostData] = []
     @Published var totalPostCount: Int = 0
     @Published var isLoading = false
-    
-    init(dataManager: DataManagerProtocol = DataManager.shared) {
-        self.dataManager = dataManager
-    }
     
     func attach(coordinator: AppCoordinator) {
         self.coordinator = coordinator

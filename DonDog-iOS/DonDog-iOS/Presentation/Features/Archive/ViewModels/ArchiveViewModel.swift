@@ -6,47 +6,38 @@
 //
 
 import Combine
-import Foundation
 import FirebaseAuth
 import FirebaseFirestore
-import UIKit
+import Foundation
 import SwiftUI
+import UIKit
 
 final class ArchiveViewModel: ObservableObject {
     let connectUserInfo = UserPairingStore.shared
     private weak var coordinator: AppCoordinator?
+    private let dataManager: DataManagerProtocol
     
     @Published var archiveMonths: [ArchiveMonth] = []
     @Published var dailyPosts: [String: [ArchivePost]] = [:]
     @Published var totalPostCount: Int = 0
     @Published var isLoading = false
     
-    private let db = Firestore.firestore()
-    private let calendar = Calendar(identifier: .gregorian)
-    private let timezone = TimeZone(identifier: "Asia/Seoul") ?? .current
+    init(dataManager: DataManagerProtocol = DataManager.shared) {
+        self.dataManager = dataManager
+    }
     
     func attach(coordinator: AppCoordinator) {
         self.coordinator = coordinator
     }
     
     func dayKey(from date: Date) -> String {
-        let startOfDay = calendar.startOfDay(for: date)
+        let startOfDay = DateUtils.startOfDay(for: date)
         return DateUtils.string(from: startOfDay, format: .dayKey)
     }
     
     // 날짜 포매팅
     private func getDate(from month: ArchiveMonth, day: ArchiveDay) -> Date? {
-        var calendar = self.calendar
-        calendar.timeZone = self.timezone
-        let components = DateComponents(
-            year: month.year,
-            month: month.month,
-            day: day.day,
-            hour: 0,
-            minute: 0,
-            second: 0
-        )
-        return calendar.date(from: components)
+        return DateUtils.date(fromYear: month.year, month: month.month, day: day.day)
     }
     
     private func convertToPostData(_ archivePosts: [ArchivePost]) -> [PostData] {
@@ -76,10 +67,6 @@ final class ArchiveViewModel: ObservableObject {
             self.coordinator?.push(
                 .postDetail(posts: posts, postType: .archive)
             )
-            // TODO: PostDetail pr 승인 후 제거 예정 (+ 관련 파일들까지)
-//            self.coordinator?.push(
-//                .archiveDetail(roomId: self.connectUserInfo.roomId ?? "", date: selectedDate, initialPosts: initial)
-//            )
         }
     }
     
@@ -87,58 +74,56 @@ final class ArchiveViewModel: ObservableObject {
     func fetchMonthlyArchives() async {
         await MainActor.run { isLoading = true }
         
-        async let months = fetchAllPosts()
-        async let count = fetchPostCount()
-        let (monthData, totalCount) = await (months, count)
+        let (monthData, totalCount) = await fetchAllPostsAndCount()
         
         await MainActor.run {
             self.archiveMonths = monthData
             self.totalPostCount = totalCount
-            self.isLoading = false }
+            self.isLoading = false
+        }
     }
     
-    // 월/일 별로 전체 기록 가져오기 -> 일자별 기록 캐싱
-    private func fetchAllPosts() async -> [ArchiveMonth] {
+    // 월/일 별로 전체 기록 가져오기
+    private func fetchAllPostsAndCount() async -> ([ArchiveMonth], Int) {
+        guard let roomId = connectUserInfo.roomId, !roomId.isEmpty else {
+            return ([], 0)
+        }
+        
         do {
-            let snapshot = try await db.collection("Rooms").document(connectUserInfo.roomId ?? "")
-                .collection("posts")
-                .order(by: "createdAt", descending: false) // 오래된 것부터
-                .getDocuments(source: .server)
+            let posts: [PostData] = try await dataManager.fetchCollection(
+                path: "Rooms/\(roomId)/posts",
+                orderBy: "createdAt",
+                descending: false
+            )
             
             var monthDict: [String: [Int: ArchiveDay]] = [:]
             var dayDict: [String: [ArchivePost]] = [:]
             
-            for doc in snapshot.documents {
-                let data = doc.data()
-                guard let tsCreated = data["createdAt"] as? Timestamp else { continue }
-                let date = tsCreated.dateValue()
+            for postData in posts {
+                let date = postData.createdAt.dateValue()
                 
-                
-                let caption = data["caption"] as? String
-                let stickerPostId = data["stickerPostId"] as? String
-                let stickerTypeString = (data["stickerType"] as? String)?.lowercased()
                 let stickerType: StickerType? = {
-                    guard let s = stickerTypeString, s != "null" else { return nil }
+                    guard let s = postData.stickerType, s != "null" else { return nil }
                     return StickerType(rawValue: s)
                 }()
                 
                 let post = ArchivePost(
-                    id: doc.documentID,
-                    createdAt: tsCreated.dateValue(),
-                    updatedAt: (data["updatedAt"] as? Timestamp)?.dateValue() ?? tsCreated.dateValue(),
-                    authorUid: data["authorId"] as? String,
-                    authorName: (data["authorName"] as? String) ?? (data["authorId"] as? String),
-                    frontImageURL: (data["frontImageURL"] as? String).flatMap(URL.init(string:)),
-                    backImageURL:  (data["backImageURL"]  as? String).flatMap(URL.init(string:)),
-                    caption: caption,
-                    stickerPostId: stickerPostId,
+                    id: postData.postId,
+                    createdAt: date,
+                    updatedAt: postData.updatedAt.dateValue(),
+                    authorUid: postData.authorId,
+                    authorName: nil,
+                    frontImageURL: postData.frontURL,
+                    backImageURL: postData.backURL,
+                    caption: postData.caption,
+                    stickerPostId: postData.stickerPostId,
                     stickerType: stickerType
                 )
                 
                 let dayKeyStr = dayKey(from: date)
                 dayDict[dayKeyStr, default: []].append(post)
                 
-                let comps = calendar.dateComponents(in: timezone, from: date)
+                let comps = DateUtils.components(from: date)
                 guard let y = comps.year, let m = comps.month, let d = comps.day else { continue }
                 let monthKey = "\(y)-\(m)"
                 if monthDict[monthKey] == nil { monthDict[monthKey] = [:] }
@@ -148,19 +133,11 @@ final class ArchiveViewModel: ObservableObject {
                     guard let thumbnail = post.thumbnailURL else { continue }
                     
                     monthDict[monthKey]?[d] = ArchiveDay(
-                        id: doc.documentID,
+                        id: post.id,
                         day: d,
                         thumbnailURL: thumbnail,
-                        postId: doc.documentID
+                        postId: post.id
                     )
-#if DEBUG
-                    print("""
-                    썸네일
-                    - 날짜: \(DateUtils.string(from: date, format: .full))) (\(y)-\(m)-\(d))
-                    - id: \(doc.documentID)
-                    - url: \(thumbnail.absoluteString)
-                    """)
-#endif
                 }
             }
             
@@ -183,25 +160,10 @@ final class ArchiveViewModel: ObservableObject {
                     if $0.year == $1.year { return $0.month > $1.month } // 최신 달이 위로
                     return $0.year > $1.year
                 }
-            return result
+            return (result, posts.count)
         } catch {
             print("Firestore 데이터 불러오기 실패: \(error.localizedDescription)")
-            return []
-        }
-    }
-    
-    // 게시물 개수 조회
-    private func fetchPostCount() async -> Int {
-        do {
-            let countQuery = await db.collection("Rooms").document(connectUserInfo.roomId ?? "").collection("posts")
-                .count
-            
-            let snapshot = try await countQuery.getAggregation(source: .server)
-            
-            return snapshot.count.intValue
-        } catch {
-            print("Count 쿼리 실패: \(error.localizedDescription)")
-            return 0
+            return ([], 0)
         }
     }
 }

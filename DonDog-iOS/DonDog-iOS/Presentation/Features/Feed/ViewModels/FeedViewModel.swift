@@ -28,7 +28,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var borderedStickers: [String: UIImage] = [:]
     
     @Published var currentPost: PostData?
-    @Published var currentNickname: String = ""
+    @Published var currentUserName: String = ""
     @Published var currentPostIndex: Int = 0
     @Published var displayablePosts: [DisplayablePost] = []
     @Published var type: String = "null"
@@ -212,7 +212,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             post: newPostData,
                             frontImage: existingPost.frontImageURL,
                             backImage: existingPost.backImageURL,
-                            stickerImage: stickerImage,
                             nickname: existingPost.nickname,
                             isMyPost: existingPost.isMyPost
                         )
@@ -265,7 +264,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                         post: newPostData,
                         frontImage: existingPost.frontImageURL,
                         backImage: existingPost.backImageURL,
-                        stickerImage: nil,
                         nickname: existingPost.nickname,
                         isMyPost: existingPost.isMyPost
                     )
@@ -366,7 +364,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                                     post: self.displayablePosts[currentIndex].post,
                                     frontImage: self.displayablePosts[currentIndex].frontImageURL,
                                     backImage: self.displayablePosts[currentIndex].backImageURL,
-                                    stickerImage: sticker,
                                     nickname: self.displayablePosts[currentIndex].nickname,
                                     isMyPost: self.displayablePosts[currentIndex].isMyPost
                                 )
@@ -415,7 +412,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         let imageGroup = DispatchGroup()
         imageGroup.enter()
-        getUserName(uid: post.authorId) { name in
+        fetchUserName(uid: post.authorId) { name in
             nickname = name
             imageGroup.leave()
         }
@@ -426,7 +423,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     post: post,
                     frontImage: front,
                     backImage: back,
-                    stickerImage: nil,
                     nickname: nickname,
                     isMyPost: isMyPost
                 )
@@ -437,7 +433,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     post: post,
                     frontImage: frontImageURL ?? URL(fileURLWithPath: "/dev/null"),
                     backImage: backImageURL ?? URL(fileURLWithPath: "/dev/null"),
-                    stickerImage: nil,
                     nickname: nickname,
                     isMyPost: isMyPost
                 )
@@ -461,7 +456,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         if !finalSortedPosts.isEmpty {
             let initialPost = finalSortedPosts[firstDisplayedPostIndex]
-            self.currentNickname = initialPost.nickname
+            self.currentUserName = initialPost.nickname
             self.selectedPostId = initialPost.postId
             self.currentPost = initialPost.post
         }
@@ -485,7 +480,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             post: postsWithStickers[index].post,
                             frontImage: postsWithStickers[index].frontImageURL,
                             backImage: postsWithStickers[index].backImageURL,
-                            stickerImage: sticker,
                             nickname: postsWithStickers[index].nickname,
                             isMyPost: postsWithStickers[index].isMyPost
                         )
@@ -500,7 +494,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    private func getUserName(uid: String, completion: @escaping (String) -> Void) {
+    private func fetchUserName(uid: String, completion: @escaping (String) -> Void) {
         Task {
             do {
                 let user: UserData = try await dataManager.fetch(path: "Users/\(uid)")
@@ -591,6 +585,5 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         currentPostIndex = index
         currentPost = displayablePost.post
         selectedPostId = displayablePost.postId
-        currentNickname = displayablePost.nickname
     }
 }

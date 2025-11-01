@@ -8,7 +8,6 @@
 import UIKit
 
 extension UIImage {
-
     func addOutline(thickness: CGFloat, color: UIColor) -> UIImage? {
         _ = self.scale
         let canvas = CGSize(width: self.size.width + thickness * 2, height: self.size.height + thickness * 2)
@@ -94,9 +93,7 @@ extension UIImage {
         
         return UIGraphicsGetImageFromCurrentImageContext()
     }
-}
-
-extension UIImage {
+    
     /// 이미지를 지정된 최대 크기로 리사이징
     func resized(maxWidth: CGFloat) -> UIImage? {
         let scale = maxWidth / self.size.width

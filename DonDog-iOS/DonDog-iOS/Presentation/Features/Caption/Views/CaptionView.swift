@@ -33,7 +33,7 @@ struct CaptionView: View {
                     if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
                         HStack{
                             Spacer()
-                            PolaroidSetView(frontImage: .uiImage(frontImage), backImage: .uiImage(backImage), nickname: "", createdAt: "", caption: nil,  selectedStickerType: nil, stickerImage: nil, isMyPost: true)
+                            PolaroidSetView(frontImage: .uiImage(frontImage), backImage: .uiImage(backImage), nickname: "", createdAt: "", caption: nil,  selectedStickerType: nil, isMyPost: true)
                                 .allowsHitTesting(true)
                                 .padding(.trailing, 30)
                         }

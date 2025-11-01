@@ -21,7 +21,6 @@ struct PolaroidFrame: View {
     let isTopImage: Bool
     // onStickerButtonTapped 제거
     let selectedStickerType: String?
-    let stickerImage: UIImage?
     let isMyPost: Bool?
     
     @ViewBuilder
@@ -121,7 +120,6 @@ struct PolaroidSetView: View {
     let createdAt: String
     let caption: String?
     let selectedStickerType: String?
-    let stickerImage: UIImage?  // 이 게시물에 붙은 스티커 이미지 (이미 테두리 적용됨)
     let isMyPost: Bool  // 내 게시물인지 여부
     
     var body: some View {
@@ -133,7 +131,6 @@ struct PolaroidSetView: View {
                 caption: "",
                 isTopImage: !isTopImage,
                 selectedStickerType: nil,
-                stickerImage: nil,
                 isMyPost: isMyPost
             )
             .onTapGesture {
@@ -152,7 +149,6 @@ struct PolaroidSetView: View {
                 caption: caption,
                 isTopImage: isTopImage,
                 selectedStickerType: selectedStickerType,
-                stickerImage: stickerImage,
                 isMyPost: isMyPost
             )
             .onTapGesture {

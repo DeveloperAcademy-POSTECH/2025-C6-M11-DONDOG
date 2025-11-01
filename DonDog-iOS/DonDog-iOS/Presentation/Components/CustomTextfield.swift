@@ -12,17 +12,17 @@ struct CustomTextField: View {
     var placeholder: String
     @Binding var text: String
     var keyboard: UIKeyboardType = .default
-    var contentType: UITextContentType? = nil
-    var onCommit: (() -> Void)? = nil
-    var errorMessage: String? = nil
-    var errorText: Binding<String?>? = nil
-    var showExternalError: Binding<Bool>? = nil
-    var softMaxLength: Int? = nil
-    var softMaxErrorText: String? = nil
+    var contentType: UITextContentType?
+    var onCommit: (() -> Void)?
+    var errorMessage: String?
+    var errorText: Binding<String?>?
+    var showExternalError: Binding<Bool>?
+    var softMaxLength: Int?
+    var softMaxErrorText: String?
     var isDisabled: Bool = false
-       
+
     @FocusState private var isFocused: Bool
-    @State private var localValidationError: String? = nil
+    @State private var localValidationError: String?
     @State private var suppressExternalError: Bool = false
 
     private var externalErrorMessage: String? {
@@ -74,7 +74,7 @@ struct CustomTextField: View {
                                         errorText?.wrappedValue = nil
                                     }
                                     var value = newValue.filter { !$0.isWhitespace }
-                                                                   
+
                                     if contentType == .telephoneNumber {
                                         let digits = value.filter { $0.isNumber }
                                         let limited = String(digits.prefix(11))
@@ -87,7 +87,7 @@ struct CustomTextField: View {
                                     } else if keyboard == .numberPad {
                                         value = value.filter { $0.isNumber }
                                     }
-                                    
+
                                     if let max = softMaxLength {
                                         if value.count > max {
                                             localValidationError = softMaxErrorText ?? "최대 \(max)자까지 입력할 수 있어요"
@@ -107,24 +107,24 @@ struct CustomTextField: View {
                                     }
                                 }
                                 .textContentType(contentType)
-                            
+
                             if let max = softMaxLength {
                                 Text("\(text.count)/\(max)")
                                     .font(.captionRegular13)
                                     .foregroundColor(hasError ? Color.ddAlert : Color.ddGray500)
                             }
                         }
-                    
+
                     }
                 }
-                
+
                 Rectangle()
                     .frame(height: 2)
                     .foregroundColor(
                         hasError
                         ? Color.ddAlert : ((isFocused && !text.isEmpty) ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
                     )
-                
+
                 if hasError, let message = (localValidationError ?? externalErrorMessage) {
                     HStack(spacing: 0) {
                         Image(systemName: "exclamationmark.circle")
@@ -142,26 +142,26 @@ struct CustomTextField: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-                isFocused = true
+            isFocused = true
         }
     }
 }
 
-struct Preview_UnderlineTextFieldWrapper: View {
+struct PreviewUnderlineTextFieldWrapper: View {
     @State private var phone: String = ""
     @State private var code: String = ""
     @State private var code2: String = ""
-    
+
     var body: some View {
         VStack(spacing: 24) {
             CustomTextField(
-                            title: "휴대폰 번호",
-                            placeholder: "휴대폰 번호를 입력해 주세요",
-                            text: $phone,
-                            keyboard: .numberPad,
-                            contentType: .telephoneNumber,
-                            errorMessage: "형식이 올바르지 않습니다."
-                        )
+                title: "휴대폰 번호",
+                placeholder: "휴대폰 번호를 입력해 주세요",
+                text: $phone,
+                keyboard: .numberPad,
+                contentType: .telephoneNumber,
+                errorMessage: "형식이 올바르지 않습니다."
+            )
             CustomTextField(
                 title: "휴대폰 번호",
                 placeholder: "휴대폰 번호를 입력해 주세요",
@@ -189,5 +189,5 @@ struct Preview_UnderlineTextFieldWrapper: View {
 }
 
 #Preview {
-    Preview_UnderlineTextFieldWrapper()
+    PreviewUnderlineTextFieldWrapper()
 }

@@ -5,8 +5,8 @@
 //  Created by 이주현 on 10/15/25.
 //
 
-import Foundation
 import FirebaseFirestore
+import Foundation
 
 final class GenerateCodeService {
     private let db = Firestore.firestore()

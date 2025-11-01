@@ -34,7 +34,7 @@ struct FeedView: View {
                     Spacer()
 
                     if connectState.isConnected == false {
-                        Button{
+                        Button {
                             coordinator.push(.setting)
                         } label: {
                             Image(systemName: "gear")

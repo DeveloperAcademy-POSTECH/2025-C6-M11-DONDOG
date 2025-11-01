@@ -6,10 +6,10 @@
 //
 
 import Combine
-import SwiftUI
-import Vision
 import CoreImage.CIFilterBuiltins
 import ImageIO
+import SwiftUI
+import Vision
 
 final class ImageUtils: ObservableObject {
     private let ciContext = CIContext(options: [.useSoftwareRenderer: false])
@@ -90,8 +90,7 @@ final class ImageUtils: ObservableObject {
             return nil
         }
         
-        guard let firstMaskUI = self.makeMask(from: image),
-              var firstMaskCI = renderToCIImage(image: firstMaskUI) else {
+        guard let firstMaskUI = self.makeMask(from: image), var firstMaskCI = renderToCIImage(image: firstMaskUI) else {
             print("첫 번째 mask 실패")
             return nil
         }
@@ -110,8 +109,7 @@ final class ImageUtils: ObservableObject {
             return nil
         }
         
-        guard let secondMaskUI = self.makeMask(from: UIImage(ciImage: clippedCIImage)),
-              var secondMaskCI = renderToCIImage(image: secondMaskUI) else {
+        guard let secondMaskUI = self.makeMask(from: UIImage(ciImage: clippedCIImage)), var secondMaskCI = renderToCIImage(image: secondMaskUI) else {
             print("두 번째 mask 실패")
             return renderToUIImage(ciImage: clippedCIImage, original: image)
         }
@@ -124,8 +122,7 @@ final class ImageUtils: ObservableObject {
         
         self.mask = secondMaskCI
         
-        guard let finalClipped = applyingMask(to: clippedCIImage),
-              let finalImage = renderToUIImage(ciImage: finalClipped, original: image) else {
+        guard let finalClipped = applyingMask(to: clippedCIImage), let finalImage = renderToUIImage(ciImage: finalClipped, original: image) else {
             return renderToUIImage(ciImage: clippedCIImage, original: image)
         }
         

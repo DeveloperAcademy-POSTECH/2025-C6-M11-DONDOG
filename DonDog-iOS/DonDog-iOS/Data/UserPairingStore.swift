@@ -14,11 +14,11 @@ final class UserPairingStore: ObservableObject {
     private init() {}
     
     @Published var isConnected: Bool = false
-    @Published var roomId: String? = nil
-    @Published var myUid: String? = nil
-    @Published var myName: String? = nil
-    @Published var partnerUid: String? = nil
-    @Published var partnerName: String? = nil
+    @Published var roomId: String?
+    @Published var myUid: String?
+    @Published var myName: String?
+    @Published var partnerUid: String?
+    @Published var partnerName: String?
     
     func reset() {
         self.isConnected = false

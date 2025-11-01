@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import UIKit
 import SwiftUI
+import UIKit
 
 extension View {
     func backHiddenSwipeEnabled() -> some View {

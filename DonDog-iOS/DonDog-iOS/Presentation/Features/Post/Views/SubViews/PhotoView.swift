@@ -1,18 +1,20 @@
 //
-//  DetailPhotoView.swift
+//  PhotoView.swift
 //  DonDog-iOS
 //
-//  Created by 조유진 on 10/17/25.
+//  Created by 이서현 on 10/27/25.
 //
 
 import SwiftUI
 
-struct DetailPhotoView: View {
-    let post: ArchivePost
+struct PhotoView: View {
+    let frontImageURL: String
+    let backImageURL: String
+    
     @State private var showingFront: Bool = true
     
     var body: some View {
-        if let front = post.frontImageURL, let back = post.backImageURL {
+        if let front = URL(string: frontImageURL), let back = URL(string: backImageURL) {
             ZStack {
                 AsyncPhoto(url: front)
                     .opacity(showingFront ? 1.0 : 0.0)
@@ -28,14 +30,13 @@ struct DetailPhotoView: View {
                     showingFront.toggle()
                 }
             }
-        } else if let front = post.frontImageURL {
+        } else if let front = URL(string: frontImageURL) {
             AsyncPhoto(url: front)
-        } else if let back = post.backImageURL {
+        } else if let back = URL(string: backImageURL) {
             AsyncPhoto(url: back)
         }
     }
     
-    // 추후 분리
     private struct AsyncPhoto: View {
         let url: URL
         var body: some View {

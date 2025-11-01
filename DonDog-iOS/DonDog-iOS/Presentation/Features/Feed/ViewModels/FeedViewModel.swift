@@ -34,7 +34,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var emotion: String = "null"
     @Published var isNotMyPost = false
     
-    private let dataManager: DataManagerProtocol = FirebaseDataManager.shared
+    private let dataManager: DataManagerProtocol = DataManager.shared
     private let imageUtils = ImageUtils()
     
     init() {
@@ -65,7 +65,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 guard let currentUid = dataManager.getCurrentUserId() else { return }
                 
                 await MainActor.run {
-                    self.isNotMyPost = postData.uid != currentUid
+                    self.isNotMyPost = postData.authorId != currentUid
                 }
             } catch {
                 print("문서 조회 실패: \(error.localizedDescription)")
@@ -93,8 +93,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 
                 // stickerPostId 선택
                 let postIdToFetch: String
-                if let currentPost = self.currentPost,
-                   !currentPost.stickerPostId.isEmpty {
+                if let currentPost = self.currentPost, !currentPost.stickerPostId.isEmpty {
                     postIdToFetch = currentPost.stickerPostId
                 } else if !recentPostId.isEmpty {
                     postIdToFetch = recentPostId
@@ -200,7 +199,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                         let existingPost = self.displayablePosts[index]
                         let newPostData = PostData(
                             postId: existingPost.postId,
-                            uid: existingPost.uid,
+                            authorId: existingPost.uid,
                             frontImageURL: existingPost.post.frontImageURL,
                             backImageURL: existingPost.post.backImageURL,
                             caption: existingPost.caption,
@@ -224,7 +223,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
         }
     }
-    
     
     func removeStickerData() {
         guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
@@ -254,7 +252,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     let existingPost = self.displayablePosts[index]
                     let newPostData = PostData(
                         postId: existingPost.postId,
-                        uid: existingPost.uid,
+                        authorId: existingPost.uid,
                         frontImageURL: existingPost.post.frontImageURL,
                         backImageURL: existingPost.post.backImageURL,
                         caption: existingPost.caption,
@@ -278,7 +276,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             }
         }
     }
-    
     
     // MARK: - CaptionViewModelDelegate
     func didUploadPost() {
@@ -340,7 +337,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    
+    // TODO: 기존 downloadAllTodayImages 함수, 100줄 이상 린트 오류 걸려서 buildDisplayablePost 두개로 분리
     private func downloadAllTodayImages(posts: [PostData], roomId: String) {
         print("🖼️ 모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")
         displayablePosts = []
@@ -352,54 +349,29 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         for (index, post) in posts.enumerated() {
             group.enter()
-            
-            let isMyPost = (post.uid == currentUserUid)
-            let imageGroup = DispatchGroup()
-            
-            var frontImageURL: URL? = nil
-            var backImageURL: URL? = nil
-            var nickname: String = "익명"
-            
-            frontImageURL = post.frontURL
-            backImageURL = post.backURL
-            
-            imageGroup.enter()
-            getUserName(uid: post.uid) { name in
-                nickname = name
-                imageGroup.leave()
-            }
-            
-            imageGroup.notify(queue: .main) {
-                if let front = frontImageURL, let back = backImageURL {
-                    let displayablePost = DisplayablePost(
-                        post: post,
-                        frontImage: front,
-                        backImage: back,
-                        stickerImage: nil,
-                        nickname: nickname,
-                        isMyPost: isMyPost
-                    )
-                    tempDisplayablePosts[index] = displayablePost
-                    print("✅ 게시물 \(index + 1) 기본 이미지 다운로드 완료")
-                    
-                    if !post.stickerPostId.isEmpty {
-                        print("🎯 스티커 다운로드 시작: \(post.stickerPostId) for post \(post.postId)")
-                        self.downloadStickerImage(stickerPostId: post.stickerPostId, roomId: roomId, stickerType: post.stickerType) { [weak self] stickerImg in
-                            guard let self = self, let sticker = stickerImg else { return }
-                            
-                            DispatchQueue.main.async {
-                                if let idx = self.displayablePosts.firstIndex(where: { $0.postId == post.postId }) {
-                                    let updatedPost = DisplayablePost(
-                                        post: self.displayablePosts[idx].post,
-                                        frontImage: self.displayablePosts[idx].frontImageURL,
-                                        backImage: self.displayablePosts[idx].backImageURL,
-                                        stickerImage: sticker,
-                                        nickname: self.displayablePosts[idx].nickname,
-                                        isMyPost: self.displayablePosts[idx].isMyPost
-                                    )
-                                    self.displayablePosts[idx] = updatedPost
-                                    print("✅ 게시물 \(index + 1) 스티커 추가 완료!")
-                                }
+            buildDisplayablePost(index: index,
+                                 post: post,
+                                 roomId: roomId,
+                                 currentUserUid: currentUserUid) { idx, displayable, stickerPostId, stickerType in
+                tempDisplayablePosts[idx] = displayable
+                
+                if let stickerId = stickerPostId {
+                    self.downloadStickerImage(stickerPostId: stickerId,
+                                              roomId: roomId,
+                                              stickerType: stickerType) { [weak self] stickerImg in
+                        guard let self = self, let sticker = stickerImg else { return }
+                        DispatchQueue.main.async {
+                            if let currentIndex = self.displayablePosts.firstIndex(where: { $0.postId == displayable.postId }) {
+                                let updated = DisplayablePost(
+                                    post: self.displayablePosts[currentIndex].post,
+                                    frontImage: self.displayablePosts[currentIndex].frontImageURL,
+                                    backImage: self.displayablePosts[currentIndex].backImageURL,
+                                    stickerImage: sticker,
+                                    nickname: self.displayablePosts[currentIndex].nickname,
+                                    isMyPost: self.displayablePosts[currentIndex].isMyPost
+                                )
+                                self.displayablePosts[currentIndex] = updated
+                                print("✅ 게시물 \(idx + 1) 스티커 추가 완료!")
                             }
                         }
                     }
@@ -410,60 +382,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         group.notify(queue: .main) {
             let sortedPosts = tempDisplayablePosts.sorted(by: { $0.key < $1.key }).map { $0.value }
+            let finalSortedPosts = sortedPosts.sorted { $0.createdAt > $1.createdAt }
             
-            let finalSortedPosts = sortedPosts.sorted { post1, post2 in
-                return post1.createdAt > post2.createdAt
-            }
+            self.applyInitialSelectionAndIndices(finalSortedPosts)
             
-            self.displayablePosts = finalSortedPosts
-            print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개")
-            
-            var firstDisplayedPostIndex = 0
-            
-            if finalSortedPosts.count > 1 && self.isAfterUpload{
-                firstDisplayedPostIndex = 1
-            } else {
-                firstDisplayedPostIndex = 0
-            }
-            
-            self.currentPostIndex = firstDisplayedPostIndex
-            
-            if !finalSortedPosts.isEmpty {
-                let initialPost = finalSortedPosts[firstDisplayedPostIndex]
-                self.currentNickname = initialPost.nickname
-                self.selectedPostId = initialPost.postId
-                self.currentPost = initialPost.post
-            }
-            
-            let stickerGroup = DispatchGroup()
-            var postsWithStickers: [DisplayablePost] = finalSortedPosts
-            
-            for (index, post) in finalSortedPosts.enumerated() {
-                if !post.stickerPostId.isEmpty {
-                    stickerGroup.enter()
-                    print("🎯 스티커 다운로드 시작: \(post.stickerPostId) for post \(post.postId)")
-                    
-                    self.downloadStickerImage(
-                        stickerPostId: post.stickerPostId,
-                        roomId: roomId,
-                        stickerType: post.stickerType
-                    ) { stickerImg in
-                        if let sticker = stickerImg {
-                            postsWithStickers[index] = DisplayablePost(
-                                post: postsWithStickers[index].post,
-                                frontImage: postsWithStickers[index].frontImageURL,
-                                backImage: postsWithStickers[index].backImageURL,
-                                stickerImage: sticker,
-                                nickname: postsWithStickers[index].nickname,
-                                isMyPost: postsWithStickers[index].isMyPost
-                            )
-                        }
-                        stickerGroup.leave()
-                    }
-                }
-            }
-            
-            stickerGroup.notify(queue: .main) {
+            self.attachStickers(to: finalSortedPosts, roomId: roomId) { postsWithStickers in
                 self.displayablePosts = postsWithStickers
                 print("🎉 모든 스티커 다운로드 완료!")
                 
@@ -480,6 +403,100 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     self.isAfterUpload = false
                 }
             }
+        }
+    }
+
+    private func buildDisplayablePost(index: Int, post: PostData, roomId: String, currentUserUid: String, completion: @escaping (Int, DisplayablePost, String?, String?) -> Void) {
+        let isMyPost = (post.authorId == currentUserUid)
+        var nickname: String = "익명"
+        
+        let frontImageURL: URL? = post.frontURL
+        let backImageURL: URL? = post.backURL
+        
+        let imageGroup = DispatchGroup()
+        imageGroup.enter()
+        getUserName(uid: post.authorId) { name in
+            nickname = name
+            imageGroup.leave()
+        }
+        
+        imageGroup.notify(queue: .main) {
+            if let front = frontImageURL, let back = backImageURL {
+                let displayablePost = DisplayablePost(
+                    post: post,
+                    frontImage: front,
+                    backImage: back,
+                    stickerImage: nil,
+                    nickname: nickname,
+                    isMyPost: isMyPost
+                )
+                print("✅ 게시물 \(index + 1) 기본 이미지 다운로드 완료")
+                completion(index, displayablePost, post.stickerPostId.isEmpty ? nil : post.stickerPostId, post.stickerType)
+            } else {
+                let displayablePost = DisplayablePost(
+                    post: post,
+                    frontImage: frontImageURL ?? URL(fileURLWithPath: "/dev/null"),
+                    backImage: backImageURL ?? URL(fileURLWithPath: "/dev/null"),
+                    stickerImage: nil,
+                    nickname: nickname,
+                    isMyPost: isMyPost
+                )
+                print("⚠️ 이미지 URL 누락: \(index + 1)")
+                completion(index, displayablePost, post.stickerPostId.isEmpty ? nil : post.stickerPostId, post.stickerType)
+            }
+        }
+    }
+
+    private func applyInitialSelectionAndIndices(_ finalSortedPosts: [DisplayablePost]) {
+        self.displayablePosts = finalSortedPosts
+        print("🎉 모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개")
+        
+        var firstDisplayedPostIndex = 0
+        if finalSortedPosts.count > 1 && self.isAfterUpload {
+            firstDisplayedPostIndex = 1
+        } else {
+            firstDisplayedPostIndex = 0
+        }
+        self.currentPostIndex = firstDisplayedPostIndex
+        
+        if !finalSortedPosts.isEmpty {
+            let initialPost = finalSortedPosts[firstDisplayedPostIndex]
+            self.currentNickname = initialPost.nickname
+            self.selectedPostId = initialPost.postId
+            self.currentPost = initialPost.post
+        }
+    }
+
+    private func attachStickers(to posts: [DisplayablePost], roomId: String, completion: @escaping ([DisplayablePost]) -> Void) {
+        let stickerGroup = DispatchGroup()
+        var postsWithStickers: [DisplayablePost] = posts
+        
+        for (index, post) in posts.enumerated() {
+            if !post.stickerPostId.isEmpty {
+                stickerGroup.enter()
+                print("🎯 스티커 다운로드 시작: \(post.stickerPostId) for post \(post.postId)")
+                self.downloadStickerImage(
+                    stickerPostId: post.stickerPostId,
+                    roomId: roomId,
+                    stickerType: post.stickerType
+                ) { stickerImg in
+                    if let sticker = stickerImg {
+                        postsWithStickers[index] = DisplayablePost(
+                            post: postsWithStickers[index].post,
+                            frontImage: postsWithStickers[index].frontImageURL,
+                            backImage: postsWithStickers[index].backImageURL,
+                            stickerImage: sticker,
+                            nickname: postsWithStickers[index].nickname,
+                            isMyPost: postsWithStickers[index].isMyPost
+                        )
+                    }
+                    stickerGroup.leave()
+                }
+            }
+        }
+        
+        stickerGroup.notify(queue: .main) {
+            completion(postsWithStickers)
         }
     }
     

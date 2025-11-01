@@ -5,10 +5,10 @@
 //  Created by 조유진 on 10/3/25.
 //
 
-import SwiftUI
 import Combine
 import FirebaseAuth
 import FirebaseFirestore
+import SwiftUI
 
 @MainActor
 final class AppCoordinator: ObservableObject {
@@ -43,8 +43,7 @@ final class AppCoordinator: ObservableObject {
         }
         
         DispatchQueue.main.async {
-            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-               let deepLink = appDelegate.initialDeepLink {
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate, let deepLink = appDelegate.initialDeepLink {
                 print("저장된 딥링크 처리: \(deepLink)")
                 self.handleDeepLink(deepLink)
                 
@@ -91,7 +90,7 @@ final class AppCoordinator: ObservableObject {
         case .auth:
             factory.makeAuthView(isWithDraw: authShowWithdraw)
         case .authNumber:
-            factory.makeAuthNumberView(isNumberWithdraw :authNumberShowWithdraw)
+            factory.makeAuthNumberView(isNumberWithdraw: authNumberShowWithdraw)
         case .profileSetup:
             factory.makeProfileView(mode: .setup)
         case .invite:
@@ -100,23 +99,19 @@ final class AppCoordinator: ObservableObject {
             EmptyView()
         case .feed:
             factory.makeFeedView()
-        case .post(let postId, let roomId):
-            factory.makePostView(with: postId, in: roomId)
         case .setting:
             factory.makeSettingView()
         case .editprofile:
             factory.makeProfileView(mode: .edit)
         case .archive:
             factory.makeArchiveView()
-        case .archiveDetail(let roomId, let date, let initialPosts):
-            factory.makeArchiveDetailView(in: roomId, date: date, initialPosts: initialPosts)
+        case .postDetail(let posts, let postType):
+            factory.makePostView(with: posts, for: postType)
         }
     }
     
     func handleDeepLink(_ urlString: String) {
-        guard let url = URL(string: urlString),
-              let scheme = url.scheme,
-              scheme == "dondog" else { return }
+        guard let url = URL(string: urlString), let scheme = url.scheme, scheme == "dondog" else { return }
         
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         
@@ -128,13 +123,13 @@ final class AppCoordinator: ObservableObject {
         }
         
         switch url.host {
-        case "post":
-            let roomId = components?.queryItems?.first(where: { $0.name == "roomId" })?.value
-            let postId = components?.queryItems?.first(where: { $0.name == "postId" })?.value
-            
-            if let roomId = roomId, let postId = postId {
-                push(.post(postId: postId, roomId: roomId))
-            }
+//        case "post":
+//            let roomId = components?.queryItems?.first(where: { $0.name == "roomId" })?.value
+//            let postId = components?.queryItems?.first(where: { $0.name == "postId" })?.value
+//            
+//            if let roomId = roomId, let postId = postId {
+//                push(.post(postId: postId, roomId: roomId))
+//            }
             
         default:
             // 처리할 수 없는 host일 경우 피드로 이동

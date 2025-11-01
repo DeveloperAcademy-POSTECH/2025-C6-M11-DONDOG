@@ -8,6 +8,7 @@
 import FirebaseCore
 import UIKit
 
+
 // MARK: - DisplayablePost
 /// UI에서 표시하기 위한 게시물 모델 (Firestore 데이터 + 다운로드된 이미지 + 닉네임)
 struct DisplayablePost: Identifiable {
@@ -32,7 +33,7 @@ struct DisplayablePost: Identifiable {
     // 편의 속성 - post 데이터에 쉽게 접근
     var caption: String { post.caption }
     var createdAt: Date { post.createdAt.dateValue() }
-    var uid: String { post.uid }
+    var uid: String { post.authorId }
     var postId: String { post.postId }
     var stickerPostId: String { post.stickerPostId }
     var stickerType: String? { post.stickerType }

@@ -16,10 +16,9 @@ protocol ModuleFactoryProtocol {
     func makeInviteView(showSentHint: Bool) -> InviteView
     func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
     func makeFeedView() -> FeedView
-    func makePostView(with postId: String, in roomId: String) -> PostView
     func makeSettingView() -> SettingView
     func makeArchiveView() -> ArchiveView
-    func makeArchiveDetailView(in roomId: String, date: Date, initialPosts: [ArchivePost]?) -> ArchiveDetailView
+    func makePostView(with posts: [PostData], for postType: PostType) -> PostView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -31,7 +30,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeAuthView(isWithDraw : Bool) -> AuthView {
+    func makeAuthView(isWithDraw: Bool) -> AuthView {
         let viewModel = AuthViewModel(isWithDraw: isWithDraw)
         let view = AuthView(viewModel: viewModel)
         return view
@@ -66,19 +65,6 @@ final class ModuleFactory: ModuleFactoryProtocol {
         let view = FeedView(viewModel: viewModel)
         return view
     }
-    
-    func makePostView(with postId: String, in roomId: String) -> PostView {
-        // 방어: 빈 값이면 안전하게 빈 화면 반환 (디버그에선 경고)
-        guard !postId.isEmpty, !roomId.isEmpty else {
-            assertionFailure("makePostView called with empty postId or roomId")
-            // 최소한 앱이 죽지 않도록 빈 뷰 반환
-            let vm = PostViewModel(postId: "", roomId: "")
-            return PostView(viewModel: vm)
-        }
-        let viewModel = PostViewModel(postId: postId, roomId: roomId)
-        let view = PostView(viewModel: viewModel)
-        return view
-    }
 
     func makeSettingView() -> SettingView {
         let viewModel = SettingViewModel()
@@ -87,16 +73,14 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func makeArchiveView() -> ArchiveView {
-        let stickerViewModel = ArchiveStickerViewModel()
-        let viewModel = ArchiveViewModel(stickerViewModel: stickerViewModel)
+        let viewModel = ArchiveViewModel()
         let view = ArchiveView(viewModel: viewModel)
         return view
     }
     
-    @MainActor
-    func makeArchiveDetailView(in roomId: String, date: Date, initialPosts: [ArchivePost]? = nil) -> ArchiveDetailView {
-        let viewModel = ArchiveDetailViewModel(roomId: roomId, date: date, initialPosts: initialPosts)
-        let view = ArchiveDetailView(viewModel: viewModel)
+    func makePostView(with posts: [PostData], for postType: PostType) -> PostView {
+        let viewModel = PostViewModel(posts: posts)
+        let view = PostView(viewModel: viewModel, postType: postType)
         return view
     }
 }

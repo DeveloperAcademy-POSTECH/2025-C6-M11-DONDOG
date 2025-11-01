@@ -6,17 +6,17 @@
 //
 
 import Foundation
-import UIKit
 
 struct DateUtils {
     enum DateFormat: String {
         case yearMonth = "yyyy년 M월"
         case monthDay = "MM월 dd일"
         case day = "d"
-        case full = "yyyy-MM-dd HH:mm:ss"
+        case time = "HH:mm"
+        case full = "MM월 dd일 HH:mm"
         case dayKey = "yyyy-MM-dd"
     }
-
+    
     static func string(from date: Date, format: DateFormat) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
@@ -24,8 +24,7 @@ struct DateUtils {
         formatter.dateFormat = format.rawValue
         return formatter.string(from: date)
     }
-
-    // 상대 시간
+    
     static func relativeTimeString(from date: Date) -> String {
         let now = Date()
         let diff = now.timeIntervalSince(date)
@@ -37,7 +36,7 @@ struct DateUtils {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-        formatter.dateFormat = "MM월 dd일 HH:mm"
+        formatter.dateFormat = DateFormat.time.rawValue
         
         switch seconds {
         case 0..<60:

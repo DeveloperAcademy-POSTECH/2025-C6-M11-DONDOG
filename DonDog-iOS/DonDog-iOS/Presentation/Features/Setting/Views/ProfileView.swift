@@ -1,12 +1,11 @@
 //
-//  ProfileSetupView.swift
+//  ProfileView.swift
 //  DonDog-iOS
 //
 //  Created by 이주현 on 10/4/25.
 //
 
 import SwiftUI
-
 
 enum ProfileFormMode {
     case setup // 최초 프로필 생성 + 초대코드 생성/저장 + 라우팅(.invite)

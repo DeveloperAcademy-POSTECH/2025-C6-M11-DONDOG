@@ -68,7 +68,7 @@ struct InviteView: View {
                             .foregroundColor(Color.ddPrimaryBlue)
                     }
                     
-                    if viewModel.remainTimeText == "00:00" {
+                    if viewModel.remainTimeText == "00:00" || viewModel.inviteText == "초대코드를 불러오지 못했습니다." {
                         ZStack {
                             RoundedRectangle(cornerRadius: 999)
                                 .foregroundStyle(viewModel.isLoading ? Color.ddSecondaryBlue : Color.ddPrimaryBlue)

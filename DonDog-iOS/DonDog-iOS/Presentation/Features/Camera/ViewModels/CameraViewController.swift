@@ -28,6 +28,8 @@ class CustomCameraViewController: UIViewController {
     private var currentCamera: AVCaptureDevice?
     
     var isFrontOnly: Bool = false
+    var stickerKeyword: String?
+    var onStickerCreated: ((UIImage) -> Void)?
     // 촬영 순서 관리
     private var isCapturingFront = true  // true: 전면 촬영, false: 후면 촬영
     private var frontImage: UIImage?
@@ -248,7 +250,7 @@ class CustomCameraViewController: UIViewController {
         paragraphStyle.alignment = .center
 
         let firstLine = NSAttributedString(
-            string: "STEP 1. 셀카 찍기📸\n",
+            string: (isFrontOnly ? "스티커 찍기📸\n" : "STEP 1. 셀카 찍기📸\n"),
             attributes: [
                 .font: UIFont(name: FontName.pretendardBold.rawValue, size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .bold),
                 .foregroundColor: Color.ddPrimaryBlue.uiColor,
@@ -257,7 +259,7 @@ class CustomCameraViewController: UIViewController {
         )
 
         let secondLine = NSAttributedString(
-            string: "전면 카메라로 얼굴이 잘 보이게 찍어주세요",
+            string: (isFrontOnly ? "\(stickerKeyword ?? "스티커")를 표현할 수 있는 표정과 포즈로 사진을 찍어주세요" : "전면 카메라로 얼굴이 잘 보이게 찍어주세요"),
             attributes: [
                 .font: UIFont(name: FontName.pretendardRegular.rawValue, size: 13) ?? UIFont.systemFont(ofSize: 13, weight: .regular),
                 .foregroundColor: Color.ddGray600.uiColor,
@@ -547,16 +549,21 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
             // 전면 촬영 완료 - 좌우 반전 (거울 모드)
             image = flipImageHorizontally(image) ?? image
             frontImage = image
-            delegate?.didCaptureFrontImage(image)
-
+    
             // 촬영된 이미지 표시
             DispatchQueue.main.async {
                 self.showCapturedImage(image)
             }
-
-            // 1초 후 후면 카메라로 전환
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.switchToNextCamera()
+            
+            if self.isFrontOnly {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    self.presentStickerConfirm(with: image)
+                }
+            } else {
+                delegate?.didCaptureFrontImage(image)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    self.switchToNextCamera()
+                }
             }
         } else {
             // 후면 촬영 완료
@@ -593,6 +600,28 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
         )
 
         return flippedImage
+    }
+    
+    // 줃제
+    private func presentStickerConfirm(with image: UIImage) {
+        let confirmVC = UIHostingController(
+            rootView: StickerConfirmView(
+                image: image
+            ) { [weak self] accepted, result in
+                guard let self = self else { return }
+                if accepted, let finalImage = result {
+                    self.onStickerCreated?(finalImage)
+                    self.presentingViewController?.dismiss(animated: true)
+                } else {
+                    self.presentedViewController?.dismiss(animated: true) {
+                        self.switchToFrontCamera()
+                    }
+                }
+            }
+        )
+        confirmVC.modalPresentationStyle = .fullScreen
+        confirmVC.modalTransitionStyle = .crossDissolve
+        self.present(confirmVC, animated: false)
     }
 }
 

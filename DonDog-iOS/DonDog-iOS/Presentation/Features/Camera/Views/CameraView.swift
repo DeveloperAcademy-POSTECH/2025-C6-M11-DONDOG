@@ -10,18 +10,20 @@ import UIKit
 
 struct CameraView: UIViewControllerRepresentable {
     @StateObject var viewModel: CameraViewModel
-    
     @Environment(\.presentationMode) var presentationMode
     
     func makeUIViewController(context: Context) -> UIViewController {
         let customCameraVC = CustomCameraViewController()
         customCameraVC.delegate = context.coordinator
-        
+
         customCameraVC.isFrontOnly = viewModel.isFrontOnly
+        if let keyword = viewModel.stickerKeyword {
+            customCameraVC.stickerKeyword = keyword
+        }
         
         // 카메라 컨트롤러 참조를 ViewModel에 저장 (리셋 기능을 위해)
         viewModel.cameraController = customCameraVC
-        DispatchQueue.main.async{
+        DispatchQueue.main.async {
             viewModel.showCaptionView = false
         }
         return customCameraVC
@@ -61,4 +63,3 @@ struct CameraView: UIViewControllerRepresentable {
         }
     }
 }
-

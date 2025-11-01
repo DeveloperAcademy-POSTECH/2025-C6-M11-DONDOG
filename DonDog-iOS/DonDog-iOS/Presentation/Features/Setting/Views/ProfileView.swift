@@ -25,7 +25,7 @@ struct ProfileView: View {
         VStack(spacing: 0) {
             CustomNavigationBar(
                 leadingType: viewModel.mode == .edit ? .back(action: { coordinator.pop() }) : .none,
-                centerType: .title(title: viewModel.mode == .edit ? "프로필 수정" : "프로필 설정"),
+                centerType: .title(title: "프로필 설정"),
                 trailingType: .none,
                 navigationColor: .black
             )
@@ -37,7 +37,7 @@ struct ProfileView: View {
                 + Text("을 위해\n")
                 + Text("별명과 역할")
                     .font(.titleBold20)
-                + Text("을 \(viewModel.mode == .edit ? "수정" : "설정")해 주세요")
+                + Text("을 설정해 주세요")
 
                 Spacer()
             }
@@ -78,8 +78,7 @@ struct ProfileView: View {
                 keyboard: .default,
                 contentType: nil,
                 errorMessage: viewModel.errorMessage,
-                softMaxLength: 10,
-                softMaxErrorText: "최대 10자까지 입력할 수 있어요"
+                softMaxLength: 10
             )
 
             Spacer()

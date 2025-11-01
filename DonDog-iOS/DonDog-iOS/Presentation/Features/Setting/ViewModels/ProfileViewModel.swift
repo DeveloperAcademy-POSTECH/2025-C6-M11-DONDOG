@@ -22,9 +22,11 @@ final class ProfileViewModel: ObservableObject {
     }
 
     let mode: ProfileFormMode
+    private let connectUserInfo = UserPairingStore.shared
+    private let dataManager: DataManagerProtocol = DataManager.shared
 
     @Published var name: String = ""
-    @Published var selectedRole: Role? = nil
+    @Published var selectedRole: Role?
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var saveCompleted: Bool = false
@@ -32,8 +34,15 @@ final class ProfileViewModel: ObservableObject {
     // edit 모드 - 버튼 활성화용
     @Published private(set) var didChangeFromInitial: Bool = false
     private var initialName: String = ""
-    private var initialRole: Role? = nil
-
+    private var initialRole: Role?
+    private var myUid: String? {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            errorMessage = "로그인 상태가 아닙니다. 다시 시도해 주세요."
+            return nil
+        }
+        return uid
+    }
+    
     var isValid: Bool {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         return !trimmed.isEmpty && selectedRole != nil && !isLoading
@@ -44,8 +53,8 @@ final class ProfileViewModel: ObservableObject {
         case .setup:
             return isValid && name.count < 10
         case .edit:
-            let nameOK = name.count <= 10
-            return ( (!name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) || didChangeFromInitial ) && nameOK && !isLoading
+            let nameLength = name.count <= 10
+            return ( (!name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) || didChangeFromInitial) && nameLength && !isLoading
         }
     }
 
@@ -53,9 +62,7 @@ final class ProfileViewModel: ObservableObject {
     private let generateInviteCodeService: GenerateCodeService
     private weak var coordinator: AppCoordinator?
 
-    init(mode: ProfileFormMode,
-         generateInviteCodeService: GenerateCodeService = GenerateCodeService(),
-         coordinator: AppCoordinator? = nil) {
+    init(mode: ProfileFormMode, generateInviteCodeService: GenerateCodeService = GenerateCodeService(), coordinator: AppCoordinator? = nil) {
         self.mode = mode
         self.generateInviteCodeService = generateInviteCodeService
         self.coordinator = coordinator
@@ -82,10 +89,7 @@ final class ProfileViewModel: ObservableObject {
     }
 
     private func saveForSetup() {
-        guard let uid = Auth.auth().currentUser?.uid else {
-            errorMessage = "로그인 상태가 아닙니다. 다시 시도해 주세요."
-            return
-        }
+        guard let myUid = myUid else { return }
         isLoading = true
 
         generateInviteCodeService.generateUniqueInviteCode { [weak self] result in
@@ -97,43 +101,45 @@ final class ProfileViewModel: ObservableObject {
                     self.isLoading = false
                 }
             case .success(let inviteCode):
-                self.saveProfile(inviteCode: inviteCode, uid: uid)
+                self.saveProfile(inviteCode: inviteCode, myUid: myUid)
             }
         }
     }
 
-    private func saveProfile(inviteCode: String, uid: String) {
-        let userDocument = db.collection("Users").document(uid)
-        let inviteDocument = db.collection("Invites").document(inviteCode)
-        let batch = db.batch()
-
-        // Users/{uid}
-        batch.setData([
-            "name": self.name,
-            "role": (self.selectedRole?.rawForDB ?? ""),
-            "recentPostId": "",
-            "createdAt": FieldValue.serverTimestamp(),
-            "updatedAt": FieldValue.serverTimestamp()
-        ], forDocument: userDocument, merge: true)
-
-        // Invites/{inviteCode}
+    private func saveProfile(inviteCode: String, myUid: String) {
+        isLoading = true
+        let userPath = "Users/\(myUid)"
+        let invitePath = "Invites/\(inviteCode)"
         let expireDate = Timestamp(date: Date().addingTimeInterval(24 * 60 * 60))
-        batch.setData([
-            "inviterUid": uid,
-            "expireDate": expireDate
-        ], forDocument: inviteDocument, merge: false)
 
-        batch.commit { [weak self] commitError in
+        let options: [DataManager.BatchOption] = [
+            .upsert(path: userPath, data: [
+                "name": self.name,
+                "role": (self.selectedRole?.rawForDB ?? ""),
+                "recentPostId": "",
+                "createdAt": FieldValue.serverTimestamp(),
+                "updatedAt": FieldValue.serverTimestamp()
+            ]),
+            .upsert(path: invitePath, data: [
+                "inviterUid": myUid,
+                "expireDate": expireDate
+            ])
+        ]
+
+        Task { [weak self] in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                if let commitError = commitError {
-                    self.errorMessage = "프로필 저장에 문제가 발생했습니다. 잠시 후 다시 시도해주세요. (\(commitError.localizedDescription))"
-                    self.isLoading = false
-                } else {
+            do {
+                try await self.dataManager.batchUpdate(options)
+                await MainActor.run {
                     self.isLoading = false
                     self.saveCompleted = true
                     self.coordinator?.inviteShowSentHint = true
                     self.coordinator?.replaceRoot(.invite)
+                }
+            } catch {
+                await MainActor.run {
+                    self.errorMessage = "프로필 저장에 문제가 발생했습니다. 잠시 후 다시 시도해주세요. (\(error.localizedDescription))"
+                    self.isLoading = false
                 }
             }
         }
@@ -141,25 +147,14 @@ final class ProfileViewModel: ObservableObject {
 
     @MainActor
     private func fetchCurrentProfile() async {
-        guard let uid = Auth.auth().currentUser?.uid else {
-            self.errorMessage = "로그인 상태가 아닙니다. 다시 로그인해 주세요."
-            return
-        }
+        guard let myUid = myUid else { return }
         do {
-            let snap = try await db.collection("Users").document(uid).getDocument()
-            guard let data = snap.data(), snap.exists else {
-                self.errorMessage = "프로필 정보가 없습니다. 먼저 프로필을 생성해 주세요."
-                return
-            }
-            let loadedName = (data["name"] as? String) ?? ""
-            let loadedRoleRaw = (data["role"] as? String) ?? "parent"
-            let loadedRole = Role(rawValue: loadedRoleRaw) ?? .parent
-
-            self.name = loadedName
-            self.selectedRole = loadedRole
-
-            self.initialName = loadedName
-            self.initialRole = loadedRole
+            let user: UserData = try await dataManager.fetch(path: "Users/\(myUid)")
+            
+            self.name = user.name
+            self.selectedRole = Role(rawValue: user.role) ?? .parent
+            self.initialName = user.name
+            self.initialRole = self.selectedRole
             self.checkIfModified()
         } catch {
             self.errorMessage = "프로필 정보를 불러오지 못했습니다. (\(error.localizedDescription))"
@@ -171,33 +166,36 @@ final class ProfileViewModel: ObservableObject {
             errorMessage = "닉네임을 입력해 주세요."
             return
         }
-        guard let uid = Auth.auth().currentUser?.uid else {
-            errorMessage = "로그인 상태가 아닙니다. 다시 로그인해주세요"
-            return
-        }
+        guard let myUid = myUid else { return }
 
         isLoading = true
-        db.collection("Users").document(uid).setData([
+        let userPath = "Users/\(myUid)"
+        let updateData: [String: Any] = [
             "name": name,
             "role": (selectedRole?.rawForDB ?? ""),
             "updatedAt": FieldValue.serverTimestamp()
-        ], merge: true) { [weak self] err in
+        ]
+
+        Task { [weak self] in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.isLoading = false
-                if let err = err {
-                    self.errorMessage = "저장에 실패했습니다. 잠시 후 다시 시도해 주세요. (\(err.localizedDescription))"
-                    return
+            do {
+                try await self.dataManager.update(path: userPath, data: updateData)
+                await MainActor.run {
+                    self.isLoading = false
+                    self.initialName = self.name
+                    self.initialRole = self.selectedRole
+                    self.checkIfModified()
+                    self.saveCompleted = true
                 }
-                self.initialName = self.name
-                self.initialRole = self.selectedRole
-                self.checkIfModified()
-                self.saveCompleted = true
+            } catch {
+                await MainActor.run {
+                    self.errorMessage = "저장에 실패했습니다. 잠시 후 다시 시도해 주세요. (\(error.localizedDescription))"
+                    self.isLoading = false
+                }
             }
         }
     }
 
-    // MARK: - Helpers
     private func checkIfModified() {
         didChangeFromInitial = (name != initialName) || (selectedRole != initialRole)
     }

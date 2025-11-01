@@ -113,7 +113,7 @@ struct CustomNavigationBar: View {
         case .title(let text):
             Text(text)
                 .font(.titleBold18)
-            
+        
         case .none:
             EmptyView()
         }

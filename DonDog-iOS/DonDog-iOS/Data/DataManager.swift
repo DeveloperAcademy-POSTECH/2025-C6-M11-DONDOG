@@ -37,8 +37,8 @@ enum DataManagerError: LocalizedError {
     }
 }
 
-final class FirebaseDataManager: DataManagerProtocol {
-    static let shared = FirebaseDataManager()
+final class DataManager: DataManagerProtocol {
+    static let shared = DataManager()
     init() {}
     
     private let db = Firestore.firestore()

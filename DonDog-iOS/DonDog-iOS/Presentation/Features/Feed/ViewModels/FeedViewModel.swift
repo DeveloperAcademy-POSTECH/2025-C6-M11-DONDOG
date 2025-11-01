@@ -33,7 +33,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var isNotMyPost = false
     
     let connectUserInfo = UserPairingStore.shared
-    private let dataManager: DataManagerProtocol = FirebaseDataManager.shared
+    private let dataManager: DataManagerProtocol = DataManager.shared
     private let imageUtils = ImageUtils()
     
     init() {

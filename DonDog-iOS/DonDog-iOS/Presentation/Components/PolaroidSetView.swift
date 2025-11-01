@@ -20,6 +20,7 @@ struct PolaroidFrame: View {
     let caption: String?
     let isTopImage: Bool
     // onStickerButtonTapped 제거
+    let sticker: UIImage
     let selectedStickerType: String?
     let isMyPost: Bool?
     
@@ -45,7 +46,7 @@ struct PolaroidFrame: View {
     }
     
     var body: some View {
-        ZStack{
+        ZStack(alignment: .bottomTrailing) {
             VStack(spacing: 0) {
                 Spacer()
                 imageView(image)
@@ -74,8 +75,10 @@ struct PolaroidFrame: View {
                             Spacer()
                         }
                     }
+                    
                     Spacer()
-                   if stickerImage == nil && nickname != "" {
+                    
+                    if selectedStickerType == nil && nickname != "" {
                         Image(systemName: "circle.dashed")
                             .resizable()
                             .scaledToFit()
@@ -91,23 +94,14 @@ struct PolaroidFrame: View {
             .background(.ddWhite)
             .cornerRadius(6)
             .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
-            VStack{
-                Spacer()
-                HStack{
-                    Spacer()
-                    if let sticker = stickerImage, let _ = selectedStickerType {
-                        ZStack{
-                            Image(uiImage: sticker)
-                                .resizable()
-                                .frame(width: 110, height: 138)
-                            Image(stickerDecoString)
-                        }.offset(x: 16, y: -36)
-                    }
-                }.frame(width: 272, height: 63)
-            }.frame(width: 272, height: 415)
             
+            Image(uiImage: sticker)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 140, height: 145)
+                .offset(x: 4)
         }
-        
+        .frame(width: 272, height: 415)
     }
 }
 
@@ -119,6 +113,7 @@ struct PolaroidSetView: View {
     let nickname: String
     let createdAt: String
     let caption: String?
+    let stickers: [String: UIImage]?
     let selectedStickerType: String?
     let isMyPost: Bool  // 내 게시물인지 여부
     
@@ -130,6 +125,7 @@ struct PolaroidSetView: View {
                 createdAt: "",
                 caption: "",
                 isTopImage: !isTopImage,
+                sticker: UIImage(),
                 selectedStickerType: nil,
                 isMyPost: isMyPost
             )
@@ -148,6 +144,7 @@ struct PolaroidSetView: View {
                 createdAt: createdAt,
                 caption: caption,
                 isTopImage: isTopImage,
+                sticker: stickers?[selectedStickerType ?? ""] ?? UIImage(),
                 selectedStickerType: selectedStickerType,
                 isMyPost: isMyPost
             )

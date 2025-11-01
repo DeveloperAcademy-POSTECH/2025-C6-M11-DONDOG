@@ -121,6 +121,7 @@ struct FeedView: View {
                                             nickname: displayablePost.nickname,
                                             createdAt: DateUtils.relativeTimeString(from: displayablePost.createdAt),
                                             caption: displayablePost.caption,
+                                            stickers: viewModel.stickerCache[viewModel.currentPost?.postId ?? ""],
                                             selectedStickerType: displayablePost.stickerType,
                                             isMyPost: displayablePost.isMyPost
                                         )
@@ -137,9 +138,9 @@ struct FeedView: View {
                         .frame(height: 520)
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                         .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
-                        .onChange(of: viewModel.currentPostIndex) { oldValue, newIndex in
+                        .task(id: viewModel.currentPostIndex) {
                             withAnimation(.easeInOut(duration: 0.3)) {
-                                viewModel.updateCurrentPost(at: newIndex)
+                                viewModel.updateCurrentPost(at: viewModel.currentPostIndex)
                             }
                         }
                         VStack{

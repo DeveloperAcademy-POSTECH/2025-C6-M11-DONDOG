@@ -31,7 +31,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var currentNickname: String = ""
     @Published var currentPostIndex: Int = 0
     @Published var displayablePosts: [DisplayablePost] = []
-    @Published var emotion: String = "null"
+    @Published var type: String = "null"
     @Published var isNotMyPost = false
     
     private let dataManager: DataManagerProtocol = DataManager.shared
@@ -119,7 +119,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                         } else {
                             print("recentSticker 이미지 생성 실패")
                         }
-                        self?.emotion = postData.stickerType ?? "null"
+                        self?.type = postData.stickerType ?? "null"
                     }
                 }
             } catch {
@@ -137,13 +137,13 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 return
             }
             
-            let emotions = ["사랑해", "멋지다", "뭐야?", "화나", "슬퍼"]
+            let types = ["사랑해", "멋지다", "뭐야?", "화나", "슬퍼"]
             var borderedDict: [String: UIImage] = [:]
             
-            for emotion in emotions {
-                let color = FeedViewModel.borderColor(for: emotion)
+            for type in types {
+                let color = FeedViewModel.borderColor(for: type)
                 if let bordered = stickerOnly.addBorder(thickness: 50, color: color) {
-                    borderedDict[emotion] = bordered
+                    borderedDict[type] = bordered
                 }
             }
             
@@ -174,7 +174,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     path: "Rooms/\(currentRoomId)/posts/\(selectedPostId)",
                     data: [
                         "stickerPostId": recentPostId,
-                        "stickerType": emotion,
+                        "stickerType": type,
                         "updatedAt": FieldValue.serverTimestamp()
                     ]
                 )
@@ -188,7 +188,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 self.downloadStickerImage(
                     stickerPostId: stickerPostId,
                     roomId: self.currentRoomId,
-                    stickerType: self.emotion
+                    stickerType: self.type
                 ) { stickerImage in
                     DispatchQueue.main.async {
                         guard let index = self.displayablePosts.firstIndex(where: { $0.postId == self.selectedPostId }) else {
@@ -205,7 +205,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             caption: existingPost.caption,
                             createdAt: existingPost.post.createdAt,
                             stickerPostId: recentPostId,
-                            stickerType: self.emotion
+                            stickerType: self.type
                         )
                         
                         self.displayablePosts[index] = DisplayablePost(
@@ -538,8 +538,8 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                                 return
                             }
                             
-                            if let emotion = stickerType {
-                                let borderColor = FeedViewModel.borderColor(for: emotion)
+                            if let type = stickerType {
+                                let borderColor = FeedViewModel.borderColor(for: type)
                                 if let borderedSticker = stickerOnly.addBorder(thickness: 50, color: borderColor) {
                                     DispatchQueue.main.async {
                                         completion(borderedSticker)
@@ -566,8 +566,8 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    static func borderColor(for emotion: String) -> UIColor {
-        switch emotion {
+    static func borderColor(for type: String) -> UIColor {
+        switch type {
         case "사랑해":
             return .ddFeelingPink
         case "멋지다":

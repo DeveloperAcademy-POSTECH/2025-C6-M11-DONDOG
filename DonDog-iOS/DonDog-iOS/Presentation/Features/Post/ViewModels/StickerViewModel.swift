@@ -14,7 +14,7 @@ import Kingfisher
 
 final class StickerViewModel: ObservableObject {
     @Published var borderedStickers: [String: UIImage] = [:]
-    @Published var emotions: [String: String] = [:]
+    @Published var Types: [String: String] = [:]
     @Published var sticker: UIImage?
     
     private var roomId: String?

@@ -10,9 +10,9 @@ import UIKit
 
 struct StickerSheetView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedEmotion: String? = nil
+    @State private var selectedType: String? = nil
     let stickerImage: UIImage?
-    let currentSelectedEmotion: String?
+    let currentSelectedType: String?
     let onStickerSelected: (String?) -> Void
     let borderedStickers: [String: UIImage]  // 미리 생성된 테두리 스티커들
     let nickname: String
@@ -28,47 +28,47 @@ struct StickerSheetView: View {
                 .font(.bodyRegular16)
                     .foregroundColor(.ddGray600)
                     .onAppear {
-                        selectedEmotion = currentSelectedEmotion
+                        selectedType = currentSelectedType
                     }
                 VStack(spacing: 8){
                     HStack(spacing: 16) {
                         Spacer()
                         Button(action: {
-                            let newEmotion = selectedEmotion == "사랑해" ? nil : "사랑해"
-                            onStickerSelected(newEmotion)
+                            let newType = selectedType == "사랑해" ? nil : "사랑해"
+                            onStickerSelected(newType)
                             dismiss()
                         }) {
                             StickerContainerView(
                                 borderedImage: borderedStickers["사랑해"],
-                                emotion: "사랑해",
-                                isSelected: selectedEmotion == "사랑해",
-                                isOtherSelected: selectedEmotion != nil && selectedEmotion != "사랑해"
+                                type: "사랑해",
+                                isSelected: selectedType == "사랑해",
+                                isOtherSelected: selectedType != nil && selectedType != "사랑해"
                             )
                         }
                         
                         Button(action: {
-                            let newEmotion = selectedEmotion == "멋지다" ? nil : "멋지다"
-                            onStickerSelected(newEmotion)
+                            let newType = selectedType == "멋지다" ? nil : "멋지다"
+                            onStickerSelected(newType)
                             dismiss()
                         }) {
                             StickerContainerView(
                                 borderedImage: borderedStickers["멋지다"],
-                                emotion: "멋지다",
-                                isSelected: selectedEmotion == "멋지다",
-                                isOtherSelected: selectedEmotion != nil && selectedEmotion != "멋지다"
+                                type: "멋지다",
+                                isSelected: selectedType == "멋지다",
+                                isOtherSelected: selectedType != nil && selectedType != "멋지다"
                             )
                         }
                         
                         Button(action: {
-                            let newEmotion = selectedEmotion == "뭐야?" ? nil : "뭐야?"
-                            onStickerSelected(newEmotion)
+                            let newType = selectedType == "뭐야?" ? nil : "뭐야?"
+                            onStickerSelected(newType)
                             dismiss()
                         }) {
                             StickerContainerView(
                                 borderedImage: borderedStickers["뭐야?"],
-                                emotion: "뭐야?",
-                                isSelected: selectedEmotion == "뭐야?",
-                                isOtherSelected: selectedEmotion != nil && selectedEmotion != "뭐야?"
+                                type: "뭐야?",
+                                isSelected: selectedType == "뭐야?",
+                                isOtherSelected: selectedType != nil && selectedType != "뭐야?"
                             )
                         }
                         Spacer()
@@ -76,34 +76,33 @@ struct StickerSheetView: View {
                     HStack(spacing: 16) {
                         Spacer()
                         Button(action: {
-                            let newEmotion = selectedEmotion == "화나" ? nil : "화나"
-                            onStickerSelected(newEmotion)
+                            let newType = selectedType == "화나" ? nil : "화나"
+                            onStickerSelected(newType)
                             dismiss()
                         }) {
                             StickerContainerView(
                                 borderedImage: borderedStickers["화나"],
-                                emotion: "화나",
-                                isSelected: selectedEmotion == "화나",
-                                isOtherSelected: selectedEmotion != nil && selectedEmotion != "화나"
+                                type: "화나",
+                                isSelected: selectedType == "화나",
+                                isOtherSelected: selectedType != nil && selectedType != "화나"
                             )
                         }
                         
                         Button(action: {
-                            let newEmotion = selectedEmotion == "슬퍼" ? nil : "슬퍼"
-                            onStickerSelected(newEmotion)
+                            let newType = selectedType == "슬퍼" ? nil : "슬퍼"
+                            onStickerSelected(newType)
                             dismiss()
                         }) {
                             StickerContainerView(
                                 borderedImage: borderedStickers["슬퍼"],
-                                emotion: "슬퍼",
-                                isSelected: selectedEmotion == "슬퍼",
-                                isOtherSelected: selectedEmotion != nil && selectedEmotion != "슬퍼"
+                                type: "슬퍼",
+                                isSelected: selectedType == "슬퍼",
+                                isOtherSelected: selectedType != nil && selectedType != "슬퍼"
                             )
                         }
                         Spacer()
                     }
                 }
-                
                 .padding(.horizontal, 20)
                 
                 Spacer()
@@ -114,22 +113,22 @@ struct StickerSheetView: View {
 
 struct StickerContainerView: View {
     let borderedImage: UIImage?  // 미리 생성된 테두리 이미지
-    let emotion: String
+    let type: String
     let isSelected: Bool
     let isOtherSelected: Bool
     
-    private var emotionStrokeColor: Color {
-            guard let stickerEmotion = StickerType(rawValue: emotion) else {
+    private var typeStrokeColor: Color {
+            guard let stickerType = StickerType(rawValue: type) else {
                 return .ddBlack
             }
-            return stickerEmotion.strokeColor
+            return stickerType.strokeColor
         }
     
     private var stickerDecoString: String {
-            guard let stickerEmotion = StickerType(rawValue: emotion) else {
+            guard let stickerType = StickerType(rawValue: type) else {
                 return ""
             }
-            return stickerEmotion.stickerDecoString
+            return stickerType.stickerDecoString
         }
     
     var body: some View {
@@ -146,8 +145,8 @@ struct StickerContainerView: View {
                 }
                 
                 ZStack{
-                    StrokeTextView(text: emotion, textColor: .ddBlack, fontName: FontName.sejongGeulggot.rawValue, fontSize: 16, strokeColor: emotionStrokeColor, strokeWidth: 12)
-                    Text(emotion)
+                    StrokeTextView(text: type, textColor: .ddBlack, fontName: FontName.sejongGeulggot.rawValue, fontSize: 16, strokeColor: typeStrokeColor, strokeWidth: 12)
+                    Text(type)
                         .font(.polaroidCaptionRegular16)
                         .foregroundColor(.ddBlack)
                         .fixedSize(horizontal: true, vertical: false)
@@ -167,6 +166,6 @@ struct StickerContainerView: View {
 }
 
 #Preview {
-    StickerContainerView(borderedImage: UIImage(named: "frontTest")!, emotion: "멋지다", isSelected: false, isOtherSelected: false)
+    StickerContainerView(borderedImage: UIImage(named: "frontTest")!, type: "멋지다", isSelected: false, isOtherSelected: false)
 }
 

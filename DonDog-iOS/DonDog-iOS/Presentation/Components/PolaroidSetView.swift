@@ -20,7 +20,7 @@ struct PolaroidFrame: View {
     let caption: String?
     let isTopImage: Bool
     // onStickerButtonTapped 제거
-    let selectedStickerEmotion: String?
+    let selectedStickerType: String?
     let stickerImage: UIImage?
     let isMyPost: Bool?
     
@@ -39,10 +39,10 @@ struct PolaroidFrame: View {
     }
     
     private var stickerDecoString: String {
-        guard let stickerEmotion = StickerType(rawValue: selectedStickerEmotion ?? "") else {
+        guard let stickerType = StickerType(rawValue: selectedStickerType ?? "") else {
             return ""
         }
-        return stickerEmotion.stickerDecoString
+        return stickerType.stickerDecoString
     }
     
     var body: some View {
@@ -96,7 +96,7 @@ struct PolaroidFrame: View {
                 Spacer()
                 HStack{
                     Spacer()
-                    if let sticker = stickerImage, let _ = selectedStickerEmotion {
+                    if let sticker = stickerImage, let _ = selectedStickerType {
                         ZStack{
                             Image(uiImage: sticker)
                                 .resizable()
@@ -120,7 +120,7 @@ struct PolaroidSetView: View {
     let nickname: String
     let createdAt: String
     let caption: String?
-    let selectedStickerEmotion: String?
+    let selectedStickerType: String?
     let stickerImage: UIImage?  // 이 게시물에 붙은 스티커 이미지 (이미 테두리 적용됨)
     let isMyPost: Bool  // 내 게시물인지 여부
     
@@ -132,7 +132,7 @@ struct PolaroidSetView: View {
                 createdAt: "",
                 caption: "",
                 isTopImage: !isTopImage,
-                selectedStickerEmotion: nil,
+                selectedStickerType: nil,
                 stickerImage: nil,
                 isMyPost: isMyPost
             )
@@ -151,7 +151,7 @@ struct PolaroidSetView: View {
                 createdAt: createdAt,
                 caption: caption,
                 isTopImage: isTopImage,
-                selectedStickerEmotion: selectedStickerEmotion,
+                selectedStickerType: selectedStickerType,
                 stickerImage: stickerImage,
                 isMyPost: isMyPost
             )
@@ -172,7 +172,7 @@ struct PolaroidSetView: View {
 //        nickname: "이토",
 //        createdAt: "오전 04:45",
 //        caption: "하이디라오 짱맛",
-//        selectedStickerEmotion: "사랑해",
+//        selectedStickerType: "사랑해",
 //        stickerImage: UIImage(named: "frontTest")!,
 //        isMyPost: false  // Preview에서는 다른 사람 게시물로 설정
 //    )

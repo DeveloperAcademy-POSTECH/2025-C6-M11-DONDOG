@@ -121,7 +121,7 @@ struct FeedView: View {
                                             nickname: displayablePost.nickname,
                                             createdAt: DateUtils.relativeTimeString(from: displayablePost.createdAt),
                                             caption: displayablePost.caption,
-                                            selectedStickerEmotion: displayablePost.stickerType,
+                                            selectedStickerType: displayablePost.stickerType,
                                             stickerImage: displayablePost.stickerImage,
                                             isMyPost: displayablePost.isMyPost
                                         )
@@ -315,10 +315,10 @@ struct FeedView: View {
                 let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
                 StickerSheetView(
                     stickerImage: sticker,
-                    currentSelectedEmotion: currentPost.stickerType,
-                    onStickerSelected: { emotion in
-                        if let emotion = emotion {
-                            viewModel.emotion = emotion
+                    currentSelectedType: currentPost.stickerType,
+                    onStickerSelected: { type in
+                        if let type = type {
+                            viewModel.type = type
                             viewModel.updateStickerData()
                         } else {
                             viewModel.removeStickerData()

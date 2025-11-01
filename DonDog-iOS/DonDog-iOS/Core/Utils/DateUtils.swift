@@ -7,16 +7,16 @@
 
 import Foundation
 
-struct DateUtils {
-    enum DateFormat: String {
-        case yearMonth = "yyyy년 M월"
-        case monthDay = "MM월 d일"
-        case day = "d"
-        case time = "HH:mm"
-        case full = "MM월 d일 HH:mm"
-        case dayKey = "yyyy-MM-dd"
-    }
-    
+enum DateFormat: String {
+    case yearMonth = "yyyy년 M월"
+    case monthDay = "MM월 d일"
+    case day = "d"
+    case time = "HH:mm"
+    case full = "MM월 d일 HH:mm"
+    case dayKey = "yyyy-MM-dd"
+}
+
+final class DateUtils {
     private static var calendar: Calendar = {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Asia/Seoul") ?? .current

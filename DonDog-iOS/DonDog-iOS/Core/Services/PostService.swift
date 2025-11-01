@@ -9,13 +9,6 @@ import FirebaseFirestore
 import FirebaseStorage
 import Foundation
 
-// 분리 예정
-enum PostServiceError: Error {
-    case unauthorized
-    case postNotFound
-    case invalidIdentifier
-}
-
 final class PostService {
     static let shared = PostService()
     private init() {}

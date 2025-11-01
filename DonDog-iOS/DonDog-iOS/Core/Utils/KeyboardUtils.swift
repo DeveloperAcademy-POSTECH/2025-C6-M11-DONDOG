@@ -9,20 +9,6 @@ import Combine
 import Foundation
 import SwiftUI
 
-extension View {
-    /// 텍스트 입력 중 화면을 탭하면 키보드를 내리는 커스텀 Modifier
-    func dismissKeyboard() -> some View {
-        self
-            .contentShape(Rectangle())
-            .simultaneousGesture(TapGesture().onEnded {
-                UIApplication.shared.sendAction(
-                    #selector(UIResponder.resignFirstResponder),
-                    to: nil, from: nil, for: nil
-                )
-            })
-    }
-}
-
 final class KeyboardResponder: ObservableObject {
     @Published var keyboardHeight: CGFloat = 0
     private var cancellables = Set<AnyCancellable>()

@@ -9,12 +9,6 @@ import Foundation
 import SwiftUI
 import UIKit
 
-extension View {
-    func backHiddenSwipeEnabled() -> some View {
-        self.modifier(BackHiddenSwipeEnabled())
-    }
-}
-
 struct BackHiddenSwipeEnabled: ViewModifier {
     func body(content: Content) -> some View {
         content

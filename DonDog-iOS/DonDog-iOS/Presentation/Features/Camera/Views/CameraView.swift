@@ -17,6 +17,8 @@ struct CameraView: UIViewControllerRepresentable {
         let customCameraVC = CustomCameraViewController()
         customCameraVC.delegate = context.coordinator
         
+        customCameraVC.isFrontOnly = viewModel.isFrontOnly
+        
         // 카메라 컨트롤러 참조를 ViewModel에 저장 (리셋 기능을 위해)
         viewModel.cameraController = customCameraVC
         DispatchQueue.main.async{

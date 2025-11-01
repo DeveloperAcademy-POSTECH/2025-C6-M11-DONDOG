@@ -26,7 +26,8 @@ class CustomCameraViewController: UIViewController {
     private var videoPreviewLayer: AVCaptureVideoPreviewLayer!
     private var photoOutput: AVCapturePhotoOutput!
     private var currentCamera: AVCaptureDevice?
-
+    
+    var isFrontOnly: Bool = false
     // 촬영 순서 관리
     private var isCapturingFront = true  // true: 전면 촬영, false: 후면 촬영
     private var frontImage: UIImage?
@@ -433,10 +434,16 @@ class CustomCameraViewController: UIViewController {
                 self.frontGuideMessageLabel.isHidden = false
                 self.backGuideMessageLabel.isHidden = true
             } else {
-                self.captureButton.setTitle("후면 촬영", for: .normal)
-                // 후면 촬영 안내 표시
-                self.frontGuideMessageLabel.isHidden = true
-                self.backGuideMessageLabel.isHidden = false
+                if self.isFrontOnly {
+                    self.frontGuideMessageLabel.isHidden = false
+                    self.backGuideMessageLabel.isHidden = true
+                    self.captureButton.setTitle("전면 촬영", for: .normal)
+                } else {
+                    self.captureButton.setTitle("후면 촬영", for: .normal)
+                    // 후면 촬영 안내 표시
+                    self.frontGuideMessageLabel.isHidden = true
+                    self.backGuideMessageLabel.isHidden = false
+                }
             }
         }
     }

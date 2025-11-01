@@ -151,7 +151,7 @@ struct FeedView: View {
                                         print("현재 post가 없습니다.")
                                         return
                                     }
-                                    coordinator.push(.postDetail(posts: [post], postType: .post))
+                                    coordinator.push(.post(posts: [post], postType: .post))
                                 } label: {
                                     ZStack {
                                         Image("DetailViewButton")
@@ -220,6 +220,7 @@ struct FeedView: View {
                         Spacer()
                         Button{
                             if !viewModel.displayablePosts.isEmpty {
+                                viewModel.updateCurrentPost(at: viewModel.currentPostIndex)
                                 let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
                                 if !currentPost.isMyPost {
                                     showStickerSheet = true
@@ -300,20 +301,20 @@ struct FeedView: View {
             )
         }
         .sheet(isPresented: $showStickerSheet) {
-            if let sticker = viewModel.sticker {
+            if let _ = viewModel.stickers {
                 let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
                 StickerSheetView(
-                    stickerImage: sticker,
-                    currentSelectedType: currentPost.stickerType,
-                    onStickerSelected: { type in
+                    initialSelectedType: StickerType(rawValue: currentPost.stickerType ?? ""),
+                    stickers: viewModel.stickers ?? [:],
+                    name: viewModel.currentUserName,
+                    onSelect: { type in
                         if let type = type {
-                            viewModel.type = type
+                            viewModel.type = type.rawValue
                             viewModel.updateStickerData()
                         } else {
                             viewModel.removeStickerData()
                         }
-                    },
-                    borderedStickers: viewModel.borderedStickers, nickname: viewModel.myNickname
+                    }
                 )
                 .presentationDetents([.height(392)])
                 .presentationDragIndicator(.visible)

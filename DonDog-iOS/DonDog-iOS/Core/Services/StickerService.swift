@@ -147,7 +147,7 @@ final class StickerService {
                         Image(uiImage: outlinedImage)
                         Image(decoImageName)
                             .resizable()
-                            .aspectRatio(contentMode: .fit)
+                            .scaledToFit()
                             .frame(width: decoWidth)
                     }
                     .offset(x: 16, y: -36),

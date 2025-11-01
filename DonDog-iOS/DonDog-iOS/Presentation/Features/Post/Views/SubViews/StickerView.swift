@@ -17,7 +17,7 @@ struct StickerView: View {
             .resizable()
             .scaledToFit()
             .frame(width: 140)
-            .onAppear {
+            .task {
                 Task {
                     guard let stickerType = stickerType, !stickerType.isEmpty else {
                         sticker = UIImage()

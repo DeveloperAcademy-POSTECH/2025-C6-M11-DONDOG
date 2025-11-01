@@ -10,10 +10,10 @@ import Foundation
 struct DateUtils {
     enum DateFormat: String {
         case yearMonth = "yyyy년 M월"
-        case monthDay = "MM월 dd일"
+        case monthDay = "MM월 d일"
         case day = "d"
         case time = "HH:mm"
-        case full = "MM월 dd일 HH:mm"
+        case full = "MM월 d일 HH:mm"
         case dayKey = "yyyy-MM-dd"
     }
     

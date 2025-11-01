@@ -11,6 +11,7 @@ struct CaptionView: View {
     @ObservedObject var viewModel: CaptionViewModel
     var onCancel: () -> Void
     var onUploadComplete: () -> Void
+    var onReturnToHome: () -> Void
     @State private var isShowCaptionEditor: Bool = false
     @FocusState private var isCaptionFocused: Bool
     @State private var isFrontImageOnTop = true
@@ -73,6 +74,7 @@ struct CaptionView: View {
                     .frame(height: 20)
                 
                 Button{
+                    onReturnToHome()
                     viewModel.uploadPost {
                         onUploadComplete() // 업로드 성공 뒤 실행
                     }

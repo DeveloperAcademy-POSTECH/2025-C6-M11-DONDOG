@@ -5,11 +5,11 @@
 //  Created by 이주현 on 10/9/25.
 //
 
-import SwiftUI
-import Foundation
 import Combine
 import FirebaseAuth
 import FirebaseFirestore
+import Foundation
+import SwiftUI
 
 final class ProfileViewModel: ObservableObject {
     enum Role: String, CaseIterable {

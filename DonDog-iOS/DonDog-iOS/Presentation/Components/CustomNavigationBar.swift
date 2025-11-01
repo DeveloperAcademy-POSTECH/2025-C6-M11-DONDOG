@@ -146,7 +146,6 @@ struct CustomNavigationBar: View {
                     .frame(width: 24, height: 24)
             }
             
-            
         case .setting(let action):
             Button(action: action) {
                 Image(systemName: "gear")

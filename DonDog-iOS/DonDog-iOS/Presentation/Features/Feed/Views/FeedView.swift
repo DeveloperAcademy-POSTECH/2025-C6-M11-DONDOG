@@ -32,7 +32,6 @@ struct FeedView: View {
                 //네비게이션 바
                 HStack{
                     Spacer()
-
                     if viewModel.connectUserInfo.isConnected == false {
                         Button{
                             coordinator.push(.setting)

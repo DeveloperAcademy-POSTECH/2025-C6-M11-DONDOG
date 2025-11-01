@@ -31,7 +31,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeAuthView(isWithDraw : Bool) -> AuthView {
+    func makeAuthView(isWithDraw: Bool) -> AuthView {
         let viewModel = AuthViewModel(isWithDraw: isWithDraw)
         let view = AuthView(viewModel: viewModel)
         return view
@@ -91,4 +91,3 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
 }
-

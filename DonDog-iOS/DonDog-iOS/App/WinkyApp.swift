@@ -1,15 +1,15 @@
 //
-//  DonDog_iOSApp.swift
+//  WinkyApp.swift
 //  DonDog-iOS
 //
 //  Created by 조유진 on 10/3/25.
 //
 
-import SwiftUI
 import FirebaseAuth
+import SwiftUI
 
 @main
-struct DonDog_iOSApp: App {
+struct WinkyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {

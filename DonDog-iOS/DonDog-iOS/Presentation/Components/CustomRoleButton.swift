@@ -42,15 +42,3 @@ struct CustomRolePicker: View {
         .padding(.vertical, 16)
     }
 }
-
-#Preview {
-    struct PreviewWrapper: View {
-        @State private var selectedRole: ProfileSetupViewModel.Role? = nil
-        
-        var body: some View {
-            CustomRolePicker(selection: $selectedRole)
-        }
-    }
-
-    return PreviewWrapper()
-}

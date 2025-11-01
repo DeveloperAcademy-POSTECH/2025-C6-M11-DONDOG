@@ -13,9 +13,7 @@ struct CustomNavMenuItem: Identifiable {
     let role: ButtonRole?
     let action: () -> Void
     
-    init(_ title: String,
-         role: ButtonRole? = nil,
-         action: @escaping () -> Void) {
+    init(_ title: String, role: ButtonRole? = nil, action: @escaping () -> Void) {
         self.title = title
         self.role = role
         self.action = action
@@ -175,6 +173,7 @@ struct CustomNavigationBar: View {
         centerType: .title(title: "10월 14일"),
         trailingType: .menu(items: [
             CustomNavMenuItem("삭제", role: .destructive) {
+                //
             },
         ]),
         navigationColor: .black

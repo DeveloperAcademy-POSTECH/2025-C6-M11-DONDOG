@@ -11,8 +11,7 @@ extension UIImage {
 
     func addBorder(thickness: CGFloat, color: UIColor) -> UIImage? {
         _ = self.scale
-        let canvas = CGSize(width: self.size.width + thickness * 2,
-                           height: self.size.height + thickness * 2)
+        let canvas = CGSize(width: self.size.width + thickness * 2, height: self.size.height + thickness * 2)
         let origin = CGPoint(x: thickness, y: thickness)
         
         // 1. 테두리만 생성
@@ -21,8 +20,7 @@ extension UIImage {
         }
         
         // 2. 테두리 변형 (180° 회전 + 좌우 반전)
-        guard let rotated = borderOnly.rotate180(),
-              let mirrored = rotated.flipHorizontally() else {
+        guard let rotated = borderOnly.rotate180(), let mirrored = rotated.flipHorizontally() else {
             return nil
         }
         
@@ -37,8 +35,7 @@ extension UIImage {
         UIGraphicsBeginImageContextWithOptions(canvas, false, self.scale)
         defer { UIGraphicsEndImageContext() }
         
-        guard let ctx = UIGraphicsGetCurrentContext(),
-              let maskCG = self.cgImage else { return nil }
+        guard let ctx = UIGraphicsGetCurrentContext(), let maskCG = self.cgImage else { return nil }
         
         ctx.setFillColor(color.cgColor)
         
@@ -46,8 +43,7 @@ extension UIImage {
         for angle in stride(from: CGFloat(0), to: CGFloat.pi * 2, by: CGFloat.pi / 4) {
             let dx = cos(angle) * thickness
             let dy = sin(angle) * thickness
-            let rect = CGRect(origin: CGPoint(x: origin.x + dx, y: origin.y + dy),
-                            size: self.size)
+            let rect = CGRect(origin: CGPoint(x: origin.x + dx, y: origin.y + dy), size: self.size)
             
             ctx.saveGState()
             ctx.clip(to: rect, mask: maskCG)

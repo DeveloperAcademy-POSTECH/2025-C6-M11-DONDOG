@@ -5,9 +5,9 @@
 //  Created by 이주현 on 10/20/25.
 //
 
+import Combine
 import Foundation
 import Network
-import Combine
 
 final class NetworkService: ObservableObject {
     enum Status { case satisfied, unsatisfied, unknown }

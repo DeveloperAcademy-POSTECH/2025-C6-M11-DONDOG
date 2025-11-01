@@ -33,11 +33,7 @@ struct CameraViewContainer: View {
                         onCancel: {
                             cameraViewModel.resetCameraState()
                         },
-                        onUploadComplete: {
-                            feedViewModel.isUploading = true
-                            cameraViewModel.frontImage = nil
-                            cameraViewModel.backImage = nil
-                        }, onReturnToHome: {
+                        onReturnToHome: {
                             isPresented = false
                         }
                     )

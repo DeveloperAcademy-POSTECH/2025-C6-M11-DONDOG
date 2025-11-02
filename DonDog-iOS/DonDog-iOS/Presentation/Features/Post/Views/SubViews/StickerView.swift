@@ -18,15 +18,13 @@ struct StickerView: View {
             .scaledToFit()
             .frame(width: 140)
             .task {
-                Task {
-                    guard let stickerType = stickerType, !stickerType.isEmpty else {
-                        sticker = UIImage()
-                        return
-                    }
-                    
-                    let stickers = await StickerService().getStickerCollection(of: postId)
-                    sticker = stickers[stickerType] ?? UIImage()
+                guard let stickerType = stickerType, !stickerType.isEmpty else {
+                    sticker = UIImage()
+                    return
                 }
+                
+                let stickers = await StickerService().getStickerCollection(of: postId)
+                sticker = stickers[stickerType] ?? UIImage()
             }
     }
 }

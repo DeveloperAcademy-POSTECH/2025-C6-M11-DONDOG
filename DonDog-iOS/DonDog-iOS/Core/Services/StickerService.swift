@@ -14,35 +14,30 @@ final class StickerService {
     private let dataManager: DataManagerProtocol = DataManager.shared
     private let imageUtils = ImageUtils()
     private var roomId: String?
-    private var stickerPostId: String?
-    private var stickerImage: UIImage? // 스티커 원본 이미지
-    private var clippedImage: UIImage? // 누끼 따진 이미지
-    private var outlinedImages: [String : UIImage?] = [:] // [stickerType : 테두리 적용된 이미지] - outline: 테두리
     
     func getStickerCollection(of postId: String) async -> [String: UIImage] {
-        await getStickerPostId(of: postId) // 스티커 원본 이미지가 있는 postId 가져오기
+        let stickerPostId = await getStickerPostId(of: postId) // 스티커 원본 이미지가 있는 postId 가져오기
         
-        guard let stickerPostId = stickerPostId else {
-            print("스티커로 만들 게시물이 없습니다")
-            return [:]
-        }
-        await fetchStickerImage(of: stickerPostId) // 스티커 원본 이미지 가져오기
+        let stickerImage = await fetchStickerImage(of: stickerPostId) // 스티커 원본 이미지 가져오기
         
-        getClippedImage() // 누끼 따기
+        let clippedImage = getClippedImage(of: stickerImage) // 누끼 따기
         
-        getOutlinedImage() // 테두리 적용
+        let outlinedImages = getOutlinedImage(for: clippedImage) // 테두리 적용 후 [stickerType : 테두리 적용된 이미지] - outline: 테두리
         
-        return getStickers() // 데코까지 적용된 스티커 배열
+        return getStickers(with: outlinedImages) // 데코까지 적용된 스티커 배열
     }
     
-    private func getStickerPostId(of postId: String) async {
-        guard let currentUserId = dataManager.getCurrentUserId() else { return }
+    private func getStickerPostId(of postId: String) async -> String {
+        guard let currentUserId = dataManager.getCurrentUserId() else {
+            print("현재 사용자 id 없음")
+            return ""
+        }
 
         do {
             let currentUser: UserData = try await dataManager.fetch(path: "Users/\(currentUserId)")
             guard let roomId = currentUser.roomId, !roomId.isEmpty else {
                 print("getStickerPostId에서 roomId가 없음")
-                return
+                return ""
             }
             self.roomId = roomId
             
@@ -55,20 +50,22 @@ final class StickerService {
                 stickerPostIdToFetch = recentPostId
             } else {
                 print("stickerPostId와 recentPostId 모두 없음")
-                return
+                return ""
             }
             
             let postData: PostData = try await dataManager.fetch(path: "Rooms/\(roomId)/posts/\(stickerPostIdToFetch)")
-            stickerPostId = postData.postId
+            
+            return postData.postId
         } catch {
             print("stickerPostId 가져오기 실패: \(error.localizedDescription)")
+            return ""
         }
     }
     
-    private func fetchStickerImage(of stickerPostId: String) async {
+    private func fetchStickerImage(of stickerPostId: String) async -> UIImage {
         guard let roomId = roomId else {
             print("fetchStickerImage에서 roomId가 없음")
-            return
+            return UIImage()
         }
 
         do {
@@ -77,47 +74,44 @@ final class StickerService {
             )
             guard let url = URL(string: postData.frontImageURL) else {
                 print("스티커 이미지 URL 생성 실패")
-                return
+                return UIImage()
             }
 
             let image = try await KingfisherManager.shared.retrieveImage(with: url).image
-            await MainActor.run {
-                self.stickerImage = image
-            }
+            
+            return image
         } catch {
             print("스티커 이미지 가져오기 실패: \(error.localizedDescription)")
+            return  UIImage()
         }
     }
     
-    private func getClippedImage() {
-        guard let stickerImage = stickerImage else {
-            print("스티커 원본 이미지 없음")
-            return
-        }
-        
+    private func getClippedImage(of stickerImage: UIImage) -> UIImage {
         guard let mask = imageUtils.makeMask(from: stickerImage) else {
             print("mask 생성 실패")
-            return
+            return UIImage()
         }
         
         guard let baseImage = imageUtils.applyingMask(to: stickerImage, with: mask) else {
             print("누끼 따기 실패")
-            return
+            return UIImage()
         }
         
         guard let mask = imageUtils.makeMask(from: baseImage) else { // 더 자연스럽게 하기 위해 2번 누끼 따기
             print("mask 생성 실패")
-            return
+            return UIImage()
         }
         
-        clippedImage = imageUtils.applyingMask(to: baseImage, with: mask)
+        guard let clippedImage = imageUtils.applyingMask(to: baseImage, with: mask) else {
+            print("누끼 따기 실패")
+            return UIImage()
+        }
+        
+        return clippedImage
     }
     
-    private func getOutlinedImage() {
-        guard let clippedImage = clippedImage else {
-            print("clippedImage 없음")
-            return
-        }
+    private func getOutlinedImage(for clippedImage: UIImage) -> [String : UIImage] {
+       var outlinedImages: [String: UIImage] = [:]
         
         for stickerType in StickerType.allCases {
             let uiColor = UIColor(stickerType.outlineColor)
@@ -126,11 +120,14 @@ final class StickerService {
                 outlinedImages[stickerType.rawValue] = outlinedImage
             } else {
                 print("이미지 합성 실패: \(stickerType.rawValue)")
+                return [:]
             }
         }
+        
+        return outlinedImages
     }
     
-    private func getStickers() -> [String: UIImage] {
+    private func getStickers(with outlinedImages: [String : UIImage]) -> [String : UIImage] {
         var stickers: [String: UIImage] = [:]
         
         for stickerType in StickerType.allCases {
@@ -138,25 +135,20 @@ final class StickerService {
             let decoImageName = stickerType.stickerDecoString
             
             let sticker: UIImage
-            if let outlinedImage {
-                let outlinedSize = outlinedImage.size
-                let decoWidth = outlinedSize.width * 1.27
-                
-                sticker = imageUtils.renderViewAsImage(
-                    ZStack {
-                        Image(uiImage: outlinedImage)
-                        Image(decoImageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: decoWidth)
-                    }
+            let outlinedSize = outlinedImage.size
+            let decoWidth = outlinedSize.width * 1.27
+            
+            sticker = imageUtils.renderViewAsImage(
+                ZStack {
+                    Image(uiImage: outlinedImage)
+                    Image(decoImageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: decoWidth)
+                }
                     .offset(x: 16, y: -36),
-                    size: CGSize(width: decoWidth, height: outlinedSize.height)
-                )
-                
-            } else {
-                sticker = UIImage()
-            }
+                size: CGSize(width: decoWidth, height: outlinedSize.height)
+            )
             
             stickers[stickerType.rawValue] = sticker
         }

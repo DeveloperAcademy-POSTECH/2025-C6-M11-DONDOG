@@ -385,8 +385,10 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             Task {
                 let newStickers = await StickerService().getStickerCollection(of: displayablePost.postId)
                 await MainActor.run {
-                    stickers = newStickers
-                    stickerCache[displayablePost.postId] = newStickers
+                    if self.selectedPostId == displayablePost.postId {
+                        stickers = newStickers
+                        stickerCache[displayablePost.postId] = newStickers
+                    }
                 }
             }
         }

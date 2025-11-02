@@ -11,7 +11,7 @@ struct SettingView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: SettingViewModel
     struct WebSheetItem: Identifiable { let id = UUID(); let url: URL }
-    @State private var webSheet: WebSheetItem? = nil
+    @State private var webSheet: WebSheetItem?
     
     var body: some View {
         ZStack {

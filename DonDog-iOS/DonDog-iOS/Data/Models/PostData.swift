@@ -34,4 +34,5 @@ struct PostData: Codable, Hashable {
 extension PostData {
     var frontURL: URL? { URL(string: frontImageURL) }
     var backURL: URL?  { URL(string: backImageURL) }
+    var thumbnailURL: URL? { frontURL ?? backURL }
 }

@@ -14,7 +14,7 @@ enum StickerType: String, CaseIterable {
     case angry = "화나"
     case sad = "슬퍼"
     
-    var strokeColor: Color {
+    var outlineColor: Color {
         switch self {
         case .love:
             return .ddFeelingPink

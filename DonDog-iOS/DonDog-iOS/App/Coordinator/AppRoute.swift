@@ -19,5 +19,5 @@ enum AppRoute: Hashable {
     case setting
     case editprofile
     case archive
-    case postDetail(posts: [PostData], postType: PostType)
+    case post(posts: [PostData], postType: PostType)
 }

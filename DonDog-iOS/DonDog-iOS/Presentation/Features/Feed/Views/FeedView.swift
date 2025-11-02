@@ -117,13 +117,10 @@ struct FeedView: View {
                                             name: displayablePost.name,
                                             createdAt: DateUtils.relativeTimeString(from: displayablePost.createdAt),
                                             caption: displayablePost.caption,
-                                            selectedStickerEmotion: displayablePost.stickerType,
-                                            stickerImage: displayablePost.stickerImage,
+                                            stickers: viewModel.stickerCache[viewModel.currentPost?.postId ?? ""],
+                                            selectedStickerType: displayablePost.stickerType,
                                             isMyPost: displayablePost.isMyPost
                                         )
-                                        .onAppear {
-                                            print("🎨 게시물 \(index) 렌더링: stickerType=\(displayablePost.stickerType ?? "nil"), stickerImage=\(displayablePost.stickerImage != nil ? "있음" : "없음")")
-                                        }
                                         .allowsHitTesting(true)
                                         .scaleEffect(index == viewModel.currentPostIndex ? 1.0 : 0.95)
                                         .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.currentPostIndex)
@@ -137,9 +134,9 @@ struct FeedView: View {
                         .frame(height: 520)
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                         .animation(.easeInOut(duration: 0.3), value: viewModel.currentPostIndex)
-                        .onChange(of: viewModel.currentPostIndex) { _, newIndex in
+                        .task(id: viewModel.currentPostIndex) {
                             withAnimation(.easeInOut(duration: 0.3)) {
-                                viewModel.updateCurrentPost(at: newIndex)
+                                viewModel.updateCurrentPost(at: viewModel.currentPostIndex)
                             }
                         }
                         VStack {
@@ -150,15 +147,7 @@ struct FeedView: View {
                                         print("현재 post가 없습니다.")
                                         return
                                     }
-                                    // TODO: PostDetail pr 승인 후 제거 예정 (+ 관련 파일들까지)
-                                    //                                        if !viewModel.displayablePosts.isEmpty {
-                                    //                                            let currentDisplayable = viewModel.displayablePosts[viewModel.currentPostIndex]
-                                    //                                            coordinator.push(.post(
-                                    //                                                postId: currentDisplayable.post.postId,
-                                    //                                                roomId: viewModel.currentRoomId
-                                    //                          l                  ))
-                                    //                                        }
-                                    coordinator.push(.postDetail(posts: [post], postType: .post))
+                                    coordinator.push(.post(posts: [post], postType: .post))
                                 } label: {
                                     ZStack {
                                         Image("DetailViewButton")
@@ -307,20 +296,20 @@ struct FeedView: View {
             )
         }
         .sheet(isPresented: $showStickerSheet) {
-            if let sticker = viewModel.sticker, let name = viewModel.connectUserInfo.myName {
+            if let _ = viewModel.stickers {
                 let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
                 StickerSheetView(
-                    stickerImage: sticker,
-                    currentSelectedEmotion: currentPost.stickerType,
-                    onStickerSelected: { emotion in
-                        if let emotion = emotion {
-                            viewModel.emotion = emotion
+                    initialSelectedType: StickerType(rawValue: currentPost.stickerType ?? ""),
+                    stickers: viewModel.stickers ?? [:],
+                    name: viewModel.currentUserName,
+                    onSelect: { type in
+                        if let type = type {
+                            viewModel.type = type.rawValue
                             viewModel.updateStickerData()
                         } else {
                             viewModel.removeStickerData()
                         }
-                    },
-                    borderedStickers: viewModel.borderedStickers, name: name
+                    }
                 )
                 .presentationDetents([.height(392)])
                 .presentationDragIndicator(.visible)

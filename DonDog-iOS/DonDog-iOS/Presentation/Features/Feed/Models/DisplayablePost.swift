@@ -13,18 +13,16 @@ import UIKit
 struct DisplayablePost: Identifiable {
     let id: String  // postId
     let post: PostData
-    var frontImageURL: URL?
-    var backImageURL: URL?
-    var stickerImage: UIImage?  // 이 게시물에 붙은 스티커 이미지
+    var frontImageURL: URL? = nil
+    var backImageURL: URL? = nil
     var name: String
     let isMyPost: Bool  // 내 게시물인지 여부
     
-    init(post: PostData, frontImage: URL? = nil, backImage: URL? = nil, stickerImage: UIImage? = nil, name: String = "익명", isMyPost: Bool = false) {
+    init(post: PostData, frontImage: URL? = nil, backImage: URL? = nil, name: String = "익명", isMyPost: Bool = false) {
         self.id = post.postId
         self.post = post
         self.frontImageURL = frontImage
         self.backImageURL = backImage
-        self.stickerImage = stickerImage
         self.name = name
         self.isMyPost = isMyPost
     }

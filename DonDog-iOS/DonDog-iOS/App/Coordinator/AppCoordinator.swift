@@ -105,7 +105,7 @@ final class AppCoordinator: ObservableObject {
             factory.makeProfileView(mode: .edit)
         case .archive:
             factory.makeArchiveView()
-        case .postDetail(let posts, let postType):
+        case .post(let posts, let postType):
             factory.makePostView(with: posts, for: postType)
         }
     }

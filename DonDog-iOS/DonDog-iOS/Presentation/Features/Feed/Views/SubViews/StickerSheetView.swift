@@ -10,7 +10,7 @@ import UIKit
 
 struct StickerSheetView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedEmotion: String? = nil
+    @State private var selectedEmotion: String?
     let stickerImage: UIImage?
     let currentSelectedEmotion: String?
     let onStickerSelected: (String?) -> Void
@@ -21,23 +21,23 @@ struct StickerSheetView: View {
         if stickerImage != nil {
             VStack(spacing: 24) {
                 Spacer()
-                VStack(spacing: 4){
+                VStack(spacing: 4) {
                     Text("\(name) 님의 셀카로")
                     Text("스티커를 붙여보세요😉")
                 }
                 .font(.bodyRegular16)
-                    .foregroundColor(.ddGray600)
-                    .onAppear {
-                        selectedEmotion = currentSelectedEmotion
-                    }
-                VStack(spacing: 8){
+                .foregroundColor(.ddGray600)
+                .onAppear {
+                    selectedEmotion = currentSelectedEmotion
+                }
+                VStack(spacing: 8) {
                     HStack(spacing: 16) {
                         Spacer()
-                        Button(action: {
+                        Button {
                             let newEmotion = selectedEmotion == "사랑해" ? nil : "사랑해"
                             onStickerSelected(newEmotion)
                             dismiss()
-                        }) {
+                        } label: {
                             StickerContainerView(
                                 borderedImage: borderedStickers["사랑해"],
                                 emotion: "사랑해",
@@ -45,12 +45,11 @@ struct StickerSheetView: View {
                                 isOtherSelected: selectedEmotion != nil && selectedEmotion != "사랑해"
                             )
                         }
-                        
-                        Button(action: {
+                        Button {
                             let newEmotion = selectedEmotion == "멋지다" ? nil : "멋지다"
                             onStickerSelected(newEmotion)
                             dismiss()
-                        }) {
+                        } label: {
                             StickerContainerView(
                                 borderedImage: borderedStickers["멋지다"],
                                 emotion: "멋지다",
@@ -59,11 +58,11 @@ struct StickerSheetView: View {
                             )
                         }
                         
-                        Button(action: {
+                        Button {
                             let newEmotion = selectedEmotion == "뭐야?" ? nil : "뭐야?"
                             onStickerSelected(newEmotion)
                             dismiss()
-                        }) {
+                        } label: {
                             StickerContainerView(
                                 borderedImage: borderedStickers["뭐야?"],
                                 emotion: "뭐야?",
@@ -75,11 +74,11 @@ struct StickerSheetView: View {
                     }
                     HStack(spacing: 16) {
                         Spacer()
-                        Button(action: {
+                        Button {
                             let newEmotion = selectedEmotion == "화나" ? nil : "화나"
                             onStickerSelected(newEmotion)
                             dismiss()
-                        }) {
+                        } label: {
                             StickerContainerView(
                                 borderedImage: borderedStickers["화나"],
                                 emotion: "화나",
@@ -88,11 +87,11 @@ struct StickerSheetView: View {
                             )
                         }
                         
-                        Button(action: {
+                        Button {
                             let newEmotion = selectedEmotion == "슬퍼" ? nil : "슬퍼"
                             onStickerSelected(newEmotion)
                             dismiss()
-                        }) {
+                        } label: {
                             StickerContainerView(
                                 borderedImage: borderedStickers["슬퍼"],
                                 emotion: "슬퍼",
@@ -119,21 +118,21 @@ struct StickerContainerView: View {
     let isOtherSelected: Bool
     
     private var emotionStrokeColor: Color {
-            guard let stickerEmotion = StickerType(rawValue: emotion) else {
-                return .ddBlack
-            }
-            return stickerEmotion.strokeColor
+        guard let stickerEmotion = StickerType(rawValue: emotion) else {
+            return .ddBlack
         }
+        return stickerEmotion.strokeColor
+    }
     
     private var stickerDecoString: String {
-            guard let stickerEmotion = StickerType(rawValue: emotion) else {
-                return ""
-            }
-            return stickerEmotion.stickerDecoString
+        guard let stickerEmotion = StickerType(rawValue: emotion) else {
+            return ""
         }
+        return stickerEmotion.stickerDecoString
+    }
     
     var body: some View {
-        ZStack{
+        ZStack {
             VStack(spacing: 5) {
                 if let borderedImage = borderedImage {
                     Image(uiImage: borderedImage)
@@ -145,14 +144,14 @@ struct StickerContainerView: View {
                         .frame(width: 69, height: 92)
                 }
                 
-                ZStack{
+                ZStack {
                     StrokeTextView(text: emotion, textColor: .ddBlack, fontName: FontName.sejongGeulggot.rawValue, fontSize: 16, strokeColor: emotionStrokeColor, strokeWidth: 12)
                     Text(emotion)
                         .font(.polaroidCaptionRegular16)
                         .foregroundColor(.ddBlack)
                         .fixedSize(horizontal: true, vertical: false)
                 }.frame(width: 75, height: 18)
-                    
+                
             }
             Image(stickerDecoString)
                 .resizable()
@@ -169,4 +168,3 @@ struct StickerContainerView: View {
 #Preview {
     StickerContainerView(borderedImage: UIImage(named: "frontTest")!, emotion: "멋지다", isSelected: false, isOtherSelected: false)
 }
-

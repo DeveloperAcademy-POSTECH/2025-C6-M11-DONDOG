@@ -5,8 +5,8 @@
 //  Created by 문창재 on 10/15/25.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 enum DisplayableImage {
     case url(URL)
@@ -46,17 +46,17 @@ struct PolaroidFrame: View {
     }
     
     var body: some View {
-        ZStack{
+        ZStack {
             VStack(spacing: 0) {
                 Spacer()
                 imageView(image)
                     .cornerRadius(3)
                     .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
                     .frame(width: 240, height: 320)
-                HStack{
-                    VStack(spacing: 0){
-                        HStack{
-                            if let caption = caption{
+                HStack {
+                    VStack(spacing: 0) {
+                        HStack {
+                            if let caption = caption {
                                 Text(caption)
                                     .font(.polaroidCaptionRegular20)
                                     .foregroundColor(.ddBlack)
@@ -65,7 +65,7 @@ struct PolaroidFrame: View {
                         }
                         .padding(.bottom, 4)
                         
-                        HStack(spacing: 4){
+                        HStack(spacing: 4) {
                             Text(name)
                                 .font(.captionRegular11)
                                 .foregroundColor(.ddGray500)
@@ -76,7 +76,7 @@ struct PolaroidFrame: View {
                         }
                     }
                     Spacer()
-                   if stickerImage == nil && name != "" {
+                    if stickerImage == nil && name != "" {
                         Image(systemName: "circle.dashed")
                             .resizable()
                             .scaledToFit()
@@ -92,12 +92,12 @@ struct PolaroidFrame: View {
             .background(.ddWhite)
             .cornerRadius(6)
             .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
-            VStack{
+            VStack {
                 Spacer()
-                HStack{
+                HStack {
                     Spacer()
-                    if let sticker = stickerImage, let _ = selectedStickerEmotion {
-                        ZStack{
+                    if let sticker = stickerImage, selectedStickerEmotion != nil {
+                        ZStack {
                             Image(uiImage: sticker)
                                 .resizable()
                                 .frame(width: 110, height: 138)

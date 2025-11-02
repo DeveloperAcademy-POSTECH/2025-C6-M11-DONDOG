@@ -8,14 +8,13 @@
 import FirebaseCore
 import UIKit
 
-
 // MARK: - DisplayablePost
 /// UI에서 표시하기 위한 게시물 모델 (Firestore 데이터 + 다운로드된 이미지 + 닉네임)
 struct DisplayablePost: Identifiable {
     let id: String  // postId
     let post: PostData
-    var frontImageURL: URL? = nil
-    var backImageURL: URL? = nil
+    var frontImageURL: URL?
+    var backImageURL: URL?
     var stickerImage: UIImage?  // 이 게시물에 붙은 스티커 이미지
     var name: String
     let isMyPost: Bool  // 내 게시물인지 여부

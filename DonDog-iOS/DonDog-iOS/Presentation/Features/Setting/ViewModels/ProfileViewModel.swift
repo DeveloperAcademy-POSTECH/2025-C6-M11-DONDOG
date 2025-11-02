@@ -58,7 +58,6 @@ final class ProfileViewModel: ObservableObject {
         }
     }
 
-    private let db = Firestore.firestore()
     private let generateInviteCodeService: GenerateCodeService
     private weak var coordinator: AppCoordinator?
 

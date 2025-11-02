@@ -30,7 +30,7 @@ struct PostContentsView: View {
                 TextView(caption: post.caption, authorId: post.authorId, createdAt: post.createdAt.dateValue())
             }
             
-            StickerView(stickerPostId: post.stickerPostId, stickerType: post.stickerType ?? "")
+            StickerView(postId: post.postId, stickerType: post.stickerType)
         }
     }
 }

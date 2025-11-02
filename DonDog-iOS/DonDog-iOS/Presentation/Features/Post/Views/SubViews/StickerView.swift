@@ -8,16 +8,23 @@
 import SwiftUI
 
 struct StickerView: View {
-    @StateObject var viewModel = StickerViewModel()
-    
-    let stickerPostId: String
-    let stickerType: String
+    let postId: String
+    let stickerType: String?
+    @State private var sticker: UIImage = UIImage()
     
     var body: some View {
-        if let uiImage = viewModel.borderedStickers[stickerPostId] {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFit()
-        }
+        Image(uiImage: sticker)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 140)
+            .task {
+                guard let stickerType = stickerType, !stickerType.isEmpty else {
+                    sticker = UIImage()
+                    return
+                }
+                
+                let stickers = await StickerService().getStickerCollection(of: postId)
+                sticker = stickers[stickerType] ?? UIImage()
+            }
     }
 }

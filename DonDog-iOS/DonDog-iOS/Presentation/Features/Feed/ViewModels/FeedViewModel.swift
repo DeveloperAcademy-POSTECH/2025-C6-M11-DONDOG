@@ -37,10 +37,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     private let dataManager: DataManagerProtocol = DataManager.shared
     private let imageUtils = ImageUtils()
     
-    init() {
-        loadTodayPosts()
-    }
-    
     func checkIsNotMyPost() {
         guard let roomId = connectUserInfo.roomId, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있음")
@@ -194,12 +190,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         Task {
             do {
-                print("오늘 찍은 Room posts 조회 시작: \(roomId)")
+                print("[FeedViewModel.loadTodayPosts] 오늘 찍은 Room posts 조회 시작: \(roomId)")
 
                 let calendar = Calendar.current
                 let today = calendar.startOfDay(for: Date())
                 let todayTimestamp = Timestamp(date: today)
-                print("오늘 날짜: \(today)")
 
                 let todayPosts: [PostData] = try await dataManager.fetchWhere(
                     path: "Rooms/\(roomId)/posts",
@@ -210,20 +205,20 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                 )
 
                 await MainActor.run {
-                    print("오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
+                    print("[FeedViewModel.loadTodayPosts] 오늘 찍은 \(todayPosts.count)개 게시물 로드 완료")
                     if let firstPost = todayPosts.first {
                         self.selectedPostId = firstPost.postId
                         self.currentPost = firstPost
                         self.currentPostIndex = 0
                         self.downloadAllTodayImages(posts: todayPosts, roomId: roomId)
                     } else {
-                        print("오늘 찍은 게시물이 없습니다")
+                        print("[FeedViewModel.loadTodayPosts] 오늘 찍은 게시물이 없습니다")
                         self.displayablePosts = []
                         self.isLoading = false
                     }
                 }
             } catch {
-                print("오늘 posts 로드 실패 또는 roomId 가져오기 실패: \(error.localizedDescription)")
+                print("[FeedViewModel.loadTodayPosts] 오늘 posts 로드 실패 또는 roomId 가져오기 실패: \(error.localizedDescription)")
                 await MainActor.run {
                     self.isLoading = false
                 }
@@ -232,7 +227,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     private func downloadAllTodayImages(posts: [PostData], roomId: String) {
-        print("모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")
+        print("[FeedViewModel.downloadAllTodayImages] 모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")
         displayablePosts = []
         
         guard let myUid = connectUserInfo.myUid else { return }
@@ -242,7 +237,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         for (index, post) in posts.enumerated() {
             group.enter()
-            buildDisplayablePost(index: index, post: post, roomId: roomId, currentUserUid: myUid) { idx, displayable, stickerPostId, stickerType in
+            buildDisplayablePost(index: index, post: post, roomId: roomId, currentUserUid: myUid) { idx, displayable, _, _ in
                 tempDisplayablePosts[idx] = displayable
                 
                 DispatchQueue.main.async {
@@ -255,7 +250,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             isMyPost: self.displayablePosts[currentIndex].isMyPost
                         )
                         self.displayablePosts[currentIndex] = updated
-                        print("게시물 \(idx + 1) 스티커 추가 완료!")
+                        print("[FeedViewModel.downloadAllTodayImages] 게시물 \(idx + 1) 스티커 추가 완료")
                     }
                 }
                 group.leave()
@@ -268,11 +263,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             
             self.applyInitialSelectionAndIndices(finalSortedPosts)
             
-            print("모든 스티커 다운로드 완료!")
+            print("[FeedViewModel.downloadAllTodayImages] 모든 스티커 다운로드 완료")
             
             self.isLoading = false
             self.isUploading = false
-            print("로딩 완료!")
+            print("[FeedViewModel.downloadAllTodayImages] 로딩 완료")
             
             if self.isAfterUpload && self.displayablePosts.count > 1 && self.currentPostIndex == 1 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
@@ -294,7 +289,8 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         let imageGroup = DispatchGroup()
         imageGroup.enter()
-        fetchUserName(uid: post.authorId) { name in
+        fetchUserName(uid: post.authorId) { fetchedName in
+            name = fetchedName
             imageGroup.leave()
         }
         
@@ -307,7 +303,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     name: name,
                     isMyPost: isMyPost
                 )
-                print("게시물 \(index + 1) 기본 이미지 다운로드 완료")
+                print("[FeedViewModel.buildDisplayablePost] 게시물 \(index + 1) 기본 이미지 다운로드 완료")
                 completion(index, displayablePost, post.stickerPostId.isEmpty ? nil : post.stickerPostId, post.stickerType)
             } else {
                 let displayablePost = DisplayablePost(
@@ -317,7 +313,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     name: name,
                     isMyPost: isMyPost
                 )
-                print("이미지 URL 누락: \(index + 1)")
+                print("[FeedViewModel.buildDisplayablePost] 이미지 URL 누락: \(index + 1)")
                 completion(index, displayablePost, post.stickerPostId.isEmpty ? nil : post.stickerPostId, post.stickerType)
             }
         }
@@ -325,7 +321,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
 
     private func applyInitialSelectionAndIndices(_ finalSortedPosts: [DisplayablePost]) {
         self.displayablePosts = finalSortedPosts
-        print("모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개")
+        print("[FeedViewModel.applyInitialSelectionAndIndices] 모든 게시물 기본 이미지 다운로드 완료: \(finalSortedPosts.count)개")
         
         var firstDisplayedPostIndex = 0
         if finalSortedPosts.count > 1 && self.isAfterUpload {
@@ -389,4 +385,3 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
 }
-

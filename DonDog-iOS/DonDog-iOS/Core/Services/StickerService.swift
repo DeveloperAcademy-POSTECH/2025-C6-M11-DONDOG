@@ -12,7 +12,6 @@ import SwiftUI
 
 final class StickerService {
     private let dataManager: DataManagerProtocol = DataManager.shared
-    private let imageUtils = ImageUtils()
     private var roomId: String?
     
     func getStickerCollection(of postId: String) async -> [String: UIImage] {
@@ -87,22 +86,22 @@ final class StickerService {
     }
     
     private func getClippedImage(of stickerImage: UIImage) -> UIImage {
-        guard let mask = imageUtils.makeMask(from: stickerImage) else {
+        guard let mask = ImageUtils.makeMask(from: stickerImage) else {
             print("mask 생성 실패")
             return UIImage()
         }
         
-        guard let baseImage = imageUtils.applyingMask(to: stickerImage, with: mask) else {
+        guard let baseImage = ImageUtils.applyingMask(to: stickerImage, with: mask) else {
             print("누끼 따기 실패")
             return UIImage()
         }
         
-        guard let mask = imageUtils.makeMask(from: baseImage) else { // 더 자연스럽게 하기 위해 2번 누끼 따기
+        guard let mask = ImageUtils.makeMask(from: baseImage) else { // 더 자연스럽게 하기 위해 2번 누끼 따기
             print("mask 생성 실패")
             return UIImage()
         }
         
-        guard let clippedImage = imageUtils.applyingMask(to: baseImage, with: mask) else {
+        guard let clippedImage = ImageUtils.applyingMask(to: baseImage, with: mask) else {
             print("누끼 따기 실패")
             return UIImage()
         }
@@ -138,7 +137,7 @@ final class StickerService {
             let outlinedSize = outlinedImage.size
             let decoWidth = outlinedSize.width * 1.27
             
-            sticker = imageUtils.renderViewAsImage(
+            sticker = ImageUtils.renderViewAsImage(
                 ZStack {
                     Image(uiImage: outlinedImage)
                     Image(decoImageName)

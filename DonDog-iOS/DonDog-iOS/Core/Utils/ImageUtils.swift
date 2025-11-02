@@ -11,8 +11,8 @@ import ImageIO
 import SwiftUI
 import Vision
 
-final class ImageUtils: ObservableObject {
-    func makeMask(from image: UIImage) -> CIImage? {
+struct ImageUtils {
+    static func makeMask(from image: UIImage) -> CIImage? {
         let request = VNGeneratePersonSegmentationRequest()
         request.qualityLevel = .balanced
         request.outputPixelFormat = kCVPixelFormatType_OneComponent8
@@ -47,7 +47,7 @@ final class ImageUtils: ObservableObject {
         return mask
     }
     
-    func applyingMask(to image: UIImage, with mask: CIImage) -> UIImage? {
+    static func applyingMask(to image: UIImage, with mask: CIImage) -> UIImage? {
         guard let ciImage = CIImage(image: image) else {
             print("UIImage -> CIImage 변환 실패")
             return nil
@@ -75,7 +75,7 @@ final class ImageUtils: ObservableObject {
         return UIImage(cgImage: cgImage)
     }
     
-    func renderViewAsImage<V: View>(_ view: V, size: CGSize) -> UIImage {
+    static func renderViewAsImage<V: View>(_ view: V, size: CGSize) -> UIImage {
         let controller = UIHostingController(rootView: view)
         controller.view.bounds = CGRect(origin: .zero, size: size)
         controller.view.backgroundColor = .clear

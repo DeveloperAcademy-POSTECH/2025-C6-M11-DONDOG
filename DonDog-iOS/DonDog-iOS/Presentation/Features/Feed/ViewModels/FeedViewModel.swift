@@ -53,10 +53,10 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     path: "Rooms/\(roomId)/posts/\(selectedPostId)"
                 )
                 
-                guard let uid = connectUserInfo.myUid else { return }
+                guard let myUid = connectUserInfo.myUid else { return }
                 
                 await MainActor.run {
-                    self.isNotMyPost = postData.authorId != uid
+                    self.isNotMyPost = postData.authorId != myUid
                 }
             } catch {
                 print("문서 조회 실패: \(error.localizedDescription)")
@@ -65,11 +65,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func getStickerData() {
-        guard let uid = connectUserInfo.myUid, let roomId = connectUserInfo.roomId else { return }
+        guard let myUid = connectUserInfo.myUid, let roomId = connectUserInfo.roomId else { return }
         
         Task {
             do {
-                let user: UserData = try await dataManager.fetch(path: "Users/\(uid)")
+                let user: UserData = try await dataManager.fetch(path: "Users/\(myUid)")
                 
                 guard let recentPostId = user.recentPostId, !recentPostId.isEmpty else {
                     print("recentPostId 없음")
@@ -145,11 +145,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             return
         }
         
-        guard let uid = connectUserInfo.myUid else { return }
+        guard let myUid = connectUserInfo.myUid else { return }
         
         Task {
             do {
-                let user: UserData = try await dataManager.fetch(path: "Users/\(uid)")
+                let user: UserData = try await dataManager.fetch(path: "Users/\(myUid)")
                 guard let recentPostId = user.recentPostId else {
                     print("recentPostId 없음")
                     return
@@ -328,7 +328,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         print("🖼️ 모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")
         displayablePosts = []
         
-        guard let uid = connectUserInfo.myUid else { return }
+        guard let myUid = connectUserInfo.myUid else { return }
         
         let group = DispatchGroup()
         var tempDisplayablePosts: [Int: DisplayablePost] = [:]
@@ -338,7 +338,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             buildDisplayablePost(index: index,
                                  post: post,
                                  roomId: roomId,
-                                 currentUserUid: uid) { idx, displayable, stickerPostId, stickerType in
+                                 currentUserUid: myUid) { idx, displayable, stickerPostId, stickerType in
                 tempDisplayablePosts[idx] = displayable
                 
                 if let stickerId = stickerPostId {

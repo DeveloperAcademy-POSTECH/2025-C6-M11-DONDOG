@@ -220,7 +220,6 @@ struct FeedView: View {
                         Spacer()
                         Button{
                             if !viewModel.displayablePosts.isEmpty {
-                                viewModel.updateCurrentPost(at: viewModel.currentPostIndex)
                                 let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
                                 if !currentPost.isMyPost {
                                     showStickerSheet = true

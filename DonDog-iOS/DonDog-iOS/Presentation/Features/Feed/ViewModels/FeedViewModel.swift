@@ -263,9 +263,15 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     // MARK: - CaptionViewModelDelegate
+    
+    func didStartUploading() {
+        isUploading = true
+    }
+    
     func didUploadPost() {
         print("✅ 게시물 업로드 완료 - FeedView 새로고침")
         
+        isUploading = false
         isAfterUpload = true
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in

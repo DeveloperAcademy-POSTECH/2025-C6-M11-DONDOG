@@ -15,7 +15,7 @@ enum DisplayableImage {
 
 struct PolaroidFrame: View {
     let image: DisplayableImage
-    let nickname: String
+    let name: String
     let createdAt: String
     let caption: String?
     let isTopImage: Bool
@@ -66,7 +66,7 @@ struct PolaroidFrame: View {
                         .padding(.bottom, 4)
                         
                         HStack(spacing: 4){
-                            Text(nickname)
+                            Text(name)
                                 .font(.captionRegular11)
                                 .foregroundColor(.ddGray500)
                             Text(createdAt)
@@ -110,7 +110,7 @@ struct PolaroidSetView: View {
     
     let frontImage: DisplayableImage
     let backImage: DisplayableImage
-    let nickname: String
+    let name: String
     let createdAt: String
     let caption: String?
     let stickers: [String: UIImage]?
@@ -121,7 +121,7 @@ struct PolaroidSetView: View {
         ZStack {
             PolaroidFrame(
                 image: backImage,
-                nickname: "",
+                name: "",
                 createdAt: "",
                 caption: "",
                 isTopImage: !isTopImage,
@@ -136,11 +136,11 @@ struct PolaroidSetView: View {
             }
             .zIndex(isTopImage ? 0 : 1)
             .rotationEffect(.degrees(8))
-            .offset(x: -50 ,y: -57)
+            .offset(x: -50, y: -57)
             
             PolaroidFrame(
                 image: frontImage,
-                nickname: nickname,
+                name: name,
                 createdAt: createdAt,
                 caption: caption,
                 isTopImage: isTopImage,
@@ -157,16 +157,3 @@ struct PolaroidSetView: View {
         }
     }
 }
-
-//#Preview(body: {
-//    PolaroidSetView(
-//        frontImage: UIImage(named: "test1")!,
-//        backImage: UIImage(named: "test2")!,
-//        nickname: "이토",
-//        createdAt: "오전 04:45",
-//        caption: "하이디라오 짱맛",
-//        selectedStickerType: "사랑해",
-//        stickerImage: UIImage(named: "frontTest")!,
-//        isMyPost: false  // Preview에서는 다른 사람 게시물로 설정
-//    )
-//})

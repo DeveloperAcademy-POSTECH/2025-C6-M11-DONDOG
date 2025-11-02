@@ -16,7 +16,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var isLoading = false
     @Published var isUploading = false
     @Published var isAfterUpload = false
-    @Published var currentRoomId: String = ""
     @Published var selectedPostId: String = "" {
         didSet {
             checkIsNotMyPost()
@@ -34,23 +33,16 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var type: String = "null"
     @Published var isNotMyPost = false
     
+    let connectUserInfo = UserPairingStore.shared
     private let dataManager: DataManagerProtocol = DataManager.shared
     private let imageUtils = ImageUtils()
     
     init() {
-        Task {
-            do {
-                self.currentRoomId = try await dataManager.getCurrentUserRoomId()
-                print("currentRoomId 초기화 완료: \(self.currentRoomId)")
-            } catch {
-                print("roomId 가져오기 실패: \(error.localizedDescription)")
-            }
-        }
         loadTodayPosts()
     }
     
     func checkIsNotMyPost() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+        guard let roomId = connectUserInfo.roomId, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있음")
             return
         }
@@ -58,13 +50,13 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         Task {
             do {
                 let postData: PostData = try await dataManager.fetch(
-                    path: "Rooms/\(currentRoomId)/posts/\(selectedPostId)"
+                    path: "Rooms/\(roomId)/posts/\(selectedPostId)"
                 )
                 
-                guard let currentUid = dataManager.getCurrentUserId() else { return }
+                guard let myUid = connectUserInfo.myUid else { return }
                 
                 await MainActor.run {
-                    self.isNotMyPost = postData.authorId != currentUid
+                    self.isNotMyPost = postData.authorId != myUid
                 }
             } catch {
                 print("문서 조회 실패: \(error.localizedDescription)")
@@ -73,7 +65,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func updateStickerData() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+        guard let roomId = connectUserInfo.roomId, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있어 업데이트 불가")
             return
         }
@@ -81,7 +73,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         Task {
             do {
                 try await dataManager.update(
-                    path: "Rooms/\(currentRoomId)/posts/\(selectedPostId)",
+                    path: "Rooms/\(roomId)/posts/\(selectedPostId)",
                     data: [
                         "stickerPostId": currentPost?.stickerPostId ?? "",
                         "stickerType": type,
@@ -120,7 +112,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func removeStickerData() {
-        guard !currentRoomId.isEmpty, !selectedPostId.isEmpty else {
+        guard let roomId = connectUserInfo.roomId, !selectedPostId.isEmpty else {
             print("currentRoomId 또는 selectedPostId가 비어 있어 삭제 불가")
             return
         }
@@ -128,7 +120,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         Task {
             do {
                 try await dataManager.update(
-                    path: "Rooms/\(currentRoomId)/posts/\(selectedPostId)",
+                    path: "Rooms/\(roomId)/posts/\(selectedPostId)",
                     data: [
                         "stickerPostId": "",
                         "stickerType": FieldValue.delete(),
@@ -158,7 +150,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                         post: newPostData,
                         frontImage: existingPost.frontImageURL,
                         backImage: existingPost.backImageURL,
-                        nickname: existingPost.nickname,
+                        name: existingPost.name,
                         isMyPost: existingPost.isMyPost
                     )
                     
@@ -177,9 +169,16 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
+    // MARK: - CaptionViewModelDelegate
+    
+    func didStartUploading() {
+        isUploading = true
+    }
+    
     func didUploadPost() {
         print("게시물 업로드 완료 - FeedView 새로고침")
         
+        isUploading = false
         isAfterUpload = true
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
@@ -191,9 +190,10 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         isLoading = true
         isUploading = false
 
+        guard let roomId = connectUserInfo.roomId else { return }
+        
         Task {
             do {
-                let roomId = try await dataManager.getCurrentUserRoomId()
                 print("오늘 찍은 Room posts 조회 시작: \(roomId)")
 
                 let calendar = Calendar.current
@@ -236,7 +236,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         print("모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")
         displayablePosts = []
         
-        guard let currentUserUid = dataManager.getCurrentUserId() else { return }
+        guard let myUid = connectUserInfo.myUid else { return }
         
         let group = DispatchGroup()
         var tempDisplayablePosts: [Int: DisplayablePost] = [:]
@@ -246,7 +246,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             buildDisplayablePost(index: index,
                                  post: post,
                                  roomId: roomId,
-                                 currentUserUid: currentUserUid) { idx, displayable, stickerPostId, stickerType in
+                                 currentUserUid: myUid) { idx, displayable, stickerPostId, stickerType in
                 tempDisplayablePosts[idx] = displayable
                 
                 DispatchQueue.main.async {
@@ -309,7 +309,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     post: post,
                     frontImage: front,
                     backImage: back,
-                    nickname: nickname,
+                    name: name,
                     isMyPost: isMyPost
                 )
                 print("게시물 \(index + 1) 기본 이미지 다운로드 완료")
@@ -319,7 +319,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     post: post,
                     frontImage: frontImageURL ?? URL(fileURLWithPath: "/dev/null"),
                     backImage: backImageURL ?? URL(fileURLWithPath: "/dev/null"),
-                    nickname: nickname,
+                    name: name,
                     isMyPost: isMyPost
                 )
                 print("이미지 URL 누락: \(index + 1)")
@@ -342,7 +342,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         if !finalSortedPosts.isEmpty {
             let initialPost = finalSortedPosts[firstDisplayedPostIndex]
-            self.currentUserName = initialPost.nickname
+            self.currentUserName = initialPost.name
             self.selectedPostId = initialPost.postId
             self.currentPost = initialPost.post
         }

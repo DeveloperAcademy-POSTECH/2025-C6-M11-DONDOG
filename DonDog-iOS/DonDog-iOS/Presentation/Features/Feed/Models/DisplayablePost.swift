@@ -16,15 +16,15 @@ struct DisplayablePost: Identifiable {
     let post: PostData
     var frontImageURL: URL? = nil
     var backImageURL: URL? = nil
-    var nickname: String
+    var name: String
     let isMyPost: Bool  // 내 게시물인지 여부
     
-    init(post: PostData, frontImage: URL? = nil, backImage: URL? = nil, nickname: String = "익명", isMyPost: Bool = false) {
+    init(post: PostData, frontImage: URL? = nil, backImage: URL? = nil, name: String = "익명", isMyPost: Bool = false) {
         self.id = post.postId
         self.post = post
         self.frontImageURL = frontImage
         self.backImageURL = backImage
-        self.nickname = nickname
+        self.name = name
         self.isMyPost = isMyPost
     }
     

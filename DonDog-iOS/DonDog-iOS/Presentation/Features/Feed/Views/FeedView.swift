@@ -24,7 +24,7 @@ struct FeedView: View {
     @State private var showToastView = false
     @State private var toastWorkItem: DispatchWorkItem?
     
-    @EnvironmentObject var connectState: UserPairingStore
+    //@EnvironmentObject var connectState: UserPairingStore
     
     var body: some View {
         ZStack{
@@ -32,9 +32,8 @@ struct FeedView: View {
                 //네비게이션 바
                 HStack{
                     Spacer()
-
-                    if connectState.isConnected == false {
-                        Button {
+                    if viewModel.connectUserInfo.isConnected == false {
+                        Button{
                             coordinator.push(.setting)
                         } label: {
                             Image(systemName: "gear")
@@ -80,7 +79,7 @@ struct FeedView: View {
                             .foregroundStyle(.ddPrimaryBlue)
                     }
                     .padding(.top, 280)
-                } else if connectState.isConnected == false {
+                } else if viewModel.connectUserInfo.isConnected == false {
                     VStack{
                         Spacer()
                         Image(systemName: "person.fill.xmark")
@@ -118,7 +117,7 @@ struct FeedView: View {
                                         PolaroidSetView(
                                             frontImage: .url(front),
                                             backImage: .url(back),
-                                            nickname: displayablePost.nickname,
+                                            name: displayablePost.name,
                                             createdAt: DateUtils.relativeTimeString(from: displayablePost.createdAt),
                                             caption: displayablePost.caption,
                                             stickers: viewModel.stickerCache[viewModel.currentPost?.postId ?? ""],
@@ -185,7 +184,7 @@ struct FeedView: View {
                     .padding(.top, 280)
                 }
                 Spacer()
-                if connectState.isConnected == true{
+                if viewModel.connectUserInfo.isConnected == true{
                     HStack{
                         Spacer()
                         Button{

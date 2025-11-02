@@ -31,18 +31,9 @@ struct CameraViewContainer: View {
                     CaptionView(
                         viewModel: captionVM,
                         onCancel: {
-                            // xmark 버튼 클릭 시 촬영 상태를 초기화하여 다시 전면 촬영부터 시작
                             cameraViewModel.resetCameraState()
                         },
-                        onUploadComplete: {
-                            // ✅ 업로드 시작 시 상태 설정
-                            feedViewModel.isUploading = true
-                            
-                            // CameraViewModel 상태 초기화
-                            cameraViewModel.frontImage = nil
-                            cameraViewModel.backImage = nil
-                            
-                            // 화면 닫기
+                        onReturnToHome: {
                             isPresented = false
                         }
                     )
@@ -56,7 +47,6 @@ struct CameraViewContainer: View {
                 backImage: cameraViewModel.backImage
             )
             
-            // ✅✅✅ 중요: delegate 설정!
             newCaptionVM.delegate = feedViewModel
             
             captionViewModel = newCaptionVM

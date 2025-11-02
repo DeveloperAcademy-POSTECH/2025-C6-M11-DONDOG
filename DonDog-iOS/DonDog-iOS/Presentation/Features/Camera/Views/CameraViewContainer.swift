@@ -40,7 +40,7 @@ struct CameraViewContainer: View {
                 }
             }
         }
-        .onChange(of: cameraViewModel.showCaptionView) { oldValue, newValue in
+        .onChange(of: cameraViewModel.showCaptionView) { _, _ in
             
             let newCaptionVM = CaptionViewModel(
                 frontImage: cameraViewModel.frontImage,
@@ -51,12 +51,10 @@ struct CameraViewContainer: View {
             
             captionViewModel = newCaptionVM
         }
-        .onChange(of: shouldDismiss) { oldValue, newValue in
+        .onChange(of: shouldDismiss) { _, newValue in
             if newValue {
                 isPresented = false
             }
         }
     }
-    
 }
-

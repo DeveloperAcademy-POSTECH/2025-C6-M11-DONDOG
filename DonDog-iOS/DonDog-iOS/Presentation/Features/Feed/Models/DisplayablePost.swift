@@ -8,7 +8,6 @@
 import FirebaseCore
 import UIKit
 
-
 // MARK: - DisplayablePost
 /// UI에서 표시하기 위한 게시물 모델 (Firestore 데이터 + 다운로드된 이미지 + 닉네임)
 struct DisplayablePost: Identifiable {

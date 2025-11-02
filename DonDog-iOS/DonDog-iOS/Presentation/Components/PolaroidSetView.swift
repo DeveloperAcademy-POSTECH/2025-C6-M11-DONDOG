@@ -5,8 +5,8 @@
 //  Created by 문창재 on 10/15/25.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 enum DisplayableImage {
     case url(URL)
@@ -53,10 +53,10 @@ struct PolaroidFrame: View {
                     .cornerRadius(3)
                     .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
                     .frame(width: 240, height: 320)
-                HStack{
-                    VStack(spacing: 0){
-                        HStack{
-                            if let caption = caption{
+                HStack {
+                    VStack(spacing: 0) {
+                        HStack {
+                            if let caption = caption {
                                 Text(caption)
                                     .font(.polaroidCaptionRegular20)
                                     .foregroundColor(.ddBlack)
@@ -65,7 +65,7 @@ struct PolaroidFrame: View {
                         }
                         .padding(.bottom, 4)
                         
-                        HStack(spacing: 4){
+                        HStack(spacing: 4) {
                             Text(name)
                                 .font(.captionRegular11)
                                 .foregroundColor(.ddGray500)
@@ -77,7 +77,6 @@ struct PolaroidFrame: View {
                     }
                     
                     Spacer()
-                    
                     if selectedStickerType == nil && name != "" {
                         Image(systemName: "circle.dashed")
                             .resizable()
@@ -94,7 +93,6 @@ struct PolaroidFrame: View {
             .background(.ddWhite)
             .cornerRadius(6)
             .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
-            
             Image(uiImage: sticker)
                 .resizable()
                 .scaledToFit()

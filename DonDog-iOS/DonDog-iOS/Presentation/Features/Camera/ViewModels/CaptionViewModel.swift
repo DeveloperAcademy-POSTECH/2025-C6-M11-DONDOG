@@ -57,4 +57,3 @@ final class CaptionViewModel: ObservableObject {
         }
     }
 }
-

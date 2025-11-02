@@ -6,10 +6,10 @@
 //
 
 import FirebaseAuth
+import Kingfisher
 import PhotosUI
 import SwiftUI
 import UIKit
-import Kingfisher
 
 struct FeedView: View {
     @EnvironmentObject var coordinator: AppCoordinator
@@ -24,16 +24,13 @@ struct FeedView: View {
     @State private var showToastView = false
     @State private var toastWorkItem: DispatchWorkItem?
     
-    //@EnvironmentObject var connectState: UserPairingStore
-    
     var body: some View {
-        ZStack{
-            VStack(spacing: 0){
-                //네비게이션 바
-                HStack{
+        ZStack {
+            VStack(spacing: 0) {
+                HStack {
                     Spacer()
                     if viewModel.connectUserInfo.isConnected == false {
-                        Button{
+                        Button {
                             coordinator.push(.setting)
                         } label: {
                             Image(systemName: "gear")
@@ -58,7 +55,7 @@ struct FeedView: View {
                                     .foregroundStyle(.ddGray100)
                                     .cornerRadius(120)
                             }
-                    }else{
+                    } else {
                         Text("")
                             .font(.captionRegular13)
                             .foregroundStyle(.ddGray600)
@@ -80,7 +77,7 @@ struct FeedView: View {
                     }
                     .padding(.top, 280)
                 } else if viewModel.connectUserInfo.isConnected == false {
-                    VStack{
+                    VStack {
                         Spacer()
                         Image(systemName: "person.fill.xmark")
                             .foregroundStyle(Color.ddSecondaryBlue)
@@ -106,8 +103,8 @@ struct FeedView: View {
                         }
                         Spacer()
                     }
-                }  else if !viewModel.displayablePosts.isEmpty {
-                    ZStack{
+                } else if !viewModel.displayablePosts.isEmpty {
+                    ZStack {
                         TabView(selection: $viewModel.currentPostIndex) {
                             ForEach(Array(viewModel.displayablePosts.indices), id: \.self) { index in
                                 let displayablePost = viewModel.displayablePosts[index]
@@ -142,8 +139,8 @@ struct FeedView: View {
                                 viewModel.updateCurrentPost(at: viewModel.currentPostIndex)
                             }
                         }
-                        VStack{
-                            HStack{
+                        VStack {
+                            HStack {
                                 Spacer()
                                 Button {
                                     guard let post = viewModel.currentPost else {
@@ -170,7 +167,7 @@ struct FeedView: View {
                         .padding(.top, 23)
                     }
                 } else {
-                    VStack(spacing: 10){
+                    VStack(spacing: 10) {
                         Image(systemName: "photo.on.rectangle.angled")
                             .resizable()
                             .foregroundStyle(.ddSecondaryBlue)
@@ -184,13 +181,13 @@ struct FeedView: View {
                     .padding(.top, 280)
                 }
                 Spacer()
-                if viewModel.connectUserInfo.isConnected == true{
-                    HStack{
+                if viewModel.connectUserInfo.isConnected == true {
+                    HStack {
                         Spacer()
-                        Button{
+                        Button {
                             coordinator.push(.archive)
-                        }label: {
-                            VStack(spacing: 2){
+                        } label: {
+                            VStack(spacing: 2) {
                                 Image("CalendarButton")
                                     .resizable()
                                     .scaledToFit()
@@ -203,13 +200,13 @@ struct FeedView: View {
                         }
                         .hapticFeedback(.medium)
                         Spacer()
-                        Button{
+                        Button {
                             showCameraView = true
                         }label: {
                             Circle()
                                 .foregroundColor(.ddWhite)
                                 .frame(width: 64, height: 64)
-                                .background{
+                                .background {
                                     Circle()
                                         .foregroundColor(.ddPrimaryBlue)
                                         .frame(width: 72, height: 72)
@@ -217,18 +214,18 @@ struct FeedView: View {
                         }
                         .hapticFeedback(.medium)
                         Spacer()
-                        Button{
+                        Button {
                             if !viewModel.displayablePosts.isEmpty {
                                 let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
                                 if !currentPost.isMyPost {
                                     showStickerSheet = true
-                                }else{
+                                } else {
                                     showToastView = true
                                 }
                             }
                         } label: {
-                            if !viewModel.displayablePosts.isEmpty{
-                                VStack(spacing: 2){
+                            if !viewModel.displayablePosts.isEmpty {
+                                VStack(spacing: 2) {
                                     Image(viewModel.displayablePosts[viewModel.currentPostIndex].isMyPost ?  "AddStickerButtonDisabled" : "AddStickerButtonAbled")
                                         .resizable()
                                         .scaledToFit()
@@ -237,8 +234,8 @@ struct FeedView: View {
                                         .foregroundStyle(viewModel.displayablePosts[viewModel.currentPostIndex].isMyPost ? .ddGray500 : .ddPrimaryBlue)
                                         .font(.captionRegular14)
                                 }
-                            }else {
-                                VStack(spacing: 2){
+                            } else {
+                                VStack(spacing: 2) {
                                     Image("AddStickerButtonDisabled")
                                         .resizable()
                                         .scaledToFit()
@@ -266,17 +263,17 @@ struct FeedView: View {
                 }
             }
         }
-        .onAppear() {
+        .onAppear {
             if !viewModel.isUploading && !viewModel.isLoading {
                 viewModel.loadTodayPosts()
             }
         }
-        .background{
+        .background {
             LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
                 .opacity(0.35)
         }
-        .onChange(of: showToastView) { oldValue, newValue in
+        .onChange(of: showToastView) { _, newValue in
             if newValue {
                 toastWorkItem?.cancel()
                 
@@ -318,9 +315,9 @@ struct FeedView: View {
                 .presentationDragIndicator(.visible)
                 .background(Color.ddWhite)
             } else {
-                HStack{
+                HStack {
                     Spacer()
-                    VStack(spacing: 4){
+                    VStack(spacing: 4) {
                         Spacer()
                         Text("스티커를 만들 사진이 없어요")
                             .font(.subtitleSemiBold16)
@@ -328,15 +325,15 @@ struct FeedView: View {
                         Text("첫 게시물을 올리면 감정 스티커를 붙일 수 있어요!")
                             .font(.captionRegular13)
                             .foregroundStyle(.ddGray500)
-                        Button{
+                        Button {
                             showStickerSheet = false
-                        }label: {
-                            ZStack{
+                        } label: {
+                            ZStack {
                                 Rectangle()
                                     .foregroundStyle(.ddPrimaryBlue)
                                     .frame(width: 112, height: 34)
                                     .cornerRadius(999)
-                                HStack{
+                                HStack {
                                     Text("사진찍기")
                                         .font(.captionRegular13)
                                         .foregroundStyle(.ddGray100)
@@ -360,4 +357,3 @@ struct FeedView: View {
         }
     }
 }
-

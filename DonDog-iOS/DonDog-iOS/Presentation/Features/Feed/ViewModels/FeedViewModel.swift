@@ -231,7 +231,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
     }
     
-    // TODO: 기존 downloadAllTodayImages 함수, 100줄 이상 린트 오류 걸려서 buildDisplayablePost 두개로 분리
     private func downloadAllTodayImages(posts: [PostData], roomId: String) {
         print("모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")
         displayablePosts = []
@@ -243,10 +242,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         for (index, post) in posts.enumerated() {
             group.enter()
-            buildDisplayablePost(index: index,
-                                 post: post,
-                                 roomId: roomId,
-                                 currentUserUid: myUid) { idx, displayable, stickerPostId, stickerType in
+            buildDisplayablePost(index: index, post: post, roomId: roomId, currentUserUid: myUid) { idx, displayable, stickerPostId, stickerType in
                 tempDisplayablePosts[idx] = displayable
                 
                 DispatchQueue.main.async {

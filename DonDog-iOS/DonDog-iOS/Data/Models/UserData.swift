@@ -24,9 +24,3 @@ struct UserData: Codable {
         self.updatedAt = updatedAt ?? Timestamp()
     }
 }
-
-extension UserData {
-    struct RoomIdOnly: Codable {
-        let roomId: String
-    }
-}

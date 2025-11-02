@@ -25,6 +25,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     
     @Published var stickers: [String: UIImage]? 
     @Published var stickerCache: [String: [String: UIImage]] = [:]
+    private let stickerService = StickerService()
     
     @Published var currentPost: PostData?
     @Published var currentUserName: String = ""
@@ -362,7 +363,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     func preloadStickers() {
         for post in displayablePosts {
             Task {
-                let stickers = await StickerService().getStickerCollection(of: post.postId)
+                let stickers = await stickerService.getStickerCollection(of: post.postId)
                 await MainActor.run {
                     self.stickerCache[post.postId] = stickers
                 }

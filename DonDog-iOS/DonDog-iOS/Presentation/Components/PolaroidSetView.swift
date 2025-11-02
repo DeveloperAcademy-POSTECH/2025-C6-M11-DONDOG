@@ -78,7 +78,7 @@ struct PolaroidFrame: View {
                     
                     Spacer()
                     
-                    if selectedStickerType == nil && nickname != "" {
+                    if selectedStickerType == nil && name != "" {
                         Image(systemName: "circle.dashed")
                             .resizable()
                             .scaledToFit()

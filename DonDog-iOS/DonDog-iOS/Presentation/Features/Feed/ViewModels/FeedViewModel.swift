@@ -103,7 +103,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                         post: newPostData,
                         frontImage: existingPost.frontImageURL,
                         backImage: existingPost.backImageURL,
-                        nickname: existingPost.nickname,
+                        name: existingPost.name,
                         isMyPost: existingPost.isMyPost
                     )
                 }
@@ -255,7 +255,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             post: self.displayablePosts[currentIndex].post,
                             frontImage: self.displayablePosts[currentIndex].frontImageURL,
                             backImage: self.displayablePosts[currentIndex].backImageURL,
-                            nickname: self.displayablePosts[currentIndex].nickname,
+                            name: self.displayablePosts[currentIndex].name,
                             isMyPost: self.displayablePosts[currentIndex].isMyPost
                         )
                         self.displayablePosts[currentIndex] = updated
@@ -291,7 +291,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
 
     private func buildDisplayablePost(index: Int, post: PostData, roomId: String, currentUserUid: String, completion: @escaping (Int, DisplayablePost, String?, String?) -> Void) {
         let isMyPost = (post.authorId == currentUserUid)
-        var nickname: String = "익명"
+        var name: String = "익명"
         
         let frontImageURL: URL? = post.frontURL
         let backImageURL: URL? = post.backURL
@@ -299,7 +299,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         let imageGroup = DispatchGroup()
         imageGroup.enter()
         fetchUserName(uid: post.authorId) { name in
-            nickname = name
             imageGroup.leave()
         }
         

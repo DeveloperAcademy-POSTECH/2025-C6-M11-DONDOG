@@ -11,7 +11,7 @@ import ImageIO
 import SwiftUI
 import Vision
 
-struct ImageUtils {
+final class ImageUtils {
     static func makeMask(from image: UIImage) -> CIImage? {
         let request = VNGeneratePersonSegmentationRequest()
         request.qualityLevel = .balanced

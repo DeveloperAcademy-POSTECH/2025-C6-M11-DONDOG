@@ -15,14 +15,14 @@ struct StickerSheetView: View {
     let currentSelectedEmotion: String?
     let onStickerSelected: (String?) -> Void
     let borderedStickers: [String: UIImage]  // 미리 생성된 테두리 스티커들
-    let nickname: String
+    let name: String
     
     var body: some View {
         if stickerImage != nil {
             VStack(spacing: 24) {
                 Spacer()
                 VStack(spacing: 4){
-                    Text("\(nickname) 님의 셀카로")
+                    Text("\(name) 님의 셀카로")
                     Text("스티커를 붙여보세요😉")
                 }
                 .font(.bodyRegular16)

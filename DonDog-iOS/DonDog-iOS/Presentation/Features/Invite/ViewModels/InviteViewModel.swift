@@ -50,12 +50,11 @@ final class InviteViewModel: ObservableObject {
         self.isLoading = true
         
         Task { [weak self] in
-            guard let self = self,
-                  let user: UserData = try? await self.dataManager.fetch(path: "Users/\(uid)") else { return }
+            guard let self = self, let user: UserData = try? await self.dataManager.fetch(path: "Users/\(uid)") else { return }
             await MainActor.run { self.userName = user.name }
         }
         
-        db.collection("Invites").whereField("inviterUid", isEqualTo: uid).getDocuments { [weak self] result, error in
+        db.collection("Invites").whereField("inviterUid", isEqualTo: uid).getDocuments { [weak self] result, _ in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 if let document = result?.documents.first {
@@ -270,7 +269,7 @@ final class InviteViewModel: ObservableObject {
         func createNewInvite() {
             generateInviteCodeService.generateUniqueInviteCode { result in
                 switch result {
-                case .failure(_):
+                case .failure:
                     self.isLoading = false
                     
                 case .success(let newCode):

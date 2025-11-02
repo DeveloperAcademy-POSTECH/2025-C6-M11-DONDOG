@@ -5,8 +5,8 @@
 //  Created by 문창재 on 10/9/25.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 protocol CaptionViewModelDelegate: AnyObject {
     func didUploadPost()

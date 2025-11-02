@@ -53,10 +53,10 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     path: "Rooms/\(roomId)/posts/\(selectedPostId)"
                 )
                 
-                guard let uid = connectUserInfo.myUid else { return }
+                guard let myUid = connectUserInfo.myUid else { return }
                 
                 await MainActor.run {
-                    self.isNotMyPost = postData.authorId != uid
+                    self.isNotMyPost = postData.authorId != myUid
                 }
             } catch {
                 print("문서 조회 실패: \(error.localizedDescription)")
@@ -65,11 +65,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     }
     
     func getStickerData() {
-        guard let uid = connectUserInfo.myUid, let roomId = connectUserInfo.roomId else { return }
+        guard let myUid = connectUserInfo.myUid, let roomId = connectUserInfo.roomId else { return }
         
         Task {
             do {
-                let user: UserData = try await dataManager.fetch(path: "Users/\(uid)")
+                let user: UserData = try await dataManager.fetch(path: "Users/\(myUid)")
                 
                 guard let recentPostId = user.recentPostId, !recentPostId.isEmpty else {
                     print("recentPostId 없음")
@@ -145,11 +145,11 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             return
         }
         
-        guard let uid = connectUserInfo.myUid else { return }
+        guard let myUid = connectUserInfo.myUid else { return }
         
         Task {
             do {
-                let user: UserData = try await dataManager.fetch(path: "Users/\(uid)")
+                let user: UserData = try await dataManager.fetch(path: "Users/\(myUid)")
                 guard let recentPostId = user.recentPostId else {
                     print("recentPostId 없음")
                     return
@@ -198,7 +198,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             frontImage: existingPost.frontImageURL,
                             backImage: existingPost.backImageURL,
                             stickerImage: stickerImage,
-                            nickname: existingPost.nickname,
+                            name: existingPost.name,
                             isMyPost: existingPost.isMyPost
                         )
                     }
@@ -251,7 +251,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                         frontImage: existingPost.frontImageURL,
                         backImage: existingPost.backImageURL,
                         stickerImage: nil,
-                        nickname: existingPost.nickname,
+                        name: existingPost.name,
                         isMyPost: existingPost.isMyPost
                     )
                     print("✅ 로컬 UI 업데이트 완료: 스티커 제거됨")
@@ -334,7 +334,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         print("🖼️ 모든 게시물 이미지 다운로드 시작 (roomId: \(roomId))")
         displayablePosts = []
         
-        guard let uid = connectUserInfo.myUid else { return }
+        guard let myUid = connectUserInfo.myUid else { return }
         
         let group = DispatchGroup()
         var tempDisplayablePosts: [Int: DisplayablePost] = [:]
@@ -344,7 +344,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
             buildDisplayablePost(index: index,
                                  post: post,
                                  roomId: roomId,
-                                 currentUserUid: uid) { idx, displayable, stickerPostId, stickerType in
+                                 currentUserUid: myUid) { idx, displayable, stickerPostId, stickerType in
                 tempDisplayablePosts[idx] = displayable
                 
                 if let stickerId = stickerPostId {
@@ -359,7 +359,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                                     frontImage: self.displayablePosts[currentIndex].frontImageURL,
                                     backImage: self.displayablePosts[currentIndex].backImageURL,
                                     stickerImage: sticker,
-                                    nickname: self.displayablePosts[currentIndex].nickname,
+                                    name: self.displayablePosts[currentIndex].name,
                                     isMyPost: self.displayablePosts[currentIndex].isMyPost
                                 )
                                 self.displayablePosts[currentIndex] = updated
@@ -419,7 +419,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     frontImage: front,
                     backImage: back,
                     stickerImage: nil,
-                    nickname: nickname,
+                    name: nickname,
                     isMyPost: isMyPost
                 )
                 print("✅ 게시물 \(index + 1) 기본 이미지 다운로드 완료")
@@ -430,7 +430,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     frontImage: frontImageURL ?? URL(fileURLWithPath: "/dev/null"),
                     backImage: backImageURL ?? URL(fileURLWithPath: "/dev/null"),
                     stickerImage: nil,
-                    nickname: nickname,
+                    name: nickname,
                     isMyPost: isMyPost
                 )
                 print("⚠️ 이미지 URL 누락: \(index + 1)")
@@ -453,7 +453,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         
         if !finalSortedPosts.isEmpty {
             let initialPost = finalSortedPosts[firstDisplayedPostIndex]
-            self.currentNickname = initialPost.nickname
+            self.currentNickname = initialPost.name
             self.selectedPostId = initialPost.postId
             self.currentPost = initialPost.post
         }
@@ -478,7 +478,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                             frontImage: postsWithStickers[index].frontImageURL,
                             backImage: postsWithStickers[index].backImageURL,
                             stickerImage: sticker,
-                            nickname: postsWithStickers[index].nickname,
+                            name: postsWithStickers[index].name,
                             isMyPost: postsWithStickers[index].isMyPost
                         )
                     }
@@ -583,6 +583,6 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         currentPostIndex = index
         currentPost = displayablePost.post
         selectedPostId = displayablePost.postId
-        currentNickname = displayablePost.nickname
+        currentNickname = displayablePost.name
     }
 }

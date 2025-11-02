@@ -117,7 +117,7 @@ struct FeedView: View {
                                         PolaroidSetView(
                                             frontImage: .url(front),
                                             backImage: .url(back),
-                                            nickname: displayablePost.nickname,
+                                            name: displayablePost.name,
                                             createdAt: DateUtils.relativeTimeString(from: displayablePost.createdAt),
                                             caption: displayablePost.caption,
                                             selectedStickerEmotion: displayablePost.stickerType,
@@ -323,7 +323,7 @@ struct FeedView: View {
                             viewModel.removeStickerData()
                         }
                     },
-                    borderedStickers: viewModel.borderedStickers, nickname: name
+                    borderedStickers: viewModel.borderedStickers, name: name
                 )
                 .presentationDetents([.height(392)])
                 .presentationDragIndicator(.visible)

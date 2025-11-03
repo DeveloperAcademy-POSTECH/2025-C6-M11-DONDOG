@@ -168,8 +168,7 @@ final class AuthNumberViewModel: ObservableObject {
         // Users/{uid}.roomId 확인
         let userDoc = db.collection("Users").document(uid)
         let userSnap = try await userDoc.getDocument()
-        if let data = userSnap.data(), let rid = data["roomId"] as? String,
-           !rid.isEmpty {
+        if let data = userSnap.data(), let rid = data["roomId"] as? String, !rid.isEmpty {
             refs.append(db.collection("Rooms").document(rid))
         }
 

@@ -5,9 +5,9 @@
 //  Created by Ito on 10/26/25.
 //
 
+import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
-import FirebaseAuth
 import UIKit
 
 final class DataManager: DataManagerProtocol {

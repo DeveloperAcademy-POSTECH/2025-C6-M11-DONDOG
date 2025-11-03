@@ -5,14 +5,15 @@
 //  Created by 문창재 on 10/9/25.
 //
 
-import SwiftUI
 import Combine
+import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
-import FirebaseAuth
+import SwiftUI
 
 protocol CaptionViewModelDelegate: AnyObject {
     func didUploadPost()
+    func didStartUploading()
 }
 
 final class CaptionViewModel: ObservableObject {
@@ -30,14 +31,13 @@ final class CaptionViewModel: ObservableObject {
         self.backImage = backImage
     }
     
-    func uploadPost(onSuccess: @escaping () -> Void) {
+    func uploadPost() {
         guard let frontImage = frontImage, let backImage = backImage else {
             print("❌ 전면 또는 후면 이미지가 없습니다")
             return
         }
         
-        print("📤 업로드 시작 - 캡션: \(caption)")
-        isUploading = true
+        delegate?.didStartUploading()
         
         Task {
             let captionSnapshot = await MainActor.run { self.caption }
@@ -105,7 +105,6 @@ final class CaptionViewModel: ObservableObject {
                     print("✅ 업로드 성공: \(postData.authorId)")
                     print("📝 캡션: \(postData.caption)")
                     self.delegate?.didUploadPost()
-                    onSuccess()
                 }
             } catch {
                 await MainActor.run {

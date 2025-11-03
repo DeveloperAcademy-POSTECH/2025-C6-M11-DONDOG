@@ -8,7 +8,6 @@
 import FirebaseCore
 import UIKit
 
-
 // MARK: - DisplayablePost
 /// UI에서 표시하기 위한 게시물 모델 (Firestore 데이터 + 다운로드된 이미지 + 닉네임)
 struct DisplayablePost: Identifiable {
@@ -16,17 +15,15 @@ struct DisplayablePost: Identifiable {
     let post: PostData
     var frontImageURL: URL? = nil
     var backImageURL: URL? = nil
-    var stickerImage: UIImage?  // 이 게시물에 붙은 스티커 이미지
-    var nickname: String
+    var name: String
     let isMyPost: Bool  // 내 게시물인지 여부
     
-    init(post: PostData, frontImage: URL? = nil, backImage: URL? = nil, stickerImage: UIImage? = nil, nickname: String = "익명", isMyPost: Bool = false) {
+    init(post: PostData, frontImage: URL? = nil, backImage: URL? = nil, name: String = "익명", isMyPost: Bool = false) {
         self.id = post.postId
         self.post = post
         self.frontImageURL = frontImage
         self.backImageURL = backImage
-        self.stickerImage = stickerImage
-        self.nickname = nickname
+        self.name = name
         self.isMyPost = isMyPost
     }
     

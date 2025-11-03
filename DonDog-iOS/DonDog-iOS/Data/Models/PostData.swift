@@ -18,7 +18,7 @@ struct PostData: Codable, Hashable {
     let stickerPostId: String
     let stickerType: String?
     
-    init(postId: String, authorId: String, frontImageURL: String, backImageURL: String, caption: String , createdAt: Timestamp? = nil, stickerPostId: String, stickerType: String?) {
+    init(postId: String, authorId: String, frontImageURL: String, backImageURL: String, caption: String, createdAt: Timestamp? = nil, stickerPostId: String, stickerType: String?) {
         self.postId = postId
         self.authorId = authorId
         self.frontImageURL = frontImageURL
@@ -33,6 +33,6 @@ struct PostData: Codable, Hashable {
 
 extension PostData {
     var frontURL: URL? { URL(string: frontImageURL) }
-    var backURL: URL?  { URL(string: backImageURL) }
+    var backURL: URL? { URL(string: backImageURL) }
     var thumbnailURL: URL? { frontURL ?? backURL }
 }

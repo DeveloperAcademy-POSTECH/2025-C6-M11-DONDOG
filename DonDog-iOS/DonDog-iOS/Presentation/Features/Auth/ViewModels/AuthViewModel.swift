@@ -6,9 +6,9 @@
 //
 
 import Combine
-import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
+import SwiftUI
 
 final class AuthViewModel: ObservableObject {
     private weak var coordinator: AppCoordinator?
@@ -30,8 +30,8 @@ final class AuthViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var shouldCloseMenu: Bool = false
     
-    @Published var phoneError: String? = nil
-    @Published var codeError: String? = nil
+    @Published var phoneError: String?
+    @Published var codeError: String?
     
     @Published var isWithDraw: Bool = false
     
@@ -42,7 +42,7 @@ final class AuthViewModel: ObservableObject {
         self.isWithDraw = isWithDraw
     }
     
-    //인증번호(SMS) 요청
+    // 인증번호(SMS) 요청
     func sendCode() {
         let digits = userPhoneNumber.filter { $0.isNumber }
         let isValidKRMobile = NSPredicate(format: "SELF MATCHES %@", "^010\\d{8}$").evaluate(with: digits)
@@ -78,8 +78,7 @@ final class AuthViewModel: ObservableObject {
                 guard let self = self else { return }
                 self.isLoading = false
 
-                if let nsError = error as NSError?,
-                   let code = AuthErrorCode(rawValue: nsError.code) {
+                if let nsError = error as NSError?, let code = AuthErrorCode(rawValue: nsError.code) {
                     if code == .invalidPhoneNumber {
                         self.phoneError = "전화번호는 010으로 시작하는 11자리 숫자예요"
                     } else {

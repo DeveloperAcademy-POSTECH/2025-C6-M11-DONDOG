@@ -20,7 +20,7 @@ struct StickerSheetView: View {
     var body: some View {
         VStack(spacing: 24) {
             Spacer()
-            VStack(spacing: 4){
+            VStack(spacing: 4) {
                 Text("\(name) 님의 셀카로")
                 Text("스티커를 붙여보세요😉")
             }
@@ -29,10 +29,10 @@ struct StickerSheetView: View {
             .onAppear {
                 selectedType = initialSelectedType
             }
-            VStack(spacing: 8){
+            VStack(spacing: 8) {
                 HStack(spacing: 16) {
                     Spacer()
-                    Button(action: { handleTap(.love) }) {
+                    Button { handleTap(.love) } label: {
                         StickerContainerView(
                             sticker: stickers[StickerType.love.rawValue],
                             type: .love,
@@ -41,7 +41,7 @@ struct StickerSheetView: View {
                         )
                     }
                     
-                    Button(action: { handleTap(.cool) }) {
+                    Button { handleTap(.cool) } label: {
                         StickerContainerView(
                             sticker: stickers[StickerType.cool.rawValue],
                             type: .cool,
@@ -50,7 +50,7 @@ struct StickerSheetView: View {
                         )
                     }
                     
-                    Button(action: { handleTap(.what) }) {
+                    Button { handleTap(.what) } label: {
                         StickerContainerView(
                             sticker: stickers[StickerType.what.rawValue],
                             type: .what,
@@ -62,7 +62,7 @@ struct StickerSheetView: View {
                 }
                 HStack(spacing: 16) {
                     Spacer()
-                    Button(action: { handleTap(.angry) }) {
+                    Button { handleTap(.angry) } label: {
                         StickerContainerView(
                             sticker: stickers[StickerType.angry.rawValue],
                             type: .angry,
@@ -71,7 +71,7 @@ struct StickerSheetView: View {
                         )
                     }
                     
-                    Button(action: { handleTap(.sad) }) {
+                    Button { handleTap(.sad) } label: {
                         StickerContainerView(
                             sticker: stickers[StickerType.sad.rawValue],
                             type: .sad,
@@ -116,7 +116,7 @@ struct StickerContainerView: View {
                 ProgressView()
             }
             
-            ZStack{
+            ZStack {
                 OutlinedText(
                     text: type.rawValue,
                     font: UIFont(name: FontName.sejongGeulggot.rawValue, size: 16) ?? UIFont.systemFont(ofSize: 16),

@@ -18,22 +18,12 @@ struct CaptionView: View {
     var body: some View {
         ZStack(alignment: .center) {
             VStack(spacing: 20) {
-                // 상단 타이틀
-                HStack {
-                    Spacer()
-                    Button {
-                        onCancel()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.title2)
-                            .foregroundColor(.black)
-                    }
-                }
-                .padding(20)
+                CustomNavigationBar(leadingType: .none, centerType: .none, trailingType: .close(action: {onCancel()}), navigationColor: .black)
+                    .padding(.trailing, 16)
                     if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
                         HStack {
                             Spacer()
-                            PolaroidSetView(frontImage: .uiImage(frontImage), backImage: .uiImage(backImage), name: "", createdAt: "", caption: nil,  stickers: [:], selectedStickerType: nil, isMyPost: true)
+                            PolaroidSetView(frontImage: .uiImage(frontImage), backImage: .uiImage(backImage), name: "", createdAt: "", caption: nil, stickers: [:], selectedStickerType: nil, isMyPost: true)
                                 .allowsHitTesting(true)
                                 .padding(.trailing, 30)
                         }
@@ -121,4 +111,8 @@ struct CaptionView: View {
             }.ignoresSafeArea()
         }
     }
+}
+
+#Preview {
+    CaptionView(viewModel: CaptionViewModel(frontImage: UIImage(), backImage: UIImage()), onCancel: {}, onReturnToHome: {})
 }

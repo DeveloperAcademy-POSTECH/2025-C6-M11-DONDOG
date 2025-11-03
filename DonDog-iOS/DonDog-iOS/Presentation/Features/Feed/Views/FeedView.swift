@@ -5,9 +5,7 @@
 //  Created by 조유진 on 10/3/25.
 //
 
-import FirebaseAuth
 import Kingfisher
-import PhotosUI
 import SwiftUI
 import UIKit
 
@@ -296,7 +294,7 @@ struct FeedView: View {
             )
         }
         .sheet(isPresented: $showStickerSheet) {
-            if let _ = viewModel.stickers {
+            if viewModel.stickers != nil {
                 let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
                 StickerSheetView(
                     initialSelectedType: StickerType(rawValue: currentPost.stickerType ?? ""),

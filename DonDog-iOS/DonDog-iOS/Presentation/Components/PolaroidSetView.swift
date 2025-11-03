@@ -52,7 +52,7 @@ struct PolaroidFrame: View {
                 imageView(image)
                     .cornerRadius(3)
                     .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
-                    .frame(width: 240, height: 320)
+                    .frame(maxWidth: 240, maxHeight: 320)
                 HStack {
                     VStack(spacing: 0) {
                         HStack {
@@ -85,21 +85,21 @@ struct PolaroidFrame: View {
                             .frame(width: 36, height: 36)
                     }
                 }
-                .frame(width: 240, height: 79)
+                .frame(maxWidth: 240, maxHeight: 79)
                 .padding(.leading, 4)
                 .background(.ddWhite)
             }
-            .frame(width: 272, height: 415)
+            .frame(maxWidth: 272, maxHeight: 415)
             .background(.ddWhite)
             .cornerRadius(6)
             .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
             Image(uiImage: sticker)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 140, height: 145)
+                .frame(maxWidth: 140, maxHeight: 145)
                 .offset(x: 4)
         }
-        .frame(width: 272, height: 415)
+        .frame(maxWidth: 272, maxHeight: 415)
     }
 }
 
@@ -154,4 +154,8 @@ struct PolaroidSetView: View {
             .zIndex(isTopImage ? 1 : 0)
         }
     }
+}
+
+#Preview {
+    PolaroidSetView(frontImage: DisplayableImage.uiImage(UIImage()), backImage: DisplayableImage.uiImage(UIImage()), name: "", createdAt: "", caption: nil, stickers: nil, selectedStickerType: nil, isMyPost: false)
 }

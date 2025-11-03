@@ -5,6 +5,7 @@
 //  Created by 이서현 on 10/27/25.
 //
 
+import Kingfisher
 import SwiftUI
 
 struct PhotoView: View {
@@ -39,35 +40,36 @@ struct PhotoView: View {
     
     private struct AsyncPhoto: View {
         let url: URL
+        @State private var loadFailed: Bool = false
+        
         var body: some View {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let img):
-                    img
-                        .resizable()
-                        .scaledToFill()
-                        .frame(maxWidth: .infinity)
-                        .aspectRatio(3.0/4.0, contentMode: .fit)
-                        .clipped()
-                        .cornerRadius(10)
-                        .transition(.opacity)
-                case .failure:
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(.ddGray600)
-                        .frame(maxWidth: .infinity)
-                        .aspectRatio(3.0/4.0, contentMode: .fit)
-                        .overlay(Image(systemName: "photo").opacity(0.7))
-                case .empty:
+            KFImage(url)
+                .placeholder {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(.ddGray600.opacity(0.2))
                         .frame(maxWidth: .infinity)
                         .aspectRatio(3.0/4.0, contentMode: .fit)
-                @unknown default:
-                    Color.clear
-                        .frame(maxWidth: .infinity)
-                        .aspectRatio(3.0/4.0, contentMode: .fit)
                 }
-            }
+                .onFailure { _ in
+                    loadFailed = true
+                }
+                .cancelOnDisappear(true)
+                .fade(duration: 0.25)
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity)
+                .aspectRatio(3.0/4.0, contentMode: .fit)
+                .clipped()
+                .cornerRadius(10)
+                .overlay(alignment: .center) {
+                    if loadFailed {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(.ddGray600)
+                            .frame(maxWidth: .infinity)
+                            .aspectRatio(3.0/4.0, contentMode: .fit)
+                            .overlay(Image(systemName: "photo").opacity(0.7))
+                    }
+                }
         }
     }
 }

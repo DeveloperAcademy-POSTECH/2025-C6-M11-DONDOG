@@ -22,14 +22,15 @@ final class PostService {
     
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
+    let connectUserInfo = UserPairingStore.shared
     
-    func deletePost(postId: String, in roomId: String, by userId: String) async throws {
-        guard !postId.isEmpty, !roomId.isEmpty else {
-            print("postId 혹은 roomId가 비어있습니다.")
+    func deletePost(postId: String) async throws {
+        guard !postId.isEmpty else {
+            print("postId가 비어있습니다.")
             return
         }
         
-        let postRef = db.collection("Rooms").document(roomId).collection("posts").document(postId)
+        let postRef = db.collection("Rooms").document(connectUserInfo.roomId ?? "").collection("posts").document(postId)
         
         let postDocument = try await postRef.getDocument()
         
@@ -43,12 +44,10 @@ final class PostService {
             return
         }
         
-        guard authorUid == userId else {
+        guard authorUid == connectUserInfo.myUid else {
             print("권한이 없습니다. (작성자가 아닙니다)")
             return
         }
-        
-        let commentDocRef = db.collection("Rooms").document(roomId).collection("comments").document(postId)
         
         // 1. 스토리지에서 이미지 삭제
         if let frontURLString = postData["frontImageURL"] as? String {
@@ -58,36 +57,7 @@ final class PostService {
             try? await storage.reference(forURL: backURLString).delete()
         }
         
-        // 2. 코멘트 삭제
-        let commentsSnapshot = try await commentDocRef.collection("comments").getDocuments()
-        if !commentsSnapshot.documents.isEmpty {
-            let batch = db.batch()
-            commentsSnapshot.documents.forEach { batch.deleteDocument($0.reference) }
-            try await batch.commit()
-        }
-        
-        // 3. 코멘트 문서 삭제
-        if (try? await commentDocRef.getDocument())?.exists == true {
-            try await commentDocRef.delete()
-        }
-        
         // 4. 포스트 삭제
         try await postRef.delete()
-    }
-    
-    func deleteComment(_ comment: Comment, postId: String, in roomId: String) async throws {
-        guard !comment.id.isEmpty, !postId.isEmpty, !roomId.isEmpty else {
-            print("commentId, postId, roomId 중 하나 이상이 비어 있습니다.")
-            return
-        }
-        
-        let commentRef = db.collection("Rooms")
-            .document(roomId)
-            .collection("comments")
-            .document(postId)
-            .collection("comments")
-            .document(comment.id)
-            
-        try await commentRef.delete()
     }
 }

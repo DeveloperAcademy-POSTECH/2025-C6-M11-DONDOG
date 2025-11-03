@@ -34,7 +34,7 @@ final class PostViewModel: ObservableObject {
     
     func deletePost(for post: PostData) async {
         do {
-            try await PostService.shared.deletePost(postId: post.postId, in: connectUserInfo.roomId ?? "", by: connectUserInfo.myUid ?? "")
+            try await PostService.shared.deletePost(postId: post.postId)
             
             await MainActor.run {
                 posts.removeAll { $0.postId == post.postId }

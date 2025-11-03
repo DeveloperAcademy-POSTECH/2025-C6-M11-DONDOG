@@ -11,7 +11,6 @@ import SwiftUI
 struct PostView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: PostViewModel
-    @FocusState private var isTextFieldFocused: Bool
     @State private var currentIndex: Int = 0
     
     let postType: PostType
@@ -58,12 +57,9 @@ struct PostView: View {
         } message: {
             Text("삭제한 사진은 되돌릴 수 없어요")
         }
-        .onTapGesture {
-            isTextFieldFocused = false
-        }
         
         ZStack(alignment: .bottom) {
-            PostFrameView(currentIndex: $currentIndex, viewModel: viewModel, isTextFieldFocused: $isTextFieldFocused, postType: postType)
+            PostFrameView(currentIndex: $currentIndex, viewModel: viewModel, postType: postType)
             
             if viewModel.showUnauthorizedAlert {
                 ToastView(toastText: "본인이 작성한 글만 삭제할 수 있어요")

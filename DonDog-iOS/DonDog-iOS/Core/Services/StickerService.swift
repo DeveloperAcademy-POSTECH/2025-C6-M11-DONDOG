@@ -12,7 +12,7 @@ import UIKit
 
 final class StickerService {
     private let dataManager: DataManagerProtocol = DataManager.shared
-    private var roomId: String?
+    let connectUserInfo = UserPairingStore.shared
     
     func getStickerCollection(of postId: String) async -> [String: UIImage] {
         let stickerPostId = await getStickerPostId(of: postId) // 스티커 원본 이미지가 있는 postId 가져오기
@@ -27,20 +27,10 @@ final class StickerService {
     }
     
     private func getStickerPostId(of postId: String) async -> String {
-        guard let currentUserId = dataManager.getCurrentUserId() else {
-            print("현재 사용자 id 없음")
-            return ""
-        }
-
         do {
-            let currentUser: UserData = try await dataManager.fetch(path: "Users/\(currentUserId)")
-            guard let roomId = currentUser.roomId, !roomId.isEmpty else {
-                print("getStickerPostId에서 roomId가 없음")
-                return ""
-            }
-            self.roomId = roomId
+            let currentUser: UserData = try await dataManager.fetch(path: "Users/\(connectUserInfo.myUid ?? "")")
             
-            let post: PostData = try await dataManager.fetch(path: "Rooms/\(roomId)/posts/\(postId)")
+            let post: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(postId)")
             
             let stickerPostIdToFetch: String
             if !post.stickerPostId.isEmpty {
@@ -52,7 +42,7 @@ final class StickerService {
                 return ""
             }
             
-            let postData: PostData = try await dataManager.fetch(path: "Rooms/\(roomId)/posts/\(stickerPostIdToFetch)")
+            let postData: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(stickerPostIdToFetch)")
             
             return postData.postId
         } catch {
@@ -62,14 +52,9 @@ final class StickerService {
     }
     
     private func fetchStickerImage(of stickerPostId: String) async -> UIImage {
-        guard let roomId = roomId else {
-            print("fetchStickerImage에서 roomId가 없음")
-            return UIImage()
-        }
-
         do {
             let postData: PostData = try await dataManager.fetch(
-                path: "Rooms/\(roomId)/posts/\(stickerPostId)"
+                path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(stickerPostId)"
             )
             guard let url = URL(string: postData.frontImageURL) else {
                 print("스티커 이미지 URL 생성 실패")

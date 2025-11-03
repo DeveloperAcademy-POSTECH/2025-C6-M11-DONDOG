@@ -23,7 +23,6 @@ struct PostFrameView: View {
                     ScrollView {
                         PostContentsView(post: post)
                         
-                        // TODO: update 방식 변경 필요 여부 확인
                         CommentView(postId: post.postId, shouldBeUpdated: $shouldBeUpdated)
                         
                         Color.clear
@@ -52,7 +51,6 @@ struct PostFrameView: View {
                     )
                 }
             } else {
-                // TODO: post를 받아오지 못했을 때, 예외 처리 뷰
                 EmptyView()
             }
         } else {
@@ -70,7 +68,6 @@ struct PostFrameView: View {
                         VStack(spacing: 0) {
                             PostContentsView(post: post)
                             
-                            // TODO: update 방식 변경 필요 여부 확인
                             CommentView(postId: post.postId, shouldBeUpdated: $shouldBeUpdated)
                         }
                         .tag(idx)

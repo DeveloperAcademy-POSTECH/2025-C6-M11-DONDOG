@@ -5,8 +5,8 @@
 //  Created by 이서현 on 10/26/25.
 //
 
-import SwiftUI
 import FirebaseFirestore
+import SwiftUI
 
 struct PostView: View {
     @EnvironmentObject var coordinator: AppCoordinator

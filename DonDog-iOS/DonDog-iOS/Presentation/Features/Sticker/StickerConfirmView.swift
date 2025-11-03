@@ -26,7 +26,9 @@ struct StickerConfirmView: View {
                 }
                 Spacer()
                 HStack {
-                    Button(action: { onConfirm(false, nil) }) {
+                    Button {
+                        onConfirm(false, nil)
+                    } label: {
                         Text("재촬영")
                             .foregroundColor(.red)
                             .padding()
@@ -34,7 +36,9 @@ struct StickerConfirmView: View {
                             .background(Color(.systemGray6))
                             .cornerRadius(10)
                     }
-                    Button(action: { goToDeco = true }) {
+                    Button {
+                        goToDeco = true
+                    } label: {
                         Text("스티커 만들기")
                             .foregroundColor(.white)
                             .padding()

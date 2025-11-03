@@ -26,7 +26,7 @@ struct WinkyApp: App {
 //                    coordinator.handleDeepLink(url.absoluteString)
 //                }
             
-            SitckerCollectionView()
+            SitckerCollectionView(viewModel: SitckerCollectionViewModel())
         }
     }
 }

@@ -6,24 +6,23 @@
 //
 
 import Combine
+import Kingfisher
 import PhotosUI
 import SwiftUI
 
+final class StickerTagManager {
+    static let shared = StickerTagManager()
+    private init() {}
+    
+    var emotionTags: [String] = []
+}
+
 struct SitckerCollectionView: View {
-    @State private var selectedCategory: StickerCategory = .affection
-    @State private var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
+    @StateObject var viewModel: SitckerCollectionViewModel
+    
     @StateObject private var cameraVM = CameraViewModel()
 
-    @State private var showMakeStickerButton: Bool = false
-    @State private var targetItemID: StickerItem.ID?
-
-    @State private var showPhotoPicker: Bool = false
-    @State private var pickedPhotoItem: PhotosPickerItem?
-    @State private var showCamera: Bool = false
-    @State private var capturedImage: UIImage?
-
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
-    private let actionBarAnimDuration: Double = 0.25
 
     var body: some View {
         let base = mainContent
@@ -31,18 +30,24 @@ struct SitckerCollectionView: View {
 
         return base
             .photosPicker(
-                isPresented: $showPhotoPicker,
-                selection: $pickedPhotoItem,
+                isPresented: $viewModel.showPhotoPicker,
+                selection: $viewModel.pickedPhotoItem,
                 matching: .images,
                 photoLibrary: .shared()
             )
-            .onChange(of: pickedPhotoItem) { _, newValue in
-                Task { await handlePickedPhoto(newValue) }
+            .onChange(of: viewModel.pickedPhotoItem) {
+                Task { await viewModel.handlePickedPhoto(viewModel.pickedPhotoItem) }
             }
-            .fullScreenCover(isPresented: $showCamera) {
-                CameraView(viewModel: cameraVM)
-                .ignoresSafeArea()
-            }
+            .fullScreenCover(
+                isPresented: $viewModel.showCamera,
+                onDismiss: {
+                    viewModel.refreshStickerAfterReturn()
+                },
+                content: {
+                    CameraView(viewModel: cameraVM)
+                        .ignoresSafeArea()
+                }
+            )
     }
 
     private var mainContent: some View {
@@ -51,17 +56,17 @@ struct SitckerCollectionView: View {
                 .padding(.vertical, 12)
             
             LazyVGrid(columns: columns) {
-                ForEach(items(for: selectedCategory)) { item in
+                ForEach(viewModel.items(for: viewModel.selectedCategory)) { item in
                     stickerCell(item)
                 }
             }
             
             Spacer()
             
-            if showMakeStickerButton {
+            if viewModel.showMakeStickerButton {
                 HStack {
                     Button {
-                        showPhotoPicker = true
+                        viewModel.showPhotoPicker = true
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "photo.on.rectangle")
@@ -76,19 +81,20 @@ struct SitckerCollectionView: View {
                     Spacer()
                     
                     Button {
-                        let keyword: String = {
-                            if let id = targetItemID,
-                               let list = itemsByCategory[selectedCategory],
-                               let item = list.first(where: { $0.id == id }) {
-                                return item.title
-                            } else {
-                                return selectedCategory.rawValue
-                            }
-                        }()
+                        guard
+                            let id = viewModel.targetItemID,
+                            let list = viewModel.itemsByCategory[viewModel.selectedCategory],
+                            let item = list.first(where: { $0.id == id })
+                        else {
+                            // 선택된 아이템이 없으면 촬영을 막아 잘못된 기본값 저장을 방지
+                            return
+                        }
+                        let keyword = item.title
+                        StickerTagManager.shared.emotionTags = [viewModel.selectedCategory.rawValue, keyword]
                         cameraVM.stickerKeyword = keyword
                         cameraVM.isFrontOnly = true
                         cameraVM.resetCameraState()
-                        showCamera = true
+                        viewModel.showCamera = true
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "camera")
@@ -104,12 +110,11 @@ struct SitckerCollectionView: View {
             }
         }
         .padding(.horizontal, 12)
-        .animation(.easeInOut, value: showMakeStickerButton)
+        .animation(.easeInOut, value: viewModel.showMakeStickerButton)
         .simultaneousGesture(
             TapGesture().onEnded {
-                if showMakeStickerButton {
-                    showMakeStickerButton = false
-                    targetItemID = nil
+                if viewModel.showMakeStickerButton {
+                    viewModel.showMakeStickerButton = false
                 }
             }
         )
@@ -117,13 +122,13 @@ struct SitckerCollectionView: View {
 
     private var dismissBackdrop: some View {
         Group {
-            if showMakeStickerButton {
+            if viewModel.showMakeStickerButton {
                 Color.black.opacity(0.001)
                     .ignoresSafeArea()
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        showMakeStickerButton = false
-                        targetItemID = nil
+                        viewModel.showMakeStickerButton = false
+                        viewModel.targetItemID = nil
                     }
             }
         }
@@ -133,7 +138,7 @@ struct SitckerCollectionView: View {
         HStack {
             let categories = StickerCategory.allCases
             ForEach(Array(categories.enumerated()), id: \.element) { index, category in
-                let isSelected = category == selectedCategory
+                let isSelected = category == viewModel.selectedCategory
                 Text(category.rawValue)
                     .font(.system(size: 15, weight: .semibold))
                     .padding(.horizontal, 14)
@@ -147,9 +152,9 @@ struct SitckerCollectionView: View {
                             .stroke(isSelected ? Color.primary.opacity(0.2) : Color.clear, lineWidth: 1)
                     )
                     .onTapGesture {
-                        selectedCategory = category
-                        showMakeStickerButton = false
-                        targetItemID = nil
+                        viewModel.selectedCategory = category
+                        viewModel.showMakeStickerButton = false
+                        viewModel.targetItemID = nil
                     }
                 if index < categories.count - 1 {
                     Spacer(minLength: 0)
@@ -170,8 +175,12 @@ struct SitckerCollectionView: View {
                             .stroke(Color.secondary.opacity(0.12), lineWidth: 1)
                     )
 
-                if let image = item.image {
-                    // 누끼/꾸미기 완료된 스티커
+                if let url = viewModel.stickerURLCache[item.id] {
+                    KFImage(url)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(12)
+                } else if let image = item.image {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
@@ -190,61 +199,30 @@ struct SitckerCollectionView: View {
         .contentShape(Rectangle())
         .highPriorityGesture(
             TapGesture().onEnded {
-                if showMakeStickerButton {
-                    if targetItemID == item.id { return }
-                    withAnimation(.easeInOut(duration: actionBarAnimDuration)) {
-                        showMakeStickerButton = false
-                    }
-                    let newID = item.id
-                    DispatchQueue.main.asyncAfter(deadline: .now() + actionBarAnimDuration * 0.9) {
-                        targetItemID = newID
-                        withAnimation(.easeInOut(duration: actionBarAnimDuration)) {
-                            showMakeStickerButton = true
-                        }
+                if viewModel.showMakeStickerButton {
+                    if viewModel.targetItemID == item.id { return }
+                    // 선택 즉시 적용하여 버튼 탭 시 잘못된 기본값을 쓰지 않도록 함
+                    viewModel.targetItemID = item.id
+                    StickerTagManager.shared.emotionTags = [viewModel.selectedCategory.rawValue, item.title]
+                    
+                    withAnimation(.easeInOut(duration: viewModel.actionBarAnimDuration)) {
+                        viewModel.showMakeStickerButton = true
                     }
                 } else {
-                    targetItemID = item.id
-                    withAnimation(.easeInOut(duration: actionBarAnimDuration)) {
-                        showMakeStickerButton = true
+                    viewModel.targetItemID = item.id
+                    StickerTagManager.shared.emotionTags = [viewModel.selectedCategory.rawValue, item.title]
+                    withAnimation(.easeInOut(duration: viewModel.actionBarAnimDuration)) {
+                        viewModel.showMakeStickerButton = true
                     }
                 }
             }
         )
-    }
-
-    // MARK: - Helpers
-    private func items(for category: StickerCategory) -> [StickerItem] {
-        itemsByCategory[category] ?? []
-    }
-
-    private func updateItemImage(_ image: UIImage) {
-        guard var arr = itemsByCategory[selectedCategory], let id = targetItemID, let index = arr.firstIndex(where: { $0.id == id }) else { return }
-        var edited = arr[index]
-        // TODO: 추후 "누끼 따기 (background removal)" 처리 후 결과 이미지를 대입
-        edited.image = image
-        arr[index] = edited
-        itemsByCategory[selectedCategory] = arr
-    }
-
-    private func applySelectedImage(_ image: UIImage) {
-        // 여기서 실제 누끼 처리 로직(서버/온디바이스)을 붙이면 됨.
-        updateItemImage(image)
-        showMakeStickerButton = false
-        targetItemID = nil
-    }
-
-    private func handlePickedPhoto(_ item: PhotosPickerItem?) async {
-        guard let item else { return }
-        do {
-            if let data = try await item.loadTransferable(type: Data.self), let uiImg = UIImage(data: data) {
-                applySelectedImage(uiImg)
-            }
-        } catch {
-            // 필요 시 오류 처리
+        .onAppear {
+            viewModel.fetchStickerURL(for: item)
         }
     }
 }
 
 #Preview {
-    SitckerCollectionView()
+    SitckerCollectionView(viewModel: SitckerCollectionViewModel())
 }

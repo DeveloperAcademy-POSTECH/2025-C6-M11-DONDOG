@@ -14,8 +14,7 @@ struct SitckerCollectionView: View {
     @State private var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
     @StateObject private var cameraVM = CameraViewModel()
 
-    // 하단 액션바 표시 상태 및 타겟 아이템
-    @State private var showActionBar: Bool = false
+    @State private var showMakeStickerButton: Bool = false
     @State private var targetItemID: StickerItem.ID?
 
     @State private var showPhotoPicker: Bool = false
@@ -29,11 +28,8 @@ struct SitckerCollectionView: View {
     var body: some View {
         let base = mainContent
             .background(dismissBackdrop)
-            .overlay(alignment: .bottom) { actionBar }
-            .animation(.easeInOut, value: showActionBar)
 
         return base
-            .padding(.horizontal, 12)
             .photosPicker(
                 isPresented: $showPhotoPicker,
                 selection: $pickedPhotoItem,
@@ -53,20 +49,66 @@ struct SitckerCollectionView: View {
         VStack {
             categoryTabs
                 .padding(.vertical, 12)
-
-            ScrollView {
-                LazyVGrid(columns: columns) {
-                    ForEach(items(for: selectedCategory)) { item in
-                        stickerCell(item)
-                    }
+            
+            LazyVGrid(columns: columns) {
+                ForEach(items(for: selectedCategory)) { item in
+                    stickerCell(item)
                 }
             }
+            
+            Spacer()
+            
+            if showMakeStickerButton {
+                HStack {
+                    Button {
+                        showPhotoPicker = true
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "photo.on.rectangle")
+                            Text("기존 게시물\n사진으로 만들기")
+                                .font(.system(size: 14, weight: .semibold))
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .border(Color.black, width: 1)
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
+                        let keyword: String = {
+                            if let id = targetItemID,
+                               let list = itemsByCategory[selectedCategory],
+                               let item = list.first(where: { $0.id == id }) {
+                                return item.title
+                            } else {
+                                return selectedCategory.rawValue
+                            }
+                        }()
+                        cameraVM.stickerKeyword = keyword
+                        cameraVM.isFrontOnly = true
+                        cameraVM.resetCameraState()
+                        showCamera = true
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "camera")
+                            Text("사진 찍기")
+                                .font(.system(size: 14, weight: .semibold))
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .border(Color.black, width: 1)
+                    }
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
-        .contentShape(Rectangle())
+        .padding(.horizontal, 12)
+        .animation(.easeInOut, value: showMakeStickerButton)
         .simultaneousGesture(
             TapGesture().onEnded {
-                if showActionBar {
-                    showActionBar = false
+                if showMakeStickerButton {
+                    showMakeStickerButton = false
                     targetItemID = nil
                 }
             }
@@ -75,12 +117,12 @@ struct SitckerCollectionView: View {
 
     private var dismissBackdrop: some View {
         Group {
-            if showActionBar {
+            if showMakeStickerButton {
                 Color.black.opacity(0.001)
                     .ignoresSafeArea()
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        showActionBar = false
+                        showMakeStickerButton = false
                         targetItemID = nil
                     }
             }
@@ -106,7 +148,7 @@ struct SitckerCollectionView: View {
                     )
                     .onTapGesture {
                         selectedCategory = category
-                        showActionBar = false
+                        showMakeStickerButton = false
                         targetItemID = nil
                     }
                 if index < categories.count - 1 {
@@ -148,80 +190,26 @@ struct SitckerCollectionView: View {
         .contentShape(Rectangle())
         .highPriorityGesture(
             TapGesture().onEnded {
-                if showActionBar {
+                if showMakeStickerButton {
                     if targetItemID == item.id { return }
                     withAnimation(.easeInOut(duration: actionBarAnimDuration)) {
-                        showActionBar = false
+                        showMakeStickerButton = false
                     }
                     let newID = item.id
                     DispatchQueue.main.asyncAfter(deadline: .now() + actionBarAnimDuration * 0.9) {
                         targetItemID = newID
                         withAnimation(.easeInOut(duration: actionBarAnimDuration)) {
-                            showActionBar = true
+                            showMakeStickerButton = true
                         }
                     }
                 } else {
                     targetItemID = item.id
                     withAnimation(.easeInOut(duration: actionBarAnimDuration)) {
-                        showActionBar = true
+                        showMakeStickerButton = true
                     }
                 }
             }
         )
-    }
-
-    private var actionBar: some View {
-        Group {
-            if showActionBar {
-                VStack(spacing: 10) {
-                    Divider()
-                        .padding(.horizontal, 16)
-                    HStack {
-                        Button {
-                            showPhotoPicker = true
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "photo.on.rectangle")
-                                Text("기존 게시물\n사진으로 만들기")
-                                    .font(.system(size: 14, weight: .semibold))
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 10)
-                            .border(Color.black, width: 1)
-                        }
-                        
-                        Spacer()
-
-                        Button {
-                            let keyword: String = {
-                                if let id = targetItemID,
-                                   let list = itemsByCategory[selectedCategory],
-                                   let item = list.first(where: { $0.id == id }) {
-                                    return item.title
-                                } else {
-                                    return selectedCategory.rawValue
-                                }
-                            }()
-                            cameraVM.stickerKeyword = keyword
-                            cameraVM.isFrontOnly = true
-                            cameraVM.resetCameraState()
-                            showCamera = true
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "camera")
-                                Text("사진 찍기")
-                                    .font(.system(size: 14, weight: .semibold))
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 10)
-                            .border(Color.black, width: 1)
-                        }
-                    }
-                }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-                .background(.ultraThinMaterial)
-            }
-        }
     }
 
     // MARK: - Helpers
@@ -241,7 +229,7 @@ struct SitckerCollectionView: View {
     private func applySelectedImage(_ image: UIImage) {
         // 여기서 실제 누끼 처리 로직(서버/온디바이스)을 붙이면 됨.
         updateItemImage(image)
-        showActionBar = false
+        showMakeStickerButton = false
         targetItemID = nil
     }
 

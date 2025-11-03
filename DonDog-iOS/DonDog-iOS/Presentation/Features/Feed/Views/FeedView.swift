@@ -21,13 +21,14 @@ struct FeedView: View {
     @State private var showStickerSheet = false
     @State private var showToastView = false
     @State private var toastWorkItem: DispatchWorkItem?
+    @EnvironmentObject var connectState: UserPairingStore
     
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
                 HStack {
                     Spacer()
-                    if viewModel.connectUserInfo.isConnected == false {
+                    if connectState.isConnected == false {
                         Button {
                             coordinator.push(.setting)
                         } label: {
@@ -74,7 +75,7 @@ struct FeedView: View {
                             .foregroundStyle(.ddPrimaryBlue)
                     }
                     .padding(.top, 280)
-                } else if viewModel.connectUserInfo.isConnected == false {
+                } else if connectState.isConnected == false {
                     VStack {
                         Spacer()
                         Image(systemName: "person.fill.xmark")

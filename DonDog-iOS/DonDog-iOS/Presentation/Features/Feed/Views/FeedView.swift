@@ -262,7 +262,7 @@ struct FeedView: View {
             }
         }
         .onAppear {
-            if !viewModel.isUploading && !viewModel.isLoading {
+            if viewModel.connectUserInfo.isConnected && !viewModel.isUploading && !viewModel.isLoading {
                 viewModel.loadTodayPosts()
             }
         }

@@ -27,6 +27,7 @@ struct CaptionView: View {
                                 .allowsHitTesting(true)
                                 .padding(.trailing, 30)
                         }
+                        .frame(minHeight: 260)
                         .padding(.top, 103)
                     }
                 
@@ -60,7 +61,7 @@ struct CaptionView: View {
                 .padding(.horizontal, 20)
                 
                 Spacer()
-                    .frame(height: 20)
+                    .frame(maxHeight: 20)
                 
                 Button {
                     onReturnToHome()
@@ -99,7 +100,6 @@ struct CaptionView: View {
                     .onTapGesture {
                         isShowCaptionEditor = false
                         isCaptionFocused = false
-                        
                     }
             }
         }

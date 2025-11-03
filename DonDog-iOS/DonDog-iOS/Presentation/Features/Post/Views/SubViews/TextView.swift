@@ -31,8 +31,11 @@ struct TextView: View {
             .frame(height: 27)
             
             HStack(spacing: 4) {
-                Text(viewModel.name)
+                Text(viewModel.name ?? "익명")
                     .foregroundStyle(.ddGray600)
+                    .onAppear {
+                        viewModel.fetchUserName(of: authorId)
+                    }
                 
                 Text(DateUtils.relativeTimeString(from: createdAt))
                     .foregroundStyle(.ddGray500)

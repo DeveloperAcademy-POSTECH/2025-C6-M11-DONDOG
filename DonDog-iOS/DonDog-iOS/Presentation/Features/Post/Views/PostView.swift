@@ -5,8 +5,8 @@
 //  Created by 이서현 on 10/26/25.
 //
 
-import SwiftUI
 import FirebaseFirestore
+import SwiftUI
 
 struct PostView: View {
     @EnvironmentObject var coordinator: AppCoordinator
@@ -18,11 +18,8 @@ struct PostView: View {
     
     var body: some View {
         CustomNavigationBar(
-            leadingType:
-                    .back(action: { coordinator.pop() }),
-            centerType:
-                    .title(title: DateUtils.string(from: (viewModel.posts.first?.createdAt.dateValue()) ?? Date(), format: .monthDay
-                )),
+            leadingType: .back(action: { coordinator.pop() }),
+            centerType: .title(title: DateUtils.string(from: (viewModel.posts.first?.createdAt.dateValue()) ?? Date(), format: .monthDay)),
             trailingType: .menu(items: [
                 CustomNavMenuItem("삭제하기", role: .destructive) {
                     viewModel.checkIfItsMyPost(of: postType == .post ? 0 : currentIndex)
@@ -30,7 +27,7 @@ struct PostView: View {
                     if !viewModel.showUnauthorizedAlert {
                         viewModel.handleDeleteRequest(for: viewModel.posts[postType == .post ? 0 : currentIndex])
                     }
-                },
+                }
             ]),
             navigationColor: .black
         )

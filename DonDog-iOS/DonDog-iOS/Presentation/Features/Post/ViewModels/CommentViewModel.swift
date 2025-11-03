@@ -101,7 +101,7 @@ final class CommentViewModel: ObservableObject {
                 }
                 
                 if let data = snapshot?.data(),
-                   let name = data["name"] as? String {
+                    let name = data["name"] as? String {
                     DispatchQueue.main.async {
                         self.name = name
                     }

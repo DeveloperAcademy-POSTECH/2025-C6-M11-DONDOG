@@ -21,8 +21,8 @@ struct Comment: Identifiable, Equatable, Hashable {
     init?(doc: QueryDocumentSnapshot) {
         let data = doc.data()
         guard let uid = data["uid"] as? String,
-              let text = data["text"] as? String,
-              let createdAt = data["createdAt"] as? Timestamp else {
+            let text = data["text"] as? String,
+            let createdAt = data["createdAt"] as? Timestamp else {
             return nil
         }
         self.id = doc.documentID

@@ -5,8 +5,8 @@
 //  Created by 이서현 on 10/30/25.
 //
 
-import SwiftUI
 import FirebaseCore
+import SwiftUI
 
 struct PostFrameView: View {
     @Binding var currentIndex: Int

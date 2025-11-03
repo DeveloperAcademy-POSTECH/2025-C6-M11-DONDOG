@@ -42,26 +42,26 @@ final class PostViewModel: ObservableObject {
     }
     
     func deletePost(for post: PostData) async {
-            do {
-                guard let roomId = try? await fetchCurrentUserRoomId(), !roomId.isEmpty else {
-                    print("roomId를 가져오지 못했습니다.")
-                    return
-                }
-                
-                guard let userId = currentUserId, !userId.isEmpty else {
-                    print("현재 사용자 id를 가져오지 못했습니다.")
-                    return
-                }
-                
-                try await PostService.shared.deletePost(postId: post.postId, in: roomId, by: userId)
-                
-                await MainActor.run {
-                    posts.removeAll { $0.postId == post.postId }
-                }
-            } catch {
-                print("게시글 삭제에 실패했습니다: \(error)")
+        do {
+            guard let roomId = try? await fetchCurrentUserRoomId(), !roomId.isEmpty else {
+                print("roomId를 가져오지 못했습니다.")
+                return
             }
+            
+            guard let userId = currentUserId, !userId.isEmpty else {
+                print("현재 사용자 id를 가져오지 못했습니다.")
+                return
+            }
+            
+            try await PostService.shared.deletePost(postId: post.postId, in: roomId, by: userId)
+            
+            await MainActor.run {
+                posts.removeAll { $0.postId == post.postId }
+            }
+        } catch {
+            print("게시글 삭제에 실패했습니다: \(error)")
         }
+    }
     
     private func updateDB() {
         // TODO: 새로고침(데이터 업데이트 적용)

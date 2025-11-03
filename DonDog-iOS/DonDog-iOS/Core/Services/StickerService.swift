@@ -7,8 +7,8 @@
 
 import Foundation
 import Kingfisher
-import UIKit
 import SwiftUI
+import UIKit
 
 final class StickerService {
     private let dataManager: DataManagerProtocol = DataManager.shared
@@ -109,8 +109,8 @@ final class StickerService {
         return clippedImage
     }
     
-    private func getOutlinedImage(for clippedImage: UIImage) -> [String : UIImage] {
-       var outlinedImages: [String: UIImage] = [:]
+    private func getOutlinedImage(for clippedImage: UIImage) -> [String: UIImage] {
+        var outlinedImages: [String: UIImage] = [:]
         
         for stickerType in StickerType.allCases {
             let uiColor = UIColor(stickerType.outlineColor)
@@ -126,7 +126,7 @@ final class StickerService {
         return outlinedImages
     }
     
-    private func getStickers(with outlinedImages: [String : UIImage]) -> [String : UIImage] {
+    private func getStickers(with outlinedImages: [String: UIImage]) -> [String: UIImage] {
         var stickers: [String: UIImage] = [:]
         
         for stickerType in StickerType.allCases {

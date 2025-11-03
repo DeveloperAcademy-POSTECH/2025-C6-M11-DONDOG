@@ -5,8 +5,8 @@
 //  Created by 이서현 on 10/27/25.
 //
 
-import SwiftUI
 import FirebaseCore
+import SwiftUI
 
 struct PostContentsView: View {
     let post: PostData

@@ -20,44 +20,17 @@ final class PostService {
     static let shared = PostService()
     private init() {}
     
-    private let db = Firestore.firestore()
     private let storage = Storage.storage()
-    let connectUserInfo = UserPairingStore.shared
+    private let connectUserInfo = UserPairingStore.shared
+    private let dataManager: DataManagerProtocol = DataManager.shared
     
     func deletePost(postId: String) async throws {
-        guard !postId.isEmpty else {
-            print("postId가 비어있습니다.")
-            return
-        }
+        let post: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(postId)")
         
-        let postRef = db.collection("Rooms").document(connectUserInfo.roomId ?? "").collection("posts").document(postId)
+        try await dataManager.deleteStorageFile(urlString: post.frontImageURL)
         
-        let postDocument = try await postRef.getDocument()
+        try await dataManager.deleteStorageFile(urlString: post.backImageURL)
         
-        guard let postData = postDocument.data(), postDocument.exists else {
-            print("post를 불러오지 못했습니다.")
-            return
-        }
-        
-        guard let authorUid = postData["authorId"] as? String else {
-            print("authorId를 불러오지 못했습니다.")
-            return
-        }
-        
-        guard authorUid == connectUserInfo.myUid else {
-            print("권한이 없습니다. (작성자가 아닙니다)")
-            return
-        }
-        
-        // 1. 스토리지에서 이미지 삭제
-        if let frontURLString = postData["frontImageURL"] as? String {
-            try? await storage.reference(forURL: frontURLString).delete()
-        }
-        if let backURLString = postData["backImageURL"] as? String {
-            try? await storage.reference(forURL: backURLString).delete()
-        }
-        
-        // 4. 포스트 삭제
-        try await postRef.delete()
+        try await dataManager.delete(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(postId)")
     }
 }

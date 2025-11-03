@@ -84,10 +84,7 @@ final class AuthService {
             self.userDocListenr?.remove()
             self.userDocListenr = userDoc.addSnapshotListener(includeMetadataChanges: true) { [weak self] userDoc, error in
                 guard let self = self else { return }
-                self.handleUserSnapshot(coordinator: coordinator,
-                                        userDoc: userDoc,
-                                        error: error,
-                                        refreshUser: refreshUser)
+                self.handleUserSnapshot(coordinator: coordinator, userDoc: userDoc, error: error, refreshUser: refreshUser)
             }
         }
     }
@@ -119,10 +116,7 @@ final class AuthService {
     }
 
     // MARK: - 라우팅 처리 2: 사용자 문서 스냅샷 처리
-    private func handleUserSnapshot(coordinator: AppCoordinator,
-                                    userDoc: DocumentSnapshot?,
-                                    error: Error?,
-                                    refreshUser: User) {
+    private func handleUserSnapshot(coordinator: AppCoordinator, userDoc: DocumentSnapshot?, error: Error?, refreshUser: User) {
         if AuthService.isAccountDeletionInProgress { return }
 
         // 오류 또는 스냅샷 nil 처리
@@ -156,17 +150,11 @@ final class AuthService {
 
         let data = userDoc.data() ?? [:]
         let roomId = data["roomId"] as? String
-        processRoomRouting(coordinator: coordinator,
-                           refreshUser: refreshUser,
-                           userData: data,
-                           roomId: roomId)
+        processRoomRouting(coordinator: coordinator, refreshUser: refreshUser, userData: data, roomId: roomId)
     }
 
     // MARK: - 라우팅 처리 3:  방/페어링 상태 라우팅
-    private func processRoomRouting(coordinator: AppCoordinator,
-                                    refreshUser: User,
-                                    userData: [String: Any],
-                                    roomId: String?) {
+    private func processRoomRouting(coordinator: AppCoordinator, refreshUser: User, userData: [String: Any], roomId: String?) {
         let state = UserPairingStore.shared
         state.myUid = refreshUser.uid
         state.myName = userData["name"] as? String

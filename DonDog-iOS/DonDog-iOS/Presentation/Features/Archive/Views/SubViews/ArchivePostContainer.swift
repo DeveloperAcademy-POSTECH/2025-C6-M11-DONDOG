@@ -5,8 +5,8 @@
 //  Created by 조유진 on 10/19/25.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct ArchivePostContainer: View {
     let url: URL

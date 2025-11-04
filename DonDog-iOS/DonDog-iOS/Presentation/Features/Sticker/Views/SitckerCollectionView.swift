@@ -38,25 +38,20 @@ struct SitckerCollectionView: View {
                                     RoundedRectangle(cornerRadius: 16)
                                         .stroke(Color.secondary.opacity(0.12), lineWidth: 1)
                                 )
-
+                            
                             if let url = viewModel.remoteURLByItemID[item.id] {
-                                KFImage(url)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding(12)
-                            } else if let image = item.image {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding(12)
-                            } else {
-                                if viewModel.loadingItemIDs.contains(item.id) {
-                                    EmptyView()
+                                        KFImage(url)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .padding(12)
                                 } else {
-                                    Image(systemName: "plus.circle")
-                                        .font(.system(size: 28, weight: .semibold))
+                                    if viewModel.loadingItemIDs.contains(item.id) {
+                                        EmptyView()
+                                    } else {
+                                        Image(systemName: "plus.circle")
+                                            .font(.system(size: 28, weight: .semibold))
+                                    }
                                 }
-                            }
                         }
                         Text(item.title)
                             .font(.system(size: 14, weight: .semibold))

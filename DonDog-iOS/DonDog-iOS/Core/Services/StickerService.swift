@@ -14,6 +14,60 @@ final class StickerService {
     private let dataManager: DataManagerProtocol = DataManager.shared
     private var roomId: String?
     
+    /// 로컬 이미지로 스티커(누끼→보더→데코)를 생성해서 반환
+    func makeSticker(from image: UIImage, title: String) async -> UIImage? {
+        // 0) 사이즈 축소 (최대 2048)
+        let maxEdge: CGFloat = 2048
+        let originalSize = image.size
+        let scale = min(maxEdge / max(originalSize.width, originalSize.height), 1)
+        let resizedSize = CGSize(width: originalSize.width * scale, height: originalSize.height * scale)
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        let renderer = UIGraphicsImageRenderer(size: resizedSize, format: format)
+        let resizedImage = renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: resizedSize))
+        }
+        
+        // 1) 누끼
+        let clipped = getClippedImage(of: resizedImage)
+        guard clipped.size.width >= 1, clipped.size.height >= 1 else { return nil }
+        
+        // 2) 스타일 해석 (StickerCategoryData에서 보더 색깔, 데코 이름 가져오기)
+        guard let style = StickerStyleData.style(forTitle: title) else { return nil }
+        
+        // 3) 보더
+        let uiColor = UIColor(style.outlineColor)
+        guard let outlined = clipped.addOutline(thickness: 40, color: uiColor) else { return nil }
+        
+        // 4) 데코 합성 (해당 데코 키)
+        let outlinedSize = outlined.size
+        guard outlinedSize.width >= 1, outlinedSize.height >= 1 else { return nil }
+        
+        // 데코/캔버스 사이즈 계산 (상한 2048)
+        let rawDecoWidth = outlinedSize.width * 1.27
+        let rawCanvas = CGSize(width: rawDecoWidth, height: outlinedSize.height)
+        let maxDim: CGFloat = 2048
+        let scaleDown = min(maxDim / rawCanvas.width, maxDim / rawCanvas.height, 1)
+        let canvasSize = CGSize(width: (rawCanvas.width * scaleDown).rounded(.toNearestOrAwayFromZero), height: (rawCanvas.height * scaleDown).rounded(.toNearestOrAwayFromZero))
+        let decoWidth = (rawDecoWidth * scaleDown).rounded(.toNearestOrAwayFromZero)
+        
+        let sticker = ImageUtils.renderViewAsImage(
+            ZStack {
+                Image(uiImage: outlined)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: canvasSize.width, height: canvasSize.height)
+                Image(style.stickerDecoString)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: decoWidth)
+            }
+            .offset(x: 16 * scaleDown, y: -36 * scaleDown),
+            size: canvasSize
+        )
+        return sticker
+    }
+    
     func getStickerCollection(of postId: String) async -> [String: UIImage] {
         let stickerPostId = await getStickerPostId(of: postId) // 스티커 원본 이미지가 있는 postId 가져오기
         
@@ -111,7 +165,6 @@ final class StickerService {
     
     private func getOutlinedImage(for clippedImage: UIImage) -> [String : UIImage] {
        var outlinedImages: [String: UIImage] = [:]
-        
         for stickerType in StickerType.allCases {
             let uiColor = UIColor(stickerType.outlineColor)
             

@@ -34,11 +34,39 @@ final class StickerConfirmViewModel: ObservableObject {
 
         Task {
             do {
-                // 1) Storage 업로드
-                let downloadURLString = try await DataManager.shared.uploadImage(
-                    image: original,
-                    path: "stickers/\(stickerID).jpg"
-                )
+//                // 1) Storage 업로드
+//                let downloadURLString = try await DataManager.shared.uploadImage(
+//                    image: original,
+//                    path: "stickers/\(stickerID).jpg"
+//                )
+                // 1) Storage 업로드 (PNG, 투명도 유지)
+                guard let pngData = original.pngData() else {
+                    throw NSError(domain: "StickerUpload", code: -10, userInfo: [NSLocalizedDescriptionKey: "PNG 변환 실패"])
+                }
+                let ref = Storage.storage().reference().child("stickers/\(stickerID).png")
+                let metadata = StorageMetadata()
+                metadata.contentType = "image/png"
+
+                let downloadURLString: String = try await withCheckedThrowingContinuation { cont in
+                    ref.putData(pngData, metadata: metadata) { _, error in
+                        if let error = error {
+                            cont.resume(throwing: error)
+                            return
+                        }
+                        ref.downloadURL { url, err in
+                            if let err = err {
+                                cont.resume(throwing: err)
+                                return
+                            }
+                            guard let url = url else {
+                                cont.resume(throwing: NSError(domain: "StickerUpload", code: -11, userInfo: [NSLocalizedDescriptionKey: "다운로드 URL 없음"]))
+                                return
+                            }
+                            cont.resume(returning: url.absoluteString)
+                        }
+                    }
+                }
+
                 guard let url = URL(string: downloadURLString) else {
                     throw DataManagerError.invalidPath
                 }

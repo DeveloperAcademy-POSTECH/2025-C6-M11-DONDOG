@@ -28,7 +28,6 @@ final class SitckerCollectionViewModel: ObservableObject {
     @Published var remoteURLByItemID: [StickerItem.ID: URL] = [:]
     @Published var loadingItemIDs: Set<StickerItem.ID> = []
     
-    
     let actionBarAnimDuration: Double = 0.25
     private let dataManager: DataManagerProtocol = DataManager.shared
     
@@ -41,9 +40,7 @@ final class SitckerCollectionViewModel: ObservableObject {
     func handlePickedPhoto(_ item: PhotosPickerItem?) async {
         guard let item else { return }
         do {
-            if let data = try await item.loadTransferable(type: Data.self), let uiImg = UIImage(data: data), var arr = itemsByCategory[selectedCategory],
-               let id = targetItemID,
-               let index = arr.firstIndex(where: { $0.id == id }) {
+            if let data = try await item.loadTransferable(type: Data.self), let uiImg = UIImage(data: data), var arr = itemsByCategory[selectedCategory], let id = targetItemID, let index = arr.firstIndex(where: { $0.id == id }) {
                 var edited = arr[index]
                 edited.image = uiImg
                 arr[index] = edited

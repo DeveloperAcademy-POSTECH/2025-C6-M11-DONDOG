@@ -71,4 +71,12 @@ final class DateUtils {
             return formatter.string(from: date)
         }
     }
+    
+    static func isATime() -> Bool {
+        let now = Date()
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: now)
+        
+        return hour >= 0 && hour < 15
+    }
 }

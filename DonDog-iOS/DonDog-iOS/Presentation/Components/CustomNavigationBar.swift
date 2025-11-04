@@ -27,6 +27,7 @@ enum CustomNavigationBarLeadingType {
 
 enum CustomNavigationBarCenterType {
     case title(title: String)
+    case timeTitle(title: String, timeImage: String)
     case none
 }
 
@@ -113,6 +114,14 @@ struct CustomNavigationBar: View {
         case .title(let text):
             Text(text)
                 .font(.titleBold18)
+            
+        case .timeTitle(let text, let image):
+            HStack(spacing: 0) {
+                Text(text)
+                    .font(.titleBold18)
+                Image(systemName: image)
+                    .font(.titleBold18)
+            }
         
         case .none:
             EmptyView()
@@ -169,7 +178,7 @@ struct CustomNavigationBar: View {
     // 게시물 상세
     CustomNavigationBar(
         leadingType: .back(action: {}),
-        centerType: .title(title: "10월 14일"),
+        centerType: .timeTitle(title: "10월 14일", timeImage: "sun.max"),
         trailingType: .menu(items: [CustomNavMenuItem("삭제", role: .destructive) {}]),
         navigationColor: .black
     )

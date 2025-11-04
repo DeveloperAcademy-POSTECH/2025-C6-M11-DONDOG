@@ -5,8 +5,8 @@
 //  Created by 문창재 on 10/15/25.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 enum DisplayableImage {
     case url(URL)
@@ -15,13 +15,13 @@ enum DisplayableImage {
 
 struct PolaroidFrame: View {
     let image: DisplayableImage
-    let nickname: String
+    let name: String
     let createdAt: String
     let caption: String?
     let isTopImage: Bool
     // onStickerButtonTapped 제거
-    let selectedStickerEmotion: String?
-    let stickerImage: UIImage?
+    let sticker: UIImage
+    let selectedStickerType: String?
     let isMyPost: Bool?
     
     @ViewBuilder
@@ -39,24 +39,24 @@ struct PolaroidFrame: View {
     }
     
     private var stickerDecoString: String {
-        guard let stickerEmotion = StickerType(rawValue: selectedStickerEmotion ?? "") else {
+        guard let stickerType = StickerType(rawValue: selectedStickerType ?? "") else {
             return ""
         }
-        return stickerEmotion.stickerDecoString
+        return stickerType.stickerDecoString
     }
     
     var body: some View {
-        ZStack{
+        ZStack(alignment: .bottomTrailing) {
             VStack(spacing: 0) {
                 Spacer()
                 imageView(image)
                     .cornerRadius(3)
                     .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
-                    .frame(width: 240, height: 320)
-                HStack{
-                    VStack(spacing: 0){
-                        HStack{
-                            if let caption = caption{
+                    .frame(maxWidth: 240, maxHeight: 320)
+                HStack {
+                    VStack(spacing: 0) {
+                        HStack {
+                            if let caption = caption {
                                 Text(caption)
                                     .font(.polaroidCaptionRegular20)
                                     .foregroundColor(.ddBlack)
@@ -65,8 +65,8 @@ struct PolaroidFrame: View {
                         }
                         .padding(.bottom, 4)
                         
-                        HStack(spacing: 4){
-                            Text(nickname)
+                        HStack(spacing: 4) {
+                            Text(name)
                                 .font(.captionRegular11)
                                 .foregroundColor(.ddGray500)
                             Text(createdAt)
@@ -75,8 +75,9 @@ struct PolaroidFrame: View {
                             Spacer()
                         }
                     }
+                    
                     Spacer()
-                   if stickerImage == nil && nickname != "" {
+                    if selectedStickerType == nil && name != "" {
                         Image(systemName: "circle.dashed")
                             .resizable()
                             .scaledToFit()
@@ -84,31 +85,21 @@ struct PolaroidFrame: View {
                             .frame(width: 36, height: 36)
                     }
                 }
-                .frame(width: 240, height: 79)
+                .frame(maxWidth: 240, maxHeight: 79)
                 .padding(.leading, 4)
                 .background(.ddWhite)
             }
-            .frame(width: 272, height: 415)
+            .frame(maxWidth: 272, maxHeight: 415)
             .background(.ddWhite)
             .cornerRadius(6)
             .shadow(color: Color.black.opacity(0.15), radius: 3, x: 1, y: 2)
-            VStack{
-                Spacer()
-                HStack{
-                    Spacer()
-                    if let sticker = stickerImage, let _ = selectedStickerEmotion {
-                        ZStack{
-                            Image(uiImage: sticker)
-                                .resizable()
-                                .frame(width: 110, height: 138)
-                            Image(stickerDecoString)
-                        }.offset(x: 16, y: -36)
-                    }
-                }.frame(width: 272, height: 63)
-            }.frame(width: 272, height: 415)
-            
+            Image(uiImage: sticker)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 140, maxHeight: 145)
+                .offset(x: 4)
         }
-        
+        .frame(maxWidth: 272, maxHeight: 415)
     }
 }
 
@@ -117,23 +108,23 @@ struct PolaroidSetView: View {
     
     let frontImage: DisplayableImage
     let backImage: DisplayableImage
-    let nickname: String
+    let name: String
     let createdAt: String
     let caption: String?
-    let selectedStickerEmotion: String?
-    let stickerImage: UIImage?  // 이 게시물에 붙은 스티커 이미지 (이미 테두리 적용됨)
+    let stickers: [String: UIImage]?
+    let selectedStickerType: String?
     let isMyPost: Bool  // 내 게시물인지 여부
     
     var body: some View {
         ZStack {
             PolaroidFrame(
                 image: backImage,
-                nickname: "",
+                name: "",
                 createdAt: "",
                 caption: "",
                 isTopImage: !isTopImage,
-                selectedStickerEmotion: nil,
-                stickerImage: nil,
+                sticker: UIImage(),
+                selectedStickerType: nil,
                 isMyPost: isMyPost
             )
             .onTapGesture {
@@ -143,16 +134,16 @@ struct PolaroidSetView: View {
             }
             .zIndex(isTopImage ? 0 : 1)
             .rotationEffect(.degrees(8))
-            .offset(x: -50 ,y: -57)
+            .offset(x: -50, y: -57)
             
             PolaroidFrame(
                 image: frontImage,
-                nickname: nickname,
+                name: name,
                 createdAt: createdAt,
                 caption: caption,
                 isTopImage: isTopImage,
-                selectedStickerEmotion: selectedStickerEmotion,
-                stickerImage: stickerImage,
+                sticker: stickers?[selectedStickerType ?? ""] ?? UIImage(),
+                selectedStickerType: selectedStickerType,
                 isMyPost: isMyPost
             )
             .onTapGesture {
@@ -165,15 +156,6 @@ struct PolaroidSetView: View {
     }
 }
 
-//#Preview(body: {
-//    PolaroidSetView(
-//        frontImage: UIImage(named: "test1")!,
-//        backImage: UIImage(named: "test2")!,
-//        nickname: "이토",
-//        createdAt: "오전 04:45",
-//        caption: "하이디라오 짱맛",
-//        selectedStickerEmotion: "사랑해",
-//        stickerImage: UIImage(named: "frontTest")!,
-//        isMyPost: false  // Preview에서는 다른 사람 게시물로 설정
-//    )
-//})
+#Preview {
+    PolaroidSetView(frontImage: DisplayableImage.uiImage(UIImage()), backImage: DisplayableImage.uiImage(UIImage()), name: "", createdAt: "", caption: nil, stickers: nil, selectedStickerType: nil, isMyPost: false)
+}

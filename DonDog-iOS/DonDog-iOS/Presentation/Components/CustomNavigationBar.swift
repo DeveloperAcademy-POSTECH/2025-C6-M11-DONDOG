@@ -113,7 +113,7 @@ struct CustomNavigationBar: View {
         case .title(let text):
             Text(text)
                 .font(.titleBold18)
-            
+        
         case .none:
             EmptyView()
         }
@@ -145,7 +145,6 @@ struct CustomNavigationBar: View {
                     .font(.body)
                     .frame(width: 24, height: 24)
             }
-            
             
         case .setting(let action):
             Button(action: action) {

@@ -8,30 +8,29 @@
 import UIKit
 
 extension UIImage {
-
-    func addBorder(thickness: CGFloat, color: UIColor) -> UIImage? {
+    func addOutline(thickness: CGFloat, color: UIColor) -> UIImage? {
         _ = self.scale
         let canvas = CGSize(width: self.size.width + thickness * 2, height: self.size.height + thickness * 2)
         let origin = CGPoint(x: thickness, y: thickness)
         
         // 1. 테두리만 생성
-        guard let borderOnly = createBorderOnly(canvas: canvas, origin: origin, thickness: thickness, color: color) else {
+        guard let outlineOnly = createOutlineOnly(canvas: canvas, origin: origin, thickness: thickness, color: color) else {
             return nil
         }
         
         // 2. 테두리 변형 (180° 회전 + 좌우 반전)
-        guard let rotated = borderOnly.rotate180(), let mirrored = rotated.flipHorizontally() else {
+        guard let rotated = outlineOnly.rotate180(), let mirrored = rotated.flipHorizontally() else {
             return nil
         }
         
         // 3. 최종 합성
-        return compositeFinalImage(border: mirrored, original: self, canvas: canvas, origin: origin)
+        return compositeFinalImage(outline: mirrored, original: self, canvas: canvas, origin: origin)
     }
     
     // MARK: - Private Helper Methods
     
     /// 테두리만 생성하는 함수
-    private func createBorderOnly(canvas: CGSize, origin: CGPoint, thickness: CGFloat, color: UIColor) -> UIImage? {
+    private func createOutlineOnly(canvas: CGSize, origin: CGPoint, thickness: CGFloat, color: UIColor) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(canvas, false, self.scale)
         defer { UIGraphicsEndImageContext() }
         
@@ -85,18 +84,16 @@ extension UIImage {
     }
     
     /// 최종 합성 함수
-    private func compositeFinalImage(border: UIImage, original: UIImage, canvas: CGSize, origin: CGPoint) -> UIImage? {
+    private func compositeFinalImage(outline: UIImage, original: UIImage, canvas: CGSize, origin: CGPoint) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(canvas, false, original.scale)
         defer { UIGraphicsEndImageContext() }
         
-        border.draw(at: .zero) // 변환된 테두리
+        outline.draw(at: .zero) // 변환된 테두리
         original.draw(at: origin) // 원본 이미지
         
         return UIGraphicsGetImageFromCurrentImageContext()
     }
-}
-
-extension UIImage {
+    
     /// 이미지를 지정된 최대 크기로 리사이징
     func resized(maxWidth: CGFloat) -> UIImage? {
         let scale = maxWidth / self.size.width

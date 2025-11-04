@@ -14,7 +14,7 @@ struct InviteView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            CustomNavigationBar(leadingType: viewModel.showSentHint ? .none : .back(action: coordinator.pop), centerType: .title(title: "가족 연결", timeImage: ""), trailingType: .none, navigationColor: .black)
+            CustomNavigationBar(leadingType: viewModel.showSentHint ? .none : .back(action: coordinator.pop), centerType: .title(title: "가족 연결"), trailingType: .none, navigationColor: .black)
             
             HStack {
                 Text("\(viewModel.userName ?? "") ")

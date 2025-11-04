@@ -29,7 +29,7 @@ struct ArchiveView: View {
             VStack {
                 CustomNavigationBar(
                     leadingType: .back(action: { coordinator.pop() }),
-                    centerType: .title(title: "아카이브", timeImage: ""),
+                    centerType: .title(title: "아카이브"),
                     trailingType: .setting(action: { coordinator.push(.setting) }),
                     navigationColor: .black
                 )

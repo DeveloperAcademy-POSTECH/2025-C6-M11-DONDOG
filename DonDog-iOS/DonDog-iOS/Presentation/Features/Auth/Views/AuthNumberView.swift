@@ -15,7 +15,7 @@ struct AuthNumberView: View {
         VStack(spacing: 0) {
             CustomNavigationBar(leadingType: .back(action: {
                 coordinator.pop()
-            }), centerType: .title(title: "본인인증", timeImage: ""), trailingType: .none, navigationColor: .black)
+            }), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
             
             Spacer()
                 .frame(height: 104)

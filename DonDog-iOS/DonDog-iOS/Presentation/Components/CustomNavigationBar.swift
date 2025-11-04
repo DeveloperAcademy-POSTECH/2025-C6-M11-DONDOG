@@ -26,7 +26,8 @@ enum CustomNavigationBarLeadingType {
 }
 
 enum CustomNavigationBarCenterType {
-    case title(title: String, timeImage: String)
+    case title(title: String)
+    case timeTitle(title: String, timeImage: String)
     case none
 }
 
@@ -110,7 +111,11 @@ struct CustomNavigationBar: View {
     @ViewBuilder
     private func navigationCenterView() -> some View {
         switch centerType {
-        case .title(let text, let image):
+        case .title(let text):
+            Text(text)
+                .font(.titleBold18)
+            
+        case .timeTitle(let text, let image):
             HStack(spacing: 0) {
                 Text(text)
                     .font(.titleBold18)
@@ -165,15 +170,15 @@ struct CustomNavigationBar: View {
 
 #Preview {
     // 전화번호 입력, 인증번호 입력, 가족 연결
-    CustomNavigationBar(leadingType: .back(action: {}), centerType: .title(title: "본인인증", timeImage: ""), trailingType: .none, navigationColor: .black)
+    CustomNavigationBar(leadingType: .back(action: {}), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
     
     // 프로필 설정, 가족 연결
-    CustomNavigationBar(leadingType: .none, centerType: .title(title: "가족연결", timeImage: ""), trailingType: .none, navigationColor: .black)
+    CustomNavigationBar(leadingType: .none, centerType: .title(title: "가족연결"), trailingType: .none, navigationColor: .black)
     
     // 게시물 상세
     CustomNavigationBar(
         leadingType: .back(action: {}),
-        centerType: .title(title: "10월 14일", timeImage: "sun.max"),
+        centerType: .timeTitle(title: "10월 14일", timeImage: "sun.max"),
         trailingType: .menu(items: [CustomNavMenuItem("삭제", role: .destructive) {}]),
         navigationColor: .black
     )

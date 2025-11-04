@@ -44,7 +44,7 @@ struct HomeView: View {
                             .frame(maxWidth: 86)
                         Text("name")
                         Spacer()
-                            
+                        
                     }
                 }
                 ZStack {
@@ -60,8 +60,8 @@ struct HomeView: View {
                     }
                 }
             }
-                .padding(.horizontal, 20)
-                .frame(maxHeight: 102)
+            .padding(.horizontal, 20)
+            .frame(maxHeight: 102)
             
             TabView(selection: $currentIndex) {
                 HStack(spacing: 16) {
@@ -71,7 +71,7 @@ struct HomeView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.ddGray200)
                 }.padding(.horizontal, 20)
-                .tag(0)
+                    .tag(0)
                 
                 HStack(spacing: 16) {
                     RoundedRectangle(cornerRadius: 12)
@@ -80,7 +80,7 @@ struct HomeView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(.ddGray400)
                 }.padding(.horizontal, 20)
-                .tag(1)
+                    .tag(1)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .frame(maxHeight: 270)
@@ -94,7 +94,7 @@ struct HomeView: View {
                     .foregroundStyle(currentIndex == 0 ? .ddGray100 : .ddGray700)
             }
             .padding()
-               
+            
             Spacer()
             
             ZStack {
@@ -138,15 +138,15 @@ struct HomeView: View {
                     Button {
                         //
                     } label: {
-                            VStack(spacing: 2) {
-                                Image("AddStickerButtonDisabled")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 40)
-                                Text("스티커")
-                                    .foregroundStyle(.ddGray500)
-                                    .font(.captionRegular14)
-                            }
+                        VStack(spacing: 2) {
+                            Image("AddStickerButtonDisabled")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
+                            Text("스티커")
+                                .foregroundStyle(.ddGray500)
+                                .font(.captionRegular14)
+                        }
                         
                     }
                     .hapticFeedback(.medium)

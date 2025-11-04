@@ -33,6 +33,7 @@
 		8B6E118A2E968E2B0082B24C /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E11892E968E2B0082B24C /* SettingView.swift */; };
 		8B6E118D2E976F380082B24C /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E118C2E976F380082B24C /* ProfileViewModel.swift */; };
 		8B6E11912E9771EA0082B24C /* SettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E11902E9771EA0082B24C /* SettingViewModel.swift */; };
+		8B736DC42EBA1F7300E2AB76 /* PhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B736DC32EBA1F7300E2AB76 /* PhotoPickerView.swift */; };
 		8B7377E02E9546030001EFCD /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7377DF2E9546030001EFCD /* AuthService.swift */; };
 		8B7729072EA73A3000344491 /* InWebSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7729062EA73A3000344491 /* InWebSheetView.swift */; };
 		8B7F47D82EB90241004FC5E3 /* SitckerCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7F47D72EB90241004FC5E3 /* SitckerCollectionViewModel.swift */; };
@@ -131,6 +132,7 @@
 		8B6E118C2E976F380082B24C /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		8B6E11902E9771EA0082B24C /* SettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewModel.swift; sourceTree = "<group>"; };
 		8B736DC02EB9D5E500E2AB76 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
+		8B736DC32EBA1F7300E2AB76 /* PhotoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerView.swift; sourceTree = "<group>"; };
 		8B7377DF2E9546030001EFCD /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		8B7729062EA73A3000344491 /* InWebSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InWebSheetView.swift; sourceTree = "<group>"; };
 		8B7F47D72EB90241004FC5E3 /* SitckerCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitckerCollectionViewModel.swift; sourceTree = "<group>"; };
@@ -364,6 +366,7 @@
 			isa = PBXGroup;
 			children = (
 				8B0108002EB656E900D030BD /* SitckerCollectionView.swift */,
+				8B736DC32EBA1F7300E2AB76 /* PhotoPickerView.swift */,
 				8B0108042EB6685C00D030BD /* StickerImageConfirmView.swift */,
 				8B0108082EB6756F00D030BD /* StickerConfirmView.swift */,
 			);
@@ -870,6 +873,7 @@
 				CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */,
 				CAA9AED92E8FC15C0047A89A /* WinkyApp.swift in Sources */,
 				CAA9AEDA2E8FC15C0047A89A /* AuthViewModel.swift in Sources */,
+				8B736DC42EBA1F7300E2AB76 /* PhotoPickerView.swift in Sources */,
 				D297CE862EB05DFE00F28395 /* StickerType.swift in Sources */,
 				8B0108012EB656E900D030BD /* SitckerCollectionView.swift in Sources */,
 				D219F1E32EAE0A3700BD82B7 /* PostView.swift in Sources */,

@@ -21,7 +21,7 @@ final class SitckerCollectionViewModel: ObservableObject {
     @Published var targetItemID: StickerItem.ID?
     
     @Published var showPhotoPicker: Bool = false
-    @Published var pickedPhotoItem: PhotosPickerItem?
+    @Published var pickedImage: UIImage?
     @Published var showCamera: Bool = false
     @Published var capturedImage: UIImage?
     
@@ -33,24 +33,6 @@ final class SitckerCollectionViewModel: ObservableObject {
     
     func returnStickerItems(for category: StickerCategory) -> [StickerItem] {
         itemsByCategory[category] ?? []
-    }
-    
-    // TODO: 갤러리에서 사진 선택시 업데이트하는 함수, 추후 수정
-    @MainActor
-    func handlePickedPhoto(_ item: PhotosPickerItem?) async {
-        guard let item else { return }
-        do {
-            if let data = try await item.loadTransferable(type: Data.self), let uiImg = UIImage(data: data), var arr = itemsByCategory[selectedCategory], let id = targetItemID, let index = arr.firstIndex(where: { $0.id == id }) {
-                var edited = arr[index]
-                edited.image = uiImg
-                arr[index] = edited
-                itemsByCategory[selectedCategory] = arr
-                
-                showMakeStickerButton = false
-                targetItemID = nil            }
-        } catch {
-            // 에러 처리 추가
-        }
     }
     
     func fetchStickerImage(forID id: StickerItem.ID) async {

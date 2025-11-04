@@ -6,7 +6,6 @@
 //
 
 import Combine
-import FirebaseAuth
 import SwiftUI
 
 struct StickerConfirmView: View {

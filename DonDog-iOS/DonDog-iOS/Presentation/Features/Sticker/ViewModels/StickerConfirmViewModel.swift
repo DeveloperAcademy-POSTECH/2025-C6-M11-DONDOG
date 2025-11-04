@@ -34,12 +34,7 @@ final class StickerConfirmViewModel: ObservableObject {
 
         Task {
             do {
-//                // 1) Storage 업로드
-//                let downloadURLString = try await DataManager.shared.uploadImage(
-//                    image: original,
-//                    path: "stickers/\(stickerID).jpg"
-//                )
-                // 1) Storage 업로드 (PNG, 투명도 유지)
+                // 1) Storage 업로드
                 guard let pngData = original.pngData() else {
                     throw NSError(domain: "StickerUpload", code: -10, userInfo: [NSLocalizedDescriptionKey: "PNG 변환 실패"])
                 }

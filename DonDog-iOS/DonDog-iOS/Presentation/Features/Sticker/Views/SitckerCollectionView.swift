@@ -7,7 +7,6 @@
 
 import Combine
 import Kingfisher
-import PhotosUI
 import SwiftUI
 
 final class StickerEmotionTagManager {
@@ -20,6 +19,7 @@ final class StickerEmotionTagManager {
 struct SitckerCollectionView: View {
     @StateObject var viewModel: SitckerCollectionViewModel
     @StateObject private var cameraVM = CameraViewModel()
+
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
 
     var body: some View {
@@ -40,18 +40,18 @@ struct SitckerCollectionView: View {
                                 )
                             
                             if let url = viewModel.remoteURLByItemID[item.id] {
-                                        KFImage(url)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .padding(12)
+                                KFImage(url)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .padding(12)
+                            } else {
+                                if viewModel.loadingItemIDs.contains(item.id) {
+                                    EmptyView()
                                 } else {
-                                    if viewModel.loadingItemIDs.contains(item.id) {
-                                        EmptyView()
-                                    } else {
-                                        Image(systemName: "plus.circle")
-                                            .font(.system(size: 28, weight: .semibold))
-                                    }
+                                    Image(systemName: "plus.circle")
+                                        .font(.system(size: 28, weight: .semibold))
                                 }
+                            }
                         }
                         Text(item.title)
                             .font(.system(size: 14, weight: .semibold))
@@ -97,20 +97,15 @@ struct SitckerCollectionView: View {
                 }
             }
         )
-        .photosPicker(
-            isPresented: $viewModel.showPhotoPicker,
-            selection: $viewModel.pickedPhotoItem,
-            matching: .images,
-            photoLibrary: .shared()
-        )
-        .onChange(of: viewModel.pickedPhotoItem) {
-            Task { await viewModel.handlePickedPhoto(viewModel.pickedPhotoItem) }
+        .sheet(isPresented: $viewModel.showPhotoPicker) {
+            PhotoPickerView { image, _ in
+                viewModel.pickedImage = image
+            }
         }
         .fullScreenCover(isPresented: $viewModel.showCamera) {
             CameraView(viewModel: cameraVM)
                 .ignoresSafeArea()
         }
-            
     }
     
     private var makeStickerButton: some View {

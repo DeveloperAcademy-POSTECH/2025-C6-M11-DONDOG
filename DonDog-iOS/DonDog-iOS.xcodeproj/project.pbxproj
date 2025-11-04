@@ -42,6 +42,7 @@
 		8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */; };
 		8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */; };
 		8BFC73612EA5D18C00B54F03 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC73602EA5D18C00B54F03 /* NetworkService.swift */; };
+		8C3F8FBF2EB8DAB000699BC3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */; };
 		8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */; };
 		8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */; };
 		8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD752EAE0EA40050003C /* DataManager.swift */; };
@@ -133,6 +134,7 @@
 		8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorView.swift; sourceTree = "<group>"; };
 		8BFC73602EA5D18C00B54F03 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		8C3F8FAA2EB7487100699BC3 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
 		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -328,6 +330,30 @@
 				CAB6B1E12EB5082D00F778EC /* UserPairingStore.swift */,
 			);
 			path = Data;
+			sourceTree = "<group>";
+		};
+		8C3F8FBB2EB8DA9400699BC3 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				8C3F8FBC2EB8DA9A00699BC3 /* Views */,
+				8C3F8FBD2EB8DAA300699BC3 /* ViewModels */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		8C3F8FBC2EB8DA9A00699BC3 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8C3F8FBD2EB8DAA300699BC3 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		8CF3BD792EAF1C2B0050003C /* Models */ = {
@@ -559,6 +585,7 @@
 		CAA9AEED2E8FC72E0047A89A /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				8C3F8FBB2EB8DA9400699BC3 /* Home */,
 				D219F1E12EAE0A2B00BD82B7 /* Post */,
 				CAA9AEC72E8FC15C0047A89A /* Auth */,
 				CAA9AEE12E8FC17C0047A89A /* Invite */,
@@ -821,6 +848,7 @@
 				8CF3BD8B2EAF215A0050003C /* Color+.swift in Sources */,
 				8CF3BD8C2EAF215A0050003C /* Notification+.swift in Sources */,
 				8B6624472EB34706006BDF4A /* InviteDoc.swift in Sources */,
+				8C3F8FBF2EB8DAB000699BC3 /* HomeView.swift in Sources */,
 				8CF3BD8D2EAF215A0050003C /* Font+.swift in Sources */,
 				8CF3BD8E2EAF215A0050003C /* UIImage+.swift in Sources */,
 				8B7729072EA73A3000344491 /* InWebSheetView.swift in Sources */,

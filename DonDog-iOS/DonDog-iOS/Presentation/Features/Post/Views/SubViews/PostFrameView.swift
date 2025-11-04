@@ -14,31 +14,38 @@ struct PostFrameView: View {
     let postType: PostType
     
     var body: some View {
-        if postType == .post {
-            if let post = viewModel.posts.first {
-                PostContentsView(post: post)
+        VStack(spacing: 0) {
+            if postType == .post {
+                if let post = viewModel.posts.first {
+                    PostContentsView(post: post)
+                } else {
+                    EmptyView()
+                }
             } else {
-                EmptyView()
-            }
-        } else {
-            let posts = viewModel.posts
-            
-            TabView(selection: $currentIndex) {
-                ForEach(Array(posts.enumerated()), id: \.offset) { idx, post in
-                    ScrollView {
-                        CustomPageIndicator(
-                            currentIndex: currentIndex + 1,
-                            totalCount: posts.count
-                        )
-                        .padding(.vertical, 8)
-                        
-                        PostContentsView(post: post)
-                            .tag(idx)
+                let posts = viewModel.posts
+                
+                TabView(selection: $currentIndex) {
+                    ForEach(Array(posts.enumerated()), id: \.offset) { idx, post in
+                        VStack(spacing: 0) {
+                            CustomPageIndicator(
+                                currentIndex: currentIndex + 1,
+                                totalCount: posts.count
+                            )
+                            .padding(.vertical, 8)
+                            
+                            PostContentsView(post: post)
+                                .tag(idx)
+                        }
                     }
                 }
+                .frame(maxWidth: .infinity)
+                .tabViewStyle(.page(indexDisplayMode: .never))
             }
-            .frame(maxWidth: .infinity)
-            .tabViewStyle(.page(indexDisplayMode: .never))
+            
+            Spacer()
+            
+            CustomButton(title: "스티커 붙이기", isEnable: true, action: { print("스티커 편집뷰로 이동") })
+                .padding(.horizontal, 20)
         }
     }
 }

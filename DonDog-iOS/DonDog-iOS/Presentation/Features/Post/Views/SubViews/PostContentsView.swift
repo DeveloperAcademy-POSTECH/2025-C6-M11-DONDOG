@@ -28,7 +28,7 @@ struct PostContentsView: View {
                 ImageView(urlString: post.backImageURL)
                     .tag(1)
             }
-            .frame(height: 524)
+            .frame(height: 470)
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .tabViewStyle(.page(indexDisplayMode: .automatic))
             .padding(.bottom, 27)
@@ -36,10 +36,6 @@ struct PostContentsView: View {
             Text(post.caption)
                 .font(.polaroidCaptionRegular20)
                 .foregroundStyle(.ddGray1000)
-            
-            Spacer()
-            
-            CustomButton(title: "스티커 붙이기", isEnable: true, action: { print("스티커 편집뷰로 이동") })
         }
         .padding(.horizontal, 20)
     }

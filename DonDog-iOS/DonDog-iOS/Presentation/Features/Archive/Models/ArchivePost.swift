@@ -20,5 +20,4 @@ struct ArchivePost: Identifiable, Hashable {
     let stickerType: StickerType?
     
     var thumbnailURL: URL? { frontImageURL ?? backImageURL }
-    var comments: [Comment] = []
 }

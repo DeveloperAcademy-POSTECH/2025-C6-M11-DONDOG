@@ -5,9 +5,9 @@
 //  Created by 이서현 on 10/28/25.
 //
 
-import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
+import SwiftUI
 
 struct TextView: View {
     @StateObject var viewModel = TextViewModel()

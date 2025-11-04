@@ -77,6 +77,6 @@ final class DateUtils {
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: now)
         
-        return hour >= 9 && hour < 18
+        return hour >= 0 && hour < 15
     }
 }

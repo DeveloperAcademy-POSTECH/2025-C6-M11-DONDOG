@@ -13,7 +13,7 @@ import SwiftUI
 struct StickerDecoView: View {
     let image: UIImage?
     let onDone: (UIImage) -> Void
-    private var currentTags: [String] { StickerTagManager.shared.emotionTags }
+    private var currentTags: [String] { StickerEmotionTagManager.shared.emotionTags }
     @State private var isUploading: Bool = false
     @State private var uploadError: String?
 
@@ -61,7 +61,7 @@ struct StickerDecoView: View {
                                     switch saveResult {
                                     case .success:
                                         isUploading = false
-                                        StickerTagManager.shared.emotionTags = []
+                                        StickerEmotionTagManager.shared.emotionTags = []
                                         onDone(resized)
                                     case .failure(let err):
                                         isUploading = false

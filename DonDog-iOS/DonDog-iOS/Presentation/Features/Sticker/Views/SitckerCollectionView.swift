@@ -64,11 +64,11 @@ struct SitckerCollectionView: View {
                     }
                     .contentShape(Rectangle())
                     .task {
-                        viewModel.fetchStickerImage(forID: item.id)
+                        await viewModel.fetchStickerImage(forID: item.id)
                     }
                     .onChange(of: viewModel.showCamera) { _, isPresented in
                         if isPresented == false {
-                            viewModel.fetchStickerImage(forID: item.id)
+                            Task { await viewModel.fetchStickerImage(forID: item.id) }
                         }
                     }
                     .highPriorityGesture(

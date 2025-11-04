@@ -508,7 +508,7 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
     // 줃제
     private func presentStickerConfirm(with image: UIImage) {
         let confirmVC = UIHostingController(
-            rootView: StickerConfirmView(
+            rootView: StickerImageConfirmView(
                 image: image
             ) { [weak self] accepted, result in
                 guard let self = self else { return }

@@ -1,5 +1,5 @@
 //
-//  StickerConfirmView.swift
+//  StickerImageConfirmView.swift
 //  DonDog-iOS
 //
 //  Created by 이주현 on 11/2/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct StickerConfirmView: View {
+struct StickerImageConfirmView: View {
     let image: UIImage?
     let onConfirm: (_ accepted: Bool, _ result: UIImage?) -> Void
     @State private var goToDeco: Bool = false
@@ -50,8 +50,14 @@ struct StickerConfirmView: View {
             }
             .padding(.horizontal, 12)
             .navigationDestination(isPresented: $goToDeco) {
-                StickerDecoView(image: image) { resultImage in
-                    onConfirm(true, resultImage)
+                if let image = image {
+                    StickerConfirmView(
+                        viewModel: StickerConfirmViewModel(
+                            image: image
+                        ) { resultImage in
+                            onConfirm(true, resultImage)
+                        }
+                    )
                 }
             }
         }

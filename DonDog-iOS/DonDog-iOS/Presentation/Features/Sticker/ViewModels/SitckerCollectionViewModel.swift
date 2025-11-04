@@ -28,7 +28,9 @@ final class SitckerCollectionViewModel: ObservableObject {
     @Published var remoteURLByItemID: [StickerItem.ID: URL] = [:]
     @Published var loadingItemIDs: Set<StickerItem.ID> = []
     
+    
     let actionBarAnimDuration: Double = 0.25
+    private let dataManager: DataManagerProtocol = DataManager.shared
     
     func returnStickerItems(for category: StickerCategory) -> [StickerItem] {
         itemsByCategory[category] ?? []
@@ -39,9 +41,7 @@ final class SitckerCollectionViewModel: ObservableObject {
     func handlePickedPhoto(_ item: PhotosPickerItem?) async {
         guard let item else { return }
         do {
-            if let data = try await item.loadTransferable(type: Data.self),
-               let uiImg = UIImage(data: data),
-               var arr = itemsByCategory[selectedCategory],
+            if let data = try await item.loadTransferable(type: Data.self), let uiImg = UIImage(data: data), var arr = itemsByCategory[selectedCategory],
                let id = targetItemID,
                let index = arr.firstIndex(where: { $0.id == id }) {
                 var edited = arr[index]
@@ -56,33 +56,27 @@ final class SitckerCollectionViewModel: ObservableObject {
         }
     }
     
-    
-    func fetchStickerImage(forID id: StickerItem.ID) {
+    func fetchStickerImage(forID id: StickerItem.ID) async {
         guard let item = itemsByCategory[selectedCategory]?.first(where: { $0.id == id }) else { return }
         
         loadingItemIDs.insert(item.id)
-        
+        // TODO: 추후 스티커 컬렉션 뷰와 메인뷰 연결 후, 싱글톤 적용
         guard let uid = Auth.auth().currentUser?.uid else {
             loadingItemIDs.remove(item.id)
             return
         }
-        let db = Firestore.firestore()
-        db.collection("Stickers")
-            .whereField("uid", isEqualTo: uid)
-            .whereField("emotionTags", isEqualTo: [selectedCategory.rawValue, item.title])
-            .limit(to: 1)
-            .getDocuments { [weak self] snapshot, _ in
-                guard let self else { return }
-                let url: URL?
-                if let first = snapshot?.documents.first,
-                   let urlString = first.data()["url"] as? String,
-                   let u = URL(string: urlString) {
-                    url = u
-                } else {
-                    url = nil
-                }
-                if let url { self.remoteURLByItemID[item.id] = url }
-                self.loadingItemIDs.remove(item.id)
+        do {
+            let stickers: [StickerData] = try await DataManager.shared.fetchWhereEqual(
+                path: "Stickers",
+                field: "uid",
+                isEqualTo: uid
+            )
+            if let match = stickers.first(where: { $0.emotionTags == [selectedCategory.rawValue, item.title] }), let url = URL(string: match.url) {
+                remoteURLByItemID[item.id] = url
             }
+        } catch {
+            print("❌ 스티커 이미지 로드 실패: \(error)")
+        }
+        loadingItemIDs.remove(item.id)
     }
 }

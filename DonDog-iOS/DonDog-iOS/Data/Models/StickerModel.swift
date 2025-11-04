@@ -7,6 +7,22 @@
 
 import Foundation
 import SwiftUI
+import FirebaseFirestore
+
+/// 서버 통신용
+struct StickerData: Codable, Identifiable {
+    @DocumentID var id: String?
+    let uid: String
+    let url: String
+    let emotionTags: [String]
+}
+
+/// 로컬 UI용
+struct StickerItem: Identifiable, Hashable {
+    let id = UUID()
+    let title: String // 세부 감정 문구 (예: "보고싶다")
+    var image: UIImage? // 누끼 완료된 스티커 이미지 (없으면 + 버튼)
+}
 
 enum StickerCategory: String, CaseIterable, Identifiable {
     case affection = "애정"
@@ -15,12 +31,6 @@ enum StickerCategory: String, CaseIterable, Identifiable {
     case humor = "유머"
     case daily = "일상"
     var id: String { rawValue }
-}
-
-struct StickerItem: Identifiable, Hashable {
-    let id = UUID()
-    let title: String // 세부 감정 문구 (예: "보고싶다")
-    var image: UIImage? // 누끼 완료된 스티커 이미지 (없으면 + 버튼)
 }
 
 struct StickerCategoryData {

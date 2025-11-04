@@ -20,7 +20,7 @@ struct SettingView: View {
                 .opacity(0.35)
             
             VStack(spacing: 0) {
-                CustomNavigationBar(leadingType: .back(action: { coordinator.pop() }), centerType: .title(title: "설정"), trailingType: .none, navigationColor: .black)
+                CustomNavigationBar(leadingType: .back(action: { coordinator.pop() }), centerType: .title(title: "설정", timeImage: ""), trailingType: .none, navigationColor: .black)
                 
                 HStack {
                     VStack(alignment: .leading, spacing: 24) {

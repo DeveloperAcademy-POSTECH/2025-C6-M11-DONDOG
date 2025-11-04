@@ -18,7 +18,7 @@ struct PostView: View {
     var body: some View {
         CustomNavigationBar(
             leadingType: .back(action: { coordinator.pop() }),
-            centerType: .title(title: DateUtils.string(from: (viewModel.posts.first?.createdAt.dateValue()) ?? Date(), format: .monthDay)),
+            centerType: .title(title: DateUtils.string(from: (viewModel.posts.first?.createdAt.dateValue()) ?? Date(), format: .monthDay), timeImage: "sun.max"),
             trailingType: .menu(items: [
                 CustomNavMenuItem("삭제하기", role: .destructive) {
                     viewModel.checkIfItsMyPost(of: postType == .post ? 0 : currentIndex)

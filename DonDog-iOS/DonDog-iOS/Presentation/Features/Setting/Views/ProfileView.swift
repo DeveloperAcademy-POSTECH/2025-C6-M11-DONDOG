@@ -25,7 +25,7 @@ struct ProfileView: View {
         VStack(spacing: 0) {
             CustomNavigationBar(
                 leadingType: viewModel.mode == .edit ? .back(action: { coordinator.pop() }) : .none,
-                centerType: .title(title: "프로필 설정"),
+                centerType: .title(title: "프로필 설정", timeImage: ""),
                 trailingType: .none,
                 navigationColor: .black
             )

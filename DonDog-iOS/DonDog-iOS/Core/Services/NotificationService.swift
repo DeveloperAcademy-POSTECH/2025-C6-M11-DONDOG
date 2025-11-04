@@ -32,14 +32,14 @@ final class NotificationService {
         
         let env: String
 #if DEBUG
-        env = "dev"
+    env = "dev"
 #else
-        env = "prod"
+    env = "prod"
 #endif
-        let info: [String: Any] = [
-            "env": env,
-            "updatedAt": FieldValue.serverTimestamp()
-        ]
+    let info: [String: Any] = [
+        "env": env,
+        "updatedAt": FieldValue.serverTimestamp()
+    ]
         
         ref.setData(info, merge: true) { err in
             if let err = err {

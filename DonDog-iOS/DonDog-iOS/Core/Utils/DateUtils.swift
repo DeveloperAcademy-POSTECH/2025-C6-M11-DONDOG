@@ -73,10 +73,9 @@ final class DateUtils {
         }
     }
     
-    static func isATime() -> Bool {
-        let now = Date()
+    static func isATime(date: Date) -> Bool {
         let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: now)
+        let hour = calendar.component(.hour, from: date)
         
         return hour >= 0 && hour < 15
     }

@@ -87,6 +87,8 @@
 		CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */; };
 		CAB6B1E22EB5082D00F778EC /* UserPairingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1E12EB5082D00F778EC /* UserPairingStore.swift */; };
 		CAB6B1E42EB5089600F778EC /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1E32EB5089600F778EC /* DateUtils.swift */; };
+		CAB6B1EE2EB6375A00F778EC /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1ED2EB6375A00F778EC /* View+.swift */; };
+		CAB6B1F42EB63D9000F778EC /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1F32EB63D9000F778EC /* Errors.swift */; };
 		D219F1E32EAE0A3700BD82B7 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1E22EAE0A3200BD82B7 /* PostView.swift */; };
 		D219F1E52EAE0A4400BD82B7 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1E42EAE0A3D00BD82B7 /* PostViewModel.swift */; };
 		D219F1F62EAE22D800BD82B7 /* PostType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1F52EAE22D300BD82B7 /* PostType.swift */; };
@@ -135,6 +137,7 @@
 		8BFC73602EA5D18C00B54F03 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		8C3F8FAA2EB7487100699BC3 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		8C3F8FAA2EB7487100699BC3 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
 		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -180,6 +183,8 @@
 		CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteViewModel.swift; sourceTree = "<group>"; };
 		CAB6B1E12EB5082D00F778EC /* UserPairingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPairingStore.swift; sourceTree = "<group>"; };
 		CAB6B1E32EB5089600F778EC /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
+		CAB6B1ED2EB6375A00F778EC /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
+		CAB6B1F32EB63D9000F778EC /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		D219F1E22EAE0A3200BD82B7 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		D219F1E42EAE0A3D00BD82B7 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		D219F1F52EAE22D300BD82B7 /* PostType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostType.swift; sourceTree = "<group>"; };
@@ -374,6 +379,7 @@
 				8CF3BD872EAF215A0050003C /* Font+.swift */,
 				8CF3BD882EAF215A0050003C /* Notification+.swift */,
 				8CF3BD892EAF215A0050003C /* UIImage+.swift */,
+				CAB6B1ED2EB6375A00F778EC /* View+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -418,7 +424,6 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
-				8C3F8FAA2EB7487100699BC3 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -703,6 +708,7 @@
 			isa = PBXGroup;
 			children = (
 				D297CE852EB05DFB00F28395 /* StickerType.swift */,
+				CAB6B1F32EB63D9000F778EC /* Errors.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -864,6 +870,7 @@
 				8BFC73612EA5D18C00B54F03 /* NetworkService.swift in Sources */,
 				D2E90A262EB3B14500A6E164 /* PostFrameView.swift in Sources */,
 				CAA9AEDB2E8FC15C0047A89A /* AuthView.swift in Sources */,
+				CAB6B1EE2EB6375A00F778EC /* View+.swift in Sources */,
 				8B7377E02E9546030001EFCD /* AuthService.swift in Sources */,
 				D219F2072EAE7F4500BD82B7 /* CustomCommentEditor.swift in Sources */,
 				8B6E118D2E976F380082B24C /* ProfileViewModel.swift in Sources */,
@@ -908,6 +915,7 @@
 				A1AEBED12E9110160006FBBA /* CameraViewController.swift in Sources */,
 				8B6E11912E9771EA0082B24C /* SettingViewModel.swift in Sources */,
 				CAA9AEF02E8FE2990047A89A /* ModuleFactoryProtocol.swift in Sources */,
+				CAB6B1F42EB63D9000F778EC /* Errors.swift in Sources */,
 				8BA7184B2E9DD7EC001F7857 /* CustomButton.swift in Sources */,
 				D297CE9D2EB1F71A00F28395 /* TextViewModel.swift in Sources */,
 				CAA9AEDF2E8FC15C0047A89A /* FeedView.swift in Sources */,
@@ -1061,11 +1069,12 @@
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "윙키(Winky)";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
-				INFOPLIST_KEY_NSCameraUsageDescription = "사진 촬영을 위해 카메라 접근이 필요합니다.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "가족과의 사진 공유 및 스티커 생성을 위해 카메라 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1107,11 +1116,12 @@
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "윙키(Winky)";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
-				INFOPLIST_KEY_NSCameraUsageDescription = "사진 촬영을 위해 카메라 접근이 필요합니다.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "가족과의 사진 공유 및 스티커 생성을 위해 카메라 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

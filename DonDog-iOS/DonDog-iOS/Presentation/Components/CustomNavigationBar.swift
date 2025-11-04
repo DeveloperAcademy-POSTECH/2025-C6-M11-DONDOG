@@ -170,11 +170,7 @@ struct CustomNavigationBar: View {
     CustomNavigationBar(
         leadingType: .back(action: {}),
         centerType: .title(title: "10월 14일"),
-        trailingType: .menu(items: [
-            CustomNavMenuItem("삭제", role: .destructive) {
-                //
-            },
-        ]),
+        trailingType: .menu(items: [CustomNavMenuItem("삭제", role: .destructive) {}]),
         navigationColor: .black
     )
     

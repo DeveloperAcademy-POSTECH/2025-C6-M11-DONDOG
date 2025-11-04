@@ -5,8 +5,8 @@
 //  Created by 조유진 on 10/19/25.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct ArchivePostContainer: View {
     let url: URL
@@ -17,7 +17,7 @@ struct ArchivePostContainer: View {
     var body: some View {
         ZStack(alignment: .center) {
             KFImage.url(url)
-                .onProgress { receivedSize,totalSize in
+                .onProgress { _, _ in
                     isFailed = false
                 }
                 .onSuccess { _ in

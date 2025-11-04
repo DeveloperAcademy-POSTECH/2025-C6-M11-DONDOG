@@ -134,7 +134,7 @@
 		8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeService.swift; sourceTree = "<group>"; };
 		8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorView.swift; sourceTree = "<group>"; };
 		8BFC73602EA5D18C00B54F03 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
-		8C3F8FAA2EB7487100699BC3 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C3F8FAA2EB7487100699BC3 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
 		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -397,7 +397,6 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
-				8C3F8FAA2EB7487100699BC3 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};

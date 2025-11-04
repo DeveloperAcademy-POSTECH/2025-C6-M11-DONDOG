@@ -185,21 +185,36 @@ final class AuthNumberViewModel: ObservableObject {
         return Array(unique.values)
     }
 
-    /// 각 Room을 순회하며 마지막 참가자인 경우 전체 삭제, 아니라면 participants에서 uid만 제거한다.
+    /// 각 Room을 순회하며 무조건 방 전체를 삭제한다.
+    /// 단, participants가 2명 이상(=상대방 존재)이면 상대방의 `Users/{uid}.roomId` 필드를 제거한 뒤 방/게시물/댓글/스토리지 파일까지 정리한다.
     private func processRooms(db: Firestore, uid: String, roomRefs: [DocumentReference]) async throws {
         for roomRef in roomRefs {
             let snap = try await roomRef.getDocument()
             guard let data = snap.data(), let parts = data["participants"] as? [String], parts.contains(uid) else { continue }
 
-            if parts.count > 1 {
-                // 여러 명이면 내 uid만 제거
-                try await dataManager.update(path: roomRef.path, data: ["participants": FieldValue.arrayRemove([uid])])
-                // 서버 스냅샷으로 재확인 (실패해도 진행)
-                _ = try? await roomRef.getDocument(source: .server)
-            } else {
-                // 마지막 1명(본인) → 방 전체 삭제
-                try await deleteEntireRoom(roomRef: roomRef)
+            // 상대방 uid 목록(현재 uid 제외)
+            let partnerIds = parts.filter { $0 != uid }
+
+            // participants가 2명 이상이면: 상대방 Users/{uid}.roomId 제거
+            if !partnerIds.isEmpty {
+                for partnerUid in partnerIds {
+                    let partnerUserPath = "Users/\(partnerUid)"
+                    do {
+                        try await dataManager.update(path: partnerUserPath, data: [
+                            "roomId": FieldValue.delete(),
+                            "recentPostId": FieldValue.delete()
+                        ])
+                    } catch {
+                        try? await dataManager.update(path: partnerUserPath, data: [
+                            "roomId": "",
+                            "recentPostId": ""
+                        ])
+                    }
+                }
             }
+
+            // 규칙: 참가자 수와 무관하게 방 전체 삭제
+            try await deleteEntireRoom(roomRef: roomRef)
         }
     }
 
@@ -256,13 +271,6 @@ final class AuthNumberViewModel: ObservableObject {
             let paths = inviterSnap.documents.map { $0.reference.path }
             try await dataManager.batchDelete(paths: paths)
         }
-
-        // 내가 초대받은 문서가 스키마에 있다면 아래와 같이 확장 가능
-        // let inviteeSnap = try await invites.whereField("inviteeUid", isEqualTo: uid).getDocuments()
-        // if !inviteeSnap.isEmpty {
-        //     let paths = inviteeSnap.documents.map { $0.reference.path }
-        //     try await dataManager.batchDelete(paths: paths)
-        // }
     }
 
     /// Users/{uid} 하위 fcmTokens 먼저 삭제 후, Users 문서 삭제
@@ -296,9 +304,7 @@ final class AuthNumberViewModel: ObservableObject {
             return false
         }
     }
-
-    // MARK: - Utilities
-
+    
     /// Firestorage URL 판별
     private func isFirebaseStorageURL(_ s: String) -> Bool {
         s.hasPrefix("https://firebasestorage.googleapis.com") || s.hasPrefix("gs://")

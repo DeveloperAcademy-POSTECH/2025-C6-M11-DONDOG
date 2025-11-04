@@ -39,7 +39,6 @@ struct PostFrameView: View {
             }
             .frame(maxWidth: .infinity)
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .ignoresSafeArea(edges: .bottom)
         }
     }
 }

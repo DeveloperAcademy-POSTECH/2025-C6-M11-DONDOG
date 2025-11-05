@@ -17,7 +17,7 @@ final class AppCoordinator: ObservableObject {
     private let authService: AuthService
     
     // 기본뷰
-    @Published var root: AppRoute = .feed
+    @Published var root: AppRoute = .home
     @Published var inviteShowSentHint: Bool = false
     @Published var authShowWithdraw: Bool = false
     @Published var authNumberShowWithdraw: Bool = false

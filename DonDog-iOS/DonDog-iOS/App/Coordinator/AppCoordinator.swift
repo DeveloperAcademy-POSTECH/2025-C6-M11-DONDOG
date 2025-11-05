@@ -105,8 +105,8 @@ final class AppCoordinator: ObservableObject {
             factory.makeProfileView(mode: .edit)
         case .archive:
             factory.makeArchiveView()
-        case .post(let posts, let postType):
-            factory.makePostView(with: posts, for: postType)
+        case .post(let post, let postType):
+            factory.makePostView(with: post, for: postType)
         }
     }
     
@@ -132,7 +132,7 @@ final class AppCoordinator: ObservableObject {
                     do {
                         let post: PostData = try await DataManager.shared.fetch(path: "Rooms/\(roomId)/posts/\(postId)")
                         await MainActor.run {
-                            self.push(.post(posts: [post], postType: .post))
+                            self.push(.post(post: post, postType: .post))
                         }
                     } catch {
                         print("게시물 이동 실패: \(error)")

@@ -32,8 +32,8 @@ final class StickerService {
             
             let post: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(postId)")
             
-            let stickerPostIdToFetch: String
-            if !post.stickerPostId.isEmpty {
+            let stickerPostIdToFetch: String?
+            if post.stickerPostId != nil && post.stickerPostId != "" {
                 stickerPostIdToFetch = post.stickerPostId
             } else if let recentPostId = currentUser.recentPostId, !recentPostId.isEmpty {
                 stickerPostIdToFetch = recentPostId
@@ -42,7 +42,7 @@ final class StickerService {
                 return ""
             }
             
-            let postData: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(stickerPostIdToFetch)")
+            let postData: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(stickerPostIdToFetch ?? "")")
             
             return postData.postId
         } catch {

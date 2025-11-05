@@ -121,36 +121,6 @@ final class DataManager: DataManagerProtocol {
             }
         }
     }
-
-    func fetchWhereEqual<T: Decodable>(
-        path: String,
-        field: String,
-        isEqualTo value: Any,
-        orderBy: String? = nil,
-        descending: Bool = false,
-        limit: Int? = nil
-    ) async throws -> [T] {
-        let collectionRef = try parseCollectionPath(path)
-        var query: Query = collectionRef.whereField(field, isEqualTo: value)
-
-        if let orderBy {
-            query = query.order(by: orderBy, descending: descending)
-        }
-        if let limit {
-            query = query.limit(to: limit)
-        }
-
-        let snapshot = try await query.getDocuments()
-
-        return snapshot.documents.compactMap { document in
-            do {
-                return try document.data(as: T.self)
-            } catch {
-                print("❌ 문서 \(document.documentID) 디코딩 실패: \(error)")
-                return nil
-            }
-        }
-    }
     
     func fetchWhere<T: Decodable>(
         path: String,

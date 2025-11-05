@@ -14,21 +14,17 @@ struct WinkyApp: App {
     
     var body: some Scene {
         WindowGroup {
-//            let factory = ModuleFactory.shared
-//            let coordinator = AppCoordinator(factory: factory)
-//            RootNavigationView(coordinator: coordinator)
-//                .onOpenURL { url in
-//                    if Auth.auth().canHandle(url) {
-//                        return
-//                    }
-//                    
-//                    guard let scheme = url.scheme, scheme == "dondog" else { return }
-//                    coordinator.handleDeepLink(url.absoluteString)
-//                }
-            
-            // SitckerCollectionView(viewModel: SitckerCollectionViewModel())
-            
-            StickerPracticeView()
+            let factory = ModuleFactory.shared
+            let coordinator = AppCoordinator(factory: factory)
+            RootNavigationView(coordinator: coordinator)
+                .onOpenURL { url in
+                    if Auth.auth().canHandle(url) {
+                        return
+                    }
+                    
+                    guard let scheme = url.scheme, scheme == "dondog" else { return }
+                    coordinator.handleDeepLink(url.absoluteString)
+                }
         }
     }
 }

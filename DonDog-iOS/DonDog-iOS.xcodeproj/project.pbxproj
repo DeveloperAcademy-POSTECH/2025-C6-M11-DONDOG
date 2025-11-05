@@ -34,7 +34,6 @@
 		8B6E118D2E976F380082B24C /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E118C2E976F380082B24C /* ProfileViewModel.swift */; };
 		8B6E11912E9771EA0082B24C /* SettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E11902E9771EA0082B24C /* SettingViewModel.swift */; };
 		8B736DC42EBA1F7300E2AB76 /* PhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B736DC32EBA1F7300E2AB76 /* PhotoPickerView.swift */; };
-		8B736DCC2EBB220600E2AB76 /* StickerPracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B736DCB2EBB220600E2AB76 /* StickerPracticeView.swift */; };
 		8B7377E02E9546030001EFCD /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7377DF2E9546030001EFCD /* AuthService.swift */; };
 		8B7729072EA73A3000344491 /* InWebSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7729062EA73A3000344491 /* InWebSheetView.swift */; };
 		8B7F47D82EB90241004FC5E3 /* SitckerCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7F47D72EB90241004FC5E3 /* SitckerCollectionViewModel.swift */; };
@@ -132,9 +131,8 @@
 		8B6E11892E968E2B0082B24C /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		8B6E118C2E976F380082B24C /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		8B6E11902E9771EA0082B24C /* SettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewModel.swift; sourceTree = "<group>"; };
-		8B736DC02EB9D5E500E2AB76 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8B736DC32EBA1F7300E2AB76 /* PhotoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerView.swift; sourceTree = "<group>"; };
-		8B736DCB2EBB220600E2AB76 /* StickerPracticeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerPracticeView.swift; sourceTree = "<group>"; };
+		8B736DDF2EBB3B6700E2AB76 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8B7377DF2E9546030001EFCD /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		8B7729062EA73A3000344491 /* InWebSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InWebSheetView.swift; sourceTree = "<group>"; };
 		8B7F47D72EB90241004FC5E3 /* SitckerCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitckerCollectionViewModel.swift; sourceTree = "<group>"; };
@@ -371,7 +369,6 @@
 				8B736DC32EBA1F7300E2AB76 /* PhotoPickerView.swift */,
 				8B0108042EB6685C00D030BD /* StickerImageConfirmView.swift */,
 				8B0108082EB6756F00D030BD /* StickerConfirmView.swift */,
-				8B736DCB2EBB220600E2AB76 /* StickerPracticeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -770,7 +767,7 @@
 				8B822D7B2EAB617800D708D7 /* Kingfisher */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8B736DC02EB9D5E500E2AB76 /* DonDog-iOS.app */;
+			productReference = 8B736DDF2EBB3B6700E2AB76 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -917,7 +914,6 @@
 				8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */,
 				8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */,
 				CAB6B1E22EB5082D00F778EC /* UserPairingStore.swift in Sources */,
-				8B736DCC2EBB220600E2AB76 /* StickerPracticeView.swift in Sources */,
 				D219F2342EAF787600BD82B7 /* PhotoView.swift in Sources */,
 				8B0108032EB667EA00D030BD /* StickerModel.swift in Sources */,
 				D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */,

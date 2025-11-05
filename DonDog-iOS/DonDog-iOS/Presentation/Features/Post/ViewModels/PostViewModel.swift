@@ -12,16 +12,17 @@ import FirebaseFirestore
 final class PostViewModel: ObservableObject {
     @Published var showDeleteConfirmAlert = false
     @Published var showUnauthorizedAlert = false
-    @Published var posts: [PostData]
+    @Published var post: PostData
     
     private let connectUserInfo = UserPairingStore.shared
     
-    init(posts: [PostData]) {
-        self.posts = posts
+    init(post: PostData) {
+        self.post = post
+        checkIfItsMyPost()
     }
     
-    func checkIfItsMyPost(of index: Int) {
-        showUnauthorizedAlert = posts[index].authorId != connectUserInfo.myUid
+    private func checkIfItsMyPost() {
+        showUnauthorizedAlert = post.authorId != connectUserInfo.myUid
     }
     
     func handleDeleteRequest(for post: PostData) {
@@ -35,10 +36,6 @@ final class PostViewModel: ObservableObject {
     func deletePost(for post: PostData) async {
         do {
             try await PostService.shared.deletePost(postId: post.postId)
-            
-            await MainActor.run {
-                posts.removeAll { $0.postId == post.postId }
-            }
         } catch {
             print("게시글 삭제에 실패했습니다: \(error)")
         }

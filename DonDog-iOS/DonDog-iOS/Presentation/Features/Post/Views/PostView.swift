@@ -13,19 +13,15 @@ struct PostView: View {
     @StateObject var viewModel: PostViewModel
     @State private var currentIndex: Int = 0
     
-    let postType: PostType
-    
     var body: some View {
-        let createdAt = viewModel.posts[currentIndex].createdAt.dateValue()
+        let createdAt = viewModel.post.createdAt.dateValue()
         CustomNavigationBar(
             leadingType: .back(action: { coordinator.pop() }),
             centerType: .timeTitle(title: DateUtils.string(from: createdAt, format: .monthDay), timeImage: DateUtils.isATime(date: createdAt) ? "sun.max" : "moon.fill"),
             trailingType: .menu(items: [
                 CustomNavMenuItem("삭제하기", role: .destructive) {
-                    viewModel.checkIfItsMyPost(of: postType == .post ? 0 : currentIndex)
-                    
                     if !viewModel.showUnauthorizedAlert {
-                        viewModel.handleDeleteRequest(for: viewModel.posts[postType == .post ? 0 : currentIndex])
+                        viewModel.handleDeleteRequest(for: viewModel.post)
                     }
                 }
             ]),
@@ -36,20 +32,10 @@ struct PostView: View {
         .alert("사진을 삭제하시겠어요?", isPresented: $viewModel.showDeleteConfirmAlert) {
             Button("확인", role: .cancel) {
                 Task {
-                    await viewModel.deletePost(for: viewModel.posts[currentIndex])
+                    await viewModel.deletePost(for: viewModel.post)
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        if postType == .post {
-                            coordinator.pop()
-                        } else {
-                            if currentIndex > 0 {
-                                currentIndex -= 1
-                            } else if viewModel.posts.count > 1 {
-                                currentIndex = 0
-                            } else {
-                                coordinator.pop()
-                            }
-                        }
+                        coordinator.pop()
                     }
                 }
             }
@@ -60,7 +46,14 @@ struct PostView: View {
         }
         
         ZStack(alignment: .bottom) {
-            PostFrameView(currentIndex: $currentIndex, viewModel: viewModel, postType: postType)
+            VStack(spacing: 0) {
+                PostContentsView(post: viewModel.post)
+                
+                Spacer()
+                
+                CustomButton(title: "스티커 붙이기", isEnable: true, action: { print("스티커 편집뷰로 이동") })
+                    .padding(.horizontal, 20)
+            }
             
             if viewModel.showUnauthorizedAlert {
                 ToastView(toastText: "본인이 작성한 글만 삭제할 수 있어요")

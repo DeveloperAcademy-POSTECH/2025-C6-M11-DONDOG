@@ -10,33 +10,6 @@ import FirebaseFirestore
 import FirebaseStorage
 import UIKit
 
-// MARK: - 에러 타입
-enum DataManagerError: LocalizedError {
-    case invalidPath
-    case documentNotFound
-    case decodingFailed
-    case imageConversionFailed
-    case uploadFailed
-    case downloadFailed
-    case authenticationRequired
-    case userDocumentNotFound
-    case roomIdNotFound
-    
-    var errorDescription: String? {
-        switch self {
-        case .invalidPath: return "잘못된 경로입니다"
-        case .documentNotFound: return "문서를 찾을 수 없습니다"
-        case .decodingFailed: return "데이터 변환에 실패했습니다"
-        case .imageConversionFailed: return "이미지 변환에 실패했습니다"
-        case .uploadFailed: return "업로드에 실패했습니다"
-        case .downloadFailed: return "다운로드에 실패했습니다"
-        case .authenticationRequired: return "로그인이 필요합니다"
-        case .userDocumentNotFound: return "사용자 문서를 찾을 수 없습니다"
-        case .roomIdNotFound: return "roomId를 찾을 수 없습니다"
-        }
-    }
-}
-
 final class DataManager: DataManagerProtocol {
     static let shared = DataManager()
     init() {}
@@ -139,36 +112,6 @@ final class DataManager: DataManagerProtocol {
         let query = collectionRef.order(by: field, descending: descending)
         let snapshot = try await query.getDocuments()
         
-        return snapshot.documents.compactMap { document in
-            do {
-                return try document.data(as: T.self)
-            } catch {
-                print("❌ 문서 \(document.documentID) 디코딩 실패: \(error)")
-                return nil
-            }
-        }
-    }
-
-    func fetchWhereEqual<T: Decodable>(
-        path: String,
-        field: String,
-        isEqualTo value: Any,
-        orderBy: String? = nil,
-        descending: Bool = false,
-        limit: Int? = nil
-    ) async throws -> [T] {
-        let collectionRef = try parseCollectionPath(path)
-        var query: Query = collectionRef.whereField(field, isEqualTo: value)
-
-        if let orderBy {
-            query = query.order(by: orderBy, descending: descending)
-        }
-        if let limit {
-            query = query.limit(to: limit)
-        }
-
-        let snapshot = try await query.getDocuments()
-
         return snapshot.documents.compactMap { document in
             do {
                 return try document.data(as: T.self)

@@ -30,7 +30,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     @Published var currentUserName: String = ""
     @Published var currentPostIndex: Int = 0
     @Published var displayablePosts: [DisplayablePost] = []
-    @Published var type: String = "null"
+    @Published var type: String = ""
     @Published var isNotMyPost = false
     
     let connectUserInfo = UserPairingStore.shared
@@ -314,6 +314,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
         }
         
         imageGroup.notify(queue: .main) {
+            let isStickerPostIdEmpty = post.stickerPostId == nil || post.stickerPostId == ""
             if let front = frontImageURL, let back = backImageURL {
                 let displayablePost = DisplayablePost(
                     post: post,
@@ -323,7 +324,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     isMyPost: isMyPost
                 )
                 print("[FeedViewModel.buildDisplayablePost] 게시물 \(index + 1) 기본 이미지 다운로드 완료")
-                completion(index, displayablePost, post.stickerPostId.isEmpty ? nil : post.stickerPostId, post.stickerType)
+                completion(index, displayablePost, isStickerPostIdEmpty ? nil : post.stickerPostId, post.stickerType)
             } else {
                 let displayablePost = DisplayablePost(
                     post: post,
@@ -333,7 +334,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
                     isMyPost: isMyPost
                 )
                 print("[FeedViewModel.buildDisplayablePost] 이미지 URL 누락: \(index + 1)")
-                completion(index, displayablePost, post.stickerPostId.isEmpty ? nil : post.stickerPostId, post.stickerType)
+                completion(index, displayablePost, isStickerPostIdEmpty ? nil : post.stickerPostId, post.stickerType)
             }
         }
     }

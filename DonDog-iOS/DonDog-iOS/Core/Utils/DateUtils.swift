@@ -7,16 +7,18 @@
 
 import Foundation
 
-struct DateUtils {
-    enum DateFormat: String {
-        case yearMonth = "yyyy년 M월"
-        case monthDay = "MM월 d일"
-        case day = "d"
-        case time = "HH:mm"
-        case full = "MM월 d일 HH:mm"
-        case dayKey = "yyyy-MM-dd"
-    }
-    
+enum DateFormat: String {
+    case yearMonth = "yyyy년 M월"
+    case monthDay = "MM월 d일"
+    case day = "d"
+    case time = "HH:mm"
+    case periodTime = "h:mma"
+    case full = "MM월 d일 HH:mm"
+    case dayKey = "yyyy-MM-dd"
+    case weekDay = "yyyy년 M월 d일 E요일"
+}
+
+final class DateUtils {
     private static var calendar: Calendar = {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Asia/Seoul") ?? .current
@@ -56,9 +58,9 @@ struct DateUtils {
         let hours = minutes / 60
         
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-        formatter.dateFormat = DateFormat.time.rawValue
+        formatter.dateFormat = DateFormat.periodTime.rawValue
         
         switch seconds {
         case 0..<60:
@@ -70,5 +72,26 @@ struct DateUtils {
         default:
             return formatter.string(from: date)
         }
+    }
+    
+    static func isATime(date: Date) -> Bool {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        
+        return hour >= 0 && hour < 15
+    }
+    
+    static func isOver3daysSinceLastUpload() -> Bool {
+        let connectUserInfo = UserPairingStore.shared
+        
+        guard let lastUploadDate = connectUserInfo.lastUploadedAt else {
+            return false
+        }
+        
+        let now = Date()
+        let timeInterval = now.timeIntervalSince(lastUploadDate)
+        let threeDaysInSeconds: TimeInterval = 3 * 24 * 60 * 60
+        
+        return timeInterval >= threeDaysInSeconds
     }
 }

@@ -12,14 +12,16 @@ struct UserData: Codable {
     let role: String
     let roomId: String?
     let recentPostId: String?
+    let lastUploadDate: Timestamp?
     let createdAt: Timestamp?
     let updatedAt: Timestamp?
 
-    init(name: String, role: String, roomId: String? = nil, recentPostId: String? = nil, createdAt: Timestamp? = nil, updatedAt: Timestamp? = nil) {
+    init(name: String, role: String, roomId: String? = nil, recentPostId: String? = nil, lastUploadDate: Timestamp? = nil, createdAt: Timestamp? = nil, updatedAt: Timestamp? = nil) {
         self.name = name
         self.role = role
         self.roomId = roomId
         self.recentPostId = recentPostId
+        self.lastUploadDate = lastUploadDate
         self.createdAt = createdAt ?? Timestamp()
         self.updatedAt = updatedAt ?? Timestamp()
     }

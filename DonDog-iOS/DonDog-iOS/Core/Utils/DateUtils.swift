@@ -80,4 +80,18 @@ final class DateUtils {
         
         return hour >= 0 && hour < 15
     }
+    
+    static func isOver3daysSinceLastUpload() -> Bool {
+        let connectUserInfo = UserPairingStore.shared
+        
+        guard let lastUploadDate = connectUserInfo.lastUploadedAt else {
+            return false
+        }
+        
+        let now = Date()
+        let timeInterval = now.timeIntervalSince(lastUploadDate)
+        let threeDaysInSeconds: TimeInterval = 3 * 24 * 60 * 60
+        
+        return timeInterval >= threeDaysInSeconds
+    }
 }

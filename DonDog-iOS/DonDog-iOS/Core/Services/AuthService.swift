@@ -16,7 +16,7 @@ final class AuthService {
     private var userDocListenr: ListenerRegistration?
     private var reconfigureObserver: NSObjectProtocol?
     private weak var coordinatorRef: AppCoordinator?
-
+    
     deinit {
         if let handle = authHandle {
             Auth.auth().removeStateDidChangeListener(handle)
@@ -26,7 +26,7 @@ final class AuthService {
         }
         if let obs = reconfigureObserver { NotificationCenter.default.removeObserver(obs) }
     }
-
+    
     // MARK: - 라우팅 진입점/코어
     func configureAuthBasedRouting(coordinator: AppCoordinator) {
         self.coordinatorRef = coordinator
@@ -46,7 +46,7 @@ final class AuthService {
             }
         }
     }
-
+    
     private func applyRouteForUser(coordinator: AppCoordinator) {
         guard let user = Auth.auth().currentUser else {
             Task { @MainActor in
@@ -58,9 +58,9 @@ final class AuthService {
             NSLog("[AuthService] currentUser 없음 → welcome 화면으로 이동")
             return
         }
-
+        
         if AuthService.isAccountDeletionInProgress { return }
-
+        
         user.getIDTokenResult(forcingRefresh: true) { [weak self] _, _ in
             guard let self = self else { return }
             guard let refreshUser = Auth.auth().currentUser else {
@@ -71,16 +71,16 @@ final class AuthService {
                 NSLog("[AuthService] IDToken 분실로 current User 찾을 수 없음 → welcome 화면으로 이동")
                 return
             }
-
+            
             Task { @MainActor in
                 UserPairingStore.shared.reset()
             }
-
+            
             self.uploadFCMAndSubscribe()
-
+            
             let uid = refreshUser.uid
             let userDoc = Firestore.firestore().collection("Users").document(uid)
-
+            
             self.userDocListenr?.remove()
             self.userDocListenr = userDoc.addSnapshotListener(includeMetadataChanges: true) { [weak self] userDoc, error in
                 guard let self = self else { return }
@@ -88,7 +88,7 @@ final class AuthService {
             }
         }
     }
-
+    
     // MARK: - 라우팅 처리 1: 라우팅 & FCM 토큰 관리
     private func replaceRootinAuthService(_ route: AppRoute, coordinator: AppCoordinator) {
         Task { @MainActor in
@@ -97,7 +97,7 @@ final class AuthService {
             NSLog("[AuthService replaceRootinAuthService함수] 🔄 \(coordinator.root) → \(route)")
         }
     }
-
+    
     private func uploadFCMAndSubscribe() {
         Messaging.messaging().token { token, error in
             if let token = token {
@@ -114,11 +114,11 @@ final class AuthService {
             }
         }
     }
-
+    
     // MARK: - 라우팅 처리 2: 사용자 문서 스냅샷 처리
     private func handleUserSnapshot(coordinator: AppCoordinator, userDoc: DocumentSnapshot?, error: Error?, refreshUser: User) {
         if AuthService.isAccountDeletionInProgress { return }
-
+        
         // 오류 또는 스냅샷 nil 처리
         if let nsError = error as NSError? {
             NSLog("⚠️ 사용자 문서 조회 오류: \(nsError.localizedDescription) → welcome로 이동")
@@ -135,7 +135,7 @@ final class AuthService {
             replaceRootinAuthService(.profileSetup, coordinator: coordinator)
             return
         }
-
+        
         // user 문서 없음 → 프로필 설정
         if userDoc.exists == false {
             Task { @MainActor in
@@ -144,27 +144,33 @@ final class AuthService {
             replaceRootinAuthService(.profileSetup, coordinator: coordinator)
             return
         }
-
+        
         // 보류 중 쓰기 → 대기
         if userDoc.metadata.hasPendingWrites { return }
-
+        
         let data = userDoc.data() ?? [:]
         let roomId = data["roomId"] as? String
         processRoomRouting(coordinator: coordinator, refreshUser: refreshUser, userData: data, roomId: roomId)
     }
-
+    
     // MARK: - 라우팅 처리 3:  방/페어링 상태 라우팅
     private func processRoomRouting(coordinator: AppCoordinator, refreshUser: User, userData: [String: Any], roomId: String?) {
         let state = UserPairingStore.shared
         state.myUid = refreshUser.uid
         state.myName = userData["name"] as? String
-
+        
+        if let lastUploadTimestamp = userData["lastUploadDate"] as? Timestamp {
+            state.lastUploadedAt = lastUploadTimestamp.dateValue()
+        } else {
+            state.lastUploadedAt = nil
+        }
+        
         guard let rid = roomId, !rid.isEmpty else {
             state.reset()
             NSLog("[AuthService] 🔓 미연결 상태 (roomId 없음)")
             return
         }
-
+        
         Task {
             do {
                 let db = Firestore.firestore()
@@ -174,7 +180,7 @@ final class AuthService {
                     replaceRootinAuthService(.welcome, coordinator: coordinator)
                     return
                 }
-
+                
                 if let partnerUid = participants.first(where: { $0 != refreshUser.uid }) {
                     let partnerDoc = try await db.collection("Users").document(partnerUid).getDocument()
                     state.partnerUid = partnerUid
@@ -184,10 +190,10 @@ final class AuthService {
                     state.partnerUid = nil
                     state.partnerName = nil
                 }
-
+                
                 state.roomId = rid
                 state.isConnected = true
-
+                
                 NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil")")
                 NSLog("[AuthService] 상태: 연결 상태 =\(state.isConnected), roomId=\(state.roomId ?? "nil")")
                 replaceRootinAuthService(.feed, coordinator: coordinator)

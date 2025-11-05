@@ -19,6 +19,7 @@ final class UserPairingStore: ObservableObject {
     @Published var myName: String?
     @Published var partnerUid: String?
     @Published var partnerName: String?
+    @Published var lastUploadedAt: Date?
     
     func reset() {
         self.isConnected = false
@@ -27,5 +28,6 @@ final class UserPairingStore: ObservableObject {
         self.myName = nil
         self.partnerUid = nil
         self.partnerName = nil
+        self.lastUploadedAt = nil
     }
 }

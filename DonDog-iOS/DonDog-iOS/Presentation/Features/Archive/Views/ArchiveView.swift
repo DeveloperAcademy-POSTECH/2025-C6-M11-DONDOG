@@ -6,6 +6,13 @@
 
 import SwiftUI
 
+enum ArchiveSegment: String, CaseIterable, Identifiable {
+    case partnerArchive = "가족"
+    case myArchive = "나"
+    
+    var id: String { self.rawValue }
+}
+
 struct ArchiveView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: ArchiveViewModel
@@ -39,7 +46,7 @@ struct ArchiveView: View {
                             Text(DateUtils.string(from: viewModel.displayMonths[viewModel.currentMonthIndex].date, format: .month))
                                 .font(.subtitleMedium20)
                         } else {
-                            Text(DateUtils.string(from: Date(), format: .yearMonth))
+                            Text(DateUtils.string(from: Date(), format: .month))
                                 .font(.subtitleMedium20)
                         }
                         
@@ -112,8 +119,9 @@ struct ArchiveView: View {
                 Spacer()
                 
                 CustomSegmentedControl(
-                    selected: viewModel.selectedAuthorType,
-                    onChange: { viewModel.selectAuthorType($0) }
+                    items: ArchiveSegment.allCases,
+                    selectedItem: $viewModel.selectedAuthorType,
+                    titleProvider: { $0.rawValue }
                 )
                 .padding(.bottom, 34)
             }

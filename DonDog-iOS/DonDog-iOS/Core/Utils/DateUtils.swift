@@ -14,6 +14,7 @@ enum DateFormat: String {
     case time = "HH:mm"
     case full = "MM월 d일 HH:mm"
     case dayKey = "yyyy-MM-dd"
+    case weekDay = "yyyy년 M월 d일 E요일"
 }
 
 final class DateUtils {

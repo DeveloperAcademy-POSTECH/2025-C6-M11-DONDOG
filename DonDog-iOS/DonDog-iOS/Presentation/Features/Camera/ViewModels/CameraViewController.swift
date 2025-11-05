@@ -505,7 +505,7 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
         return flippedImage
     }
     
-    // 줃제
+    /// 스티커 이미지 컨펌 뷰로 넘기는 함수
     private func presentStickerConfirm(with image: UIImage) {
         let confirmVC = UIHostingController(
             rootView: StickerImageConfirmView(

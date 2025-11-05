@@ -18,12 +18,28 @@ final class ArchiveViewModel: ObservableObject {
     private let dataManager: DataManagerProtocol = DataManager.shared
     
     @Published var archiveMonths: [ArchiveMonth] = []
+    @Published var displayMonths: [ArchiveMonth] = []
     @Published var allPosts: [PostData] = []
     @Published var totalPostCount: Int = 0
+    @Published var displayPostCount: Int = 0
     @Published var isLoading = false
+    @Published var selectedAuthorType: CustomSegmentedControl.PostAuthorType = .partnerArchive
+    @Published var currentMonthIndex: Int = 0
     
     func attach(coordinator: AppCoordinator) {
         self.coordinator = coordinator
+    }
+    
+    func goToPreviousMonth() {
+        if currentMonthIndex < displayMonths.count - 1 {
+            currentMonthIndex += 1
+        }
+    }
+    
+    func goToNextMonth() {
+        if currentMonthIndex > 0 {
+            currentMonthIndex -= 1
+        }
     }
     
     // 날짜 포매팅
@@ -31,27 +47,12 @@ final class ArchiveViewModel: ObservableObject {
         return DateUtils.date(fromYear: month.year, month: month.month, day: day.day)
     }
     
-    // 날짜 설정
-    func dayKey(from date: Date) -> String {
-        let startOfDay = DateUtils.startOfDay(for: date)
-        return DateUtils.string(from: startOfDay, format: .dayKey)
-    }
-    
-    // 일자별 기록으로 이동
-    func moveDailyArchive(month: ArchiveMonth, day: ArchiveDay) {
-        guard let selectedDate = getDate(from: month, day: day) else { return }
-
-        let startOfDay = DateUtils.startOfDay(for: selectedDate)
-        let endOfDay = startOfDay.addingTimeInterval(24 * 60 * 60)
-
-        let postsForDay = self.allPosts.filter { post in
-            let postDate = post.createdAt.dateValue()
-            return postDate >= startOfDay && postDate < endOfDay
-        }
+    func moveToPost(day: ArchiveDay) {
+        guard let post = allPosts.first(where: { $0.postId == day.postId }) else { return }
 
         DispatchQueue.main.async {
             self.coordinator?.push(
-                .post(post: postsForDay.first!, postType: .archive)
+                .post(post: post, postType: .archive)
             )
         }
     }
@@ -60,19 +61,53 @@ final class ArchiveViewModel: ObservableObject {
     func fetchMonthlyArchives() async {
         await MainActor.run { isLoading = true }
         
-        let (monthData, totalCount, allPosts) = await fetchAllPostsAndCount()
+        let allPosts = await fetchAllPosts()
         
         await MainActor.run {
-            self.archiveMonths = monthData
-            self.totalPostCount = totalCount
             self.allPosts = allPosts
+            self.totalPostCount = allPosts.count
+            updateDisplayArchives()
             self.isLoading = false
         }
     }
     
-    private func fetchAllPostsAndCount() async -> ([ArchiveMonth], Int, [PostData]) {
+    func selectAuthorType(_ type: CustomSegmentedControl.PostAuthorType) {
+        selectedAuthorType = type
+        updateDisplayArchives()
+    }
+    
+    private func updateDisplayArchives() {
+        guard let myId = connectUserInfo.myUid else { return }
+        let partnerId = connectUserInfo.partnerUid
+        
+        let filteredPosts: [PostData]
+        
+        switch selectedAuthorType {
+        case .partnerArchive:
+            filteredPosts = allPosts.filter { $0.authorId == partnerId}
+        case .myArchive:
+            filteredPosts = allPosts.filter { $0.authorId == myId}
+        }
+        
+        var monthDict = processPosts(filteredPosts)
+        
+        let now = Date()
+        let comps = DateUtils.components(from: now)
+        if let year = comps.year, let month = comps.month {
+            let currentMonthKey = "\(year)-\(month)"
+            if monthDict[currentMonthKey] == nil {
+                monthDict[currentMonthKey] = [:]
+            }
+        }
+        
+        displayMonths = sortArchiveMonths(from: monthDict)
+        displayPostCount = filteredPosts.count
+        currentMonthIndex = 0
+    }
+    
+    private func fetchAllPosts() async -> [PostData] {
         guard let roomId = connectUserInfo.roomId, !roomId.isEmpty else {
-            return ([], 0, [])
+            return []
         }
         
         do {
@@ -81,15 +116,10 @@ final class ArchiveViewModel: ObservableObject {
                 orderBy: "createdAt",
                 descending: false
             )
-            
-            let monthDict = processPosts(posts)
-            let archiveMonths = sortArchiveMonths(from: monthDict)
-            
-            return (archiveMonths, posts.count, posts)
-            
+            return posts
         } catch {
-            print("DataManager 데이터 불러오기 실패: \(error.localizedDescription)")
-            return ([], 0, [])
+            print("DataManager 데이터 불러오기 실패: \\(error.localizedDescription)")
+            return []
         }
     }
 

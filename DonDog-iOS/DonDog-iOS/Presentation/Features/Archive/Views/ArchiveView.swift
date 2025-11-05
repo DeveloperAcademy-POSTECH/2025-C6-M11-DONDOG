@@ -12,96 +12,110 @@ struct ArchiveView: View {
     
     private let grid = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
-    @ViewBuilder
-    private func archivePlaceholder(height: CGFloat = 100) -> some View {
-        Rectangle()
-            .fill(.ddGray600.opacity(0.3))
-            .frame(height: height)
-            .cornerRadius(8)
-            .overlay(
-                Image(systemName: "photo")
-                    .foregroundStyle(.ddWhite.opacity(0.7))
-            )
-    }
-    
     var body: some View {
         ZStack {
             VStack {
-                CustomNavigationBar(
-                    leadingType: .back(action: { coordinator.pop() }),
-                    centerType: .title(title: "아카이브"),
-                    trailingType: .setting(action: { coordinator.push(.setting) }),
-                    navigationColor: .black
-                )
+                VStack {
+                    CustomNavigationBar(
+                        leadingType: .back(action: { coordinator.pop() }),
+                        centerType: .none,
+                        trailingType: .setting(action: { coordinator.push(.setting) }),
+                        navigationColor: .black
+                    )
+                    
+                    // Month 이동
+                    HStack(spacing: 24) {
+                        Spacer()
+                        
+                        Button {
+                            viewModel.goToPreviousMonth()
+                        } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.body)
+                                .frame(width: 24, height: 24)
+                        }
+                        
+                        if !viewModel.displayMonths.isEmpty {
+                            Text(DateUtils.string(from: viewModel.displayMonths[viewModel.currentMonthIndex].date, format: .month))
+                                .font(.subtitleMedium20)
+                        } else {
+                            Text(DateUtils.string(from: Date(), format: .yearMonth))
+                                .font(.subtitleMedium20)
+                        }
+                        
+                        Button {
+                            viewModel.goToNextMonth()
+                        } label: {
+                            Image(systemName: "chevron.right")
+                                .font(.body)
+                                .frame(width: 24, height: 24)
+                        }
+                        
+                        Spacer()
+                    }
+                    .foregroundStyle(.ddGray1000)
+                }
+                .padding(.horizontal, 20)
                 
                 // 사진 0장일 때 예외처리
-                if !viewModel.isLoading && viewModel.totalPostCount == 0 {
-                    Spacer()
-                    
-                    VStack(spacing: 16) {
-                        Image(systemName: "photo.on.rectangle.angled")
-                            .resizable()
-                            .foregroundStyle(.ddSecondaryBlue)
-                            .scaledToFit()
-                            .frame(width: 57, height: 48)
-                        Text("아직 사진이 없어요\n지금 순간을 사진으로 남겨보세요")
-                            .multilineTextAlignment(.center)
-                            .font(.bodyMedium16)
-                            .foregroundStyle(.ddSecondaryBlue)
-                    }
-                    
-                    Spacer()
-                } else {
-                    ScrollView {
-                        VStack {
-                            if viewModel.totalPostCount > 0 {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        // 이름 없을 때 예외처리 추후 수정
-                                        HStack(spacing: 0) {
-                                            Text(viewModel.connectUserInfo.partnerName ?? "상대방").bold()
-                                            Text("님과 ")
-                                            Text(viewModel.connectUserInfo.myName ?? "나").bold()
-                                            Text("님만의 추억이")
-                                        }
-                                        HStack(spacing: 0) {
-                                            Text("\(viewModel.totalPostCount)개").bold()
-                                            Text(" 모였어요")
-                                        }
-                                    }
-                                    .font(.bodyRegular18)
-                                    .padding(.vertical, 8)
-                                    
-                                    Spacer()
-                                }
-                                Divider().padding(.vertical, 8)
+                if !viewModel.isLoading {
+                    if !viewModel.displayMonths.isEmpty {
+                        let month = viewModel.displayMonths[viewModel.currentMonthIndex]
+                        if month.days.isEmpty {
+                            Spacer()
+                            VStack(spacing: 16) {
+                                Image(systemName: "photo.on.rectangle.angled")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 57, height: 48)
+                                Text(viewModel.selectedAuthorType == .partnerArchive ? "가족이 사진을 올리지 않았어요" : "아직 사진을 올리지 않았어요")
+                                    .multilineTextAlignment(.center)
+                                    .font(.bodyMedium16)
                             }
-                            
-                            ForEach(viewModel.archiveMonths) { month in
-                                VStack(alignment: .leading) {
-                                    Text(DateUtils.string(from: month.date, format: .yearMonth))
-                                        .font(.subtitleSemiBold16)
-                                        .padding(.vertical, 8)
-                                    
-                                    LazyVGrid(columns: grid, spacing: 8) {
-                                        ForEach(month.days) { day in
-                                            if viewModel.isLoading {
-                                                archivePlaceholder(height: 100)
-                                            } else {
+                            .foregroundStyle(.ddGray1000)
+                            Spacer()
+                        } else {
+                            ScrollView {
+                                VStack {
+                                    VStack(alignment: .leading) {
+                                        LazyVGrid(columns: grid, spacing: 8) {
+                                            ForEach(month.days) { day in
                                                 Button {
-                                                    viewModel.moveDailyArchive(month: month, day: day)
+                                                    viewModel.moveToPost(day: day)
                                                 } label: {
                                                     ArchivePostContainer(url: day.thumbnailURL, day: day.day)
                                                 }
+                                                .hapticFeedback(.medium)
                                             }
                                         }
                                     }
+                                    .padding(.vertical, 8)
                                 }
-                                .padding(.vertical, 8)
                             }
                         }
+                    } else {
+                        Spacer()
+                        VStack(spacing: 16) {
+                            Image(systemName: "photo.on.rectangle.angled")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 57, height: 48)
+                            Text(viewModel.selectedAuthorType == .partnerArchive ? "가족이 사진을 올리지 않았어요" : "아직 사진을 올리지 않았어요")
+                                .multilineTextAlignment(.center)
+                                .font(.bodyMedium16)
+                        }
+                        .foregroundStyle(.ddGray1000)
+                        Spacer()
                     }
                 }
+                
+                Spacer()
+                
+                CustomSegmentedControl(
+                    selected: viewModel.selectedAuthorType,
+                    onChange: { viewModel.selectAuthorType($0) }
+                )
+                .padding(.bottom, 34)
             }
             
             if viewModel.isLoading {
@@ -117,12 +131,11 @@ struct ArchiveView: View {
                 .background(.ddWhite)
                 .background(
                     LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
-                        .ignoresSafeArea()
                         .opacity(0.35)
+                        .ignoresSafeArea()
                 )
             }
         }
-        .padding(.horizontal, 20)
         .background(.ddWhite)
         .backHiddenSwipeEnabled()
         .task {

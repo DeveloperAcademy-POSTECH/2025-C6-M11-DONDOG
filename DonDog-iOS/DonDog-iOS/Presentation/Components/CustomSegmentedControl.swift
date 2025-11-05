@@ -7,46 +7,46 @@
 
 import SwiftUI
 
-struct CustomSegmentedControl: View {
-    enum PostAuthorType { case partnerArchive, myArchive }
-    
-    let selected: PostAuthorType
-    let onChange: (PostAuthorType) -> Void
+struct CustomSegmentedControl<Item: Hashable & Identifiable>: View {
+    let items: [Item]
+    @Binding var selectedItem: Item
+    let titleProvider: (Item) -> String
     
     @Namespace private var nameSpace
     @State private var pressBounce = false
     
     var body: some View {
         HStack(spacing: 0) {
-            segment("가족", .partnerArchive)
-            segment("나", .myArchive)
+            ForEach(items) { item in
+                segment(item)
+            }
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
         .background(.ddGray300)
         .clipShape(Capsule())
         .fixedSize()
-        .animation(.bouncy(duration: 0.55, extraBounce: 0.45), value: selected)
+        .animation(.bouncy(duration: 0.55, extraBounce: 0.45), value: selectedItem)
         .animation(.bouncy(duration: 0.35, extraBounce: 0.35), value: pressBounce)
     }
     
     @ViewBuilder
-    private func segment(_ title: String, _ type: PostAuthorType) -> some View {
+    private func segment(_ item: Item) -> some View {
         Button {
             pressBounce = true
-            onChange(type)
+            selectedItem = item
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
                 pressBounce = false
             }
         } label: {
-            Text(title)
+            Text(titleProvider(item))
                 .font(.subtitleSemiBold16)
                 .foregroundStyle(.ddGray1000)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 12)
                 .background(
                     ZStack {
-                        if selected == type {
+                        if selectedItem == item {
                             Capsule()
                                 .fill(.ddWhite)
                                 .matchedGeometryEffect(id: "pill", in: nameSpace)

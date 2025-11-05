@@ -304,6 +304,7 @@
 				8B7729062EA73A3000344491 /* InWebSheetView.swift */,
 				8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */,
 				CA9C140B2EA60BA000519748 /* ToastView.swift */,
+				CAB6B30F2EBB20AF00F778EC /* CustomSegmentedControl.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -590,7 +591,6 @@
 			isa = PBXGroup;
 			children = (
 				CA9C13E22EA48A5500519748 /* ArchivePostContainer.swift */,
-				CAB6B30F2EBB20AF00F778EC /* CustomSegmentedControl.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";

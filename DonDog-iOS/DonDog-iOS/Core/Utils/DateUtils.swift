@@ -12,6 +12,7 @@ enum DateFormat: String {
     case monthDay = "MM월 d일"
     case day = "d"
     case time = "HH:mm"
+    case periodTime = "h:mma"
     case full = "MM월 d일 HH:mm"
     case dayKey = "yyyy-MM-dd"
     case weekDay = "yyyy년 M월 d일 E요일"
@@ -57,9 +58,9 @@ final class DateUtils {
         let hours = minutes / 60
         
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-        formatter.dateFormat = DateFormat.time.rawValue
+        formatter.dateFormat = DateFormat.periodTime.rawValue
         
         switch seconds {
         case 0..<60:
@@ -73,10 +74,9 @@ final class DateUtils {
         }
     }
     
-    static func isATime() -> Bool {
-        let now = Date()
+    static func isATime(date: Date) -> Bool {
         let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: now)
+        let hour = calendar.component(.hour, from: date)
         
         return hour >= 0 && hour < 15
     }

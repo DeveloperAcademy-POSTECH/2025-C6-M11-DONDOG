@@ -145,7 +145,7 @@ struct FeedView: View {
                                         print("현재 post가 없습니다.")
                                         return
                                     }
-                                    coordinator.push(.post(posts: [post], postType: .post))
+                                    coordinator.push(.post(post: post, postType: .post))
                                 } label: {
                                     ZStack {
                                         Image("DetailViewButton")

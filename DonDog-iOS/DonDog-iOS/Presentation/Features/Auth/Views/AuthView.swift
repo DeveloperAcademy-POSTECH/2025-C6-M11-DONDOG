@@ -12,10 +12,69 @@ struct AuthView: View {
     @StateObject var viewModel: AuthViewModel
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(spacing: 0) {
+            CustomNavigationBar(leadingType: .back(action: {coordinator.pop()}), centerType: .title(title: "본인인증"), trailingType: .none, navigationColor: .black)
+            
+            Spacer()
+                .frame(height: 104)
+            
+            HStack {
+                if viewModel.isWithDraw {
+                    Text("윙키")
+                        .font(.titleBold20)
+                    +
+                    Text("를 탈퇴하기 위해\n")
+                    +
+                    Text("전화번호 인증")
+                        .font(.titleBold20)
+                    +
+                    Text("이 필요해요")
+                } else {
+                    Text("윙키")
+                        .font(.titleBold20)
+                    +
+                    Text("를 이용하기 위해\n")
+                    +
+                    Text("전화번호")
+                        .font(.titleBold20)
+                    +
+                    Text("를 이용한 인증이 필요해요")
+                }
+                
+                Spacer()
+            }
+            .lineSpacing(4)
+            .font(.subtitleMedium20)
+            .padding(.bottom, 32)
+            
+            CustomTextField(
+                title: nil,
+                placeholder: "010-1234-5678",
+                text: $viewModel.userPhoneNumber,
+                keyboard: .numberPad,
+                contentType: .telephoneNumber,
+                errorText: $viewModel.phoneError,
+                isDisabled: viewModel.isLoading
+            )
+            .padding(.bottom, 32)
+            
+            Spacer()
+            
+            CustomButton(title: "다음", isEnable: !viewModel.userPhoneNumber.isEmpty && !viewModel.isLoading, action: viewModel.sendCode, isProgressView: viewModel.isLoading)
+            
+        }
+        .task {
+            viewModel.attach(coordinator: coordinator)
+        }
+        .padding(.horizontal, 20)
+        .backHiddenSwipeEnabled()
+        .dismissKeyboard()
+        .alert("", isPresented: $viewModel.showPhoneMismatchAlert) {
+            Button("확인", role: .cancel) {
+                viewModel.userPhoneNumber = ""
+            }
+        } message: {
+            Text(viewModel.mismatchAlertText)
+        }
     }
-}
-
-#Preview {
-    AuthView(viewModel: AuthViewModel())
 }

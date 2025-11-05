@@ -9,18 +9,40 @@ import SwiftUI
 
 struct RootNavigationView: View {
     @StateObject var coordinator: AppCoordinator
+    @StateObject var networkService = NetworkService()
+    @State private var showMainView = false
     
     init(coordinator: AppCoordinator) {
         self._coordinator = StateObject(wrappedValue: coordinator)
     }
     
     var body: some View {
-        NavigationStack(path: $coordinator.path) {
-            coordinator.build(.auth)
-                .navigationDestination(for: AppRoute.self) { route in
-                    coordinator.build(route)
+        ZStack {
+            if showMainView {
+                NavigationStack(path: $coordinator.path) {
+                    coordinator.build(coordinator.root)
+                        .navigationDestination(for: AppRoute.self) { route in
+                            coordinator.build(route)
+                        }
                 }
-                .environmentObject(coordinator)
+                .id(coordinator.sessionKey) // 다른 계정으로 로그인 시 전부 재생성
+                .overlay(alignment: .top) {
+                    NetworkErrorView(isUnstable: networkService.status != .satisfied)
+                        .animation(.easeInOut(duration: 0.25), value: networkService.status)
+                        .ignoresSafeArea()
+                }
+            } else {
+                SplashView()
+                    .task {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            withAnimation {
+                                showMainView = true
+                            }
+                        }
+                    }
+            }
         }
+        .environmentObject(coordinator)
+        .environmentObject(UserPairingStore.shared)
     }
 }

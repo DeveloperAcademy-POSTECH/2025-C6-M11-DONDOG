@@ -6,10 +6,18 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum AppRoute: Hashable {
+    case welcome
     case auth
+    case authNumber
+    case profileSetup
     case invite
     case camera
     case feed
+    case setting
+    case editprofile
+    case archive
+    case post(posts: [PostData], postType: PostType)
 }

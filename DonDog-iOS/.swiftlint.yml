@@ -1,0 +1,29 @@
+disabled_rules: # Default Rules에서 비활성화할 규칙
+  - trailing_whitespace
+  - force_cast
+  - force_unwrapping
+  - line_length
+  - unneeded_override
+  - large_tuple
+  - type_name
+  - redundant_string_enum_value
+
+opt_in_rules: # Default Rules에서 활성화할 규칙
+  - sorted_imports
+  - indentation_width
+
+indentation_width:
+  indentation_width: 4
+
+identifier_name:
+  min_length: 1
+
+type_body_length:
+  warning: 500
+  error: 600
+
+excluded:
+  - .vscode
+  - .git
+  - Pods
+  - .build

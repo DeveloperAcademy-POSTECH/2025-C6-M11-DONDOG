@@ -1,0 +1,39 @@
+name: 🐛 버그 수정
+description: 테스트 중 발생한 문제를 추적하기 위해 사용합니다.
+title: "fix: "
+labels: ["Fix", "QA"]
+body:
+  - type: textarea
+    id: symptom
+    attributes:
+      label: 📄 증상 설명
+      placeholder: 예) 피드 새로고침 시 앱이 종료됩니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 🔍 재현 절차
+      placeholder: |
+        1. 로그인 후 피드 진입
+        2. 화면을 아래로 당김
+        3. Crash 발생
+    validations:
+      required: false
+
+  - type: input
+    id: device
+    attributes:
+      label: 🛠 테스트 환경
+      placeholder: 예) iPhone 15, iOS 17.4
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: 🖼 스크린샷 또는 로그
+      placeholder: 예) Xcode 콘솔 로그 첨부 또는 에러 화면
+    validations:
+      required: false

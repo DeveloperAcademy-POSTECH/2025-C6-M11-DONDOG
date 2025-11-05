@@ -97,6 +97,7 @@
 		D297CE862EB05DFE00F28395 /* StickerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D297CE852EB05DFB00F28395 /* StickerType.swift */; };
 		D2A7FA3B2E9FFDCD005F5AF8 /* DisplayablePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A7FA3A2E9FFDCA005F5AF8 /* DisplayablePost.swift */; };
 		D2AB17672EB75107005292FD /* OutlinedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2AB17662EB75107005292FD /* OutlinedText.swift */; };
+		D2AB17BF2EBAEF10005292FD /* PostType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2AB17BE2EBAEF0C005292FD /* PostType.swift */; };
 		D2E90A3E2EB6083800A6E164 /* StickerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E90A3D2EB6083400A6E164 /* StickerService.swift */; };
 /* End PBXBuildFile section */
 
@@ -180,6 +181,7 @@
 		D2A7FA3A2E9FFDCA005F5AF8 /* DisplayablePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayablePost.swift; sourceTree = "<group>"; };
 		D2AB17662EB75107005292FD /* OutlinedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlinedText.swift; sourceTree = "<group>"; };
 		D2AB17892EB9AA92005292FD /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AB17BE2EBAEF0C005292FD /* PostType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostType.swift; sourceTree = "<group>"; };
 		D2E90A3D2EB6083400A6E164 /* StickerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -572,6 +574,7 @@
 		D219F1E12EAE0A2B00BD82B7 /* Post */ = {
 			isa = PBXGroup;
 			children = (
+				D2AB17BD2EBAEF02005292FD /* Models */,
 				D219F1F72EAE246E00BD82B7 /* ViewModels */,
 				D219F1EC2EAE20C300BD82B7 /* Views */,
 			);
@@ -650,6 +653,14 @@
 			isa = PBXGroup;
 			children = (
 				D2A7FA3A2E9FFDCA005F5AF8 /* DisplayablePost.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D2AB17BD2EBAEF02005292FD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D2AB17BE2EBAEF0C005292FD /* PostType.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -803,6 +814,7 @@
 				8B7377E02E9546030001EFCD /* AuthService.swift in Sources */,
 				8B6E118D2E976F380082B24C /* ProfileViewModel.swift in Sources */,
 				D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */,
+				D2AB17BF2EBAEF10005292FD /* PostType.swift in Sources */,
 				CA9C140C2EA60BA000519748 /* ToastView.swift in Sources */,
 				D219F1E52EAE0A4400BD82B7 /* PostViewModel.swift in Sources */,
 				61C9B1A02E9BED150007C8F4 /* ArchiveViewModel.swift in Sources */,

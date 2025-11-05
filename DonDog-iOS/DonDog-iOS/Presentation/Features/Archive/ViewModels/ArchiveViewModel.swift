@@ -51,7 +51,7 @@ final class ArchiveViewModel: ObservableObject {
 
         DispatchQueue.main.async {
             self.coordinator?.push(
-                .post(post: postsForDay.first!)
+                .post(post: postsForDay.first!, postType: .archive)
             )
         }
     }

@@ -13,6 +13,8 @@ struct PostView: View {
     @StateObject var viewModel: PostViewModel
     @State private var currentIndex: Int = 0
     
+    let postType: PostType
+    
     var body: some View {
         let createdAt = viewModel.post.createdAt.dateValue()
         CustomNavigationBar(
@@ -51,8 +53,10 @@ struct PostView: View {
                 
                 Spacer()
                 
-                CustomButton(title: "스티커 붙이기", isEnable: true, action: { print("스티커 편집뷰로 이동") })
-                    .padding(.horizontal, 20)
+                if postType == .post {
+                    CustomButton(title: "스티커 붙이기", isEnable: true, action: { print("스티커 편집뷰로 이동") })
+                        .padding(.horizontal, 20)
+                }
             }
             
             if viewModel.showUnauthorizedAlert {

@@ -25,8 +25,6 @@ struct WinkyApp: App {
                     guard let scheme = url.scheme, scheme == "dondog" else { return }
                     coordinator.handleDeepLink(url.absoluteString)
                 }
-            
-            // SitckerCollectionView(viewModel: SitckerCollectionViewModel())
         }
     }
 }

@@ -23,7 +23,6 @@ struct StickerConfirmView: View {
                     .scaledToFit()
                     .frame(maxWidth: .infinity)
                     .clipped()
-                    .padding(.bottom, 8)
             }
             
             Spacer()

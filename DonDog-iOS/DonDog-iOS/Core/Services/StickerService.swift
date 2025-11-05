@@ -16,16 +16,16 @@ final class StickerService {
     
     /// 로컬 이미지로 스티커(누끼→보더→데코)를 생성해서 반환
     func makeSticker(from image: UIImage, title: String) async -> UIImage? {
-        // 0) 사이즈 축소 (최대 2048)
-        let maxEdge: CGFloat = 2048
+        // 0) 입력 프리-리사이즈 (성능용, 최대 변 1024pt)
         let originalSize = image.size
-        let scale = min(maxEdge / max(originalSize.width, originalSize.height), 1)
-        let resizedSize = CGSize(width: originalSize.width * scale, height: originalSize.height * scale)
-        let format = UIGraphicsImageRendererFormat.default()
-        format.scale = 1
-        let renderer = UIGraphicsImageRenderer(size: resizedSize, format: format)
-        let resizedImage = renderer.image { _ in
-            image.draw(in: CGRect(origin: .zero, size: resizedSize))
+        let preMaxEdgePt: CGFloat = 1024
+        let preScale = min(preMaxEdgePt / max(originalSize.width, originalSize.height), 1)
+        let preSize = CGSize(width: originalSize.width * preScale, height: originalSize.height * preScale)
+        let preFormat = UIGraphicsImageRendererFormat.default()
+        preFormat.scale = 1
+        let preRenderer = UIGraphicsImageRenderer(size: preSize, format: preFormat)
+        let resizedImage = preRenderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: preSize))
         }
         
         // 1) 누끼
@@ -35,35 +35,42 @@ final class StickerService {
         // 2) 스타일 해석 (StickerCategoryData에서 보더 색깔, 데코 이름 가져오기)
         guard let style = StickerStyleData.style(forTitle: title) else { return nil }
         
-        // 3) 보더
+        // 2-1) 보더
         let uiColor = UIColor(style.outlineColor)
         guard let outlined = clipped.addOutline(thickness: 40, color: uiColor) else { return nil }
         
-        // 4) 데코 합성 (해당 데코 키)
+        // 2-2) 데코 합성 (해당 데코 키)
         let outlinedSize = outlined.size
         guard outlinedSize.width >= 1, outlinedSize.height >= 1 else { return nil }
         
-        // 데코/캔버스 사이즈 계산 (상한 2048)
-        let rawDecoWidth = outlinedSize.width * 1.27
-        let rawCanvas = CGSize(width: rawDecoWidth, height: outlinedSize.height)
-        let maxDim: CGFloat = 2048
-        let scaleDown = min(maxDim / rawCanvas.width, maxDim / rawCanvas.height, 1)
-        let canvasSize = CGSize(width: (rawCanvas.width * scaleDown).rounded(.toNearestOrAwayFromZero), height: (rawCanvas.height * scaleDown).rounded(.toNearestOrAwayFromZero))
-        let decoWidth = (rawDecoWidth * scaleDown).rounded(.toNearestOrAwayFromZero)
+        // 3) 최종 사이즈 계산 320×320 px
+        let targetPx: CGFloat = 320
+        let screenScale = UIScreen.main.scale
+        
+        let canvasPt = CGSize(width: targetPx / screenScale, height: targetPx / screenScale)
+        let decoRatio: CGFloat = 0.90 // 데코 폭
+        let offsetXRatio: CGFloat = 0.12 // getStickers의 16을 320px에 대한 값으로 반영
+        let offsetYRatio: CGFloat = -0.18 // getStickers의 36을 320px에 대한 값으로 반영
+        
+        let decoWidthPt = canvasPt.width * decoRatio
+        let offsetPtX = canvasPt.width * offsetXRatio
+        let offsetPtY = canvasPt.height * offsetYRatio
         
         let sticker = ImageUtils.renderViewAsImage(
             ZStack {
                 Image(uiImage: outlined)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: canvasSize.width, height: canvasSize.height)
+                    .frame(width: canvasPt.width, height: canvasPt.height)
+                
                 Image(style.stickerDecoString)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: decoWidth)
+                    .frame(width: decoWidthPt)
+                    // .offset(x: offsetPtX, y: offsetPtY)
             }
-            .offset(x: 16 * scaleDown, y: -36 * scaleDown),
-            size: canvasSize
+            // .offset(x: offsetPtX, y: offsetPtY)
+            , size: canvasPt
         )
         return sticker
     }
@@ -139,6 +146,7 @@ final class StickerService {
         }
     }
     
+    /// 누끼 마스크 두 번 적용해 클리핑 이미지 생성
     private func getClippedImage(of stickerImage: UIImage) -> UIImage {
         guard let mask = ImageUtils.makeMask(from: stickerImage) else {
             print("mask 생성 실패")
@@ -163,6 +171,7 @@ final class StickerService {
         return clippedImage
     }
     
+    /// 클리핑 이미지에 테두리 적용
     private func getOutlinedImage(for clippedImage: UIImage) -> [String : UIImage] {
        var outlinedImages: [String: UIImage] = [:]
         for stickerType in StickerType.allCases {
@@ -179,6 +188,7 @@ final class StickerService {
         return outlinedImages
     }
     
+    /// 테두리 적용한 이미지에 데코 이미지 zstack으로 넣기
     private func getStickers(with outlinedImages: [String : UIImage]) -> [String : UIImage] {
         var stickers: [String: UIImage] = [:]
         
@@ -204,7 +214,6 @@ final class StickerService {
             
             stickers[stickerType.rawValue] = sticker
         }
-        
         return stickers
     }
 }

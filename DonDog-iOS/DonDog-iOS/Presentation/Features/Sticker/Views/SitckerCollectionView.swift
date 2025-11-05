@@ -73,7 +73,7 @@ struct SitckerCollectionView: View {
                             if viewModel.showMakeStickerButton, viewModel.targetItemID == tappedItem.id { return }
                             viewModel.targetItemID = tappedItem.id
                             StickerEmotionTagManager.shared.emotionTags = [viewModel.selectedCategory.rawValue, tappedItem.title]
-                            withAnimation(.easeInOut(duration: viewModel.actionBarAnimDuration)) {
+                            withAnimation(.easeInOut(duration: 0.25)) {
                                 viewModel.showMakeStickerButton = true
                             }
                         }

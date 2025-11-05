@@ -28,7 +28,6 @@ final class SitckerCollectionViewModel: ObservableObject {
     @Published var remoteURLByItemID: [StickerItem.ID: URL] = [:]
     @Published var loadingItemIDs: Set<StickerItem.ID> = []
     
-    let actionBarAnimDuration: Double = 0.25
     private let dataManager: DataManagerProtocol = DataManager.shared
     
     func returnStickerItems(for category: StickerCategory) -> [StickerItem] {

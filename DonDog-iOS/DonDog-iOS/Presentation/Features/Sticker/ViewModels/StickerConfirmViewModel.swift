@@ -27,7 +27,7 @@ final class StickerConfirmViewModel: ObservableObject {
         guard !isUploading else { return }
         guard let original = image else { return }
         let stickerID = UUID().uuidString
-        let selectedTags = Array(currentTags.prefix(3))
+        let selectedTags = Array(currentTags)
 
         isUploading = true
         uploadError = nil

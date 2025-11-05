@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct HomeView: View {
+    @EnvironmentObject var coordinator: AppCoordinator
+    @StateObject var viewModel: FeedViewModel
     @State var currentIndex: Int = 0
+    @State var showCameraView: Bool = false
+    @StateObject private var cameraViewModel = CameraViewModel()
     
     var body: some View {
         VStack {
@@ -66,10 +70,10 @@ struct HomeView: View {
             TabView(selection: $currentIndex) {
                 HStack(spacing: 16) {
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(.ddGray200)
+                        .fill(DateUtils.isOver3daysSinceLastUpload() ? .red : .ddGray200 )
                     
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(.ddGray200)
+                        .fill(DateUtils.isOver3daysSinceLastUpload() ? .red : .ddGray200 )
                 }.padding(.horizontal, 20)
                     .tag(0)
                 
@@ -105,7 +109,7 @@ struct HomeView: View {
                 HStack {
                     Spacer()
                     Button {
-                        //
+                        coordinator.push(.archive)
                     } label: {
                         VStack(spacing: 2) {
                             Image("CalendarButton")
@@ -121,7 +125,7 @@ struct HomeView: View {
                     .hapticFeedback(.medium)
                     Spacer()
                     Button {
-                        //
+                        showCameraView = true
                     }label: {
                         Circle()
                             .foregroundColor(.ddWhite)
@@ -154,9 +158,12 @@ struct HomeView: View {
                 }.padding(.bottom, 22)
             }
         }
+        .fullScreenCover(isPresented: $showCameraView) {
+            CameraViewContainer(
+                cameraViewModel: cameraViewModel,
+                feedViewModel: viewModel,
+                isPresented: $showCameraView
+            )
+        }
     }
-}
-
-#Preview {
-    HomeView()
 }

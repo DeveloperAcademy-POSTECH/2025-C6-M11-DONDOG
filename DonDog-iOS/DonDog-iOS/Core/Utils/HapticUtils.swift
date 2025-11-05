@@ -82,22 +82,6 @@ final class HapticManager {
     }
 }
 
-// MARK: - SwiftUI View Extension
-
-import SwiftUI
-
-extension View {
-    /// 버튼 탭 시 햅틱 피드백을 추가하는 modifier
-    /// - Parameter style: 햅틱 스타일 (기본값: .light)
-    func hapticFeedback(_ style: HapticStyle = .light) -> some View {
-        self.simultaneousGesture(
-            TapGesture().onEnded { _ in
-                style.trigger()
-            }
-        )
-    }
-}
-
 // MARK: - Haptic Style Enum
 
 enum HapticStyle {

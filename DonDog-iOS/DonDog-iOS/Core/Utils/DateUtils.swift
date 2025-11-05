@@ -8,14 +8,14 @@
 import Foundation
 
 enum DateFormat: String {
+    case full = "MM월 d일 HH:mm"
     case yearMonth = "yyyy년 M월"
+    case weekDay = "yyyy년 M월 d일 E요일"
     case monthDay = "MM월 d일"
+    case month = "MM월"
     case day = "d"
     case time = "HH:mm"
     case periodTime = "h:mma"
-    case full = "MM월 d일 HH:mm"
-    case dayKey = "yyyy-MM-dd"
-    case weekDay = "yyyy년 M월 d일 E요일"
 }
 
 final class DateUtils {

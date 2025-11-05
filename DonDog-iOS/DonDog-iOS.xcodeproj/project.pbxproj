@@ -11,6 +11,10 @@
 		61C9B19E2E9BEC130007C8F4 /* ArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B19D2E9BEC130007C8F4 /* ArchiveView.swift */; };
 		61C9B1A02E9BED150007C8F4 /* ArchiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */; };
 		61C9B1A62E9BFCBE0007C8F4 /* ArchiveDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A52E9BFCBE0007C8F4 /* ArchiveDate.swift */; };
+		8B0108012EB656E900D030BD /* SitckerCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0108002EB656E900D030BD /* SitckerCollectionView.swift */; };
+		8B0108032EB667EA00D030BD /* StickerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0108022EB667EA00D030BD /* StickerModel.swift */; };
+		8B0108052EB6685C00D030BD /* StickerImageConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0108042EB6685C00D030BD /* StickerImageConfirmView.swift */; };
+		8B0108092EB6756F00D030BD /* StickerConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0108082EB6756F00D030BD /* StickerConfirmView.swift */; };
 		8B1EB7932EA07F7A00F720CF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
@@ -29,14 +33,17 @@
 		8B6E118A2E968E2B0082B24C /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E11892E968E2B0082B24C /* SettingView.swift */; };
 		8B6E118D2E976F380082B24C /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E118C2E976F380082B24C /* ProfileViewModel.swift */; };
 		8B6E11912E9771EA0082B24C /* SettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E11902E9771EA0082B24C /* SettingViewModel.swift */; };
+		8B736DC42EBA1F7300E2AB76 /* PhotoPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B736DC32EBA1F7300E2AB76 /* PhotoPickerView.swift */; };
 		8B7377E02E9546030001EFCD /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7377DF2E9546030001EFCD /* AuthService.swift */; };
 		8B7729072EA73A3000344491 /* InWebSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7729062EA73A3000344491 /* InWebSheetView.swift */; };
+		8B7F47D82EB90241004FC5E3 /* SitckerCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7F47D72EB90241004FC5E3 /* SitckerCollectionViewModel.swift */; };
 		8B822D7C2EAB617800D708D7 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 8B822D7B2EAB617800D708D7 /* Kingfisher */; };
 		8BA62EA42E9149A00054EB8F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA62EA32E9149A00054EB8F /* AppDelegate.swift */; };
 		8BA7184B2E9DD7EC001F7857 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */; };
 		8BA7184D2E9DE2C3001F7857 /* CustomTextfield.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */; };
 		8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */; };
 		8BBE41F22EA1E9CB00057A23 /* AuthNumberViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */; };
+		8BD3E1AB2EB9A3E00002785E /* StickerConfirmViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD3E1AA2EB9A3E00002785E /* StickerConfirmViewModel.swift */; };
 		8BDF768E2E9F498B007F12BB /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF768D2E9F498B007F12BB /* WelcomeView.swift */; };
 		8BDF76982E9F72CE007F12BB /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF76972E9F72CE007F12BB /* SplashView.swift */; };
 		8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */; };
@@ -107,19 +114,27 @@
 		61C9B19D2E9BEC130007C8F4 /* ArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveView.swift; sourceTree = "<group>"; };
 		61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveViewModel.swift; sourceTree = "<group>"; };
 		61C9B1A52E9BFCBE0007C8F4 /* ArchiveDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDate.swift; sourceTree = "<group>"; };
+		8B0108002EB656E900D030BD /* SitckerCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitckerCollectionView.swift; sourceTree = "<group>"; };
+		8B0108022EB667EA00D030BD /* StickerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerModel.swift; sourceTree = "<group>"; };
+		8B0108042EB6685C00D030BD /* StickerImageConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerImageConfirmView.swift; sourceTree = "<group>"; };
+		8B0108082EB6756F00D030BD /* StickerConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerConfirmView.swift; sourceTree = "<group>"; };
 		8B5F44552E90FA74003137F2 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8B6624462EB34706006BDF4A /* InviteDoc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteDoc.swift; sourceTree = "<group>"; };
 		8B6E11892E968E2B0082B24C /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		8B6E118C2E976F380082B24C /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		8B6E11902E9771EA0082B24C /* SettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewModel.swift; sourceTree = "<group>"; };
+		8B736DC02EB9D5E500E2AB76 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
+		8B736DC32EBA1F7300E2AB76 /* PhotoPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerView.swift; sourceTree = "<group>"; };
 		8B7377DF2E9546030001EFCD /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		8B7729062EA73A3000344491 /* InWebSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InWebSheetView.swift; sourceTree = "<group>"; };
+		8B7F47D72EB90241004FC5E3 /* SitckerCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitckerCollectionViewModel.swift; sourceTree = "<group>"; };
 		8BA62EA32E9149A00054EB8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextfield.swift; sourceTree = "<group>"; };
 		8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberView.swift; sourceTree = "<group>"; };
 		8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberViewModel.swift; sourceTree = "<group>"; };
+		8BD3E1AA2EB9A3E00002785E /* StickerConfirmViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerConfirmViewModel.swift; sourceTree = "<group>"; };
 		8BDF768D2E9F498B007F12BB /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		8BDF76972E9F72CE007F12BB /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeService.swift; sourceTree = "<group>"; };
@@ -249,6 +264,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		8B0107FF2EB656CB00D030BD /* Sticker */ = {
+			isa = PBXGroup;
+			children = (
+				8BD3E1A82EB9A38A0002785E /* ViewModels */,
+				8BD3E1A92EB9A3950002785E /* Views */,
+			);
+			path = Sticker;
+			sourceTree = "<group>";
+		};
 		8B6E118B2E976F2C0082B24C /* Setting */ = {
 			isa = PBXGroup;
 			children = (
@@ -317,6 +341,22 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		8BD3E1A82EB9A38A0002785E /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				8B7F47D72EB90241004FC5E3 /* SitckerCollectionViewModel.swift */,
+				8BD3E1AA2EB9A3E00002785E /* StickerConfirmViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		8BD3E1A92EB9A3950002785E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8B0108002EB656E900D030BD /* SitckerCollectionView.swift */,
+				8B736DC32EBA1F7300E2AB76 /* PhotoPickerView.swift */,
+				8B0108042EB6685C00D030BD /* StickerImageConfirmView.swift */,
+				8B0108082EB6756F00D030BD /* StickerConfirmView.swift */,
 		8C3F8FBB2EB8DA9400699BC3 /* Home */ = {
 			isa = PBXGroup;
 			children = (
@@ -339,6 +379,7 @@
 				8B6624462EB34706006BDF4A /* InviteDoc.swift */,
 				8CF3BD7E2EAF1C740050003C /* UserData.swift */,
 				8CF3BD7C2EAF1C6F0050003C /* PostData.swift */,
+				8B0108022EB667EA00D030BD /* StickerModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -395,8 +436,6 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
-				8C3E790E2EB9A2A9000ADEF6 /* DonDog-iOS.app */,
-				D2AB17892EB9AA92005292FD /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -572,6 +611,7 @@
 				D24402A72E992CD800D837C8 /* Caption */,
 				61C9B19A2E9BEBEB0007C8F4 /* Archive */,
 				8B6E118B2E976F2C0082B24C /* Setting */,
+				8B0107FF2EB656CB00D030BD /* Sticker */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -720,8 +760,7 @@
 				8B822D7B2EAB617800D708D7 /* Kingfisher */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8C3E790E2EB9A2A9000ADEF6 /* DonDog-iOS.app */;
-			productReference = D2AB17892EB9AA92005292FD /* DonDog-iOS.app */;
+			productReference = 8B736DC02EB9D5E500E2AB76 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -827,7 +866,9 @@
 				CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */,
 				CAA9AED92E8FC15C0047A89A /* WinkyApp.swift in Sources */,
 				CAA9AEDA2E8FC15C0047A89A /* AuthViewModel.swift in Sources */,
+				8B736DC42EBA1F7300E2AB76 /* PhotoPickerView.swift in Sources */,
 				D297CE862EB05DFE00F28395 /* StickerType.swift in Sources */,
+				8B0108012EB656E900D030BD /* SitckerCollectionView.swift in Sources */,
 				D219F1E32EAE0A3700BD82B7 /* PostView.swift in Sources */,
 				8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */,
 				8BDF768E2E9F498B007F12BB /* WelcomeView.swift in Sources */,
@@ -849,10 +890,13 @@
 				8BDF76982E9F72CE007F12BB /* SplashView.swift in Sources */,
 				D2E90A3E2EB6083800A6E164 /* StickerService.swift in Sources */,
 				CA9C14032EA5CD8C00519748 /* PostService.swift in Sources */,
+				D219F2232EAEA25500BD82B7 /* CommentView.swift in Sources */,
+				8B7F47D82EB90241004FC5E3 /* SitckerCollectionViewModel.swift in Sources */,
 				8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */,
 				8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */,
 				61C9B19E2E9BEC130007C8F4 /* ArchiveView.swift in Sources */,
 				CAA62D912EA2892000C60E05 /* ArchivePost.swift in Sources */,
+				8B0108052EB6685C00D030BD /* StickerImageConfirmView.swift in Sources */,
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				CAA62D062EA1E57200C60E05 /* CustomPageIndicator.swift in Sources */,
 				D219F21F2EAEA10500BD82B7 /* PostContentsView.swift in Sources */,
@@ -863,10 +907,15 @@
 				8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */,
 				8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */,
 				CAB6B1E22EB5082D00F778EC /* UserPairingStore.swift in Sources */,
+				D219F2342EAF787600BD82B7 /* PhotoView.swift in Sources */,
+				8B0108032EB667EA00D030BD /* StickerModel.swift in Sources */,
 				D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */,
 				D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */,
 				619343842E9D3C9B004B5F01 /* NotificationService.swift in Sources */,
 				CAA62D012EA1E3FD00C60E05 /* SwipeBackUtils.swift in Sources */,
+				D219F1F62EAE22D800BD82B7 /* PostType.swift in Sources */,
+				D219F2382EB028E500BD82B7 /* TextView.swift in Sources */,
+				8BD3E1AB2EB9A3E00002785E /* StickerConfirmViewModel.swift in Sources */,
 				CAA62D032EA1E3FD00C60E05 /* ImageUtils.swift in Sources */,
 				CAA62D042EA1E3FD00C60E05 /* KeyboardUtils.swift in Sources */,
 				CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */,
@@ -875,6 +924,8 @@
 				CAA9AEF02E8FE2990047A89A /* ModuleFactoryProtocol.swift in Sources */,
 				CAB6B1F42EB63D9000F778EC /* Errors.swift in Sources */,
 				8BA7184B2E9DD7EC001F7857 /* CustomButton.swift in Sources */,
+				8B0108092EB6756F00D030BD /* StickerConfirmView.swift in Sources */,
+				D297CE9D2EB1F71A00F28395 /* TextViewModel.swift in Sources */,
 				CAA9AEDF2E8FC15C0047A89A /* FeedView.swift in Sources */,
 				D297CE7F2EB0305E00F28395 /* StickerView.swift in Sources */,
 				8B6E118A2E968E2B0082B24C /* SettingView.swift in Sources */,

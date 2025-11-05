@@ -23,6 +23,11 @@ class CustomCameraViewController: UIViewController {
     private var videoPreviewLayer: AVCaptureVideoPreviewLayer!
     private var photoOutput: AVCapturePhotoOutput!
     private var currentCamera: AVCaptureDevice?
+    
+    var isFrontOnly: Bool = false
+    var stickerKeyword: String?
+    var onStickerCreated: ((UIImage) -> Void)?
+
     private var isCapturingFront = true  // true: 전면 촬영, false: 후면 촬영
     private var frontImage: UIImage?
     private var backImage: UIImage?
@@ -193,7 +198,7 @@ class CustomCameraViewController: UIViewController {
     }
 
     private func setupFrontGuideLabel() {
-        let (title, description) = ("STEP 1. 셀카 찍기📸\n", "전면 카메라로 얼굴이 잘 보이게 찍어주세요")
+        let (title, description) = (isFrontOnly ? "스티커 찍기📸\n" : "STEP 1. 셀카 찍기📸\n", isFrontOnly ? "\(stickerKeyword ?? "스티커")를 표현할 수 있는 표정과 포즈로 사진을 찍어주세요" : "전면 카메라로 얼굴이 잘 보이게 찍어주세요")
         configureGuideLabel(
             label: frontGuideMessageLabel,
             title: title,
@@ -360,6 +365,16 @@ class CustomCameraViewController: UIViewController {
                 self.frontGuideMessageLabel.isHidden = false
                 self.backGuideMessageLabel.isHidden = true
             } else {
+                if self.isFrontOnly {
+                    self.frontGuideMessageLabel.isHidden = false
+                    self.backGuideMessageLabel.isHidden = true
+                    self.captureButton.setTitle("전면 촬영", for: .normal)
+                } else {
+                    self.captureButton.setTitle("후면 촬영", for: .normal)
+                    // 후면 촬영 안내 표시
+                    self.frontGuideMessageLabel.isHidden = true
+                    self.backGuideMessageLabel.isHidden = false
+                }
                 self.captureButton.setTitle("후면 촬영", for: .normal)
                 self.frontGuideMessageLabel.isHidden = true
                 self.backGuideMessageLabel.isHidden = false
@@ -445,14 +460,18 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
         if isCapturingFront {
             image = flipImageHorizontally(image) ?? image
             frontImage = image
-            delegate?.didCaptureFrontImage(image)
-            
             DispatchQueue.main.async {
                 self.showCapturedImage(image)
             }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.switchToNextCamera()
+            if self.isFrontOnly {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    self.presentStickerConfirm(with: image)
+                }
+            } else {
+                delegate?.didCaptureFrontImage(image)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    self.switchToNextCamera()
+                }
             }
         } else {
             backImage = image
@@ -484,5 +503,27 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
         )
         
         return flippedImage
+    }
+    
+    /// 스티커 이미지 컨펌 뷰로 넘기는 함수
+    private func presentStickerConfirm(with image: UIImage) {
+        let confirmVC = UIHostingController(
+            rootView: StickerImageConfirmView(
+                image: image
+            ) { [weak self] accepted, result in
+                guard let self = self else { return }
+                if accepted, let finalImage = result {
+                    self.onStickerCreated?(finalImage)
+                    self.presentingViewController?.dismiss(animated: true)
+                } else {
+                    self.presentedViewController?.dismiss(animated: true) {
+                        self.switchToFrontCamera()
+                    }
+                }
+            }
+        )
+        confirmVC.modalPresentationStyle = .fullScreen
+        confirmVC.modalTransitionStyle = .crossDissolve
+        self.present(confirmVC, animated: false)
     }
 }

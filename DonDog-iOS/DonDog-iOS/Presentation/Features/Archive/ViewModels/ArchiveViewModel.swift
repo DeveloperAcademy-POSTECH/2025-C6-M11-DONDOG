@@ -101,7 +101,7 @@ final class ArchiveViewModel: ObservableObject {
             let date = postData.createdAt.dateValue()
             
             let stickerType: StickerType? = {
-                guard let s = postData.stickerType, s != "null" else { return nil }
+                guard let s = postData.stickerType, s != "" else { return nil }
                 return StickerType(rawValue: s)
             }()
             

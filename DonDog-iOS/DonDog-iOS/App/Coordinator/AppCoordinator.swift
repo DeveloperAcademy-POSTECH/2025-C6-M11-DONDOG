@@ -107,6 +107,8 @@ final class AppCoordinator: ObservableObject {
             factory.makeArchiveView()
         case .post(let post, let postType):
             factory.makePostView(with: post, for: postType)
+        case .home:
+            factory.makeHomeView()
         }
     }
     

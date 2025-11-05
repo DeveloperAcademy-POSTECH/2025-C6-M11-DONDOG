@@ -19,6 +19,7 @@ protocol ModuleFactoryProtocol {
     func makeSettingView() -> SettingView
     func makeArchiveView() -> ArchiveView
     func makePostView(with post: PostData, for postType: PostType) -> PostView
+    func makeHomeView() -> HomeView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -81,6 +82,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makePostView(with post: PostData, for postType: PostType) -> PostView {
         let viewModel = PostViewModel(post: post)
         let view = PostView(viewModel: viewModel, postType: postType)
+        return view
+    }
+    
+    func makeHomeView() -> HomeView {
+        let viewModel = FeedViewModel()
+        let view = HomeView(viewModel: viewModel)
         return view
     }
 }

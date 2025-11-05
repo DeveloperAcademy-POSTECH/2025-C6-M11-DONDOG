@@ -14,6 +14,65 @@ final class StickerService {
     private let dataManager: DataManagerProtocol = DataManager.shared
     let connectUserInfo = UserPairingStore.shared
     
+    /// 로컬 이미지로 스티커(누끼→보더→데코)를 생성해서 반환
+    func makeSticker(from image: UIImage, title: String) async -> UIImage? {
+        // 0) 입력 프리-리사이즈 (성능용, 최대 변 1024pt)
+        let originalSize = image.size
+        let preMaxEdgePt: CGFloat = 1024
+        let preScale = min(preMaxEdgePt / max(originalSize.width, originalSize.height), 1)
+        let preSize = CGSize(width: originalSize.width * preScale, height: originalSize.height * preScale)
+        let preFormat = UIGraphicsImageRendererFormat.default()
+        preFormat.scale = 1
+        let preRenderer = UIGraphicsImageRenderer(size: preSize, format: preFormat)
+        let resizedImage = preRenderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: preSize))
+        }
+        
+        // 1) 누끼
+        let clipped = getClippedImage(of: resizedImage)
+        guard clipped.size.width >= 1, clipped.size.height >= 1 else { return nil }
+        
+        // 2) 스타일 해석 (StickerCategoryData에서 보더 색깔, 데코 이름 가져오기)
+        guard let style = StickerStyleData.style(forTitle: title) else { return nil }
+        
+        // 2-1) 보더
+        let uiColor = UIColor(style.outlineColor)
+        guard let outlined = clipped.addOutline(thickness: 40, color: uiColor) else { return nil }
+        
+        // 2-2) 데코 합성 (해당 데코 키)
+        let outlinedSize = outlined.size
+        guard outlinedSize.width >= 1, outlinedSize.height >= 1 else { return nil }
+        
+        // 3) 최종 사이즈 계산 320×320 px
+        let targetPx: CGFloat = 320
+        let screenScale = UIScreen.main.scale
+        
+        let canvasPt = CGSize(width: targetPx / screenScale, height: targetPx / screenScale)
+        let decoRatio: CGFloat = 0.90 // 데코 폭
+        let offsetXRatio: CGFloat = 0.12 // getStickers의 16을 320px에 대한 값으로 반영
+        let offsetYRatio: CGFloat = -0.18 // getStickers의 36을 320px에 대한 값으로 반영
+        
+        let decoWidthPt = canvasPt.width * decoRatio
+        let offsetPtX = canvasPt.width * offsetXRatio
+        let offsetPtY = canvasPt.height * offsetYRatio
+        
+        let sticker = ImageUtils.renderViewAsImage(
+            ZStack {
+                Image(uiImage: outlined)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: canvasPt.width, height: canvasPt.height)
+                
+                Image(style.stickerDecoString)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: decoWidthPt)
+            }
+            .offset(x: offsetPtX, y: offsetPtY), size: canvasPt
+        )
+        return sticker
+    }
+    
     func getStickerCollection(of postId: String) async -> [String: UIImage] {
         let stickerPostId = await getStickerPostId(of: postId) // 스티커 원본 이미지가 있는 postId 가져오기
         
@@ -60,7 +119,7 @@ final class StickerService {
                 print("스티커 이미지 URL 생성 실패")
                 return UIImage()
             }
-
+            
             let image = try await KingfisherManager.shared.retrieveImage(with: url).image
             
             return image
@@ -70,6 +129,7 @@ final class StickerService {
         }
     }
     
+    /// 누끼 마스크 두 번 적용해 클리핑 이미지 생성
     private func getClippedImage(of stickerImage: UIImage) -> UIImage {
         guard let mask = ImageUtils.makeMask(from: stickerImage) else {
             print("mask 생성 실패")
@@ -94,7 +154,8 @@ final class StickerService {
         return clippedImage
     }
     
-    private func getOutlinedImage(for clippedImage: UIImage) -> [String: UIImage] {
+    /// 클리핑 이미지에 테두리 적용
+    private func getOutlinedImage(for clippedImage: UIImage) -> [String : UIImage] {
         var outlinedImages: [String: UIImage] = [:]
         
         for stickerType in StickerType.allCases {
@@ -111,6 +172,7 @@ final class StickerService {
         return outlinedImages
     }
     
+    /// 테두리 적용한 이미지에 데코 이미지 zstack으로 넣기
     private func getStickers(with outlinedImages: [String: UIImage]) -> [String: UIImage] {
         var stickers: [String: UIImage] = [:]
         

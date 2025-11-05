@@ -7,12 +7,12 @@
 
 import Foundation
 import Kingfisher
-import UIKit
 import SwiftUI
+import UIKit
 
 final class StickerService {
     private let dataManager: DataManagerProtocol = DataManager.shared
-    private var roomId: String?
+    let connectUserInfo = UserPairingStore.shared
     
     /// 로컬 이미지로 스티커(누끼→보더→데코)를 생성해서 반환
     func makeSticker(from image: UIImage, title: String) async -> UIImage? {
@@ -67,10 +67,8 @@ final class StickerService {
                     .resizable()
                     .scaledToFit()
                     .frame(width: decoWidthPt)
-                    // .offset(x: offsetPtX, y: offsetPtY)
             }
-            // .offset(x: offsetPtX, y: offsetPtY)
-            , size: canvasPt
+            .offset(x: offsetPtX, y: offsetPtY), size: canvasPt
         )
         return sticker
     }
@@ -88,23 +86,13 @@ final class StickerService {
     }
     
     private func getStickerPostId(of postId: String) async -> String {
-        guard let currentUserId = dataManager.getCurrentUserId() else {
-            print("현재 사용자 id 없음")
-            return ""
-        }
-
         do {
-            let currentUser: UserData = try await dataManager.fetch(path: "Users/\(currentUserId)")
-            guard let roomId = currentUser.roomId, !roomId.isEmpty else {
-                print("getStickerPostId에서 roomId가 없음")
-                return ""
-            }
-            self.roomId = roomId
+            let currentUser: UserData = try await dataManager.fetch(path: "Users/\(connectUserInfo.myUid ?? "")")
             
-            let post: PostData = try await dataManager.fetch(path: "Rooms/\(roomId)/posts/\(postId)")
+            let post: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(postId)")
             
-            let stickerPostIdToFetch: String
-            if !post.stickerPostId.isEmpty {
+            let stickerPostIdToFetch: String?
+            if post.stickerPostId != nil && post.stickerPostId != "" {
                 stickerPostIdToFetch = post.stickerPostId
             } else if let recentPostId = currentUser.recentPostId, !recentPostId.isEmpty {
                 stickerPostIdToFetch = recentPostId
@@ -113,7 +101,7 @@ final class StickerService {
                 return ""
             }
             
-            let postData: PostData = try await dataManager.fetch(path: "Rooms/\(roomId)/posts/\(stickerPostIdToFetch)")
+            let postData: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(stickerPostIdToFetch ?? "")")
             
             return postData.postId
         } catch {
@@ -123,20 +111,15 @@ final class StickerService {
     }
     
     private func fetchStickerImage(of stickerPostId: String) async -> UIImage {
-        guard let roomId = roomId else {
-            print("fetchStickerImage에서 roomId가 없음")
-            return UIImage()
-        }
-
         do {
             let postData: PostData = try await dataManager.fetch(
-                path: "Rooms/\(roomId)/posts/\(stickerPostId)"
+                path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(stickerPostId)"
             )
             guard let url = URL(string: postData.frontImageURL) else {
                 print("스티커 이미지 URL 생성 실패")
                 return UIImage()
             }
-
+            
             let image = try await KingfisherManager.shared.retrieveImage(with: url).image
             
             return image
@@ -173,7 +156,8 @@ final class StickerService {
     
     /// 클리핑 이미지에 테두리 적용
     private func getOutlinedImage(for clippedImage: UIImage) -> [String : UIImage] {
-       var outlinedImages: [String: UIImage] = [:]
+        var outlinedImages: [String: UIImage] = [:]
+        
         for stickerType in StickerType.allCases {
             let uiColor = UIColor(stickerType.outlineColor)
             
@@ -189,7 +173,7 @@ final class StickerService {
     }
     
     /// 테두리 적용한 이미지에 데코 이미지 zstack으로 넣기
-    private func getStickers(with outlinedImages: [String : UIImage]) -> [String : UIImage] {
+    private func getStickers(with outlinedImages: [String: UIImage]) -> [String: UIImage] {
         var stickers: [String: UIImage] = [:]
         
         for stickerType in StickerType.allCases {
@@ -214,6 +198,7 @@ final class StickerService {
             
             stickers[stickerType.rawValue] = sticker
         }
+        
         return stickers
     }
 }

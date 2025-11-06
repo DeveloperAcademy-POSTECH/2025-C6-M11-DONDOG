@@ -45,7 +45,6 @@
 		8C3E791F2EBB2899000ADEF6 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */; };
 		8C3E79222EBB28F5000ADEF6 /* HomePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3E79212EBB28EF000ADEF6 /* HomePost.swift */; };
 		8C3F8FBF2EB8DAB000699BC3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */; };
-		8C62BE902EBB3CD400185CD3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C62BE8F2EBB3CD400185CD3 /* GoogleService-Info.plist */; };
 		8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */; };
 		8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */; };
 		8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD752EAE0EA40050003C /* DataManager.swift */; };
@@ -132,7 +131,6 @@
 		8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		8C3E79212EBB28EF000ADEF6 /* HomePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePost.swift; sourceTree = "<group>"; };
 		8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		8C62BE8F2EBB3CD400185CD3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
 		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -551,7 +549,6 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
-				8C62BE8F2EBB3CD400185CD3 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				8BBE42992EB07255005548B3 /* Data */,
@@ -792,7 +789,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
-				8C62BE902EBB3CD400185CD3 /* GoogleService-Info.plist in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,

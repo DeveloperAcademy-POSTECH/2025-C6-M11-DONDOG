@@ -86,7 +86,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func makeHomeView() -> HomeView {
-        let viewModel = FeedViewModel()
+        let viewModel = HomeViewModel()
         let view = HomeView(viewModel: viewModel)
         return view
     }

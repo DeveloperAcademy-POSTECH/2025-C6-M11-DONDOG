@@ -11,7 +11,8 @@ import SwiftUI
 struct PostView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: PostViewModel
-    @State private var currentIndex: Int = 0
+    
+    @State private var showStickerSheet = false
     
     let postType: PostType
     
@@ -54,7 +55,7 @@ struct PostView: View {
                 Spacer()
                 
                 if postType == .post {
-                    CustomButton(title: "스티커 붙이기", isEnable: true, action: { print("스티커 편집뷰로 이동") })
+                    CustomButton(title: "스티커 붙이기", isEnable: true, action: { showStickerSheet = true })
                         .padding(.horizontal, 20)
                 }
             }
@@ -74,6 +75,12 @@ struct PostView: View {
                         removal: .opacity.animation(.easeOut(duration: 0.7))
                     ))
             }
+        }
+        .sheet(isPresented: $showStickerSheet) {
+            StickerSheetView()
+            .presentationDetents([.height(270)])
+            .presentationDragIndicator(.hidden)
+            .background(Color.ddGray100.opacity(0.5))
         }
     }
 }

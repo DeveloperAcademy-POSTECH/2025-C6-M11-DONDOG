@@ -302,6 +302,7 @@
 				8B7729062EA73A3000344491 /* InWebSheetView.swift */,
 				8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */,
 				CA9C140B2EA60BA000519748 /* ToastView.swift */,
+				8CF9C7502EA129D400EB944A /* StickerSheetView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -656,7 +657,6 @@
 		D293F37B2EA55B7100AECA1A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
-				8CF9C7502EA129D400EB944A /* StickerSheetView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";

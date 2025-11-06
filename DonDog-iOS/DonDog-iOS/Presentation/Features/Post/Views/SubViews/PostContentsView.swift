@@ -15,7 +15,7 @@ struct PostContentsView: View {
     @State private var isFrontOrBack: Int = 0
     
     var body: some View {
-        VStack(alignment: .center) {
+        VStack {
             Text(DateUtils.relativeTimeString(from: post.createdAt.dateValue()))
                 .font(.captionRegular13)
                 .foregroundStyle(.ddGray500)

@@ -42,11 +42,6 @@ final class ArchiveViewModel: ObservableObject {
         }
     }
     
-    // 날짜 포매팅
-    private func getDate(from month: ArchiveMonth, day: ArchiveDay) -> Date? {
-        return DateUtils.date(fromYear: month.year, month: month.month, day: day.day)
-    }
-    
     // 각 Post로 이동
     func moveToPost(day: ArchiveDay) {
         Task { @MainActor in

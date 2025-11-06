@@ -10,56 +10,29 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var coordinator: AppCoordinator
-    @StateObject var viewModel: FeedViewModel
-    @State var currentIndex: Int = 0
-    @State var showCameraView: Bool = false
-    @State var isShowingMyPost: Bool = true
+    @StateObject var viewModel: HomeViewModel
     @StateObject private var cameraViewModel = CameraViewModel()
     
-    private var myLatestPost: DisplayablePost? {
-        viewModel.displayablePosts
-            .filter { $0.isMyPost }
-            .sorted { $0.createdAt > $1.createdAt }
-            .first
-    }
-    
-    private var partnerLatestPost: DisplayablePost? {
-        viewModel.displayablePosts
-            .filter { !$0.isMyPost }
-            .sorted { $0.createdAt > $1.createdAt }
-            .first
-    }
-    
-    private var currentPost: DisplayablePost? {
-        isShowingMyPost ? myLatestPost : partnerLatestPost
-    }
-    
     var body: some View {
-        VStack {
-            CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .none, navigationColor: .black)
-            
-            Spacer()
-            
-            Text("활기찬 오전을 기록해보세요")
-            
-            Spacer()
+        VStack(spacing: 0) {
+            CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .changeTime(action: { viewModel.toggleTimeType() }, time: viewModel.isShowingATimePost ? "낮" : "밤"), navigationColor: .black)
+                .padding(.horizontal, 16)
             
             Button {
-                isShowingMyPost.toggle()
-                currentIndex = 0
+                viewModel.togglePostType()
+                viewModel.currentIndex = 0
             } label: {
-                Text(isShowingMyPost ? "나" : "너")
+                Text(viewModel.isShowingMyPost ? "나" : "너")
             }
             .padding(8)
             .background {
                 RoundedRectangle(cornerRadius: 99)
                     .fill(.ddGray200)
             }
+            .padding(.top, 33)
             
-            Spacer()
-            
-            TabView(selection: $currentIndex) {
-                if let post = currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
+            TabView(selection: $viewModel.currentIndex) {
+                if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
                     KFImage(frontURL)
                         .resizable()
                         .scaledToFit()
@@ -89,18 +62,9 @@ struct HomeView: View {
                     .tag(1)
                 }
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
             .frame(maxHeight: 468)
-            
-            HStack {
-                Circle()
-                    .frame(width: 10, height: 10)
-                    .foregroundStyle(currentIndex == 0 ? .ddGray700 : .ddGray100)
-                Circle()
-                    .frame(width: 10, height: 10)
-                    .foregroundStyle(currentIndex == 0 ? .ddGray100 : .ddGray700)
-            }
-            .padding()
+            .padding(.top, 28)
             
             Spacer()
             
@@ -128,7 +92,7 @@ struct HomeView: View {
                     .hapticFeedback(.medium)
                     Spacer()
                     Button {
-                        showCameraView = true
+                        viewModel.isShowCameraView = true
                     }label: {
                         Circle()
                             .foregroundColor(.ddWhite)
@@ -146,12 +110,12 @@ struct HomeView: View {
                         //
                     } label: {
                         VStack(spacing: 2) {
-                            Image("AddStickerButtonDisabled")
+                            Image("AddStickerButtonAbled")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 40)
                             Text("스티커")
-                                .foregroundStyle(.ddGray500)
+                                .foregroundStyle(.ddPrimaryBlue)
                                 .font(.captionRegular14)
                         }
                         
@@ -161,12 +125,27 @@ struct HomeView: View {
                 }.padding(.bottom, 22)
             }
         }
-        .fullScreenCover(isPresented: $showCameraView) {
+        .ignoresSafeArea(edges: .bottom)
+        .background {
+            if viewModel.isShowingATimePost {
+                Color.white
+                    .ignoresSafeArea()
+            } else {
+                Color.indigo
+                    .ignoresSafeArea()
+            }
+        }
+        .animation(.smooth(duration: 0.5), value: viewModel.isShowingATimePost)
+        .fullScreenCover(isPresented: $viewModel.isShowCameraView) {
             CameraViewContainer(
                 cameraViewModel: cameraViewModel,
-                feedViewModel: viewModel,
-                isPresented: $showCameraView
+                delegate: viewModel,
+                isPresented: $viewModel.isShowCameraView
             )
         }
     }
+}
+
+#Preview {
+    HomeView(viewModel: HomeViewModel())
 }

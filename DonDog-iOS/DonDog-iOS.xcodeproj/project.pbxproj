@@ -42,7 +42,10 @@
 		8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */; };
 		8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */; };
 		8BFC73612EA5D18C00B54F03 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC73602EA5D18C00B54F03 /* NetworkService.swift */; };
+		8C3E791F2EBB2899000ADEF6 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */; };
+		8C3E79222EBB28F5000ADEF6 /* HomePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3E79212EBB28EF000ADEF6 /* HomePost.swift */; };
 		8C3F8FBF2EB8DAB000699BC3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */; };
+		8C62BE902EBB3CD400185CD3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8C62BE8F2EBB3CD400185CD3 /* GoogleService-Info.plist */; };
 		8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */; };
 		8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */; };
 		8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD752EAE0EA40050003C /* DataManager.swift */; };
@@ -126,7 +129,10 @@
 		8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorView.swift; sourceTree = "<group>"; };
 		8BFC73602EA5D18C00B54F03 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		8C3E790E2EB9A2A9000ADEF6 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		8C3E79212EBB28EF000ADEF6 /* HomePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePost.swift; sourceTree = "<group>"; };
 		8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		8C62BE8F2EBB3CD400185CD3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
 		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -317,10 +323,28 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		8C3E791D2EBB288C000ADEF6 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		8C3E79202EBB28E8000ADEF6 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8C3E79212EBB28EF000ADEF6 /* HomePost.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		8C3F8FBB2EB8DA9400699BC3 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				8C3E79202EBB28E8000ADEF6 /* Models */,
 				8C3F8FBC2EB8DA9A00699BC3 /* Views */,
+				8C3E791D2EBB288C000ADEF6 /* ViewModels */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -527,6 +551,7 @@
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
+				8C62BE8F2EBB3CD400185CD3 /* GoogleService-Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
 				8BBE42992EB07255005548B3 /* Data */,
@@ -767,6 +792,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
+				8C62BE902EBB3CD400185CD3 /* GoogleService-Info.plist in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
@@ -810,6 +836,7 @@
 				CA9C13E32EA48A5500519748 /* ArchivePostContainer.swift in Sources */,
 				CAB6B1E42EB5089600F778EC /* DateUtils.swift in Sources */,
 				8BA7184D2E9DE2C3001F7857 /* CustomTextfield.swift in Sources */,
+				8C3E791F2EBB2899000ADEF6 /* HomeViewModel.swift in Sources */,
 				A192F2BF2E9F3ADA00995DCC /* PolaroidSetView.swift in Sources */,
 				CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */,
 				61C9B1A62E9BFCBE0007C8F4 /* ArchiveDate.swift in Sources */,
@@ -838,6 +865,7 @@
 				D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */,
 				D2AB17BF2EBAEF10005292FD /* PostType.swift in Sources */,
 				CA9C140C2EA60BA000519748 /* ToastView.swift in Sources */,
+				8C3E79222EBB28F5000ADEF6 /* HomePost.swift in Sources */,
 				D219F1E52EAE0A4400BD82B7 /* PostViewModel.swift in Sources */,
 				61C9B1A02E9BED150007C8F4 /* ArchiveViewModel.swift in Sources */,
 				8CF3BD7F2EAF1C770050003C /* UserData.swift in Sources */,

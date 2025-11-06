@@ -19,6 +19,7 @@ final class StickerEmotionTagManager {
 struct SitckerCollectionView: View {
     @StateObject var viewModel: SitckerCollectionViewModel
     @StateObject private var cameraVM = CameraViewModel()
+    @State private var showStickerConfirm = false
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
 
@@ -97,15 +98,51 @@ struct SitckerCollectionView: View {
                 }
             }
         )
-        .sheet(isPresented: $viewModel.showPhotoPicker) {
-            PhotoPickerView { image, _ in
-                viewModel.pickedImage = image
-            }
-        }
         .fullScreenCover(isPresented: $viewModel.showCamera) {
             CameraView(viewModel: cameraVM)
                 .ignoresSafeArea()
         }
+        .sheet(isPresented: $viewModel.showPhotoPicker) {
+            PhotoPickerView { image in
+                viewModel.pickedImage = image /// 컬렉션뷰 -> 스티커컨펌뷰 로 전달
+                viewModel.showPhotoPicker = false
+                
+                DispatchQueue.main.async {
+                    showStickerConfirm = true
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showStickerConfirm) {
+            if let image = viewModel.pickedImage {
+                StickerConfirmView(
+                    viewModel: StickerConfirmViewModel(
+                        image: image,
+                        onDone: { _ in
+                            showStickerConfirm = false
+                        }
+                    ),
+                    source: .picker,
+                    onRetake: {
+                        showStickerConfirm = false
+                        DispatchQueue.main.async {
+                            viewModel.showPhotoPicker = true
+                        }
+                    },
+                    onClose: {
+                        // 포토피커 경로에서는 Confirm만 닫기
+                        showStickerConfirm = false
+                    }
+                )
+            }
+        }
+        .onChange(of: showStickerConfirm) { _, isPresented in
+            if isPresented == false {
+                if let id = viewModel.targetItemID {
+                    Task { await viewModel.fetchStickerImage(forID: id) }
+                }
+            }
+        }
+        
     }
     
     private var makeStickerButton: some View {

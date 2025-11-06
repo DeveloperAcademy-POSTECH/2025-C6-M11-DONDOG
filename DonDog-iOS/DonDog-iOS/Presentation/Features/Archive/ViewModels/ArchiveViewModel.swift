@@ -106,6 +106,7 @@ final class ArchiveViewModel: ObservableObject {
         let partnerId = connectUserInfo.partnerUid
         
         let filteredPosts: [PostData]
+        
         switch selectedAuthorType {
         case .partnerArchive:
             filteredPosts = allPosts.filter { $0.authorId == partnerId }
@@ -134,7 +135,7 @@ final class ArchiveViewModel: ObservableObject {
             let monthKey = "\(y)-\(m)"
             
             guard let thumb = post.thumbnailURL else { continue }
-            let dayItem = ArchiveDay(id: post.postId, day: d, thumbnailURL: thumb, postId: post.postId)
+            let dayItem = ArchiveDay(id: post.postId, day: d, thumbnailURL: thumb, postId: post.postId, date: date)
             
             // 월별 배열 초기화
             if monthDict[monthKey] == nil { monthDict[monthKey] = [] }

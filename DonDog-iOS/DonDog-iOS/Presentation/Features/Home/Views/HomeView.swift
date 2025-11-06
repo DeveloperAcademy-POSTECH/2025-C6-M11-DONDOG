@@ -18,17 +18,7 @@ struct HomeView: View {
             CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .changeTime(action: { viewModel.toggleTimeType() }, time: viewModel.isShowingATimePost ? "낮" : "밤"), navigationColor: .black)
                 .padding(.horizontal, 16)
             
-            Button {
-                viewModel.togglePostType()
-                viewModel.currentIndex = 0
-            } label: {
-                Text(viewModel.isShowingMyPost ? "나" : "너")
-            }
-            .padding(8)
-            .background {
-                RoundedRectangle(cornerRadius: 99)
-                    .fill(.ddGray200)
-            }
+            CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
             .padding(.top, 33)
             
             TabView(selection: $viewModel.currentIndex) {

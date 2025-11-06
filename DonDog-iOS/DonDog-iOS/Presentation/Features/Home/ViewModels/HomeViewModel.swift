@@ -17,8 +17,8 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
     @Published var isLoading: Bool = false
     @Published var isShowCameraView: Bool = false
     
+    let connectUserInfo = UserPairingStore.shared
     private let dataManager: DataManagerProtocol = DataManager.shared
-    private let connectUserInfo = UserPairingStore.shared
     private var cancellables = Set<AnyCancellable>()
     
     init() {

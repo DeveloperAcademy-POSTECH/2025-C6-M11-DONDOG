@@ -158,7 +158,7 @@ final class StickerService {
     }
     
     /// 클리핑 이미지에 테두리 적용
-    private func getOutlinedImage(for clippedImage: UIImage) -> [String : UIImage] {
+    private func getOutlinedImage(for clippedImage: UIImage) -> [String: UIImage] {
         var outlinedImages: [String: UIImage] = [:]
         
         for stickerType in StickerType.allCases {

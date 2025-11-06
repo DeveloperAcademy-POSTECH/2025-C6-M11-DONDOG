@@ -17,16 +17,17 @@ final class StickerEmotionTagManager {
 }
 
 struct SitckerCollectionView: View {
+    @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: SitckerCollectionViewModel
     @StateObject private var cameraVM = CameraViewModel()
-    @State private var showStickerConfirm = false
-
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
 
     var body: some View {
         VStack {
+            CustomNavigationBar(leadingType: .back(action: { coordinator.pop() }), centerType: .title(title: "스티커 만들기"), trailingType: .none, navigationColor: .black)
+            
             categoryTabs
-                .padding(.vertical, 12)
+                .padding(.vertical, 6)
             
             LazyVGrid(columns: columns) {
                 ForEach(viewModel.returnStickerItems(for: viewModel.selectedCategory)) { item in
@@ -89,6 +90,7 @@ struct SitckerCollectionView: View {
             }
         }
         .padding(.horizontal, 12)
+        .backHiddenSwipeEnabled()
         .background(dismissBackdrop)
         .simultaneousGesture(
             /// 뷰 전체에 탭 제스처 추가 - 화면 빈 곳을 탭하면 버튼을 닫기 위함
@@ -103,39 +105,37 @@ struct SitckerCollectionView: View {
                 .ignoresSafeArea()
         }
         .sheet(isPresented: $viewModel.showPhotoPicker) {
-            PhotoPickerView { image in
-                viewModel.pickedImage = image /// 컬렉션뷰 -> 스티커컨펌뷰 로 전달
+            PhotoPickerView(viewModel: PhotoPickerViewModel()) { image in
+                viewModel.pickedImage = image
                 viewModel.showPhotoPicker = false
-                
                 DispatchQueue.main.async {
-                    showStickerConfirm = true
+                    viewModel.showStickerConfirm = true
                 }
             }
         }
-        .fullScreenCover(isPresented: $showStickerConfirm) {
+        .fullScreenCover(isPresented: $viewModel.showStickerConfirm) {
             if let image = viewModel.pickedImage {
                 StickerConfirmView(
                     viewModel: StickerConfirmViewModel(
                         image: image,
                         onDone: { _ in
-                            showStickerConfirm = false
+                            viewModel.showStickerConfirm = false
                         }
                     ),
-                    source: .picker,
+                    route: .picker,
                     onRetake: {
-                        showStickerConfirm = false
+                        viewModel.showStickerConfirm = false
                         DispatchQueue.main.async {
                             viewModel.showPhotoPicker = true
                         }
                     },
                     onClose: {
-                        // 포토피커 경로에서는 Confirm만 닫기
-                        showStickerConfirm = false
+                        viewModel.showStickerConfirm = false
                     }
                 )
             }
         }
-        .onChange(of: showStickerConfirm) { _, isPresented in
+        .onChange(of: viewModel.showStickerConfirm) { _, isPresented in
             if isPresented == false {
                 if let id = viewModel.targetItemID {
                     Task { await viewModel.fetchStickerImage(forID: id) }

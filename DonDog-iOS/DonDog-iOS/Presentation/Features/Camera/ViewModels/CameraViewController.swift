@@ -520,7 +520,7 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
                             self?.dismissAllModals()
                         }
                     ),
-                    source: .camera,
+                    route: .camera,
                     onRetake: { [weak self] in
                         self?.presentedViewController?.dismiss(animated: true) {
                             guard let self = self else { return }

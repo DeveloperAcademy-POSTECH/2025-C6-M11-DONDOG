@@ -20,6 +20,7 @@ final class SitckerCollectionViewModel: ObservableObject {
     @Published var showMakeStickerButton: Bool = false
     @Published var targetItemID: StickerItem.ID?
     
+    @Published var showStickerConfirm = false
     @Published var showPhotoPicker: Bool = false
     @Published var pickedImage: UIImage?
     @Published var showCamera: Bool = false

@@ -8,7 +8,7 @@
 import Combine
 import SwiftUI
 
-enum StickerConfirmSource {
+enum EntryRoute {
     case camera
     case picker
 }
@@ -16,13 +16,13 @@ enum StickerConfirmSource {
 struct StickerConfirmView: View {
     @StateObject var viewModel: StickerConfirmViewModel
     @Environment(\.dismiss) private var dismiss
-    let source: StickerConfirmSource
+    let route: EntryRoute
     let onRetake: () -> Void
     let onClose: () -> Void
 
-    init(viewModel: StickerConfirmViewModel, source: StickerConfirmSource = .picker, onRetake: @escaping () -> Void = {}, onClose: @escaping () -> Void = {}) {
+    init(viewModel: StickerConfirmViewModel, route: EntryRoute = .picker, onRetake: @escaping () -> Void = {}, onClose: @escaping () -> Void = {}) {
         _viewModel = StateObject(wrappedValue: viewModel)
-        self.source = source
+        self.route = route
         self.onRetake = onRetake
         self.onClose = onClose
     }
@@ -46,9 +46,6 @@ struct StickerConfirmView: View {
             
             Spacer()
             
-            if viewModel.isUploading {
-                ProgressView("업로드 중…")
-            }
             if let error = viewModel.uploadError, !error.isEmpty {
                 Text(error)
                     .foregroundColor(.red)
@@ -59,7 +56,7 @@ struct StickerConfirmView: View {
                     onRetake()
                 } label: {
                     HStack(spacing: 8) {
-                        Text("다시 찍기")
+                        Text(route == .camera ? "다시 찍기" : "다시 고르기")
                             .font(.system(size: 14, weight: .semibold))
                     }
                     .padding(.horizontal, 14)

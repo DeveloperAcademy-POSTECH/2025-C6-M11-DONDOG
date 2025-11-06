@@ -12,28 +12,21 @@ import SwiftUI
 
 struct PhotoPickerView: View {
     @Environment(\.dismiss) private var dismiss
+    @StateObject var viewModel: PhotoPickerViewModel
+    
     let selectPhoto: (UIImage) -> Void
     private let columns = [GridItem(.adaptive(minimum: 100), spacing: 8)]
-    
-    @State var items: [PostData] = []
-    @State var isLoading = false
-    @State var errorMessage: String?
-    
-    @State private var selectedURL: URL?
-    @State private var selectedImage: UIImage?
-
-    private let dataManager: DataManagerProtocol = DataManager.shared
     private let screenWidth = UIScreen.main.bounds.width
-
+    
     var body: some View {
         NavigationStack {
             ScrollView {
-                if isLoading {
+                if viewModel.isLoading {
                     ProgressView()
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 0) {
-                            ForEach(items, id: \.postId) { post in
+                            ForEach(viewModel.items, id: \.postId) { post in
                                 if let imageURL = URL(string: post.frontImageURL) {
                                     ZStack(alignment: .topTrailing) {
                                         KFImage(imageURL)
@@ -43,9 +36,9 @@ struct PhotoPickerView: View {
                                             .frame(width: screenWidth/3 + 3, height: 160)
                                             .clipped()
                                             .contentShape(Rectangle())
-                                            .onTapGesture { selectedURL = imageURL }
-
-                                        if selectedURL == imageURL {
+                                            .onTapGesture { viewModel.selectedURL = imageURL }
+                                        
+                                        if viewModel.selectedURL == imageURL {
                                             Color(.systemGray5).opacity(0.35)
                                                 .frame(width: screenWidth/3 + 3, height: 160)
                                                 .allowsHitTesting(false)
@@ -77,52 +70,22 @@ struct PhotoPickerView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("확인") {
-                        guard let url = selectedURL else { return }
+                        guard viewModel.selectedURL != nil else { return }
                         Task {
-                            let retrieve = try await KingfisherManager.shared.retrieveImage(
-                                with: url,
-                                options: [.fromMemoryCacheOrRefresh]
-                            )
-                            let uiImage = retrieve.image
-                            
-                            guard let sticker = await StickerService().makeSticker(from: uiImage) else {
-                                return
+                            do {
+                                let sticker = try await viewModel.makeStickerFromSelected()
+                                selectPhoto(sticker)
+                                dismiss()
+                            } catch {
+                                viewModel.errorMessage = error.localizedDescription
                             }
-                            selectPhoto(sticker)
-                            dismiss()
                         }
                     }
-                    .disabled(selectedURL == nil)
+                    .disabled(viewModel.selectedURL == nil)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .task { await loadInitial() }
-        }
-        
-    }
-    
-    func loadInitial() async {
-        errorMessage = nil
-        items.removeAll()
-        await loadMore()
-    }
-
-    func loadMore() async {
-        guard !isLoading else { return }
-        isLoading = true; defer { isLoading = false }
-        do {
-            // TODO: uid, roomId 싱글톤에서 가져오는걸로 수정
-            guard let uid = Auth.auth().currentUser?.uid else { return }
-            let roomId = try await dataManager.getCurrentUserRoomId()
-
-            let all: [PostData] = try await dataManager.fetchCollection(
-                path: "Rooms/\(roomId)/posts",
-                orderBy: "createdAt",
-                descending: true
-            )
-            self.items = all.filter { $0.authorId == uid && !$0.frontImageURL.isEmpty }
-        } catch {
-            errorMessage = error.localizedDescription
+            .task { await viewModel.loadInitial() }
         }
     }
 }

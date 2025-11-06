@@ -107,7 +107,7 @@ struct HomeView: View {
                     .hapticFeedback(.medium)
                     Spacer()
                     Button {
-                        //
+                        coordinator.push(.stickerCollection)
                     } label: {
                         VStack(spacing: 2) {
                             Image("AddStickerButtonAbled")

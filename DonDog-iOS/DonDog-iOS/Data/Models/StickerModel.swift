@@ -5,9 +5,9 @@
 //  Created by 이주현 on 11/2/25.
 //
 
+import FirebaseFirestore
 import Foundation
 import SwiftUI
-import FirebaseFirestore
 
 /// 서버 통신용
 struct StickerData: Codable, Identifiable {

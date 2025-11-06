@@ -9,15 +9,15 @@ import SwiftUI
 
 struct CameraViewContainer: View {
     @StateObject var cameraViewModel: CameraViewModel
-    @ObservedObject var feedViewModel: FeedViewModel
+    var delegate: CaptionViewModelDelegate
     @Binding var isPresented: Bool
     
     @State private var captionViewModel: CaptionViewModel?
     @State private var shouldDismiss = false
     
-    init(cameraViewModel: CameraViewModel, feedViewModel: FeedViewModel, isPresented: Binding<Bool>) {
+    init(cameraViewModel: CameraViewModel, delegate: CaptionViewModelDelegate, isPresented: Binding<Bool>) {
         _cameraViewModel = StateObject(wrappedValue: cameraViewModel)
-        self.feedViewModel = feedViewModel
+        self.delegate = delegate
         self._isPresented = isPresented
     }
     
@@ -47,7 +47,7 @@ struct CameraViewContainer: View {
                 backImage: cameraViewModel.backImage
             )
             
-            newCaptionVM.delegate = feedViewModel
+            newCaptionVM.delegate = delegate
             
             captionViewModel = newCaptionVM
         }

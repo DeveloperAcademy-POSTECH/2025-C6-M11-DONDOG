@@ -279,7 +279,7 @@ struct FeedView: View {
         .fullScreenCover(isPresented: $showCameraView) {
             CameraViewContainer(
                 cameraViewModel: cameraViewModel,
-                feedViewModel: viewModel,
+                delegate: viewModel,
                 isPresented: $showCameraView
             )
         }

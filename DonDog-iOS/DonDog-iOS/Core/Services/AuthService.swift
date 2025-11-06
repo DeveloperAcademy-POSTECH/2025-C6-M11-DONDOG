@@ -196,7 +196,7 @@ final class AuthService {
                 
                 NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil")")
                 NSLog("[AuthService] 상태: 연결 상태 =\(state.isConnected), roomId=\(state.roomId ?? "nil")")
-                replaceRootinAuthService(.feed, coordinator: coordinator)
+                replaceRootinAuthService(.home, coordinator: coordinator)
             } catch {
                 NSLog("AuthService에서 정보 로딩 중 에러: \(error.localizedDescription)")
                 state.reset()

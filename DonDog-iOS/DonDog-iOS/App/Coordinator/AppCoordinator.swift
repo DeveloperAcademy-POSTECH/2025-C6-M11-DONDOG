@@ -99,16 +99,18 @@ final class AppCoordinator: ObservableObject {
             EmptyView()
         case .feed:
             factory.makeFeedView()
-        case .setting:
-            factory.makeSettingView()
-        case .editprofile:
-            factory.makeProfileView(mode: .edit)
+        case .home:
+            factory.makeHomeView()
+        case .stickerCollection:
+            factory.makeStickerCollectionView()
         case .archive:
             factory.makeArchiveView()
         case .post(let post, let postType):
             factory.makePostView(with: post, for: postType)
-        case .home:
-            factory.makeHomeView()
+        case .setting:
+            factory.makeSettingView()
+        case .editprofile:
+            factory.makeProfileView(mode: .edit)
         }
     }
     

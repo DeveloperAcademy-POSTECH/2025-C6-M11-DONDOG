@@ -123,12 +123,12 @@ final class DataManager: DataManagerProtocol {
     }
     
     func fetchWhereEqual<T: Decodable>(
-            path: String,
-            field: String,
-            isEqualTo value: Any,
-            orderBy: String? = nil,
-            descending: Bool = false,
-            limit: Int? = nil
+        path: String,
+        field: String,
+        isEqualTo value: Any,
+        orderBy: String? = nil,
+        descending: Bool = false,
+        limit: Int? = nil
     ) async throws -> [T] {
         let collectionRef = try parseCollectionPath(path)
         var query: Query = collectionRef.whereField(field, isEqualTo: value)

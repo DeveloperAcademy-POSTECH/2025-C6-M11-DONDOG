@@ -20,6 +20,7 @@ protocol ModuleFactoryProtocol {
     func makeArchiveView() -> ArchiveView
     func makePostView(with post: PostData, for postType: PostType) -> PostView
     func makeHomeView() -> HomeView
+    func makeStickerCollectionView() -> SitckerCollectionView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -88,6 +89,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makeHomeView() -> HomeView {
         let viewModel = HomeViewModel()
         let view = HomeView(viewModel: viewModel)
+        return view
+    }
+    
+    func makeStickerCollectionView() -> SitckerCollectionView {
+        let viewModel = SitckerCollectionViewModel()
+        let view = SitckerCollectionView(viewModel: viewModel)
         return view
     }
 }

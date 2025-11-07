@@ -507,23 +507,44 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
     
     /// 스티커 이미지 컨펌 뷰로 넘기는 함수
     private func presentStickerConfirm(with image: UIImage) {
-        let confirmVC = UIHostingController(
-            rootView: StickerImageConfirmView(
-                image: image
-            ) { [weak self] accepted, result in
-                guard let self = self else { return }
-                if accepted, let finalImage = result {
-                    self.onStickerCreated?(finalImage)
-                    self.presentingViewController?.dismiss(animated: true)
-                } else {
-                    self.presentedViewController?.dismiss(animated: true) {
-                        self.switchToFrontCamera()
+        Task { [weak self] in
+            guard let self = self else { return }
+            let sticker = await StickerService().makeSticker(from: image)
+            let finalImage = sticker
+            
+            let confirmVC = UIHostingController(
+                rootView: StickerConfirmView(
+                    viewModel: StickerConfirmViewModel(
+                        image: finalImage,
+                        onDone: { [weak self] _ in
+                            self?.dismissAllModals()
+                        }
+                    ),
+                    route: .camera,
+                    onRetake: { [weak self] in
+                        self?.presentedViewController?.dismiss(animated: true) {
+                            guard let self = self else { return }
+                            self.resetCameraState()
+                        }
+                    },
+                    onClose: { [weak self] in
+                        self?.dismissAllModals()
                     }
-                }
+                )
+            )
+            confirmVC.modalPresentationStyle = .fullScreen
+            confirmVC.modalTransitionStyle = .crossDissolve
+            self.present(confirmVC, animated: false)
+        }
+    }
+    
+    private func dismissAllModals(animated: Bool = true) {
+        DispatchQueue.main.async {
+            if let presenter = self.presentingViewController {
+                presenter.dismiss(animated: animated)
+            } else {
+                self.dismiss(animated: animated)
             }
-        )
-        confirmVC.modalPresentationStyle = .fullScreen
-        confirmVC.modalTransitionStyle = .crossDissolve
-        self.present(confirmVC, animated: false)
+        }
     }
 }

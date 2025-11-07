@@ -159,7 +159,7 @@ final class AuthService {
         state.myUid = refreshUser.uid
         state.myName = userData["name"] as? String
         
-        if let lastUploadTimestamp = userData["lastUploadDate"] as? Timestamp {
+        if let lastUploadTimestamp = userData["lastUploadedAt"] as? Timestamp {
             state.lastUploadedAt = lastUploadTimestamp.dateValue()
         } else {
             state.lastUploadedAt = nil
@@ -195,7 +195,8 @@ final class AuthService {
                 state.isConnected = true
                 
                 NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil")")
-                NSLog("[AuthService] 상태: 연결 상태 =\(state.isConnected), roomId=\(state.roomId ?? "nil")")
+                NSLog("[AuthService] 상태: 연결 상태 =\(state.isConnected), roomId=\(state.roomId ?? "nil"), lastUploadedAt = \(DateUtils.string(from: state.lastUploadedAt ?? .now, format: .full))")
+                
                 replaceRootinAuthService(.home, coordinator: coordinator)
             } catch {
                 NSLog("AuthService에서 정보 로딩 중 에러: \(error.localizedDescription)")

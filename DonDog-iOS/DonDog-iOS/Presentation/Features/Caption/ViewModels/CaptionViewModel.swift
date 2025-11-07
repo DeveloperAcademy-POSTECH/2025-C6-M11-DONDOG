@@ -71,7 +71,7 @@ final class CaptionViewModel: ObservableObject {
 
                 try await dataManager.create(path: "Rooms/\(roomId)/posts/\(postId)", data: dict)
 
-                try await dataManager.update(path: "Users/\(myUid)", data: ["recentPostId": postId, "lastUploadDate": FieldValue.serverTimestamp()])
+                try await dataManager.update(path: "Users/\(myUid)", data: ["recentPostId": postId, "lastUploadedAt": FieldValue.serverTimestamp()])
 
                 await MainActor.run {
                     connectUserInfo.lastUploadedAt = Date()

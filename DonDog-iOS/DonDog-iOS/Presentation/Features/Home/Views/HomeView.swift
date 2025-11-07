@@ -15,7 +15,7 @@ struct HomeView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .changeTime(action: { viewModel.toggleTimeType() }, time: viewModel.isShowingATimePost ? "낮" : "밤"), navigationColor: .black)
+            CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "낮" : "밤"), navigationColor: .black)
                 .padding(.horizontal, 16)
             
             CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })

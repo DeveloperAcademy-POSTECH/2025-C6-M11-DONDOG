@@ -10,15 +10,21 @@ import SwiftUI
 
 final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
     @Published var currentIndex: Int = 0
-    @Published var isShowingMyPost: Bool = true
+    @Published var isShowingMyPost: Bool = false
+    @Published var selectedPostType: ArchiveSegment = .partnerArchive {
+        didSet {
+            isShowingMyPost = selectedPostType == .myArchive
+            currentIndex = 0
+        }
+    }
     @Published var isShowingATimePost: Bool = true
     @Published var todayPosts: [HomePost] = []
     @Published var currentPost: HomePost?
     @Published var isLoading: Bool = false
     @Published var isShowCameraView: Bool = false
     
+    let connectUserInfo = UserPairingStore.shared
     private let dataManager: DataManagerProtocol = DataManager.shared
-    private let connectUserInfo = UserPairingStore.shared
     private var cancellables = Set<AnyCancellable>()
     
     init() {

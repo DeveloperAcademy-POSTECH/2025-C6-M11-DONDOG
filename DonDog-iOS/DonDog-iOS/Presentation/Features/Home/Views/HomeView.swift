@@ -18,24 +18,16 @@ struct HomeView: View {
             CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .changeTime(action: { viewModel.toggleTimeType() }, time: viewModel.isShowingATimePost ? "낮" : "밤"), navigationColor: .black)
                 .padding(.horizontal, 16)
             
-            Button {
-                viewModel.togglePostType()
-                viewModel.currentIndex = 0
-            } label: {
-                Text(viewModel.isShowingMyPost ? "나" : "너")
-            }
-            .padding(8)
-            .background {
-                RoundedRectangle(cornerRadius: 99)
-                    .fill(.ddGray200)
-            }
+            CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
             .padding(.top, 33)
             
             TabView(selection: $viewModel.currentIndex) {
                 if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
+                    // 뷰빌더로 변경할 예정
                     KFImage(frontURL)
                         .resizable()
                         .scaledToFit()
+                        .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
                         .cornerRadius(12)
                         .padding(.horizontal, 20)
                         .tag(0)
@@ -43,10 +35,12 @@ struct HomeView: View {
                     KFImage(backURL)
                         .resizable()
                         .scaledToFit()
+                        .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
                         .cornerRadius(12)
                         .padding(.horizontal, 20)
                         .tag(1)
                 } else {
+                    // 포스트가 없을 때
                     HStack(spacing: 16) {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ddGray200)

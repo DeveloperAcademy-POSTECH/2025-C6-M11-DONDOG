@@ -15,7 +15,10 @@ final class StickerService {
     let connectUserInfo = UserPairingStore.shared
     
     /// 로컬 이미지로 스티커(누끼→보더→데코)를 생성해서 반환
-    func makeSticker(from image: UIImage, title: String) async -> UIImage? {
+    func makeSticker(from image: UIImage) async -> UIImage? {
+        let tags = StickerEmotionTagManager.shared.emotionTags
+        let title = tags[1]
+        
         // 0) 입력 프리-리사이즈 (성능용, 최대 변 1024pt)
         let originalSize = image.size
         let preMaxEdgePt: CGFloat = 1024
@@ -155,7 +158,7 @@ final class StickerService {
     }
     
     /// 클리핑 이미지에 테두리 적용
-    private func getOutlinedImage(for clippedImage: UIImage) -> [String : UIImage] {
+    private func getOutlinedImage(for clippedImage: UIImage) -> [String: UIImage] {
         var outlinedImages: [String: UIImage] = [:]
         
         for stickerType in StickerType.allCases {

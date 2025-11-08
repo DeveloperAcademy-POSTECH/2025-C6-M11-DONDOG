@@ -42,11 +42,6 @@ final class ArchiveViewModel: ObservableObject {
         }
     }
     
-    // 날짜 포매팅
-    private func getDate(from month: ArchiveMonth, day: ArchiveDay) -> Date? {
-        return DateUtils.date(fromYear: month.year, month: month.month, day: day.day)
-    }
-    
     // 각 Post로 이동
     func moveToPost(day: ArchiveDay) {
         Task { @MainActor in
@@ -106,6 +101,7 @@ final class ArchiveViewModel: ObservableObject {
         let partnerId = connectUserInfo.partnerUid
         
         let filteredPosts: [PostData]
+        
         switch selectedAuthorType {
         case .partnerArchive:
             filteredPosts = allPosts.filter { $0.authorId == partnerId }
@@ -134,7 +130,7 @@ final class ArchiveViewModel: ObservableObject {
             let monthKey = "\(y)-\(m)"
             
             guard let thumb = post.thumbnailURL else { continue }
-            let dayItem = ArchiveDay(id: post.postId, day: d, thumbnailURL: thumb, postId: post.postId)
+            let dayItem = ArchiveDay(id: post.postId, day: d, thumbnailURL: thumb, postId: post.postId, date: date)
             
             // 월별 배열 초기화
             if monthDict[monthKey] == nil { monthDict[monthKey] = [] }

@@ -7,8 +7,8 @@
 import SwiftUI
 
 enum ArchiveSegment: String, CaseIterable, Identifiable {
-    case partnerArchive = "가족"
-    case myArchive = "나"
+    case partnerArchive = "가족 사진"
+    case myArchive = "내 사진"
     
     var id: String { self.rawValue }
 }
@@ -16,8 +16,9 @@ enum ArchiveSegment: String, CaseIterable, Identifiable {
 struct ArchiveView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: ArchiveViewModel
+    @State private var showToastView = false
     
-    private let grid = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    private let grid = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
     
     var body: some View {
         ZStack {
@@ -31,13 +32,13 @@ struct ArchiveView: View {
                     )
                     
                     // Month 이동
-                    HStack(spacing: 24) {
+                    HStack(spacing: 16) {
                         Spacer()
                         
                         Button {
                             viewModel.goToPreviousMonth()
                         } label: {
-                            Image(systemName: "chevron.left")
+                            Image(systemName: "arrowtriangle.left.fill")
                                 .font(.body)
                                 .frame(width: 24, height: 24)
                         }
@@ -53,7 +54,7 @@ struct ArchiveView: View {
                         Button {
                             viewModel.goToNextMonth()
                         } label: {
-                            Image(systemName: "chevron.right")
+                            Image(systemName: "arrowtriangle.right.fill")
                                 .font(.body)
                                 .frame(width: 24, height: 24)
                         }
@@ -75,7 +76,7 @@ struct ArchiveView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 57, height: 48)
-                                Text(viewModel.selectedAuthorType == .partnerArchive ? "가족이 사진을 올리지 않았어요" : "아직 사진을 올리지 않았어요")
+                                Text("아직 사진이 없어요\n첫 게시물을 올려 볼까요?")
                                     .multilineTextAlignment(.center)
                                     .font(.bodyMedium16)
                             }
@@ -87,14 +88,20 @@ struct ArchiveView: View {
                                     VStack(alignment: .leading) {
                                         LazyVGrid(columns: grid, spacing: 8) {
                                             ForEach(month.days) { day in
+                                                let isBlurred = DateUtils.isOver3daysSinceLastUpload() && viewModel.selectedAuthorType == .partnerArchive && day.date > (UserPairingStore.shared.lastUploadedAt ?? Date())
                                                 Button {
-                                                    viewModel.moveToPost(day: day)
+                                                    if !isBlurred {
+                                                        viewModel.moveToPost(day: day)
+                                                    } else {
+                                                        showToastView = true
+                                                    }
                                                 } label: {
-                                                    ArchivePostContainer(url: day.thumbnailURL, day: day.day)
+                                                    ArchivePostContainer(url: day.thumbnailURL, day: day.day, date: day.date, isBlurred: isBlurred)
                                                 }
                                                 .hapticFeedback(.medium)
                                             }
                                         }
+                                        .padding(.horizontal, 12)
                                     }
                                     .padding(.vertical, 8)
                                 }
@@ -107,7 +114,7 @@ struct ArchiveView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 57, height: 48)
-                            Text(viewModel.selectedAuthorType == .partnerArchive ? "가족이 사진을 올리지 않았어요" : "아직 사진을 올리지 않았어요")
+                            Text("게시물이 없어요")
                                 .multilineTextAlignment(.center)
                                 .font(.bodyMedium16)
                         }
@@ -142,6 +149,23 @@ struct ArchiveView: View {
                         .opacity(0.35)
                         .ignoresSafeArea()
                 )
+            }
+            
+            if showToastView {
+                VStack {
+                    Spacer()
+                    ToastView(toastText: "게시물을 올린지 3일이 지났어요!")
+                        .padding(.bottom, 114)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                withAnimation { showToastView = false }
+                            }
+                        }
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .bottom).animation(.spring()),
+                            removal: .opacity.animation(.easeOut(duration: 0.7))
+                        ))
+                }
             }
         }
         .background(.ddWhite)

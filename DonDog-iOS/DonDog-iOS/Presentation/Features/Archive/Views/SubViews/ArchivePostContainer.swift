@@ -11,6 +11,8 @@ import SwiftUI
 struct ArchivePostContainer: View {
     let url: URL
     let day: Int
+    let date: Date
+    let isBlurred: Bool
     
     @State private var isFailed = false
     
@@ -27,36 +29,53 @@ struct ArchivePostContainer: View {
                     isFailed = true
                 }
                 .placeholder {
-                    Rectangle()
+                    RoundedRectangle(cornerRadius: 8)
                         .fill(.ddWhite)
-                        .cornerRadius(8)
-                        .frame(width: 75, height: 100)
+                        .frame(width: 72, height: 96)
                 }
                 .resizable()
                 .scaledToFill()
-                .frame(width: 75, height: 100)
-                .clipped()
+                .frame(width: 72, height: 96)
                 .transition(.opacity)
+                .blur(radius: isBlurred ? 8 : 0)
                 .cornerRadius(8)
+                .clipped()
                 .overlay(
                     Group {
-                        if isFailed {
+                        if isBlurred {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(.ddBlack30)
+                                .overlay {
+                                    VStack {
+                                        Text("\(day)일")
+                                            .font(.subtitleSemiBold16)
+                                            .foregroundStyle(.ddWhite)
+                                        Image(systemName: DateUtils.isATime(date: date) ? "sun.max.fill" : "moon.fill")
+                                            .font(.body)
+                                            .foregroundStyle(.white)
+                                    }
+                                }
+                        } else if isFailed {
                             ZStack {
-                                Rectangle()
+                                RoundedRectangle(cornerRadius: 8)
                                     .fill(.ddGray600)
-                                    .cornerRadius(8)
                                     .overlay(Image(systemName: "exclamationmark.triangle").foregroundStyle(.white))
-                                    .frame(width: 75, height: 100)
+                                    .frame(width: 72, height: 96)
                             }
                         } else {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(.ddBlack30)
-                                
-                                Text("\(day)일")
-                                    .font(.subtitleSemiBold16)
-                                    .foregroundStyle(.ddWhite)
-                            }
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(.ddBlack30)
+                                .overlay {
+                                    VStack(alignment: .center) {
+                                        Text("\(day)일")
+                                            .font(.subtitleSemiBold16)
+                                            .foregroundStyle(.ddWhite)
+                                        
+                                        Image(systemName: DateUtils.isATime(date: date) ? "sun.max.fill" : "moon.fill")
+                                            .font(.body)
+                                            .foregroundStyle(.white)
+                                    }
+                                }
                         }
                     }
                 )

@@ -24,7 +24,7 @@ struct PostStickerView: View {
     }
     
     // 뷰에서 선언
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3) // 스티커 사이 간격 여기서 조절
     @StateObject private var cameraVM = CameraViewModel()
     @ObservedObject private var gridService: StickerGridService
     init(gridService: StickerGridService = .shared) {
@@ -63,6 +63,7 @@ struct PostStickerView: View {
             remoteURLByItemID: gridService.remoteURLByItemID,
             loadingItemIDs: gridService.loadingItemIDs,
             columns: columns,
+            rowSpacing: 10, // 스티커 줄 사이 간격 여기서 조절
             isCameraPresented: $showCamera,
             onItemAppear: { id in
                 if let item = items(for: selectedCategory).first(where: { $0.id == id }) {
@@ -79,6 +80,7 @@ struct PostStickerView: View {
                 StickerEmotionTagManager.shared.emotionTags = [selectedCategory.rawValue, item.title]
                 targetItemID = item.id
                 cameraVM.isFrontOnly = true
+                cameraVM.stickerKeyword = item.title
                 cameraVM.resetCameraState()
                 showCamera = true
             },

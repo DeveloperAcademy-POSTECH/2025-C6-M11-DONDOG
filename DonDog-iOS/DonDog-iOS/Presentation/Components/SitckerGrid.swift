@@ -13,6 +13,7 @@ struct StickerGrid: View {
        let remoteURLByItemID: [StickerItem.ID: URL]
        let loadingItemIDs: Set<StickerItem.ID>
        let columns: [GridItem]
+       let rowSpacing: CGFloat
        @Binding var isCameraPresented: Bool
        var isStickerConfirmPresented: Binding<Bool>?
        let onItemAppear: (StickerItem.ID) -> Void
@@ -26,6 +27,7 @@ struct StickerGrid: View {
            remoteURLByItemID: [StickerItem.ID: URL],
            loadingItemIDs: Set<StickerItem.ID>,
            columns: [GridItem],
+           rowSpacing: CGFloat = 16,
            isCameraPresented: Binding<Bool>,
            isStickerConfirmPresented: Binding<Bool>? = nil,
            onItemAppear: @escaping (StickerItem.ID) -> Void,
@@ -38,6 +40,7 @@ struct StickerGrid: View {
            self.remoteURLByItemID = remoteURLByItemID
            self.loadingItemIDs = loadingItemIDs
            self.columns = columns
+           self.rowSpacing = rowSpacing
            self._isCameraPresented = isCameraPresented
            self.isStickerConfirmPresented = isStickerConfirmPresented
            self.onItemAppear = onItemAppear
@@ -49,39 +52,45 @@ struct StickerGrid: View {
 
 
     var body: some View {
-        LazyVGrid(columns: columns) {
+        LazyVGrid(columns: columns, spacing: rowSpacing) {
             ForEach(items) { item in
-                VStack(spacing: 8) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.secondary.opacity(0.06))
-                            .frame(height: 120)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.secondary.opacity(0.12), lineWidth: 1)
-                            )
-
-                        if let url = remoteURLByItemID[item.id] {
-                            KFImage(url)
-                                .resizable()
-                                .scaledToFit()
-                                .padding(12)
-                                .contentShape(Rectangle())
-                                .onTapGesture { onItemTap(item) }
-                        } else {
-                            if loadingItemIDs.contains(item.id) {
-                                EmptyView()
-                            } else {
-                                Image(systemName: "plus.circle")
-                                    .font(.system(size: 28, weight: .semibold))
-                                    .contentShape(Rectangle())
-                                    .onTapGesture { onPlusTap(item) }
+                VStack {
+                    if let url = remoteURLByItemID[item.id] {
+                        KFImage(url)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100)
+                            .contentShape(Rectangle())
+                            .onTapGesture { onItemTap(item) }
+                    } else {
+                        VStack(spacing: 12) {
+                            ZStack {
+                                Circle()
+                                    .stroke(Color.secondary, style: StrokeStyle(lineWidth: 3, dash: [15, 5]))
+                                    .frame(width: 100, height: 100)
+                                
+                                if loadingItemIDs.contains(item.id) {
+                                    EmptyView()
+                                } else {
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 20))
+                                        .contentShape(Rectangle())
+                                }
+                            }
+                            
+                            if remoteURLByItemID[item.id] == nil {
+                                Text(item.title)
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .lineLimit(1)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if !loadingItemIDs.contains(item.id) {
+                                onPlusTap(item)
                             }
                         }
                     }
-                    Text(item.title)
-                        .font(.system(size: 14, weight: .semibold))
-                        .lineLimit(1)
                 }
                 .contentShape(Rectangle())
                 .task { onItemAppear(item.id) }

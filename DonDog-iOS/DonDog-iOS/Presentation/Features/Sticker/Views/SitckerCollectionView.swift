@@ -40,6 +40,7 @@ struct SitckerCollectionView: View {
                 remoteURLByItemID: gridService.remoteURLByItemID,
                 loadingItemIDs: gridService.loadingItemIDs,
                 columns: columns,
+                rowSpacing: 40,
                 isCameraPresented: $viewModel.showCamera,
                 isStickerConfirmPresented: $viewModel.showStickerConfirm,
                 onItemAppear: { id in

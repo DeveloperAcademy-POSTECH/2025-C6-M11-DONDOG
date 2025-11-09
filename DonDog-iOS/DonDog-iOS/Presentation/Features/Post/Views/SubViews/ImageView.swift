@@ -10,10 +10,10 @@ import SwiftUI
 
 struct ImageView: View {
     let urlString: String
+    @Binding var isEditing: Bool
     
     @StateObject var viewModel = PostContentsViewModel()
     @State private var loadFailed: Bool = false
-    @State private var isEditing = true
 
     private var url: URL? {
         URL(string: urlString)

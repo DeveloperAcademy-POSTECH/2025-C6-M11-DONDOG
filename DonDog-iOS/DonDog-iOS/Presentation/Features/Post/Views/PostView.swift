@@ -50,7 +50,7 @@ struct PostView: View {
         
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
-                PostContentsView(post: viewModel.post)
+                PostContentsView(post: viewModel.post, isEditing: $showStickerSheet)
                 
                 Spacer()
                 

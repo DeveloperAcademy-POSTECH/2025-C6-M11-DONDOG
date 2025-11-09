@@ -11,6 +11,7 @@ import SwiftUI
 
 struct PostContentsView: View {
     let post: PostData
+    @Binding var isEditing: Bool
     
     @State private var isFrontOrBack: Int = 0
     
@@ -22,10 +23,10 @@ struct PostContentsView: View {
                 .padding(.bottom, 23)
             
             TabView(selection: $isFrontOrBack) {
-                ImageView(urlString: post.frontImageURL)
+                ImageView(urlString: post.frontImageURL, isEditing: $isEditing)
                     .tag(0)
 
-                ImageView(urlString: post.backImageURL)
+                ImageView(urlString: post.backImageURL, isEditing: $isEditing)
                     .tag(1)
             }
             .frame(height: 470)

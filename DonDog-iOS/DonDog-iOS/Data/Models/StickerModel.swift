@@ -15,6 +15,7 @@ struct StickerData: Codable, Identifiable {
     let uid: String
     let url: String
     let emotionTags: [String]
+    let createdAt: Date
 }
 
 /// 로컬 UI용
@@ -28,8 +29,6 @@ enum StickerCategory: String, CaseIterable, Identifiable {
     case affection = "애정"
     case worry = "걱정"
     case praise = "칭찬"
-    case humor = "유머"
-    case daily = "일상"
     var id: String { rawValue }
 }
 
@@ -43,8 +42,7 @@ struct StickerCategoryData {
             .init(title: "안아줄게", image: nil),
             .init(title: "그리워", image: nil),
             .init(title: "빨리 만나자", image: nil),
-            .init(title: "네 편이야", image: nil),
-            .init(title: "고마워", image: nil)
+            .init(title: "네 편이야", image: nil)
         ]
 
         dict[.worry] = [
@@ -53,9 +51,7 @@ struct StickerCategoryData {
             .init(title: "무리하지 마", image: nil),
             .init(title: "아프지 마", image: nil),
             .init(title: "조심히 들어가", image: nil),
-            .init(title: "연락 기다릴게", image: nil),
-            .init(title: "천천히 해", image: nil),
-            .init(title: "늦게까지 깨어있지 마", image: nil)
+            .init(title: "연락 기다릴게", image: nil)
         ]
 
         dict[.praise] = [
@@ -64,28 +60,7 @@ struct StickerCategoryData {
             .init(title: "대단해", image: nil),
             .init(title: "멋지다", image: nil),
             .init(title: "자랑스러워", image: nil),
-            .init(title: "고생했어", image: nil),
-            .init(title: "너답다", image: nil)
-        ]
-
-        dict[.humor] = [
-            .init(title: "빵 터짐", image: nil),
-            .init(title: "아재개그각", image: nil),
-            .init(title: "오늘의 밈", image: nil),
-            .init(title: "갸꿀잼", image: nil),
-            .init(title: "드립 인정", image: nil),
-            .init(title: "ㅋㅋㅋㅋ", image: nil),
-            .init(title: "크크큭", image: nil)
-        ]
-
-        dict[.daily] = [
-            .init(title: "오늘도 화이팅", image: nil),
-            .init(title: "커피 한 잔", image: nil),
-            .init(title: "퇴근!", image: nil),
-            .init(title: "운동 가자", image: nil),
-            .init(title: "산책 갈래", image: nil),
-            .init(title: "날씨 좋네", image: nil),
-            .init(title: "휴식 모드", image: nil)
+            .init(title: "고생했어", image: nil)
         ]
         
         return dict

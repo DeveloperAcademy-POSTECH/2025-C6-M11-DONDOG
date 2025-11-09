@@ -57,7 +57,7 @@ struct ImageView: View {
             }
         }
         .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .bottomBar) {
                 if isEditing {
                     Button("저장") {
                         isEditing = false

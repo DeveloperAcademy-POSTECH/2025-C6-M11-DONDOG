@@ -40,39 +40,3 @@ struct PostContentsView: View {
         .padding(.horizontal, 20)
     }
 }
-
-private struct ImageView: View {
-    let urlString: String
-    @State private var loadFailed: Bool = false
-
-    private var url: URL? {
-        URL(string: urlString)
-    }
-
-    var body: some View {
-        ZStack {
-            KFImage(url)
-                .placeholder {
-                    RoundedRectangle(cornerRadius: 15)
-                        .fill(.ddGray500)
-                }
-                .onFailure { _ in
-                    loadFailed = true
-                }
-                .cancelOnDisappear(true)
-                .fade(duration: 0.25)
-                .resizable()
-                .scaledToFill()
-                .clipped()
-                .overlay(alignment: .center) {
-                    if loadFailed {
-                        RoundedRectangle(cornerRadius: 15)
-                            .fill(.ddGray500)
-                            .overlay(Image(systemName: "photo"))
-                    }
-                }
-            
-            StickerView()
-        }
-    }
-}

@@ -104,6 +104,8 @@
 		D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A52E992CD800D837C8 /* CaptionView.swift */; };
 		D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A32E992CD800D837C8 /* CaptionViewModel.swift */; };
 		D27750932EBCFAAC00E27680 /* StickerSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27750922EBCFAA200E27680 /* StickerSheetViewModel.swift */; };
+		D27750952EBD11A800E27680 /* PostContentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27750942EBD11A300E27680 /* PostContentsViewModel.swift */; };
+		D27750992EC0186400E27680 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27750982EC0186400E27680 /* ImageView.swift */; };
 		D297CE7F2EB0305E00F28395 /* StickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D297CE7E2EB0305E00F28395 /* StickerView.swift */; };
 		D297CE862EB05DFE00F28395 /* StickerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D297CE852EB05DFB00F28395 /* StickerType.swift */; };
 		D2A7FA3B2E9FFDCD005F5AF8 /* DisplayablePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A7FA3A2E9FFDCA005F5AF8 /* DisplayablePost.swift */; };
@@ -199,6 +201,8 @@
 		D24402A32E992CD800D837C8 /* CaptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionViewModel.swift; sourceTree = "<group>"; };
 		D24402A52E992CD800D837C8 /* CaptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionView.swift; sourceTree = "<group>"; };
 		D27750922EBCFAA200E27680 /* StickerSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetViewModel.swift; sourceTree = "<group>"; };
+		D27750942EBD11A300E27680 /* PostContentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentsViewModel.swift; sourceTree = "<group>"; };
+		D27750982EC0186400E27680 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		D297CE7E2EB0305E00F28395 /* StickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerView.swift; sourceTree = "<group>"; };
 		D297CE852EB05DFB00F28395 /* StickerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerType.swift; sourceTree = "<group>"; };
 		D2A7FA3A2E9FFDCA005F5AF8 /* DisplayablePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayablePost.swift; sourceTree = "<group>"; };
@@ -673,6 +677,7 @@
 			isa = PBXGroup;
 			children = (
 				D219F21E2EAEA10100BD82B7 /* PostContentsView.swift */,
+				D27750982EC0186400E27680 /* ImageView.swift */,
 				D297CE7E2EB0305E00F28395 /* StickerView.swift */,
 				8CF9C7502EA129D400EB944A /* StickerSheetView.swift */,
 			);
@@ -691,6 +696,7 @@
 		D219F1F72EAE246E00BD82B7 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				D27750942EBD11A300E27680 /* PostContentsViewModel.swift */,
 				D27750922EBCFAA200E27680 /* StickerSheetViewModel.swift */,
 				D219F1E42EAE0A3D00BD82B7 /* PostViewModel.swift */,
 			);
@@ -875,6 +881,7 @@
 			files = (
 				8CF9C7512EA129D600EB944A /* StickerSheetView.swift in Sources */,
 				8CF3BD7D2EAF1C710050003C /* PostData.swift in Sources */,
+				D27750952EBD11A800E27680 /* PostContentsViewModel.swift in Sources */,
 				CA9C13E32EA48A5500519748 /* ArchivePostContainer.swift in Sources */,
 				CAB6B1E42EB5089600F778EC /* DateUtils.swift in Sources */,
 				8BA7184D2E9DE2C3001F7857 /* CustomTextfield.swift in Sources */,
@@ -884,6 +891,7 @@
 				61C9B1A62E9BFCBE0007C8F4 /* ArchiveDate.swift in Sources */,
 				CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */,
 				8B5F44562E90FA74003137F2 /* ProfileView.swift in Sources */,
+				D27750992EC0186400E27680 /* ImageView.swift in Sources */,
 				8CF3BD8B2EAF215A0050003C /* Color+.swift in Sources */,
 				8CF3BD8C2EAF215A0050003C /* Notification+.swift in Sources */,
 				8B6624472EB34706006BDF4A /* InviteDoc.swift in Sources */,

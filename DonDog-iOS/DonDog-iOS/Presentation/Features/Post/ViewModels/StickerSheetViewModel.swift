@@ -8,10 +8,15 @@
 import Combine
 import FirebaseAuth
 import FirebaseFirestore
-import Foundation
-import Kingfisher
-import PhotosUI
 import SwiftUI
+
+struct AttachedSticker: Identifiable, Codable {
+    var id = UUID()
+    var imageName: String
+    var position: CGPoint
+    var scale: CGFloat
+    var rotation: Angle
+}
 
 final class StickerSheetViewModel: ObservableObject {
     @Published var selectedCategory: StickerCategory = .affection

@@ -29,7 +29,7 @@ struct StickerSheetView: View {
                     }
                     .pickerStyle(.segmented)
                     .frame(width: 300)
-                    .onChange(of: select) { newValue in
+                    .onChange(of: select) { _, newValue in
                         viewModel.selectedCategory = category[newValue]
                     }
                 }

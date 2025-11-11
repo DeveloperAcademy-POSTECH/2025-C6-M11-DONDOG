@@ -17,8 +17,9 @@ enum AppRoute: Hashable {
     case camera
     case feed
     case home
-    case setting
-    case editprofile
+    case stickerCollection
     case archive
     case post(post: PostData, postType: PostType)
+    case setting
+    case editprofile
 }

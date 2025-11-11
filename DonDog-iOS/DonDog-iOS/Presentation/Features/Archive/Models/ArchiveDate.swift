@@ -25,4 +25,5 @@ struct ArchiveDay: Identifiable, Hashable {
     let day: Int
     let thumbnailURL: URL
     let postId: String
+    let date: Date
 }

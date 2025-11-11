@@ -10,18 +10,35 @@ import SwiftUI
 
 final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
     @Published var currentIndex: Int = 0
-    @Published var isShowingMyPost: Bool = true
-    @Published var isShowingATimePost: Bool = true
+    @Published var isShowingMyPost: Bool = false
+    @Published var selectedPostType: ArchiveSegment = .partnerArchive {
+        didSet {
+            isShowingMyPost = selectedPostType == .myArchive
+            currentIndex = 0
+        }
+    }
+    
+    @Published var isShowingATimePost: Bool = true {
+        didSet {
+            updateTimeTypeFromCurrentTime()
+        }
+    }
     @Published var todayPosts: [HomePost] = []
     @Published var currentPost: HomePost?
     @Published var isLoading: Bool = false
     @Published var isShowCameraView: Bool = false
     
+    let connectUserInfo = UserPairingStore.shared
     private let dataManager: DataManagerProtocol = DataManager.shared
-    private let connectUserInfo = UserPairingStore.shared
     private var cancellables = Set<AnyCancellable>()
+    private var timeCheckTimer: Timer?
     
     init() {
+        updateTimeTypeFromCurrentTime()
+        timeCheckTimer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { [weak self] _ in
+            self?.updateTimeTypeFromCurrentTime()
+        }
+        
         connectUserInfo.$isConnected
             .dropFirst()
             .sink { [weak self] isConnected in
@@ -88,13 +105,18 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
             .first
     }
     
+    private func updateTimeTypeFromCurrentTime() {
+        let currentIsATime = DateUtils.isATime(date: Date())
+        if isShowingATimePost != currentIsATime {
+            DispatchQueue.main.async { [weak self] in
+                self?.isShowingATimePost = currentIsATime
+            }
+        }
+    }
+    
     func togglePostType() {
         isShowingMyPost.toggle()
         currentIndex = 0
-    }
-    
-    func toggleTimeType() {
-        isShowingATimePost.toggle()
     }
     
     func didStartUploading() {
@@ -106,5 +128,9 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
         Task {
             await loadPosts()
         }
+    }
+    
+    deinit {
+        timeCheckTimer?.invalidate()
     }
 }

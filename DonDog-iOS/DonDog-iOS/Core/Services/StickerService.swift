@@ -46,32 +46,24 @@ final class StickerService {
         let outlinedSize = outlined.size
         guard outlinedSize.width >= 1, outlinedSize.height >= 1 else { return nil }
         
-        // 3) 최종 사이즈 계산 320×320 px
-        let targetPx: CGFloat = 320
-        let screenScale = UIScreen.main.scale
-        
-        let canvasPt = CGSize(width: targetPx / screenScale, height: targetPx / screenScale)
-        let decoRatio: CGFloat = 0.90 // 데코 폭
-        let offsetXRatio: CGFloat = 0.12 // getStickers의 16을 320px에 대한 값으로 반영
-        let offsetYRatio: CGFloat = -0.18 // getStickers의 36을 320px에 대한 값으로 반영
-        
-        let decoWidthPt = canvasPt.width * decoRatio
-        let offsetPtX = canvasPt.width * offsetXRatio
-        let offsetPtY = canvasPt.height * offsetYRatio
+        // 3) 최종 사이즈 계산
+        let decoWidth = outlinedSize.width * 1.27
         
         let sticker = ImageUtils.renderViewAsImage(
             ZStack {
                 Image(uiImage: outlined)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: canvasPt.width, height: canvasPt.height)
+                    .frame(width: outlinedSize.width, height: outlinedSize.height)
                 
                 Image(style.stickerDecoString)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: decoWidthPt)
+                    .frame(width: decoWidth)
+                    .offset(x: 16, y: -36)
             }
-            .offset(x: offsetPtX, y: offsetPtY), size: canvasPt
+            .offset(y: -40)
+            , size: CGSize(width: decoWidth, height: outlinedSize.height)
         )
         return sticker
     }

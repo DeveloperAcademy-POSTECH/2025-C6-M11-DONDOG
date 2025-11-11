@@ -13,10 +13,17 @@ import SwiftUI
 final class StickerGridService: ObservableObject {
     static let shared = StickerGridService()
     
-    @Published var remoteURLByItemID: [StickerItem.ID: URL] = [:]
+    @Published var stickerImageURLs: [StickerItem.ID: URL] = [:]
     @Published var loadingItemIDs: Set<StickerItem.ID> = []
     
+    @Published var selectedCategory: StickerCategory = .affection
+    @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
+    
     private init() {}
+    
+    func stickerItems(for category: StickerCategory) -> [StickerItem] {
+        itemsByCategory[category] ?? []
+    }
 
     func fetchStickerImage(for item: StickerItem, in category: StickerCategory) async {
         loadingItemIDs.insert(item.id)
@@ -41,7 +48,7 @@ final class StickerGridService: ObservableObject {
 
             if let latest,
                let url = URL(string: latest.url) {
-                remoteURLByItemID[item.id] = url
+                stickerImageURLs[item.id] = url
             }
         } catch {
             print("❌ 스티커 이미지 로드 실패: \(error)")

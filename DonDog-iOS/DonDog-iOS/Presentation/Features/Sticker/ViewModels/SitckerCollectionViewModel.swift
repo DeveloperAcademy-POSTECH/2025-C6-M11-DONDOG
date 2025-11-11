@@ -14,9 +14,6 @@ import PhotosUI
 import SwiftUI
 
 final class SitckerCollectionViewModel: ObservableObject {
-    @Published var selectedCategory: StickerCategory = .affection
-    @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
-    
     @Published var showMakeStickerButton: Bool = false
     @Published var targetItemID: StickerItem.ID?
     
@@ -27,8 +24,4 @@ final class SitckerCollectionViewModel: ObservableObject {
     @Published var capturedImage: UIImage?
     
     private let dataManager: DataManagerProtocol = DataManager.shared
-    
-    func returnStickerItems(for category: StickerCategory) -> [StickerItem] {
-        itemsByCategory[category] ?? []
-    }
 }

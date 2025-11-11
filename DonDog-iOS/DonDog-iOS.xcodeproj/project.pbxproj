@@ -137,10 +137,10 @@
 		8BA62EA32E9149A00054EB8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextfield.swift; sourceTree = "<group>"; };
-		8BA793C62EC059F800FF05B3 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8BA793C92EC06DF000FF05B3 /* PostStickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostStickerView.swift; sourceTree = "<group>"; };
 		8BA793CB2EC073E500FF05B3 /* SitckerGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitckerGrid.swift; sourceTree = "<group>"; };
 		8BA793CD2EC0750900FF05B3 /* StickerGridService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerGridService.swift; sourceTree = "<group>"; };
+		8BBB3A5C2EC2B8B900BEFC30 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberView.swift; sourceTree = "<group>"; };
 		8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberViewModel.swift; sourceTree = "<group>"; };
 		8BDF768D2E9F498B007F12BB /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
@@ -468,6 +468,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
+				8BBB3A5C2EC2B8B900BEFC30 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -793,7 +794,7 @@
 				8B822D7B2EAB617800D708D7 /* Kingfisher */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8BA793C62EC059F800FF05B3 /* DonDog-iOS.app */;
+			productReference = 8BBB3A5C2EC2B8B900BEFC30 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

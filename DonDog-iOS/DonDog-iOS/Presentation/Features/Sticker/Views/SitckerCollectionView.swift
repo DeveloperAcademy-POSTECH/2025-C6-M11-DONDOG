@@ -21,6 +21,12 @@ struct SitckerCollectionView: View {
     @StateObject var viewModel: SitckerCollectionViewModel
     @StateObject private var cameraVM = CameraViewModel()
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
+    
+    @ObservedObject private var gridService: StickerGridService
+    init(viewModel: SitckerCollectionViewModel, gridService: StickerGridService = .shared) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self._gridService = ObservedObject(wrappedValue: gridService)
+    }
 
     var body: some View {
         VStack {
@@ -29,59 +35,43 @@ struct SitckerCollectionView: View {
             categoryTabs
                 .padding(.vertical, 6)
             
-            LazyVGrid(columns: columns) {
-                ForEach(viewModel.returnStickerItems(for: viewModel.selectedCategory)) { item in
-                    VStack(spacing: 8) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.secondary.opacity(0.06))
-                                .frame(height: 120)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.secondary.opacity(0.12), lineWidth: 1)
-                                )
-                            
-                            if let url = viewModel.remoteURLByItemID[item.id] {
-                                KFImage(url)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding(12)
-                            } else {
-                                if viewModel.loadingItemIDs.contains(item.id) {
-                                    EmptyView()
-                                } else {
-                                    Image(systemName: "plus.circle")
-                                        .font(.system(size: 28, weight: .semibold))
-                                }
-                            }
-                        }
-                        Text(item.title)
-                            .font(.system(size: 14, weight: .semibold))
-                            .lineLimit(1)
+            StickerGrid(
+                items: gridService.stickerItems(for: gridService.selectedCategory),
+                remoteURLByItemID: gridService.stickerImageURLs,
+                loadingItemIDs: gridService.loadingItemIDs,
+                columns: columns,
+                rowSpacing: 40,
+                isCameraPresented: $viewModel.showCamera,
+                isStickerConfirmPresented: $viewModel.showStickerConfirm,
+                onItemAppear: { id in
+                    if let item = gridService.stickerItems(for: gridService.selectedCategory)
+                        .first(where: { $0.id == id }) {
+                        Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
                     }
-                    .contentShape(Rectangle())
-                    .task {
-                        await viewModel.fetchStickerImage(forID: item.id)
+                },
+                onItemTap: { item in
+                    guard let tapped = gridService.stickerItems(for: gridService.selectedCategory)
+                        .first(where: { $0.id == item.id }) else { return }
+                    if viewModel.showMakeStickerButton, viewModel.targetItemID == tapped.id { return }
+                    viewModel.targetItemID = tapped.id
+                    StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, tapped.title]
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        viewModel.showMakeStickerButton = true
                     }
-                    .onChange(of: viewModel.showCamera) { _, isPresented in
-                        if isPresented == false {
-                            Task { await viewModel.fetchStickerImage(forID: item.id) }
-                        }
+                },
+                onCameraDismiss: { id in
+                    if let item = gridService.stickerItems(for: gridService.selectedCategory)
+                        .first(where: { $0.id == id }) {
+                        Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
                     }
-                    .highPriorityGesture(
-                        TapGesture().onEnded {
-                            guard let tappedItem = viewModel.itemsByCategory[viewModel.selectedCategory]?.first(where: { $0.id == item.id }) else { return }
-                            /// 이미 같은 셀을 다시 탭한 상황이면 무시 (액션바가 떠 있는 상태에서의 중복 방지)
-                            if viewModel.showMakeStickerButton, viewModel.targetItemID == tappedItem.id { return }
-                            viewModel.targetItemID = tappedItem.id
-                            StickerEmotionTagManager.shared.emotionTags = [viewModel.selectedCategory.rawValue, tappedItem.title]
-                            withAnimation(.easeInOut(duration: 0.25)) {
-                                viewModel.showMakeStickerButton = true
-                            }
-                        }
-                    )
+                },
+                onConfirmDismiss: { id in
+                    if let item = gridService.stickerItems(for: gridService.selectedCategory)
+                        .first(where: { $0.id == id }) {
+                        Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
+                    }
                 }
-            }
+            )
             
             Spacer()
             
@@ -100,49 +90,8 @@ struct SitckerCollectionView: View {
                 }
             }
         )
-        .fullScreenCover(isPresented: $viewModel.showCamera) {
-            CameraView(viewModel: cameraVM)
-                .ignoresSafeArea()
-        }
-        .sheet(isPresented: $viewModel.showPhotoPicker) {
-            PhotoPickerView(viewModel: PhotoPickerViewModel()) { image in
-                viewModel.pickedImage = image
-                viewModel.showPhotoPicker = false
-                DispatchQueue.main.async {
-                    viewModel.showStickerConfirm = true
-                }
-            }
-        }
-        .fullScreenCover(isPresented: $viewModel.showStickerConfirm) {
-            if let image = viewModel.pickedImage {
-                StickerConfirmView(
-                    viewModel: StickerConfirmViewModel(
-                        image: image,
-                        onDone: { _ in
-                            viewModel.showStickerConfirm = false
-                        }
-                    ),
-                    route: .picker,
-                    onRetake: {
-                        viewModel.showStickerConfirm = false
-                        DispatchQueue.main.async {
-                            viewModel.showPhotoPicker = true
-                        }
-                    },
-                    onClose: {
-                        viewModel.showStickerConfirm = false
-                    }
-                )
-            }
-        }
-        .onChange(of: viewModel.showStickerConfirm) { _, isPresented in
-            if isPresented == false {
-                if let id = viewModel.targetItemID {
-                    Task { await viewModel.fetchStickerImage(forID: id) }
-                }
-            }
-        }
-        
+        .cameraCaptureFlow(isPresented: $viewModel.showCamera, cameraVM: cameraVM)
+        .photoPickerStickerConfirmFlow(viewModel: viewModel)
     }
     
     private var makeStickerButton: some View {
@@ -165,13 +114,12 @@ struct SitckerCollectionView: View {
             Button {
                 guard
                     let id = viewModel.targetItemID,
-                    let list = viewModel.itemsByCategory[viewModel.selectedCategory],
-                    let item = list.first(where: { $0.id == id })
+                    let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id })
                 else {
                     return
                 }
                 let keyword = item.title
-                StickerEmotionTagManager.shared.emotionTags = [viewModel.selectedCategory.rawValue, keyword]
+                StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, keyword]
                 cameraVM.stickerKeyword = keyword
                 cameraVM.isFrontOnly = true
                 cameraVM.resetCameraState()
@@ -208,7 +156,7 @@ struct SitckerCollectionView: View {
         HStack {
             let categories = StickerCategory.allCases
             ForEach(Array(categories.enumerated()), id: \.element) { index, category in
-                let isSelected = category == viewModel.selectedCategory
+                let isSelected = category == gridService.selectedCategory
                 Text(category.rawValue)
                     .font(.system(size: 15, weight: .semibold))
                     .padding(.horizontal, 14)
@@ -222,7 +170,7 @@ struct SitckerCollectionView: View {
                             .stroke(isSelected ? Color.primary.opacity(0.2) : Color.clear, lineWidth: 1)
                     )
                     .onTapGesture {
-                        viewModel.selectedCategory = category
+                        gridService.selectedCategory = category
                         viewModel.showMakeStickerButton = false
                         viewModel.targetItemID = nil
                     }

@@ -71,7 +71,8 @@ final class StickerConfirmViewModel: ObservableObject {
                 let data: [String: Any] = [
                     "uid": uid,
                     "url": url.absoluteString,
-                    "emotionTags": selectedTags
+                    "emotionTags": selectedTags,
+                    "createdAt": FieldValue.serverTimestamp()
                 ]
                 _ = try await DataManager.shared.createWithAutoId(path: "Stickers", data: data)
 

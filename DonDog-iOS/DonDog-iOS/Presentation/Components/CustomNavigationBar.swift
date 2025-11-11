@@ -35,7 +35,7 @@ enum CustomNavigationBarTrailingType {
     case close(action: () -> Void)
     case menu(items: [CustomNavMenuItem])
     case setting(action: () -> Void)
-    case changeTime(action: () -> Void, time: String)
+    case timeType(time: String)
     case none
 }
 
@@ -163,10 +163,8 @@ struct CustomNavigationBar: View {
                     .frame(width: 24, height: 24)
             }
         
-        case .changeTime(let action, let time):
-            Button(action: action) {
+        case .timeType(let time):
                 Text("\(time)")
-            }
             
         case .none:
             Spacer().frame(width: 24).opacity(0)
@@ -190,7 +188,7 @@ struct CustomNavigationBar: View {
     )
     
     // 홈뷰
-    CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .changeTime(action: {}, time: "낮"), navigationColor: .black)
+    CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .timeType(time: "낮"), navigationColor: .black)
     
     // 카메라 상세 - 촬영
     CustomNavigationBar(leadingType: .back(action: {}), centerType: .none, trailingType: .none, navigationColor: .black)

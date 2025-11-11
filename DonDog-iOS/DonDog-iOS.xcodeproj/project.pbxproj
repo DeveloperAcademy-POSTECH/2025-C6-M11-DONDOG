@@ -103,8 +103,7 @@
 		D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */; };
 		D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A52E992CD800D837C8 /* CaptionView.swift */; };
 		D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A32E992CD800D837C8 /* CaptionViewModel.swift */; };
-		D27750932EBCFAAC00E27680 /* StickerSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27750922EBCFAA200E27680 /* StickerSheetViewModel.swift */; };
-		D27750952EBD11A800E27680 /* PostContentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27750942EBD11A300E27680 /* PostContentsViewModel.swift */; };
+		D27750932EBCFAAC00E27680 /* StickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27750922EBCFAA200E27680 /* StickerViewModel.swift */; };
 		D27750992EC0186400E27680 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27750982EC0186400E27680 /* ImageView.swift */; };
 		D297CE7F2EB0305E00F28395 /* StickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D297CE7E2EB0305E00F28395 /* StickerView.swift */; };
 		D297CE862EB05DFE00F28395 /* StickerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D297CE852EB05DFB00F28395 /* StickerType.swift */; };
@@ -200,8 +199,7 @@
 		D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewContainer.swift; sourceTree = "<group>"; };
 		D24402A32E992CD800D837C8 /* CaptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionViewModel.swift; sourceTree = "<group>"; };
 		D24402A52E992CD800D837C8 /* CaptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionView.swift; sourceTree = "<group>"; };
-		D27750922EBCFAA200E27680 /* StickerSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetViewModel.swift; sourceTree = "<group>"; };
-		D27750942EBD11A300E27680 /* PostContentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentsViewModel.swift; sourceTree = "<group>"; };
+		D27750922EBCFAA200E27680 /* StickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerViewModel.swift; sourceTree = "<group>"; };
 		D27750982EC0186400E27680 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		D297CE7E2EB0305E00F28395 /* StickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerView.swift; sourceTree = "<group>"; };
 		D297CE852EB05DFB00F28395 /* StickerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerType.swift; sourceTree = "<group>"; };
@@ -696,8 +694,7 @@
 		D219F1F72EAE246E00BD82B7 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				D27750942EBD11A300E27680 /* PostContentsViewModel.swift */,
-				D27750922EBCFAA200E27680 /* StickerSheetViewModel.swift */,
+				D27750922EBCFAA200E27680 /* StickerViewModel.swift */,
 				D219F1E42EAE0A3D00BD82B7 /* PostViewModel.swift */,
 			);
 			path = ViewModels;
@@ -881,7 +878,6 @@
 			files = (
 				8CF9C7512EA129D600EB944A /* StickerSheetView.swift in Sources */,
 				8CF3BD7D2EAF1C710050003C /* PostData.swift in Sources */,
-				D27750952EBD11A800E27680 /* PostContentsViewModel.swift in Sources */,
 				CA9C13E32EA48A5500519748 /* ArchivePostContainer.swift in Sources */,
 				CAB6B1E42EB5089600F778EC /* DateUtils.swift in Sources */,
 				8BA7184D2E9DE2C3001F7857 /* CustomTextfield.swift in Sources */,
@@ -947,7 +943,7 @@
 				8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */,
 				8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */,
 				CAB6B1E22EB5082D00F778EC /* UserPairingStore.swift in Sources */,
-				D27750932EBCFAAC00E27680 /* StickerSheetViewModel.swift in Sources */,
+				D27750932EBCFAAC00E27680 /* StickerViewModel.swift in Sources */,
 				D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */,
 				D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */,
 				619343842E9D3C9B004B5F01 /* NotificationService.swift in Sources */,

@@ -12,7 +12,7 @@ struct ImageView: View {
     let urlString: String
     @Binding var isEditing: Bool
     
-    @StateObject var viewModel = PostContentsViewModel()
+    @StateObject var viewModel = StickerViewModel()
     @State private var loadFailed: Bool = false
 
     private var url: URL? {
@@ -52,32 +52,6 @@ struct ImageView: View {
                 .onTapGesture {
                     if isEditing {
                         viewModel.selectedStickerID = sticker.id
-                    }
-                }
-            }
-        }
-        .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
-                if isEditing {
-                    Button("저장") {
-                        isEditing = false
-                        viewModel.saveStickers()
-                        viewModel.selectedStickerID = nil
-                    }
-                } else {
-                    Button("편집") {
-                        isEditing = true
-                    }
-                }
-            }
-
-            ToolbarItem(placement: .bottomBar) {
-                if isEditing {
-                    Button {
-                        viewModel.addSticker(named: "loveSticker")
-                    } label: {
-                        Label("Add Sticker", systemImage: "plus.circle.fill")
-                            .font(.title2)
                     }
                 }
             }

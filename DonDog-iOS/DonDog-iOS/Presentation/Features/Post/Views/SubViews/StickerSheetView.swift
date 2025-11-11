@@ -9,7 +9,7 @@ import Kingfisher
 import SwiftUI
 
 struct StickerSheetView: View {
-    @StateObject private var viewModel = StickerSheetViewModel()
+    @StateObject private var viewModel = StickerViewModel()
     @State private var select = 0
     @Environment(\.dismiss) var dismiss
     
@@ -36,6 +36,8 @@ struct StickerSheetView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
+                        viewModel.saveStickers()
+                        viewModel.selectedStickerID = nil
                         dismiss()
                     } label: {
                         Image(systemName: "chevron.down")
@@ -48,7 +50,7 @@ struct StickerSheetView: View {
 }
 
 private struct StickerSheetCollectionView: View {
-    @ObservedObject var viewModel: StickerSheetViewModel
+    @ObservedObject var viewModel: StickerViewModel
     
     private let columns = [
         GridItem(.flexible()),
@@ -83,6 +85,9 @@ private struct StickerSheetCollectionView: View {
                                         .font(.system(size: 28, weight: .semibold))
                                 }
                             }
+                        }
+                        .onTapGesture {
+                            viewModel.addSticker(named: "loveSticker")
                         }
                     }
                     .task(id: item.id) {

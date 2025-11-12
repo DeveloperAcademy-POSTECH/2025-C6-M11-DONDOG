@@ -98,29 +98,31 @@ struct StickerCellView: View {
                 KFImage(url)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 100)
+                    .frame(width: 130)
                     .contentShape(Rectangle())
                     .onTapGesture(perform: onTapLoaded)
             } else {
-                ZStack {
-                    Circle()
-                        .stroke(.secondary, style: StrokeStyle(lineWidth: 3, dash: [15, 5]))
-                        .frame(width: 100, height: 100)
+                VStack {
+                    ZStack {
+                        Circle()
+                            .stroke(.secondary, style: StrokeStyle(lineWidth: 3, dash: [15, 5]))
+                            .frame(width: 80, height: 80)
 
-                    if isLoading {
-                        ProgressView()
-                    } else {
-                        Image(systemName: "plus")
-                            .font(.system(size: 20))
+                        if isLoading {
+                            ProgressView()
+                        } else {
+                            Image(systemName: "plus")
+                                .font(.system(size: 20))
+                        }
                     }
+                    .contentShape(Rectangle())
+                    
+                    Text(title)
+                        .font(.system(size: 14, weight: .semibold))
+                        .lineLimit(1)
                 }
-                .contentShape(Rectangle())
                 .onTapGesture { if !isLoading { onTapEmpty() } }
             }
-
-            Text(title)
-                .font(.system(size: 14, weight: .semibold))
-                .lineLimit(1)
         }
     }
 }

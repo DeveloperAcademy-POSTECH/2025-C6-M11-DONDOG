@@ -49,6 +49,16 @@ final class StickerService {
         // 3) 최종 사이즈 계산
         let decoWidth = outlinedSize.width * 1.27
         
+        let titleImage: UIImage = OutlinedTitleImageMaker.render (
+            text: title,
+            font: UIFont(name: "SejongGeulggot", size: 55) ?? .systemFont(ofSize: 55),
+            fill: .black,
+            stroke: UIColor(style.outlineColor),
+            strokeWidth: 7.5,
+            kerning: 0,
+            maxWidth: decoWidth
+        )
+        
         let sticker = ImageUtils.renderViewAsImage(
             ZStack {
                 Image(uiImage: outlined)
@@ -61,6 +71,15 @@ final class StickerService {
                     .scaledToFit()
                     .frame(width: decoWidth)
                     .offset(x: 16, y: -36)
+                
+                VStack {
+                    Spacer()
+                    
+                    Image(uiImage: titleImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: outlinedSize.width, alignment: .center)
+                }
             }
             .offset(y: -40)
             , size: CGSize(width: decoWidth, height: outlinedSize.height)

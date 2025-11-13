@@ -29,8 +29,8 @@ struct ArchivePostContainer: View {
                     isFailed = true
                 }
                 .placeholder {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(.ddWhite)
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(.ppGray200)
                         .frame(width: 72, height: 96)
                 }
                 .resizable()
@@ -38,33 +38,33 @@ struct ArchivePostContainer: View {
                 .frame(width: 72, height: 96)
                 .transition(.opacity)
                 .blur(radius: isBlurred ? 8 : 0)
-                .cornerRadius(8)
+                .cornerRadius(2)
                 .clipped()
                 .overlay(
                     Group {
                         if isBlurred {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(.ddBlack30)
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(.ppBlack.opacity(0.3))
                                 .overlay {
                                     VStack {
                                         Text("\(day)일")
                                             .font(.subtitleSemiBold16)
                                             .foregroundStyle(.ddWhite)
                                         Image(systemName: DateUtils.isATime(date: date) ? "sun.max.fill" : "moon.fill")
-                                            .font(.body)
-                                            .foregroundStyle(.white)
+                                            .font(.bodyMedium16)
+                                            .foregroundStyle(.ddWhite)
                                     }
                                 }
                         } else if isFailed {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(.ddGray600)
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(.ppGray600)
                                     .overlay(Image(systemName: "exclamationmark.triangle").foregroundStyle(.white))
                                     .frame(width: 72, height: 96)
                             }
                         } else {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(.ddBlack30)
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(.ppBlack.opacity(0.3))
                                 .overlay {
                                     VStack(alignment: .center) {
                                         Text("\(day)일")
@@ -72,7 +72,7 @@ struct ArchivePostContainer: View {
                                             .foregroundStyle(.ddWhite)
                                         
                                         Image(systemName: DateUtils.isATime(date: date) ? "sun.max.fill" : "moon.fill")
-                                            .font(.body)
+                                            .font(.bodyMedium16)
                                             .foregroundStyle(.white)
                                     }
                                 }

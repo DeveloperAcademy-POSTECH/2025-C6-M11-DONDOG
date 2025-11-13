@@ -12,16 +12,17 @@ import SwiftUI
 struct PostContentsView: View {
     let post: PostData
     @Binding var isEditing: Bool
+    @ObservedObject var viewModel: StickerViewModel
     
     @State private var isFrontOrBack: Int = 0
     
     var body: some View {
         VStack(alignment: .leading) {
             TabView(selection: $isFrontOrBack) {
-                ImageView(urlString: post.frontImageURL, isEditing: $isEditing)
+                ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel)
                     .tag(0)
                 
-                ImageView(urlString: post.backImageURL, isEditing: $isEditing)
+                ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel)
                     .tag(1)
             }
             .frame(height: 470)

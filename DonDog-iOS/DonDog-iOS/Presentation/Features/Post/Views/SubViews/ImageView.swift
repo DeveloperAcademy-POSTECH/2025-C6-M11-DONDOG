@@ -12,7 +12,7 @@ struct ImageView: View {
     let urlString: String
     @Binding var isEditing: Bool
     
-    @StateObject var viewModel = StickerViewModel()
+    @ObservedObject var viewModel: StickerViewModel
     @State private var loadFailed: Bool = false
 
     private var url: URL? {

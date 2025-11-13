@@ -2,35 +2,105 @@
 //  StickerSheetView.swift
 //  DonDog-iOS
 //
-//  Created by 문창재 on 10/16/25.
+//  Created by 이주현 on 11/9/25.
 //
 
+import FirebaseAuth
+import FirebaseFirestore
 import Kingfisher
 import SwiftUI
 
+// 스티커 카테고리와 공용 컴포넌트 StickerGrid 사용 방법을 알려주기 위한 연습 뷰 for Hyun.. 추후 삭제 요망
 struct StickerSheetView: View {
-    @StateObject private var viewModel = StickerViewModel()
+    @ObservedObject var viewModel: StickerViewModel
     @State private var select = 0
     @Environment(\.dismiss) var dismiss
+    private let categories = StickerCategory.allCases
     
-    private let category = StickerCategory.allCases
-    
+    // 뷰에서 선언
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 20), count: 3) // 스티커 사이 간격 여기서 조절
+    @StateObject private var cameraVM = CameraViewModel()
+    @ObservedObject private var gridService: StickerGridService
+    init(viewModel: StickerViewModel, gridService: StickerGridService = .shared) {
+        self.viewModel = viewModel
+        self._gridService = ObservedObject(wrappedValue: gridService)
+    }
+
+    // 뷰 body
     var body: some View {
+        //        // 여기서 수정/삭제/크기 조절 기능 추가
+        //        if let url = previewURL {
+        //            KFImage(url)
+        //                .resizable()
+        //                .scaledToFit()
+        //                .frame(maxWidth: .infinity)
+        //                .padding(.bottom, 8)
+        //        }
+        //        
+        //        HStack {
+        //            let categories = StickerCategory.allCases
+        //            ForEach(Array(categories.enumerated()), id: \.element) { index, category in
+        //                Text(category.rawValue)
+        //                    .font(.system(size: 15, weight: .semibold))
+        //                    .padding(.horizontal, 14)
+        //                    .padding(.vertical, 8)
+        //                    .onTapGesture {
+        //                        gridService.selectedCategory = category
+        //                        targetItemID = nil
+        //                        previewURL = nil
+        //                    }
+        //                if index < categories.count - 1 { Spacer(minLength: 0) }
+        //            }
+        //        }
+        
         NavigationStack {
             VStack {
-                StickerSheetCollectionView(viewModel: viewModel)
+                StickerGrid(
+                    items: gridService.stickerItems(for: gridService.selectedCategory),
+                    remoteURLByItemID: gridService.stickerImageURLs,
+                    loadingItemIDs: gridService.loadingItemIDs,
+                    columns: columns,
+                    rowSpacing: 8, // 스티커 줄 사이 간격 여기서 조절
+                    isCameraPresented: $viewModel.showCamera,
+                    onItemAppear: { id in
+                        if let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id }) {
+                            Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
+                        }
+                    },
+                    onItemTap: { item in
+                        if let url = gridService.stickerImageURLs[item.id] {
+                            //                    previewURL = url
+                            viewModel.targetItemID = item.id
+                            viewModel.addSticker(with: url)
+                        }
+                    },
+                    onPlusTap: { item in
+                        StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, item.title]
+                        viewModel.targetItemID = item.id
+                        cameraVM.isFrontOnly = true
+                        cameraVM.stickerKeyword = item.title
+                        cameraVM.resetCameraState()
+                        viewModel.showCamera = true
+                    },
+                    onCameraDismiss: { id in
+                        if let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id }) {
+                            Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
+                        }
+                    }
+                )
             }
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Picker("", selection: $select) {
-                        ForEach(0..<category.count, id: \.self) { index in
-                            Text(category[index].rawValue).tag(index)
+                        ForEach(Array(categories.enumerated()), id: \.element) { index, category in
+                            Text(category.rawValue).tag(index)
                         }
                     }
                     .pickerStyle(.segmented)
                     .frame(width: 300)
-                    .onChange(of: select) { _, newValue in
-                        viewModel.selectedCategory = category[newValue]
+                    .onChange(of: select) { _, selectedValue in
+                        gridService.selectedCategory = categories[selectedValue]
+                        print("selectedCategory: \(gridService.selectedCategory)")
                     }
                 }
                 
@@ -46,56 +116,7 @@ struct StickerSheetView: View {
                 }
             }
         }
-    }
-}
-
-private struct StickerSheetCollectionView: View {
-    @ObservedObject var viewModel: StickerViewModel
-    
-    private let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
-    
-    var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(viewModel.returnStickerItems(for: viewModel.selectedCategory)) { item in
-                    VStack(spacing: 8) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.secondary.opacity(0.06))
-                                .frame(height: 120)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.secondary.opacity(0.12), lineWidth: 1)
-                                )
-                            
-                            if let url = viewModel.remoteURLByItemID[item.id] {
-                                KFImage(url)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding(12)
-                            } else {
-                                if viewModel.loadingItemIDs.contains(item.id) {
-                                    ProgressView()
-                                } else {
-                                    Image(systemName: "plus.circle")
-                                        .font(.system(size: 28, weight: .semibold))
-                                }
-                            }
-                        }
-                        .onTapGesture {
-                            viewModel.addSticker(named: "loveSticker")
-                        }
-                    }
-                    .task(id: item.id) {
-                        await viewModel.fetchStickerImage(forID: item.id)
-                    }
-                }
-                .padding(.bottom, 4)
-            }
-        }
+        // 뷰 최상단에 선언 (카메라 뷰 full screen)
+        .cameraCaptureFlow(isPresented: $viewModel.showCamera, cameraVM: cameraVM)
     }
 }

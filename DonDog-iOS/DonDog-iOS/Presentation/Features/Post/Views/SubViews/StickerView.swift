@@ -5,6 +5,7 @@
 //  Created by 이서현 on 10/28/25.
 //
 
+import Kingfisher
 import SwiftUI
 
 struct StickerView: View {
@@ -20,7 +21,7 @@ struct StickerView: View {
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            Image(sticker.imageName)
+            KFImage(sticker.stickerURL)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)

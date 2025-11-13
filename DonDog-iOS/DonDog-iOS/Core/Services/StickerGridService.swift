@@ -47,7 +47,7 @@ final class StickerGridService: ObservableObject {
             }
 
             if let latest,
-               let url = URL(string: latest.url) {
+                let url = URL(string: latest.url) {
                 stickerImageURLs[item.id] = url
             }
         } catch {

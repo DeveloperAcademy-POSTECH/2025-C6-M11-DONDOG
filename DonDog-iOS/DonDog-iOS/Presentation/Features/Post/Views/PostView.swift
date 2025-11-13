@@ -11,6 +11,7 @@ import SwiftUI
 struct PostView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: PostViewModel
+    @StateObject var stickerViewModel = StickerViewModel()
     
     @State private var showDeleteConfirmAlert: Bool = false
     @State private var showStickerSheet = false
@@ -50,7 +51,7 @@ struct PostView: View {
             }
             
             ZStack(alignment: .bottomTrailing) {
-                PostContentsView(post: viewModel.post, isEditing: $showStickerSheet)
+                PostContentsView(post: viewModel.post, isEditing: $showStickerSheet, viewModel: stickerViewModel)
                 
                 if postType == .post {
                     Button {
@@ -64,7 +65,7 @@ struct PostView: View {
                 }
             }
             .sheet(isPresented: $showStickerSheet) {
-                StickerSheetView()
+                StickerSheetView(viewModel: stickerViewModel)
                     .presentationDetents([.height(270)])
                     .presentationDragIndicator(.hidden)
                     .background(Color.ddGray100.opacity(0.5))

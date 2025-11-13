@@ -26,6 +26,20 @@ struct CameraViewContainer: View {
             CameraView(viewModel: cameraViewModel)
                 .ignoresSafeArea()
             
+            if cameraViewModel.showGuideView {
+                if cameraViewModel.frontImage == nil {
+                    ShootingGuideView(step: .front, isVisible: $cameraViewModel.showGuideView)
+                } else {
+                    ShootingGuideView(step: .back, isVisible: $cameraViewModel.showGuideView)
+                }
+            }
+            
+            if cameraViewModel.showCompleteView {
+                ShootingCompleteView(isVisible: $cameraViewModel.showCompleteView) {
+                    cameraViewModel.showCaptionView = true
+                }
+            }
+            
             if cameraViewModel.showCaptionView {
                 if let captionVM = captionViewModel {
                     CaptionView(
@@ -39,6 +53,9 @@ struct CameraViewContainer: View {
                     )
                 }
             }
+        }
+        .onAppear {
+            cameraViewModel.showGuideView = true
         }
         .onChange(of: cameraViewModel.showCaptionView) { _, _ in
             

@@ -55,6 +55,8 @@
 		8C3E791F2EBB2899000ADEF6 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */; };
 		8C3E79222EBB28F5000ADEF6 /* HomePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3E79212EBB28EF000ADEF6 /* HomePost.swift */; };
 		8C3F8FBF2EB8DAB000699BC3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */; };
+		8C62BF102EC2BA3300185CD3 /* ShootingGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C62BF0F2EC2B9C700185CD3 /* ShootingGuideView.swift */; };
+		8C62BF122EC3615000185CD3 /* ShootingCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C62BF112EC3614800185CD3 /* ShootingCompleteView.swift */; };
 		8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */; };
 		8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */; };
 		8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD752EAE0EA40050003C /* DataManager.swift */; };
@@ -151,6 +153,9 @@
 		8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		8C3E79212EBB28EF000ADEF6 /* HomePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePost.swift; sourceTree = "<group>"; };
 		8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		8C62BF0B2EC16B1300185CD3 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C62BF0F2EC2B9C700185CD3 /* ShootingGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShootingGuideView.swift; sourceTree = "<group>"; };
+		8C62BF112EC3614800185CD3 /* ShootingCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShootingCompleteView.swift; sourceTree = "<group>"; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
 		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -405,6 +410,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		8C62BF0E2EC2B9BF00185CD3 /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				8C62BF112EC3614800185CD3 /* ShootingCompleteView.swift */,
+				8C62BF0F2EC2B9C700185CD3 /* ShootingGuideView.swift */,
+			);
+			path = SubViews;
+			sourceTree = "<group>";
+		};
 		8CF3BD792EAF1C2B0050003C /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -468,6 +482,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
+				8C62BF0B2EC16B1300185CD3 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -523,6 +538,7 @@
 		CAA9AEC82E8FC15C0047A89A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8C62BF0E2EC2B9BF00185CD3 /* SubViews */,
 				CAA9AECB2E8FC15C0047A89A /* CameraView.swift */,
 				D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */,
 			);
@@ -793,6 +809,7 @@
 				8B822D7B2EAB617800D708D7 /* Kingfisher */,
 			);
 			productName = "DonDog-iOS";
+			productReference = 8C62BF0B2EC16B1300185CD3 /* DonDog-iOS.app */;
 			productReference = 8BFD78AE2EC2CD5800E519FF /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -909,6 +926,7 @@
 				D297CE862EB05DFE00F28395 /* StickerType.swift in Sources */,
 				D219F1E32EAE0A3700BD82B7 /* PostView.swift in Sources */,
 				8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */,
+				8C62BF102EC2BA3300185CD3 /* ShootingGuideView.swift in Sources */,
 				8BDF768E2E9F498B007F12BB /* WelcomeView.swift in Sources */,
 				8BFC73612EA5D18C00B54F03 /* NetworkService.swift in Sources */,
 				CAA9AEDB2E8FC15C0047A89A /* AuthView.swift in Sources */,
@@ -934,6 +952,7 @@
 				8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */,
 				8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */,
 				61C9B19E2E9BEC130007C8F4 /* ArchiveView.swift in Sources */,
+				8C62BF122EC3615000185CD3 /* ShootingCompleteView.swift in Sources */,
 				CAA9AEDD2E8FC15C0047A89A /* CameraView.swift in Sources */,
 				CAA62D062EA1E57200C60E05 /* CustomPageIndicator.swift in Sources */,
 				D219F21F2EAEA10500BD82B7 /* PostContentsView.swift in Sources */,

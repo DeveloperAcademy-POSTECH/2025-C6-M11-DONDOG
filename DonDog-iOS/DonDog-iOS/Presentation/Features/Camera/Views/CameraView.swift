@@ -16,7 +16,7 @@ struct CameraView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let customCameraVC = CustomCameraViewController()
         customCameraVC.delegate = context.coordinator
-        
+        customCameraVC.viewModel = viewModel
         customCameraVC.isFrontOnly = viewModel.isFrontOnly
         if let keyword = viewModel.stickerKeyword {
             customCameraVC.stickerKeyword = keyword
@@ -54,9 +54,7 @@ struct CameraView: UIViewControllerRepresentable {
         }
         
         func didCompleteBothPhotos() {
-            DispatchQueue.main.async {
-                self.parent.viewModel.showCaptionView = true
-            }
+            
         }
         
         func didCancel() {

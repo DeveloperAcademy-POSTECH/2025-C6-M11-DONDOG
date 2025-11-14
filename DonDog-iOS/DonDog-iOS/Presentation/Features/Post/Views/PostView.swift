@@ -67,6 +67,7 @@ struct PostView: View {
             .sheet(isPresented: $showStickerSheet) {
                 StickerSheetView(viewModel: stickerViewModel)
                     .presentationDetents([.height(270)])
+                    .presentationBackgroundInteraction(.enabled)
                     .presentationDragIndicator(.hidden)
                     .background(Color.ddGray100.opacity(0.5))
             }

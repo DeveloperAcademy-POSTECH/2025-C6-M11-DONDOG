@@ -42,5 +42,6 @@ struct PostContentsView: View {
                 .padding(.leading, 4)
         }
         .padding(.horizontal, 20)
+        .gesture(isEditing ? nil : DragGesture())
     }
 }

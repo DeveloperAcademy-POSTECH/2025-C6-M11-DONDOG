@@ -20,32 +20,39 @@ struct StickerView: View {
     @State private var lastRotation: Angle = .zero
     
     var body: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack {
             KFImage(sticker.stickerURL)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
-                .scaleEffect(sticker.scale)
-                .rotationEffect(sticker.rotation)
-                .offset(x: sticker.position.x, y: sticker.position.y)
                 .gesture(isEditable ? dragGesture.simultaneously(with: scaleGesture).simultaneously(with: rotationGesture) : nil)
                 .overlay {
                     if isEditable && isSelected {
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.blue, lineWidth: 2)
-                            .padding(-4)
+                        RoundedRectangle(cornerRadius: 0)
+                            .stroke(.ddWhite, lineWidth: 1)
+                            .padding(-8)
                     }
                 }
             
             if isEditable && isSelected {
                 Button(action: onDelete) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.red)
-                        .padding(4)
+                    Image(systemName: "trash.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 10, height: 10)
+                        .foregroundColor(.ddBlack)
+                        .background(
+                            Circle()
+                                .fill(.ddWhite)
+                                .frame(width: 18, height: 18)
+                        )
                 }
-                .offset(x: sticker.position.x + 60, y: sticker.position.y - 60)
+                .offset(x: -65, y: -65)
             }
         }
+        .scaleEffect(sticker.scale)
+        .rotationEffect(sticker.rotation)
+        .offset(x: sticker.position.x, y: sticker.position.y)
     }
     
     private var dragGesture: some Gesture {
@@ -71,7 +78,7 @@ struct StickerView: View {
                 lastScale = sticker.scale
             }
     }
-
+    
     private var rotationGesture: some Gesture {
         RotationGesture()
             .onChanged { value in
@@ -80,5 +87,13 @@ struct StickerView: View {
             .onEnded { _ in
                 lastRotation = sticker.rotation
             }
+    }
+    
+    func cornerOffset(xSign: CGFloat, ySign: CGFloat) -> (CGFloat, CGFloat) {
+        let halfSize = 65 * sticker.scale
+        let radians = sticker.rotation.radians
+        let x = xSign * halfSize * cos(radians) - ySign * halfSize * sin(radians)
+        let y = xSign * halfSize * sin(radians) + ySign * halfSize * cos(radians)
+        return (x, y)
     }
 }

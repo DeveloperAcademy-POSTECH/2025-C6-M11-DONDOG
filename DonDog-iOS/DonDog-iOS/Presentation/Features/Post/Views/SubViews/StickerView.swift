@@ -48,24 +48,43 @@ struct StickerView: View {
                         )
                 }
                 .offset(x: -65, y: -65)
+                
+                Image(systemName: "arrow.up.backward.and.arrow.down.forward")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 11, height: 11)
+                    .foregroundColor(.ddWhite)
+                    .background(
+                        Circle()
+                            .fill(.ddBlack)
+                            .frame(width: 18, height: 18)
+                    )
+                    .offset(x: 65, y: 65)
+                    .gesture(dragGesture.simultaneously(with: scaleGesture).simultaneously(with: rotationGesture))
             }
         }
         .scaleEffect(sticker.scale)
         .rotationEffect(sticker.rotation)
         .offset(x: sticker.position.x, y: sticker.position.y)
     }
-    
+
     private var dragGesture: some Gesture {
         DragGesture()
             .onChanged { value in
+                let newX = lastOffset.width + value.translation.width
+                let newY = lastOffset.height + value.translation.height
+                
                 sticker.position = CGPoint(
-                    x: lastOffset.width + value.translation.width,
-                    y: lastOffset.height + value.translation.height
+                    x: min(max(newX, -150), 150),
+                    y: min(max(newY, -200), 200)
                 )
             }
             .onEnded { value in
-                lastOffset.width += value.translation.width
-                lastOffset.height += value.translation.height
+                let finalX = lastOffset.width + value.translation.width
+                let finalY = lastOffset.height + value.translation.height
+                
+                lastOffset.width = min(max(finalX, -150), 150)
+                lastOffset.height = min(max(finalY, -200), 200)
             }
     }
     

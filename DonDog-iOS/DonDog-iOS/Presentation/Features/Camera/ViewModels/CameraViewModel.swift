@@ -18,6 +18,8 @@ final class CameraViewModel: ObservableObject {
     var backImage: UIImage?
     @Published var isUploading = false
     @Published var showCaptionView = false
+    @Published var showGuideView: Bool = true
+    @Published var showCompleteView: Bool = false
     
     // 전면 촬영만 할지 여부 - 피드뷰, 스티커 컬렉션 뷰
     var isFrontOnly: Bool = false
@@ -29,10 +31,10 @@ final class CameraViewModel: ObservableObject {
     /// 촬영 상태를 초기화하여 다시 전면 촬영부터 시작할 수 있도록 함
     func resetCameraState() {
         cameraController?.resetCameraState()
-        
         frontImage = nil
         backImage = nil
         isUploading = false
         showCaptionView = false
+        showGuideView = true
     }
 }

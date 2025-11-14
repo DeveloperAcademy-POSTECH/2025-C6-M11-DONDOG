@@ -71,8 +71,8 @@ struct StickerView: View {
     private var dragGesture: some Gesture {
         DragGesture()
             .onChanged { value in
-                let newX = lastOffset.width + value.translation.width
-                let newY = lastOffset.height + value.translation.height
+                let newX = lastOffset.width + value.translation.width / sticker.scale
+                let newY = lastOffset.height + value.translation.height / sticker.scale
                 
                 sticker.position = CGPoint(
                     x: min(max(newX, -150), 150),
@@ -80,8 +80,8 @@ struct StickerView: View {
                 )
             }
             .onEnded { value in
-                let finalX = lastOffset.width + value.translation.width
-                let finalY = lastOffset.height + value.translation.height
+                let finalX = lastOffset.width + value.translation.width / sticker.scale
+                let finalY = lastOffset.height + value.translation.height / sticker.scale
                 
                 lastOffset.width = min(max(finalX, -150), 150)
                 lastOffset.height = min(max(finalY, -200), 200)
@@ -91,7 +91,7 @@ struct StickerView: View {
     private var scaleGesture: some Gesture {
         MagnificationGesture()
             .onChanged { value in
-                sticker.scale = lastScale * value
+                sticker.scale = min(max(lastScale * value, 0.4), 3.0)
             }
             .onEnded { _ in
                 lastScale = sticker.scale
@@ -119,7 +119,7 @@ struct StickerView: View {
     private var transformGesture: some Gesture {
         DragGesture()
             .onChanged { value in
-                let center = CGPoint(x: 0, y: 0)
+                let center = CGPoint(x: sticker.position.x, y: sticker.position.y)
                 
                 let start = CGPoint(
                     x: value.startLocation.x - center.x,

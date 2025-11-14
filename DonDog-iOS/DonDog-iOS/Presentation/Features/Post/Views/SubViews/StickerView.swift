@@ -60,7 +60,7 @@ struct StickerView: View {
                             .frame(width: 18, height: 18)
                     )
                     .offset(x: 65, y: 65)
-                    .gesture(dragGesture.simultaneously(with: scaleGesture).simultaneously(with: rotationGesture))
+                    .gesture(transformGesture)
             }
         }
         .scaleEffect(sticker.scale)
@@ -114,5 +114,36 @@ struct StickerView: View {
         let x = xSign * halfSize * cos(radians) - ySign * halfSize * sin(radians)
         let y = xSign * halfSize * sin(radians) + ySign * halfSize * cos(radians)
         return (x, y)
+    }
+    
+    private var transformGesture: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                let center = CGPoint(x: 0, y: 0)
+                
+                let start = CGPoint(
+                    x: value.startLocation.x - center.x,
+                    y: value.startLocation.y - center.y
+                )
+                let end = CGPoint(
+                    x: value.location.x - center.x,
+                    y: value.location.y - center.y
+                )
+                
+                let startDistance = hypot(start.x, start.y)
+                let endDistance = hypot(end.x, end.y)
+                let scaleDelta = endDistance / max(startDistance, 1)
+                sticker.scale = lastScale * scaleDelta
+                sticker.scale = max(0.4, min(sticker.scale, 3.0))
+                
+                let startAngle = atan2(start.y, start.x)
+                let endAngle = atan2(end.y, end.x)
+                let angleDelta = endAngle - startAngle
+                sticker.rotation = lastRotation + Angle(radians: angleDelta)
+            }
+            .onEnded { _ in
+                lastScale = sticker.scale
+                lastRotation = sticker.rotation
+            }
     }
 }

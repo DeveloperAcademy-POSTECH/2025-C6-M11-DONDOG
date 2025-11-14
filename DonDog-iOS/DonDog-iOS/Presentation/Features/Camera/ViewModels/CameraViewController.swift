@@ -23,6 +23,7 @@ class CustomCameraViewController: UIViewController {
     private var videoPreviewLayer: AVCaptureVideoPreviewLayer!
     private var photoOutput: AVCapturePhotoOutput!
     private var currentCamera: AVCaptureDevice?
+    weak var viewModel: CameraViewModel?
     
     var isFrontOnly: Bool = false
     var stickerKeyword: String?
@@ -122,12 +123,12 @@ class CustomCameraViewController: UIViewController {
         previewContainerView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-                previewContainerView.topAnchor.constraint(equalTo: stepIndicatorContainer.bottomAnchor, constant: 20),
-                previewContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-                previewContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-                
-                previewContainerView.heightAnchor.constraint(equalTo: previewContainerView.widthAnchor, multiplier: 4.0/3.0)
-            ])
+            previewContainerView.topAnchor.constraint(equalTo: stepIndicatorContainer.bottomAnchor, constant: 20),
+            previewContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            previewContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            
+            previewContainerView.heightAnchor.constraint(equalTo: previewContainerView.widthAnchor, multiplier: 4.0/3.0)
+        ])
         
         videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         videoPreviewLayer.videoGravity = .resizeAspectFill
@@ -192,7 +193,7 @@ class CustomCameraViewController: UIViewController {
             stepTitleLabel.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 8)
         ])
     }
-
+    
     // 2. Step 인디케이터 컨테이너 설정
     private func setupStepIndicatorContainer() {
         view.addSubview(stepIndicatorContainer)
@@ -203,7 +204,7 @@ class CustomCameraViewController: UIViewController {
             stepIndicatorContainer.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
-
+    
     // 3. Step 1 원, 라벨, 체크 마크 설정
     private func setupStep1Circle() {
         // Step 1 원
@@ -245,7 +246,7 @@ class CustomCameraViewController: UIViewController {
             step1CheckmarkImageView.heightAnchor.constraint(equalToConstant: 14)
         ])
     }
-
+    
     // 4. 점 세 개 설정
     private func setupStepDots() {
         stepIndicatorContainer.addSubview(stepDotsContainer)
@@ -272,7 +273,7 @@ class CustomCameraViewController: UIViewController {
             ])
         }
     }
-
+    
     // 5. Step 2 원, 라벨, 체크 마크 설정
     private func setupStep2Circle() {
         // Step 2 원
@@ -453,7 +454,7 @@ class CustomCameraViewController: UIViewController {
             nextButton.heightAnchor.constraint(equalToConstant: 52)
         ])
     }
-
+    
     @objc private func retakePhoto() {
         if isCapturingFront {
             // 전면 촬영 다시 찍기
@@ -483,7 +484,7 @@ class CustomCameraViewController: UIViewController {
             captureButton.alpha = 1.0
         }
     }
-
+    
     private func updateUIForFrontPhotoConfirmation(isConfirmed: Bool) {
         isFrontPhotoConfirmed = isConfirmed
         
@@ -548,8 +549,8 @@ class CustomCameraViewController: UIViewController {
         } else {
             // 후면 촬영 완료 후 "다음" 버튼: 최종 완료
             guard let backImage = backImage else { return }
-            
-            delegate?.didCompleteBothPhotos()
+            delegate?.didCaptureBackImage(backImage)
+            viewModel?.showCompleteView = true
         }
     }
     
@@ -604,6 +605,10 @@ class CustomCameraViewController: UIViewController {
         isCaptureButtonEnabled = true
         captureButton.isEnabled = true
         captureButton.alpha = 1.0
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.viewModel?.showGuideView = true
+        }
         
         // Step2 UI 상태로 전환
         updateUIForBackCamera()
@@ -753,7 +758,7 @@ class CustomCameraViewController: UIViewController {
 extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard let imageData = photo.fileDataRepresentation(),
-              var image = UIImage(data: imageData) else {
+            var image = UIImage(data: imageData) else {
             print("이미지 변환 실패")
             return
         }

@@ -39,9 +39,10 @@ struct ArchiveView: View {
                         Button {
                             viewModel.goToPreviousMonth()
                         } label: {
-                            Image("ArchiveLeftButton")
+                            Image(viewModel.hasPreviousDisplayMonth ? "ArchiveLeftButton" : "ArchiveLeftButtonGray")
                         }
                         .padding(.horizontal, 10)
+                        .disabled(!viewModel.hasPreviousDisplayMonth)
                         
                         if !viewModel.displayMonths.isEmpty {
                             Text(DateUtils.string(from: viewModel.displayMonths[viewModel.currentMonthIndex].date, format: .month))
@@ -54,10 +55,10 @@ struct ArchiveView: View {
                         Button {
                             viewModel.goToNextMonth()
                         } label: {
-                            Image(viewModel.isCurrentMonthDisplayed ? "ArchiveRightButtonGray" : "ArchiveRightButton")
+                            Image(viewModel.hasNextDisplayMonth ? "ArchiveRightButton" : "ArchiveRightButtonGray")
                         }
                         .padding(.horizontal, 10)
-                        .disabled(viewModel.isCurrentMonthDisplayed)
+                        .disabled(!viewModel.hasNextDisplayMonth)
                         
                         Spacer()
                     }
@@ -77,11 +78,15 @@ struct ArchiveView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 60, height: 48)
-                                Text("아직 사진이 없어요\n첫 게시물을 올려 볼까요?")
-                                    .multilineTextAlignment(.center)
-                                    .font(.bodyMedium16)
+                                Text(
+                                    viewModel.isCurrentMonthDisplayed
+                                    ? "아직 사진이 없어요\n첫 게시물을 올려 볼까요?"
+                                    : "기록이 없어요"
+                                )
+                                .multilineTextAlignment(.center)
+                                .font(.bodyMedium16)
                             }
-                            .foregroundStyle(.ddGray500)
+                            .foregroundStyle(.ppGray500)
                             Spacer()
                         } else {
                             ScrollView {
@@ -114,7 +119,7 @@ struct ArchiveView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 60, height: 48)
-                            Text("기록이 없어요")
+                            Text("아직 사진이 없어요\n첫 게시물을 올려 볼까요?")
                                 .multilineTextAlignment(.center)
                                 .font(.bodyMedium16)
                         }

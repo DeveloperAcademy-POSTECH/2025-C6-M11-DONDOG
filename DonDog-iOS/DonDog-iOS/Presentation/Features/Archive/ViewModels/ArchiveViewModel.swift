@@ -30,6 +30,16 @@ final class ArchiveViewModel: ObservableObject {
         self.coordinator = coordinator
     }
     
+    var hasPreviousDisplayMonth: Bool {
+        guard !displayMonths.isEmpty else { return false }
+        return currentMonthIndex < displayMonths.count - 1
+    }
+
+    var hasNextDisplayMonth: Bool {
+        guard !displayMonths.isEmpty else { return false }
+        return currentMonthIndex > 0
+    }
+    
     func goToPreviousMonth() {
         if currentMonthIndex < displayMonths.count - 1 {
             currentMonthIndex += 1
@@ -170,7 +180,7 @@ final class ArchiveViewModel: ObservableObject {
         return months
     }
     
-    // 현재 달의 게시물 없을 때 처리를 위한 값
+    // 현재 달 표시
     var isCurrentMonthDisplayed: Bool {
         guard !displayMonths.isEmpty else { return false }
         let currentDisplayMonth = displayMonths[currentMonthIndex]

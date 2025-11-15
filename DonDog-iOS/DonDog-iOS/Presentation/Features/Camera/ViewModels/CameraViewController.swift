@@ -16,7 +16,8 @@ protocol CustomCameraDelegate: AnyObject {
     func didCompleteBothPhotos()
 }
 
-class CustomCameraViewController: UIViewController {
+// swiftlint:disable type_body_length
+class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate {
     // MARK: - Properties
     weak var delegate: CustomCameraDelegate?
     private var captureSession: AVCaptureSession!
@@ -24,7 +25,7 @@ class CustomCameraViewController: UIViewController {
     private var photoOutput: AVCapturePhotoOutput!
     private var currentCamera: AVCaptureDevice?
     
-    var isFrontOnly: Bool = false
+    var isStickerCamera: Bool = false
     var stickerKeyword: String?
     var onStickerCreated: ((UIImage) -> Void)?
     
@@ -35,8 +36,13 @@ class CustomCameraViewController: UIViewController {
     private let previewContainerView = UIView()
     private let capturedImageView = UIImageView()
     private let captureButton = UIButton()
+    private let innerCaptureCircle = UIView()
     private let cancelButton = UIButton()
     
+    private let stickerGuideContainer = UIStackView()
+    private let stickerTitleLabel = UILabel()
+    private let stickerSubtitleLabel = UILabel()
+
     private let stepTitleLabel = UILabel()
     private let stepIndicatorContainer = UIView()
     private let step1Circle = UIView()
@@ -56,6 +62,7 @@ class CustomCameraViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureModeFromEmotionTags()
         setupCamera()
         setupUI()
         updateUIForCurrentState()  // 초기 UI 상태 설정
@@ -63,15 +70,41 @@ class CustomCameraViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationItem.hidesBackButton = true
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         startSession()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // 네비게이션 바를 숨긴 상태에서도 좌우 스와이프(뒤로가기) 제스처가 동작하도록 설정
+        if let gesture = navigationController?.interactivePopGestureRecognizer {
+            gesture.isEnabled = true
+            gesture.delegate = self
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        
         stopSession()
     }
     
     // MARK: - Camera Setup
+    private func configureModeFromEmotionTags() {
+        let tags = StickerEmotionTagManager.shared.emotionTags
+        
+        if tags.count >= 2 {
+            isStickerCamera = true
+            stickerKeyword = tags[1]
+        } else {
+            isStickerCamera = false
+            stickerKeyword = nil
+        }
+    }
+
     private func setupCamera() {
         captureSession = AVCaptureSession()
         captureSession.sessionPreset = .photo
@@ -106,28 +139,48 @@ class CustomCameraViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = .white
-        
         setupCancelButton()
-        setupStepIndicator()
+        if isStickerCamera {
+            setupStickerGuide()
+        } else {
+            setupStepIndicator()
+        }
         setupPreviewLayer()
         setupCaptureButton()
-        setupBottomButtons()
+        if !isStickerCamera {
+            setupBottomButtons()
+        }
     }
     
     private func setupPreviewLayer() {
         previewContainerView.backgroundColor = .clear
         previewContainerView.clipsToBounds = true
+        previewContainerView.layer.cornerRadius = 12
         
         view.addSubview(previewContainerView)
         previewContainerView.translatesAutoresizingMaskIntoConstraints = false
         
+        let topAnchor: NSLayoutYAxisAnchor
+        let topSpacing: CGFloat
+        if isStickerCamera {
+            if stickerGuideContainer.superview != nil {
+                topAnchor = stickerGuideContainer.bottomAnchor
+                topSpacing = 24
+            } else {
+                topAnchor = cancelButton.bottomAnchor
+                topSpacing = 24
+            }
+        } else {
+            topAnchor = stepIndicatorContainer.bottomAnchor
+            topSpacing = 20
+        }
+        
         NSLayoutConstraint.activate([
-                previewContainerView.topAnchor.constraint(equalTo: stepIndicatorContainer.bottomAnchor, constant: 20),
-                previewContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-                previewContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-                
-                previewContainerView.heightAnchor.constraint(equalTo: previewContainerView.widthAnchor, multiplier: 4.0/3.0)
-            ])
+            previewContainerView.topAnchor.constraint(equalTo: topAnchor, constant: topSpacing),
+            previewContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 22),
+            previewContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -22),
+            previewContainerView.heightAnchor.constraint(equalTo: previewContainerView.widthAnchor, multiplier: 4.0/3.0)
+        ])
         
         videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         videoPreviewLayer.videoGravity = .resizeAspectFill
@@ -168,6 +221,39 @@ class CustomCameraViewController: UIViewController {
         gradientLayer.frame = view.bounds
     }
     
+    // MARK: - 스티커 안내 UI
+    private func setupStickerGuide() {
+        guard isStickerCamera else { return }
+        let tagText = stickerKeyword ?? StickerEmotionTagManager.shared.emotionTags.last ?? ""
+
+        stickerGuideContainer.axis = .vertical
+        stickerGuideContainer.alignment = .center
+        stickerGuideContainer.distribution = .fill
+        stickerGuideContainer.spacing = 4
+
+        stickerTitleLabel.text = tagText
+        stickerTitleLabel.font = UIFont(name: FontName.sejongGeulggot.rawValue, size: 32) ?? UIFont.systemFont(ofSize: 32, weight: .bold)
+        stickerTitleLabel.textColor = .ppPrime
+        stickerTitleLabel.textAlignment = .center
+
+        stickerSubtitleLabel.text = "스티커에 어울리는 사진을 찍어주세요"
+        stickerSubtitleLabel.font = UIFont(name: FontName.pretendardRegular.rawValue, size: 16) ?? UIFont.systemFont(ofSize: 16, weight: .regular)
+        stickerSubtitleLabel.textColor = .ddGray700
+        stickerSubtitleLabel.textAlignment = .center
+
+        stickerGuideContainer.addArrangedSubview(stickerTitleLabel)
+        stickerGuideContainer.addArrangedSubview(stickerSubtitleLabel)
+
+        view.addSubview(stickerGuideContainer)
+        stickerGuideContainer.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            stickerGuideContainer.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 16),
+            stickerGuideContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            stickerGuideContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+        ])
+    }
+    
+    // MARK: - Step 안내 UI
     private func setupStepIndicator() {
         setupStepTitleLabel()
         setupStepIndicatorContainer()
@@ -316,8 +402,11 @@ class CustomCameraViewController: UIViewController {
         ])
     }
     
+    // MARK: - 상태 업데이트
     // Step 인디케이터 상태 업데이트
     private func updateStepIndicator() {
+        guard !isStickerCamera else { return }
+        
         if isCapturingFront {
             // 전면 촬영 중
             step1Circle.backgroundColor = .ddAlert
@@ -343,14 +432,13 @@ class CustomCameraViewController: UIViewController {
             step2Label.textColor = .white
         }
     }
-    
+
     private func updateUIForCurrentState() {
         DispatchQueue.main.async {
             if self.isCapturingFront {
                 self.captureButton.setTitle("전면 촬영", for: .normal)
-                
             } else {
-                if self.isFrontOnly {
+                if self.isStickerCamera {
                     self.captureButton.setTitle("전면 촬영", for: .normal)
                 } else {
                     self.captureButton.setTitle("후면 촬영", for: .normal)
@@ -366,11 +454,25 @@ class CustomCameraViewController: UIViewController {
     private func setupCaptureButton() {
         captureButton.backgroundColor = .white
         captureButton.layer.cornerRadius = 36
-        captureButton.layer.borderWidth = 5
-        captureButton.layer.borderColor = Color.ddPrimaryBlue.uiColor.cgColor
-        
+        captureButton.layer.borderWidth = 3
+        captureButton.layer.borderColor = Color.ppPrime.uiColor.cgColor
+
         captureButton.addTarget(self, action: #selector(capturePhoto), for: .touchUpInside)
-        
+
+        innerCaptureCircle.backgroundColor = Color.ppPrime.uiColor
+        innerCaptureCircle.layer.cornerRadius = 28
+        innerCaptureCircle.clipsToBounds = true
+        innerCaptureCircle.isUserInteractionEnabled = false
+
+        captureButton.addSubview(innerCaptureCircle)
+        innerCaptureCircle.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            innerCaptureCircle.centerXAnchor.constraint(equalTo: captureButton.centerXAnchor),
+            innerCaptureCircle.centerYAnchor.constraint(equalTo: captureButton.centerYAnchor),
+            innerCaptureCircle.widthAnchor.constraint(equalToConstant: 56),
+            innerCaptureCircle.heightAnchor.constraint(equalToConstant: 56)
+        ])
+
         view.addSubview(captureButton)
         captureButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -485,8 +587,9 @@ class CustomCameraViewController: UIViewController {
     }
 
     private func updateUIForFrontPhotoConfirmation(isConfirmed: Bool) {
-        isFrontPhotoConfirmed = isConfirmed
+        guard !isStickerCamera else { return }
         
+        isFrontPhotoConfirmed = isConfirmed
         DispatchQueue.main.async {
             if isConfirmed {
                 // 1. Step 타이틀 변경
@@ -748,12 +851,12 @@ class CustomCameraViewController: UIViewController {
         }
     }
 }
+// swiftlint:enable type_body_length
 
 // MARK: - AVCapturePhotoCaptureDelegate
 extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        guard let imageData = photo.fileDataRepresentation(),
-              var image = UIImage(data: imageData) else {
+        guard let imageData = photo.fileDataRepresentation(), var image = UIImage(data: imageData) else {
             print("이미지 변환 실패")
             return
         }
@@ -772,7 +875,7 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
             }
             
             // 스티커 모드인 경우에만 자동 진행
-            if self.isFrontOnly {
+            if self.isStickerCamera {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     self.presentStickerConfirm(with: image)
                 }
@@ -822,20 +925,27 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
             let confirmVC = UIHostingController(
                 rootView: StickerConfirmView(
                     viewModel: StickerConfirmViewModel(
-                        image: finalImage,
-                        onDone: { [weak self] _ in
-                            self?.dismissAllModals()
-                        }
+                        image: finalImage
                     ),
                     route: .camera,
                     onRetake: { [weak self] in
-                        self?.presentedViewController?.dismiss(animated: true) {
-                            guard let self = self else { return }
+                        guard let self = self else { return }
+                        self.presentedViewController?.dismiss(animated: true) {
+                            self.navigationController?.setNavigationBarHidden(true, animated: false)
+                            self.navigationItem.hidesBackButton = true
                             self.resetCameraState()
                         }
                     },
-                    onClose: { [weak self] in
-                        self?.dismissAllModals()
+                    onComplete: { [weak self] in
+                        guard let self = self else { return }
+                        self.dismiss(animated: true) {
+                            self.delegate?.didCancel()
+                        }
+                    },
+                    onUploaded: { tags in
+                        Task {
+                            await StickerGridService.shared.reloadSticker(tags: tags)
+                        }
                     }
                 )
             )

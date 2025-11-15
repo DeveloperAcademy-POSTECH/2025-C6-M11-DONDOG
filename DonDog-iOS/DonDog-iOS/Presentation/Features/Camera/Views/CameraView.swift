@@ -17,7 +17,7 @@ struct CameraView: UIViewControllerRepresentable {
         let customCameraVC = CustomCameraViewController()
         customCameraVC.delegate = context.coordinator
         
-        customCameraVC.isFrontOnly = viewModel.isFrontOnly
+        customCameraVC.isStickerCamera = viewModel.isStickerCamera
         if let keyword = viewModel.stickerKeyword {
             customCameraVC.stickerKeyword = keyword
         }

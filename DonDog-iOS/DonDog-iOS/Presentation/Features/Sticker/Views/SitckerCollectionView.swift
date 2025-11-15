@@ -19,21 +19,22 @@ final class StickerEmotionTagManager {
 struct SitckerCollectionView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: SitckerCollectionViewModel
-    @StateObject private var cameraVM = CameraViewModel()
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 19), count: 3)
+    @Namespace private var categoryUnderlineNamespace
     
     @ObservedObject private var gridService: StickerGridService
     init(viewModel: SitckerCollectionViewModel, gridService: StickerGridService = .shared) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._gridService = ObservedObject(wrappedValue: gridService)
     }
-
+    
     var body: some View {
         VStack {
             CustomNavigationBar(leadingType: .back(action: { coordinator.pop() }), centerType: .title(title: "스티커 만들기"), trailingType: .none, navigationColor: .black)
             
             categoryTabs
-                .padding(.vertical, 6)
+                .padding(.vertical, 16)
+                .padding(.horizontal, -20)
             
             StickerGrid(
                 items: gridService.stickerItems(for: gridService.selectedCategory),
@@ -41,37 +42,24 @@ struct SitckerCollectionView: View {
                 loadingItemIDs: gridService.loadingItemIDs,
                 columns: columns,
                 rowSpacing: 40,
-                isCameraPresented: $viewModel.showCamera,
-                isStickerConfirmPresented: $viewModel.showStickerConfirm,
                 onItemAppear: { id in
-                    if let item = gridService.stickerItems(for: gridService.selectedCategory)
-                        .first(where: { $0.id == id }) {
-                        Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
+                    guard gridService.stickerImageURLs[id] == nil, gridService.loadingItemIDs.contains(id) == false, let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id }) else { return }
+                    
+                    Task {
+                        await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory)
                     }
                 },
                 onItemTap: { item in
-                    guard let tapped = gridService.stickerItems(for: gridService.selectedCategory)
-                        .first(where: { $0.id == item.id }) else { return }
+                    guard let tapped = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == item.id }) else { return }
                     if viewModel.showMakeStickerButton, viewModel.targetItemID == tapped.id { return }
                     viewModel.targetItemID = tapped.id
                     StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, tapped.title]
                     withAnimation(.easeInOut(duration: 0.25)) {
                         viewModel.showMakeStickerButton = true
                     }
-                },
-                onCameraDismiss: { id in
-                    if let item = gridService.stickerItems(for: gridService.selectedCategory)
-                        .first(where: { $0.id == id }) {
-                        Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
-                    }
-                },
-                onConfirmDismiss: { id in
-                    if let item = gridService.stickerItems(for: gridService.selectedCategory)
-                        .first(where: { $0.id == id }) {
-                        Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
-                    }
                 }
             )
+            .padding(.vertical, 10)
             
             Spacer()
             
@@ -79,7 +67,7 @@ struct SitckerCollectionView: View {
                 makeStickerButton
             }
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 20)
         .backHiddenSwipeEnabled()
         .background(dismissBackdrop)
         .simultaneousGesture(
@@ -90,54 +78,59 @@ struct SitckerCollectionView: View {
                 }
             }
         )
-        .cameraCaptureFlow(isPresented: $viewModel.showCamera, cameraVM: cameraVM)
-        .photoPickerStickerConfirmFlow(viewModel: viewModel)
+        .onAppear {
+            reloadStickerIfNeeded()
+        }
+    }
+    
+    private func reloadStickerIfNeeded() {
+        let tags = StickerEmotionTagManager.shared.emotionTags
+        guard tags.count >= 2 else { return }
+        
+        let categoryRaw = tags[0]
+        let title = tags[1]
+        
+        guard let category = StickerCategory(rawValue: categoryRaw) else {
+            StickerEmotionTagManager.shared.emotionTags = []
+            return
+        }
+        
+        let items = gridService.stickerItems(for: category)
+        guard let item = items.first(where: { $0.title == title }) else {
+            StickerEmotionTagManager.shared.emotionTags = []
+            return
+        }
+        
+        Task {
+            await gridService.fetchStickerImage(for: item, in: category)
+            await MainActor.run {
+                StickerEmotionTagManager.shared.emotionTags = []
+            }
+        }
     }
     
     private var makeStickerButton: some View {
         HStack {
-            Button {
-                viewModel.showPhotoPicker = true
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "photo.on.rectangle")
-                    Text("기존 게시물\n사진으로 만들기")
-                        .font(.system(size: 14, weight: .semibold))
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .border(Color.black, width: 1)
-            }
+            CustomButton(title: "내 게시물로 만들기", style: .secondary, isEnable: true, action: { coordinator.push(.photoPicker) })
             
             Spacer()
+                .frame(maxWidth: 16)
             
-            Button {
+            CustomButton(title: "스티커 만들기", style: .primary, isEnable: true, action: {
                 guard
                     let id = viewModel.targetItemID,
                     let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id })
-                else {
-                    return
-                }
+                else { return }
+                
                 let keyword = item.title
                 StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, keyword]
-                cameraVM.stickerKeyword = keyword
-                cameraVM.isFrontOnly = true
-                cameraVM.resetCameraState()
-                viewModel.showCamera = true
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "camera")
-                    Text("사진 찍기")
-                        .font(.system(size: 14, weight: .semibold))
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .border(Color.black, width: 1)
-            }
+                
+                coordinator.push(.camera)
+            })
         }
         .transition(.move(edge: .bottom).combined(with: .opacity))
     }
-
+    
     private var dismissBackdrop: some View {
         Group {
             if viewModel.showMakeStickerButton {
@@ -151,29 +144,42 @@ struct SitckerCollectionView: View {
             }
         }
     }
-
+    
     private var categoryTabs: some View {
         HStack {
             let categories = StickerCategory.allCases
             ForEach(Array(categories.enumerated()), id: \.element) { index, category in
                 let isSelected = category == gridService.selectedCategory
-                Text(category.rawValue)
-                    .font(.system(size: 15, weight: .semibold))
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(isSelected ? Color.primary.opacity(0.1) : Color.secondary.opacity(0.08))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14)
-                            .stroke(isSelected ? Color.primary.opacity(0.2) : Color.clear, lineWidth: 1)
-                    )
-                    .onTapGesture {
+                VStack(spacing: 12) {
+                    Text(category.rawValue)
+                        .font(isSelected ? .subtitleSemiBold16 : .bodyRegular16)
+                        .foregroundColor(isSelected ? Color.ppBlack : Color.ppGray300)
+                    
+                    ZStack {
+                        Rectangle()
+                            .frame(height: 2)
+                            .foregroundColor(.clear)
+                        
+                        if isSelected {
+                            Rectangle()
+                                .frame(height: 2)
+                                .foregroundColor(Color.ppPrime)
+                                .cornerRadius(5)
+                                .matchedGeometryEffect(
+                                    id: "categoryUnderline",
+                                    in: categoryUnderlineNamespace
+                                )
+                        }
+                    }
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    withAnimation(.easeInOut(duration: 0.5)) {
                         gridService.selectedCategory = category
                         viewModel.showMakeStickerButton = false
                         viewModel.targetItemID = nil
                     }
+                }
                 if index < categories.count - 1 {
                     Spacer(minLength: 0)
                 }

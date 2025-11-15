@@ -40,8 +40,8 @@ struct CameraViewContainer: View {
                 }
             }
         }
+        .backHiddenSwipeEnabled()
         .onChange(of: cameraViewModel.showCaptionView) { _, _ in
-            
             let newCaptionVM = CaptionViewModel(
                 frontImage: cameraViewModel.frontImage,
                 backImage: cameraViewModel.backImage

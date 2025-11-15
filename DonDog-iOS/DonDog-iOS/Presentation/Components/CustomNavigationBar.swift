@@ -36,6 +36,7 @@ enum CustomNavigationBarTrailingType {
     case menu(items: [CustomNavMenuItem])
     case setting(action: () -> Void)
     case timeType(time: String)
+    case textButton(title: String, isEnabled: Bool, action: () -> Void)
     case none
 }
 
@@ -164,7 +165,16 @@ struct CustomNavigationBar: View {
             }
         
         case .timeType(let time):
-                Text("\(time)")
+            Text("\(time)")
+            
+        case .textButton(let title, let isEnabled, let action):
+            Button(action: action) {
+                Text(title)
+                    .font(.bodyRegular18)
+                    .foregroundStyle(isEnabled ? Color.ppPrime : Color.ppGray300)
+            }
+            .disabled(!isEnabled)
+            .opacity(isEnabled ? 1.0 : 0.3)
             
         case .none:
             Spacer().frame(width: 24).opacity(0)

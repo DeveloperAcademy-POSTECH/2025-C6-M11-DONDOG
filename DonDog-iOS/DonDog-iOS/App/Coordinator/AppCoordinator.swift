@@ -96,7 +96,7 @@ final class AppCoordinator: ObservableObject {
         case .invite:
             factory.makeInviteView(showSentHint: inviteShowSentHint)
         case .camera:
-            EmptyView()
+            factory.makeCameraView()
         case .feed:
             factory.makeFeedView()
         case .home:
@@ -111,6 +111,8 @@ final class AppCoordinator: ObservableObject {
             factory.makeSettingView()
         case .editprofile:
             factory.makeProfileView(mode: .edit)
+        case .photoPicker:
+            factory.makePhotoPickerView()
         }
     }
     

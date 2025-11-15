@@ -12,18 +12,19 @@ import FirebaseStorage
 import SwiftUI
 
 final class StickerConfirmViewModel: ObservableObject {
+    @Published var image: UIImage?
+    
     @Published var isUploading: Bool = false
     @Published var uploadError: String?
-    let image: UIImage?
-    let onDone: (UIImage) -> Void
+
     private var currentTags: [String] { StickerEmotionTagManager.shared.emotionTags }
     
-    init(image: UIImage?, onDone: @escaping (UIImage) -> Void) {
+    init(image: UIImage?) {
         self.image = image
-        self.onDone = onDone
+        print("StickerConfirmViewModel init 완료")
     }
     
-    func uploadSticker() {
+    func uploadSticker(onSuccess: (([String]) -> Void)? = nil) {
         guard !isUploading else { return }
         guard let original = image else { return }
         let stickerID = UUID().uuidString
@@ -79,7 +80,7 @@ final class StickerConfirmViewModel: ObservableObject {
                 await MainActor.run {
                     self.isUploading = false
                     StickerEmotionTagManager.shared.emotionTags = []
-                    self.onDone(original)
+                    onSuccess?(selectedTags)
                 }
             } catch {
                 await MainActor.run {

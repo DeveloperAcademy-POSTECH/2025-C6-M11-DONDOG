@@ -19,8 +19,8 @@ final class CameraViewModel: ObservableObject {
     @Published var isUploading = false
     @Published var showCaptionView = false
     
-    // 전면 촬영만 할지 여부 - 피드뷰, 스티커 컬렉션 뷰
-    var isFrontOnly: Bool = false
+    // 스티커 제작뷰에서 활성화한 카메라인지 여부
+    var isStickerCamera: Bool = false
     @Published var stickerKeyword: String? = nil
     
     // 카메라 컨트롤러 참조 (리셋을 위해 필요)

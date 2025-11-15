@@ -122,6 +122,7 @@ struct CustomNavigationBar: View {
                     .font(.titleBold18)
                 Image(systemName: image)
                     .font(.titleBold18)
+                    .foregroundStyle(.ppPrime)
             }
         
         case .none:

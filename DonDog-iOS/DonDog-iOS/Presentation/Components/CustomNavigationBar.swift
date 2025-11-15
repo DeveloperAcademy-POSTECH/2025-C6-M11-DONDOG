@@ -164,7 +164,8 @@ struct CustomNavigationBar: View {
             }
         
         case .timeType(let time):
-                Text("\(time)")
+            Text("\(time)")
+                .frame(width: 24)
             
         case .none:
             Spacer().frame(width: 24).opacity(0)

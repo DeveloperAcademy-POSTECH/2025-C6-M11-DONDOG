@@ -19,6 +19,7 @@ protocol CaptionViewModelDelegate: AnyObject {
 final class CaptionViewModel: ObservableObject {
     @Published var caption: String = ""
     @Published var isUploading: Bool = false
+    @Published var currentIndex: Int = 0
     
     let connectUserInfo = UserPairingStore.shared
     weak var delegate: CaptionViewModelDelegate?

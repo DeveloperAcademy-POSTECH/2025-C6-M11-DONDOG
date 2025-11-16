@@ -18,17 +18,24 @@ struct PostContentsView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            TabView(selection: $isFrontOrBack) {
-                ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel)
-                    .tag(0)
-                
-                ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel)
-                    .tag(1)
+            if !isEditing {
+                TabView(selection: $isFrontOrBack) {
+                    ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel)
+                        .tag(0)
+                    
+                    ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel)
+                        .tag(1)
+                }
+                .tabViewStyle(.page(indexDisplayMode: .automatic))
+                .frame(height: 470)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .padding(.bottom, 10)
+            } else {
+                ImageView(urlString: isFrontOrBack == 0 ? post.frontImageURL : post.backImageURL, isEditing: $isEditing, viewModel: viewModel)
+                    .frame(height: 470)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .padding(.bottom, 10)
             }
-            .frame(height: 470)
-            .clipShape(RoundedRectangle(cornerRadius: 15))
-            .tabViewStyle(.page(indexDisplayMode: .automatic))
-            .padding(.bottom, 10)
             
             Text(post.caption)
                 .font(.polaroidCaptionRegular16)

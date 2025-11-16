@@ -13,6 +13,7 @@ struct StickerView: View {
     var isSelected: Bool
     var isEditable: Bool
     var onDelete: () -> Void
+    var onInteraction: () -> Void
     
     @State private var dragOffset: CGSize = .zero
     @State private var lastOffset: CGSize = .zero
@@ -71,6 +72,7 @@ struct StickerView: View {
     private var dragGesture: some Gesture {
         DragGesture()
             .onChanged { value in
+                onInteraction()
                 let newX = lastOffset.width + value.translation.width / sticker.scale
                 let newY = lastOffset.height + value.translation.height / sticker.scale
                 
@@ -91,6 +93,7 @@ struct StickerView: View {
     private var scaleGesture: some Gesture {
         MagnificationGesture()
             .onChanged { value in
+                onInteraction()
                 sticker.scale = min(max(lastScale * value, 0.4), 3.0)
             }
             .onEnded { _ in
@@ -101,19 +104,12 @@ struct StickerView: View {
     private var rotationGesture: some Gesture {
         RotationGesture()
             .onChanged { value in
+                onInteraction()
                 sticker.rotation = lastRotation + value
             }
             .onEnded { _ in
                 lastRotation = sticker.rotation
             }
-    }
-    
-    func cornerOffset(xSign: CGFloat, ySign: CGFloat) -> (CGFloat, CGFloat) {
-        let halfSize = 65 * sticker.scale
-        let radians = sticker.rotation.radians
-        let x = xSign * halfSize * cos(radians) - ySign * halfSize * sin(radians)
-        let y = xSign * halfSize * sin(radians) + ySign * halfSize * cos(radians)
-        return (x, y)
     }
     
     private var transformGesture: some Gesture {

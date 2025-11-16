@@ -125,7 +125,7 @@ final class DataManager: DataManagerProtocol {
     func fetchWhereEqual<T: Decodable>(
         path: String,
         field: String,
-        isEqualTo value: Any,
+        isEqualTo value: String,
         orderBy: String? = nil,
         descending: Bool = false,
         limit: Int? = nil

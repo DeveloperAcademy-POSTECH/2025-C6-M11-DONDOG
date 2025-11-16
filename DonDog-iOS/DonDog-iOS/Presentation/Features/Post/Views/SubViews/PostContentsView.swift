@@ -11,68 +11,37 @@ import SwiftUI
 
 struct PostContentsView: View {
     let post: PostData
+    @Binding var isEditing: Bool
+    @ObservedObject var viewModel: StickerViewModel
     
     @State private var isFrontOrBack: Int = 0
     
     var body: some View {
-        VStack(alignment: .center) {
-            Text(DateUtils.relativeTimeString(from: post.createdAt.dateValue()))
-                .font(.captionRegular13)
-                .foregroundStyle(.ddGray500)
-                .padding(.bottom, 23)
-            
+        VStack(alignment: .leading) {
             TabView(selection: $isFrontOrBack) {
-                ImageView(urlString: post.frontImageURL)
+                ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel)
                     .tag(0)
-
-                ImageView(urlString: post.backImageURL)
+                
+                ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel)
                     .tag(1)
             }
             .frame(height: 470)
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .tabViewStyle(.page(indexDisplayMode: .automatic))
-            .padding(.bottom, 27)
+            .padding(.bottom, 10)
             
             Text(post.caption)
-                .font(.polaroidCaptionRegular20)
+                .font(.polaroidCaptionRegular16)
                 .foregroundStyle(.ddGray1000)
+                .padding(.bottom, 2)
+                .padding(.leading, 4)
+            
+            Text(DateUtils.relativeTimeString(from: post.createdAt.dateValue()))
+                .font(.captionRegular13)
+                .foregroundStyle(.ddGray500)
+                .padding(.leading, 4)
         }
         .padding(.horizontal, 20)
-    }
-}
-
-private struct ImageView: View {
-    let urlString: String
-    @State private var loadFailed: Bool = false
-
-    private var url: URL? {
-        URL(string: urlString)
-    }
-
-    var body: some View {
-        ZStack {
-            KFImage(url)
-                .placeholder {
-                    RoundedRectangle(cornerRadius: 15)
-                        .fill(.ddGray500)
-                }
-                .onFailure { _ in
-                    loadFailed = true
-                }
-                .cancelOnDisappear(true)
-                .fade(duration: 0.25)
-                .resizable()
-                .scaledToFill()
-                .clipped()
-                .overlay(alignment: .center) {
-                    if loadFailed {
-                        RoundedRectangle(cornerRadius: 15)
-                            .fill(.ddGray500)
-                            .overlay(Image(systemName: "photo"))
-                    }
-                }
-            
-            StickerView()
-        }
+        .gesture(isEditing ? nil : DragGesture())
     }
 }

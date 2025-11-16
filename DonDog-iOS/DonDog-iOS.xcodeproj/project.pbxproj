@@ -42,7 +42,7 @@
 		8BA62EA42E9149A00054EB8F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA62EA32E9149A00054EB8F /* AppDelegate.swift */; };
 		8BA7184B2E9DD7EC001F7857 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */; };
 		8BA7184D2E9DE2C3001F7857 /* CustomTextfield.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */; };
-		8BA793CA2EC06DF000FF05B3 /* PostStickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA793C92EC06DF000FF05B3 /* PostStickerView.swift */; };
+		8BA793CA2EC06DF000FF05B3 /* StickerSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA793C92EC06DF000FF05B3 /* StickerSheetView.swift */; };
 		8BA793CC2EC073E500FF05B3 /* SitckerGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA793CB2EC073E500FF05B3 /* SitckerGrid.swift */; };
 		8BA793CE2EC0750900FF05B3 /* StickerGridService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA793CD2EC0750900FF05B3 /* StickerGridService.swift */; };
 		8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */; };
@@ -71,7 +71,6 @@
 		8CF3BD8C2EAF215A0050003C /* Notification+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD882EAF215A0050003C /* Notification+.swift */; };
 		8CF3BD8D2EAF215A0050003C /* Font+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD872EAF215A0050003C /* Font+.swift */; };
 		8CF3BD8E2EAF215A0050003C /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD892EAF215A0050003C /* UIImage+.swift */; };
-		8CF9C7512EA129D600EB944A /* StickerSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF9C7502EA129D400EB944A /* StickerSheetView.swift */; };
 		A192F2BF2E9F3ADA00995DCC /* PolaroidSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */; };
 		A1AEBED12E9110160006FBBA /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1AEBED02E9110120006FBBA /* CameraViewController.swift */; };
 		CA2A58302E9E38C700AC3500 /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */; };
@@ -113,6 +112,8 @@
 		D24402A22E992CCF00D837C8 /* CameraViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */; };
 		D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A52E992CD800D837C8 /* CaptionView.swift */; };
 		D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24402A32E992CD800D837C8 /* CaptionViewModel.swift */; };
+		D27750932EBCFAAC00E27680 /* StickerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27750922EBCFAA200E27680 /* StickerViewModel.swift */; };
+		D27750992EC0186400E27680 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27750982EC0186400E27680 /* ImageView.swift */; };
 		D297CE7F2EB0305E00F28395 /* StickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D297CE7E2EB0305E00F28395 /* StickerView.swift */; };
 		D297CE862EB05DFE00F28395 /* StickerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D297CE852EB05DFB00F28395 /* StickerType.swift */; };
 		D2A7FA3B2E9FFDCD005F5AF8 /* DisplayablePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A7FA3A2E9FFDCA005F5AF8 /* DisplayablePost.swift */; };
@@ -144,7 +145,7 @@
 		8BA62EA32E9149A00054EB8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8BA7184A2E9DD7EC001F7857 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextfield.swift; sourceTree = "<group>"; };
-		8BA793C92EC06DF000FF05B3 /* PostStickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostStickerView.swift; sourceTree = "<group>"; };
+		8BA793C92EC06DF000FF05B3 /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		8BA793CB2EC073E500FF05B3 /* SitckerGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitckerGrid.swift; sourceTree = "<group>"; };
 		8BA793CD2EC0750900FF05B3 /* StickerGridService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerGridService.swift; sourceTree = "<group>"; };
 		8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberView.swift; sourceTree = "<group>"; };
@@ -175,7 +176,6 @@
 		8CF3BD872EAF215A0050003C /* Font+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+.swift"; sourceTree = "<group>"; };
 		8CF3BD882EAF215A0050003C /* Notification+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+.swift"; sourceTree = "<group>"; };
 		8CF3BD892EAF215A0050003C /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
-		8CF9C7502EA129D400EB944A /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolaroidSetView.swift; sourceTree = "<group>"; };
 		A1AEBED02E9110120006FBBA /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
@@ -218,6 +218,9 @@
 		D24402A12E992CCF00D837C8 /* CameraViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewContainer.swift; sourceTree = "<group>"; };
 		D24402A32E992CD800D837C8 /* CaptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionViewModel.swift; sourceTree = "<group>"; };
 		D24402A52E992CD800D837C8 /* CaptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionView.swift; sourceTree = "<group>"; };
+		D27750922EBCFAA200E27680 /* StickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerViewModel.swift; sourceTree = "<group>"; };
+		D27750982EC0186400E27680 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		D27750A32EC3888100E27680 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D297CE7E2EB0305E00F28395 /* StickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerView.swift; sourceTree = "<group>"; };
 		D297CE852EB05DFB00F28395 /* StickerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerType.swift; sourceTree = "<group>"; };
 		D2A7FA3A2E9FFDCA005F5AF8 /* DisplayablePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayablePost.swift; sourceTree = "<group>"; };
@@ -504,6 +507,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
+				D27750A32EC3888100E27680 /* DonDog-iOS.app */,
 				8C62BF0B2EC16B1300185CD3 /* DonDog-iOS.app */,
 				8C62C0172EC6B26900185CD3 /* DonDog-iOS.app */,
 			);
@@ -718,6 +722,8 @@
 			isa = PBXGroup;
 			children = (
 				D219F21E2EAEA10100BD82B7 /* PostContentsView.swift */,
+				D27750982EC0186400E27680 /* ImageView.swift */,
+				8BA793C92EC06DF000FF05B3 /* StickerSheetView.swift */,
 				D297CE7E2EB0305E00F28395 /* StickerView.swift */,
 			);
 			path = SubViews;
@@ -728,7 +734,6 @@
 			children = (
 				D219F1EB2EAE20B700BD82B7 /* SubViews */,
 				D219F1E22EAE0A3200BD82B7 /* PostView.swift */,
-				8BA793C92EC06DF000FF05B3 /* PostStickerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -736,6 +741,7 @@
 		D219F1F72EAE246E00BD82B7 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				D27750922EBCFAA200E27680 /* StickerViewModel.swift */,
 				D219F1E42EAE0A3D00BD82B7 /* PostViewModel.swift */,
 			);
 			path = ViewModels;
@@ -769,7 +775,6 @@
 		D293F37B2EA55B7100AECA1A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
-				8CF9C7502EA129D400EB944A /* StickerSheetView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -834,6 +839,9 @@
 			);
 			productName = "DonDog-iOS";
 			productReference = 8C62C0172EC6B26900185CD3 /* DonDog-iOS.app */;
+			productReference = D27750A32EC3888100E27680 /* DonDog-iOS.app */;
+			productReference = 8C62BF0B2EC16B1300185CD3 /* DonDog-iOS.app */;
+			productReference = 8BFD78AE2EC2CD5800E519FF /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -918,7 +926,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8CF9C7512EA129D600EB944A /* StickerSheetView.swift in Sources */,
 				8CF3BD7D2EAF1C710050003C /* PostData.swift in Sources */,
 				CA9C13E32EA48A5500519748 /* ArchivePostContainer.swift in Sources */,
 				8BA793CE2EC0750900FF05B3 /* StickerGridService.swift in Sources */,
@@ -930,6 +937,7 @@
 				61C9B1A62E9BFCBE0007C8F4 /* ArchiveDate.swift in Sources */,
 				CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */,
 				8B5F44562E90FA74003137F2 /* ProfileView.swift in Sources */,
+				D27750992EC0186400E27680 /* ImageView.swift in Sources */,
 				8CF3BD8B2EAF215A0050003C /* Color+.swift in Sources */,
 				8CF3BD8C2EAF215A0050003C /* Notification+.swift in Sources */,
 				8B6624472EB34706006BDF4A /* InviteDoc.swift in Sources */,
@@ -991,6 +999,7 @@
 				8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */,
 				8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */,
 				CAB6B1E22EB5082D00F778EC /* UserPairingStore.swift in Sources */,
+				D27750932EBCFAAC00E27680 /* StickerViewModel.swift in Sources */,
 				D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */,
 				D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */,
 				619343842E9D3C9B004B5F01 /* NotificationService.swift in Sources */,
@@ -1008,7 +1017,7 @@
 				CAA9AEDF2E8FC15C0047A89A /* FeedView.swift in Sources */,
 				D297CE7F2EB0305E00F28395 /* StickerView.swift in Sources */,
 				8B6E118A2E968E2B0082B24C /* SettingView.swift in Sources */,
-				8BA793CA2EC06DF000FF05B3 /* PostStickerView.swift in Sources */,
+				8BA793CA2EC06DF000FF05B3 /* StickerSheetView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,9 +10,8 @@ import FirebaseAuth
 import FirebaseFirestore
 
 final class PostViewModel: ObservableObject {
-    @Published var showDeleteConfirmAlert = false
-    @Published var showUnauthorizedAlert = false
     @Published var post: PostData
+    @Published var isMyPost = false
     
     private let connectUserInfo = UserPairingStore.shared
     
@@ -22,18 +21,10 @@ final class PostViewModel: ObservableObject {
     }
     
     private func checkIfItsMyPost() {
-        showUnauthorizedAlert = post.authorId != connectUserInfo.myUid
+        isMyPost = post.authorId == connectUserInfo.myUid
     }
     
-    func handleDeleteRequest(for post: PostData) {
-        if post.authorId == connectUserInfo.myUid {
-            showDeleteConfirmAlert = true
-        } else {
-            showUnauthorizedAlert = true
-        }
-    }
-    
-    func deletePost(for post: PostData) async {
+    func deletePost() async {
         do {
             try await PostService.shared.deletePost(postId: post.postId)
         } catch {

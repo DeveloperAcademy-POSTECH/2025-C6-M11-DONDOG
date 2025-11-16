@@ -16,14 +16,14 @@ struct CustomSegmentedControl<Item: Hashable & Identifiable>: View {
     @State private var pressBounce = false
     
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 6) {
             ForEach(items) { item in
                 segment(item)
             }
         }
         .padding(.vertical, 6)
         .padding(.horizontal, 8)
-        .background(.ddGray300)
+        .background(.ppSubPrime)
         .clipShape(Capsule())
         .fixedSize()
         .animation(.bouncy(duration: 0.55, extraBounce: 0.45), value: selectedItem)
@@ -41,16 +41,15 @@ struct CustomSegmentedControl<Item: Hashable & Identifiable>: View {
         } label: {
             Text(titleProvider(item))
                 .font(.subtitleSemiBold16)
-                .foregroundStyle(.ddGray1000)
+                .foregroundStyle(selectedItem == item ? .ppBlack : .ppWhite)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 12)
                 .background(
                     ZStack {
                         if selectedItem == item {
                             Capsule()
-                                .fill(.ddWhite)
+                                .fill(.ppWhite)
                                 .matchedGeometryEffect(id: "pill", in: nameSpace)
-                                .shadow(color: .ddBlack.opacity(0.08), radius: 1, x: 0, y: 1)
                         }
                     },
                     alignment: .center

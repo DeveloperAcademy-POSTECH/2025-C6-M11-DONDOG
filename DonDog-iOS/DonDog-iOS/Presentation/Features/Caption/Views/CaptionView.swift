@@ -12,15 +12,15 @@ struct CaptionView: View {
     var onCancel: () -> Void
     var onReturnToHome: () -> Void
     @State private var isShowCaptionEditor: Bool = false
+    @State private var isShowCancelAlert: Bool = false
     @FocusState private var isCaptionFocused: Bool
-    @State private var isFrontImageOnTop = true
     @StateObject private var keyboard = KeyboardResponder()
     
     var body: some View {
         GeometryReader { _ in
             ZStack(alignment: .center) {
                 VStack(spacing: 0) {
-                    CustomNavigationBar(leadingType: .none, centerType: .timeTitle(title: "11월 9일", timeImage: "sun"), trailingType: .close(action: {onCancel()}), navigationColor: .black)
+                    CustomNavigationBar(leadingType: .none, centerType: .timeTitle(title: "11월 9일", timeImage: DateUtils.isATime(date: .now) ? "sun.max" : "moon.fill"), trailingType: .close(action: {isShowCancelAlert = true}), navigationColor: .black)
                         .padding(.horizontal, 16)
                     if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
                         ZStack {
@@ -104,17 +104,78 @@ struct CaptionView: View {
                         viewModel.uploadPost()
                     } label: {
                         Text("업로드하기")
-                            .font(.bodyRegular18)
-                            .foregroundColor(.ddWhite)
+                            .font(.bodyMedium16)
+                            .foregroundColor(.ppWhite)
                             .frame(maxWidth: .infinity)
                             .frame(height: 52)
                     }
-                    .background(.red)
+                    .background(.ppPrime)
                     .cornerRadius(12)
                     .disabled(viewModel.isUploading)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 8)
                     .hapticFeedback(.medium)
+                }
+                if isShowCancelAlert {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            isShowCancelAlert = false
+                        }
+                    
+                    VStack(spacing: 0) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.ddAlert)
+                            .padding(.top, 24)
+                        
+                        Text("다시 촬영하시겠어요?")
+                            .font(.subtitleSemiBold16)
+                            .foregroundColor(.ddBlack)
+                            .padding(.top, 16)
+                        
+                        Text("지금까지 찍은 사진은 사라져요")
+                            .font(.bodyRegular16)
+                            .foregroundColor(.ddGray500)
+                            .padding(.top, 8)
+                            .padding(.bottom, 24)
+                        
+                        HStack(spacing: 8) {
+                            Button {
+                                isShowCancelAlert = false
+                            } label: {
+                                Text("취소")
+                                    .font(.subtitleSemiBold16)
+                                    .foregroundColor(.ddGray500)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 48)
+                                    .background(Color.ddWhite)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(Color.ddGray300, lineWidth: 1)
+                                    )
+                                    .cornerRadius(12)
+                            }
+                            
+                            Button {
+                                isShowCancelAlert = false
+                                onCancel()
+                            } label: {
+                                Text("재촬영")
+                                    .font(.subtitleSemiBold16)
+                                    .foregroundColor(.ddWhite)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 48)
+                                    .background(Color.ddAlert)
+                                    .cornerRadius(12)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 20)
+                    }
+                    .background(Color.ddWhite)
+                    .cornerRadius(16)
+                    .padding(.horizontal, 40)
                 }
             }
             .background {

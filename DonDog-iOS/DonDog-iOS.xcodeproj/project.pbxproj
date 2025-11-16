@@ -57,6 +57,11 @@
 		8C3F8FBF2EB8DAB000699BC3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */; };
 		8C62BF102EC2BA3300185CD3 /* ShootingGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C62BF0F2EC2B9C700185CD3 /* ShootingGuideView.swift */; };
 		8C62BF122EC3615000185CD3 /* ShootingCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C62BF112EC3614800185CD3 /* ShootingCompleteView.swift */; };
+		8C62C0222EC8850800185CD3 /* CameraViewController+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C62C0212EC8850000185CD3 /* CameraViewController+UI.swift */; };
+		8C62C0242EC8852600185CD3 /* CameraViewController+StepIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C62C0232EC8851C00185CD3 /* CameraViewController+StepIndicator.swift */; };
+		8C62C0262EC8854100185CD3 /* CameraViewController+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C62C0252EC8853F00185CD3 /* CameraViewController+Actions.swift */; };
+		8C62C0282EC8855400185CD3 /* CameraViewController+State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C62C0272EC8855200185CD3 /* CameraViewController+State.swift */; };
+		8C62C02A2EC8856500185CD3 /* CameraViewController+PhotoCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C62C0292EC8856400185CD3 /* CameraViewController+PhotoCapture.swift */; };
 		8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */; };
 		8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */; };
 		8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD752EAE0EA40050003C /* DataManager.swift */; };
@@ -157,6 +162,11 @@
 		8C62BF0F2EC2B9C700185CD3 /* ShootingGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShootingGuideView.swift; sourceTree = "<group>"; };
 		8C62BF112EC3614800185CD3 /* ShootingCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShootingCompleteView.swift; sourceTree = "<group>"; };
 		8C62C0172EC6B26900185CD3 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C62C0212EC8850000185CD3 /* CameraViewController+UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+UI.swift"; sourceTree = "<group>"; };
+		8C62C0232EC8851C00185CD3 /* CameraViewController+StepIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+StepIndicator.swift"; sourceTree = "<group>"; };
+		8C62C0252EC8853F00185CD3 /* CameraViewController+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+Actions.swift"; sourceTree = "<group>"; };
+		8C62C0272EC8855200185CD3 /* CameraViewController+State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+State.swift"; sourceTree = "<group>"; };
+		8C62C0292EC8856400185CD3 /* CameraViewController+PhotoCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+PhotoCapture.swift"; sourceTree = "<group>"; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
 		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -425,6 +435,18 @@
 			path = SubViews;
 			sourceTree = "<group>";
 		};
+		8C62C01E2EC884A200185CD3 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8C62C0292EC8856400185CD3 /* CameraViewController+PhotoCapture.swift */,
+				8C62C0272EC8855200185CD3 /* CameraViewController+State.swift */,
+				8C62C0252EC8853F00185CD3 /* CameraViewController+Actions.swift */,
+				8C62C0232EC8851C00185CD3 /* CameraViewController+StepIndicator.swift */,
+				8C62C0212EC8850000185CD3 /* CameraViewController+UI.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		8CF3BD792EAF1C2B0050003C /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -565,6 +587,7 @@
 		CAA9AECC2E8FC15C0047A89A /* Camera */ = {
 			isa = PBXGroup;
 			children = (
+				8C62C01E2EC884A200185CD3 /* Extensions */,
 				CAA9AEC82E8FC15C0047A89A /* Views */,
 				CAA9AECA2E8FC15C0047A89A /* ViewModels */,
 			);
@@ -928,6 +951,7 @@
 				CAC4C62B2EC6D39800131F6A /* CustomAlert.swift in Sources */,
 				8CF3BD8E2EAF215A0050003C /* UIImage+.swift in Sources */,
 				8B7729072EA73A3000344491 /* InWebSheetView.swift in Sources */,
+				8C62C0282EC8855400185CD3 /* CameraViewController+State.swift in Sources */,
 				CA2A58302E9E38C700AC3500 /* CustomNavigationBar.swift in Sources */,
 				CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */,
 				CAA9AED92E8FC15C0047A89A /* WinkyApp.swift in Sources */,
@@ -950,6 +974,7 @@
 				D2AB17BF2EBAEF10005292FD /* PostType.swift in Sources */,
 				8B38DBE22EBCFB5800DD7562 /* PhotoPickerViewModel.swift in Sources */,
 				8B736DF42EBB415100E2AB76 /* PhotoPickerView.swift in Sources */,
+				8C62C0222EC8850800185CD3 /* CameraViewController+UI.swift in Sources */,
 				CA9C140C2EA60BA000519748 /* ToastView.swift in Sources */,
 				8C3E79222EBB28F5000ADEF6 /* HomePost.swift in Sources */,
 				D219F1E52EAE0A4400BD82B7 /* PostViewModel.swift in Sources */,
@@ -961,7 +986,9 @@
 				CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */,
 				8BDF76982E9F72CE007F12BB /* SplashView.swift in Sources */,
 				D2E90A3E2EB6083800A6E164 /* StickerService.swift in Sources */,
+				8C62C02A2EC8856500185CD3 /* CameraViewController+PhotoCapture.swift in Sources */,
 				CA9C14032EA5CD8C00519748 /* PostService.swift in Sources */,
+				8C62C0242EC8852600185CD3 /* CameraViewController+StepIndicator.swift in Sources */,
 				8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */,
 				8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */,
 				61C9B19E2E9BEC130007C8F4 /* ArchiveView.swift in Sources */,
@@ -987,6 +1014,7 @@
 				CAA62D042EA1E3FD00C60E05 /* KeyboardUtils.swift in Sources */,
 				CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */,
 				A1AEBED12E9110160006FBBA /* CameraViewController.swift in Sources */,
+				8C62C0262EC8854100185CD3 /* CameraViewController+Actions.swift in Sources */,
 				8B6E11912E9771EA0082B24C /* SettingViewModel.swift in Sources */,
 				CAA9AEF02E8FE2990047A89A /* ModuleFactoryProtocol.swift in Sources */,
 				CAB6B1F42EB63D9000F778EC /* Errors.swift in Sources */,

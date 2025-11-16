@@ -8,25 +8,25 @@
 import SwiftUI
 
 struct SplashView: View {
-    @EnvironmentObject var coordinator: AppCoordinator
-    @State private var showSplashView = false
-    
     var body: some View {
         ZStack {
-            LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
+            Color.ppPrime
                 .ignoresSafeArea()
-                .opacity(0.35)
             
             VStack {
                 Spacer()
                 Image("SplashLogo")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 94)
-                    .padding(.bottom, 68)
+                    .frame(width: 245)
+                Text("서로의 하루를 공유하는 가장 즐거운 방법")
+                    .foregroundStyle(Color.ppWhite)
+                    .font(.captionMedium14)
                 Spacer()
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(height: 68)
             }
-            .padding(.horizontal, 20)
             .navigationBarBackButtonHidden(true)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

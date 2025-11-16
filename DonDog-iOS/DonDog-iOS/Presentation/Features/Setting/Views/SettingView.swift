@@ -14,68 +14,72 @@ struct SettingView: View {
     @State private var webSheet: WebSheetItem?
     
     var body: some View {
-        ZStack {
-            LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
-                .ignoresSafeArea()
-                .opacity(0.35)
+        VStack(spacing: 0) {
+            CustomNavigationBar(leadingType: .back(action: { coordinator.pop() }), centerType: .title(title: "설정"), trailingType: .none, navigationColor: .black)
+                .padding(.horizontal, 16)
             
-            VStack(spacing: 0) {
-                CustomNavigationBar(leadingType: .back(action: { coordinator.pop() }), centerType: .title(title: "설정"), trailingType: .none, navigationColor: .black)
-                
-                HStack {
-                    VStack(alignment: .leading, spacing: 24) {
-                        Button { coordinator.push(.editprofile) }    label: { Text("프로필 수정") }
-                        Button { viewModel.showLogoutConfirm = true } label: { Text("로그아웃") }
-                        Button { viewModel.showDeleteConfirm = true } label: { Text("회원탈퇴") }
-                        
-                        Button {
-                            if let url = URL(string: "https://posacademy.notion.site/Winky-2922b843d5af8058aabbc9bbe3009139?source=copy_link") {
-                                webSheet = WebSheetItem(url: url)
-                            }
-                        } label: {
-                            Text("개인정보처리방침")
+            HStack {
+                VStack(alignment: .leading, spacing: 24) {
+                    Button { coordinator.push(.editprofile) }    label: { Text("프로필 수정").font(.subtitleMedium18).foregroundStyle(Color.ppGray700) }
+                    Button { viewModel.showLogoutConfirm = true } label: { Text("로그아웃").font(.subtitleMedium18).foregroundStyle(Color.ppGray700) }
+                    Button { viewModel.showDeleteConfirm = true } label: { Text("회원탈퇴").font(.subtitleMedium18).foregroundStyle(Color.ppGray700) }
+                    
+                    Button {
+                        if let url = URL(string: "https://posacademy.notion.site/Winky-2922b843d5af8058aabbc9bbe3009139?source=copy_link") {
+                            webSheet = WebSheetItem(url: url)
                         }
-                        .foregroundStyle(Color.ddGray500)
-
-                        Button {
-                            if let url = URL(string: "https://posacademy.notion.site/2932b843d5af8002a16df56cb9d27afe?source=copy_link") {
-                                webSheet = WebSheetItem(url: url)
-                            }
-                        } label: {
-                            Text("신고하기")
-                        }
-                        .foregroundStyle(Color.ddGray500)
-
+                    } label: {
+                        Text("개인정보처리방침")
                     }
-                    .font(.subtitleMedium18)
-                    .foregroundStyle(Color.ddGray1000)
-        
-                    Spacer()
+                    .foregroundStyle(Color.ppGray400)
+                    
+                    Button {
+                        if let url = URL(string: "https://posacademy.notion.site/2932b843d5af8002a16df56cb9d27afe?source=copy_link") {
+                            webSheet = WebSheetItem(url: url)
+                        }
+                    } label: {
+                        Text("신고하기")
+                    }
+                    .foregroundStyle(Color.ppGray400)
+                    
                 }
-                .padding(.horizontal, 4)
-                .padding(.vertical, 35)
+                .font(.subtitleMedium18)
+                .foregroundStyle(Color.ppGray700)
+                
                 Spacer()
             }
-            .padding(.horizontal, 20)
-            .navigationBarBackButtonHidden(true)
-            .alert("", isPresented: $viewModel.showLogoutConfirm) {
-                Button("취소", role: .cancel) {}
-                Button("로그아웃", role: .destructive) {
-                    Task { await viewModel.logout() }
-                }
-            } message: {
-                Text("로그아웃 하시겠습니까?")
-            }
-            .alert("윙키를 탈퇴하시겠습니까?", isPresented: $viewModel.showDeleteConfirm) {
-                Button("취소", role: .cancel) {}
-                Button("확인", role: .destructive) {
-                    coordinator.authShowWithdraw = true
-                    coordinator.push(.auth)
-                }
-            } message: {
-                Text("탈퇴하면 모든 기록이 사라져요")
-            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 40)
+            Spacer()
         }
+        .background(.ppWhite)
+        .navigationBarBackButtonHidden(true)
+        .customAlert(
+            isPresented: $viewModel.showLogoutConfirm,
+            title: "로그아웃 하시겠어요?",
+            confirmTitle: "로그아웃",
+            cancelTitle: "취소",
+            onConfirm: {
+                Task { await viewModel.logout() }
+            },
+            onCancel: {
+                //
+            }
+        )
+        .customAlert(
+            isPresented: $viewModel.showDeleteConfirm,
+            title: "윙키를 탈퇴하시겠습니까?",
+            message: "탈퇴하면 모든 기록이 사라져요",
+            confirmTitle: "탈퇴하기",
+            cancelTitle: "취소",
+            onConfirm: {
+                coordinator.authShowWithdraw = true
+                coordinator.push(.auth)
+            },
+            onCancel: {
+                //
+            }
+        )
         .sheet(item: $webSheet) { item in
             InAppWebSheet(url: item.url)
                 .ignoresSafeArea()

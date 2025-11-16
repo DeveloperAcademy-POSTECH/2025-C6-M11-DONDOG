@@ -34,8 +34,14 @@ struct CustomTextField: View {
     }
 
     private var hasError: Bool {
+        if isFocused { return false }
         if let msg = localValidationError, !msg.isEmpty { return true }
         return externalErrorMessage != nil
+    }
+
+    private var isSoftLimitExceeded: Bool {
+        guard let max = softMaxLength else { return false }
+        return text.count > max
     }
 
     var body: some View {
@@ -50,14 +56,14 @@ struct CustomTextField: View {
                         if text.isEmpty {
                             Text(placeholder)
                                 .font(.subtitleMedium18)
-                                .foregroundColor(Color.ddGray500)
+                                .foregroundColor(Color.ppGray400)
                                 .allowsHitTesting(false)
                         }
                         HStack {
                             TextField("", text: $text)
                                 .disabled(isDisabled)
                                 .font(.bodyRegular18)
-                                .foregroundColor(Color.ddBlack)
+                                .foregroundColor(hasError ? Color.ppPrime : Color.ppBlack)
                                 .keyboardType(keyboard)
                                 .focused($isFocused)
                                 .submitLabel(.done)
@@ -67,12 +73,11 @@ struct CustomTextField: View {
                                     isFocused = false
                                 }
                                 .onChange(of: text) { _, newValue in
+                                    localValidationError = nil
+                                    errorText?.wrappedValue = nil
                                     showExternalError?.wrappedValue = false
                                     suppressExternalError = true
-                                    if hasError {
-                                        localValidationError = nil
-                                        errorText?.wrappedValue = nil
-                                    }
+                                    
                                     var value = newValue.filter { !$0.isWhitespace }
 
                                     if contentType == .telephoneNumber {
@@ -111,7 +116,7 @@ struct CustomTextField: View {
                             if let max = softMaxLength {
                                 Text("\(text.count)/\(max)")
                                     .font(.captionRegular13)
-                                    .foregroundColor(hasError ? Color.ddAlert : Color.ddGray500)
+                                    .foregroundColor(isSoftLimitExceeded ? Color.ppPrime : Color.ppGray400)
                             }
                         }
 
@@ -122,7 +127,7 @@ struct CustomTextField: View {
                     .frame(height: 2)
                     .foregroundColor(
                         hasError
-                        ? Color.ddAlert : ((isFocused && !text.isEmpty) ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
+                        ? Color.ppPrime : ((isFocused && !text.isEmpty) ? Color.ppPrime : Color.ppPrime50)
                     )
 
                 if hasError, let message = (localValidationError ?? externalErrorMessage) {
@@ -136,7 +141,7 @@ struct CustomTextField: View {
                             .font(.captionRegular13)
                         Spacer()
                     }
-                    .foregroundColor(Color.ddAlert)
+                    .foregroundColor(Color.ppGray500)
                 }
             }
         }

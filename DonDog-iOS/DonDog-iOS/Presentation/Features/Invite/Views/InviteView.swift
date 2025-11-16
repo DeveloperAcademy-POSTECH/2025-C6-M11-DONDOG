@@ -49,29 +49,29 @@ struct InviteView: View {
                             HStack(spacing: 0) {
                                 Text(viewModel.inviteText)
                                     .font(.bodyRegular18)
-                                    .foregroundColor(viewModel.remainTimeText == "00:00" ? Color.ddGray500 : Color.ddBlack)
+                                    .foregroundColor(viewModel.remainTimeText == "00:00" ? Color.ppGray400 : Color.ppBlack)
                                 
                                 Spacer()
                                 
                                 Text(viewModel.remainTimeText)
                                     .font(.captionRegular13)
-                                    .foregroundStyle(Color.ddGray500)
+                                    .foregroundStyle(Color.ppGray400)
                             }
                         } else {
-                            Text("Wingky")
+                            Text("Picpeek")
                                 .font(.bodyRegular18)
                                 .opacity(0)
                         }
                         
                         Rectangle()
                             .frame(height: 2)
-                            .foregroundColor(Color.ddPrimaryBlue)
+                            .foregroundColor(Color.ppPrime)
                     }
                     
                     if viewModel.remainTimeText == "00:00" || viewModel.inviteText == "초대코드를 불러오지 못했습니다." {
                         ZStack {
                             RoundedRectangle(cornerRadius: 999)
-                                .foregroundStyle(viewModel.isLoading ? Color.ddSecondaryBlue : Color.ddPrimaryBlue)
+                                .foregroundStyle(viewModel.isLoading ? Color.ppPrime50 : Color.ppPrime)
                                 .frame(width: 70, height: 28)
                             
                             HStack(spacing: 2) {
@@ -79,7 +79,7 @@ struct InviteView: View {
                                 Image(systemName: "arrow.trianglehead.counterclockwise")
                             }
                             .font(.captionRegular13)
-                            .foregroundStyle(Color.ddWhite)
+                            .foregroundStyle(Color.ppWhite)
                         }
                         .onTapGesture {
                             if !viewModel.isLoading {
@@ -88,14 +88,14 @@ struct InviteView: View {
                         }
                     } else {
                         ShareLink(
-                            item: "https://testflight.apple.com/join/4QzRhxBT",
-                            message: Text("\n🪽 윙키 초대장이 도착했어요!\n사진 한 장으로 멀리 떨어져 있어도, 특별한 추억을 쌓아요.\n\n초대코드 : \(viewModel.inviteText)")
+                            item: "https://apps.apple.com/kr/app/%EC%9C%99%ED%82%A4-winky/id6754219883",
+                            message: Text("\n📸 픽픽 초대장이 도착했어요!\n사진 한 장으로 멀리 떨어져 있어도, 특별한 추억을 쌓아요.\n\n초대코드 : \(viewModel.inviteText)")
                         ) {
                             Image(systemName: "square.and.arrow.up")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 18)
-                                .foregroundStyle(Color.ddGray800)
+                                .foregroundStyle(Color.ppGray600)
                                 .padding(.leading, 3)
                         }
                     }
@@ -109,7 +109,7 @@ struct InviteView: View {
             
             if viewModel.showSentHint {
                 Text("초대 코드를 보냈어요")
-                    .foregroundStyle(Color.ddGray500)
+                    .foregroundStyle(Color.ppGray500)
                     .underline(true, pattern: .solid)
                     .font(.captionRegular13)
                     .onTapGesture {

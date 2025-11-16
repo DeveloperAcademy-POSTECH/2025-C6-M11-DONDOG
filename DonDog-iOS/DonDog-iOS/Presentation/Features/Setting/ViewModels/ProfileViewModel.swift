@@ -15,8 +15,20 @@ final class ProfileViewModel: ObservableObject {
     enum Role: String, CaseIterable {
         case parent
         case child
+        
+        var iconOffName: String {
+            switch self {
+                case .parent: return "ParentIconOff"
+                case .child:  return "ChildIconOff"
+                }
+            }
+        var iconOnName: String {
+            switch self {
+            case .parent: return "ParentIconOn"
+            case .child:  return "ChildIconOn"
+            }
+        }
 
-        var displayIcon: String { self == .parent ? "👵🏻" : "👧🏻" }
         var displayName: String { self == .parent ? "부모님" : "자녀" }
         var rawForDB: String { self.rawValue }
     }
@@ -25,14 +37,15 @@ final class ProfileViewModel: ObservableObject {
     private let connectUserInfo = UserPairingStore.shared
     private let dataManager: DataManagerProtocol = DataManager.shared
 
-    @Published var name: String = ""
-    @Published var selectedRole: Role?
+    @Published var name: String = "" { didSet { checkIfModified() } }
+    @Published var selectedRole: Role? { didSet { checkIfModified() } }
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     @Published var saveCompleted: Bool = false
 
     // edit 모드 - 버튼 활성화용
     @Published private(set) var didChangeFromInitial: Bool = false
+    @Published private(set) var didChangeRole: Bool = false
     private var initialName: String = ""
     private var initialRole: Role?
     private var myUid: String? {
@@ -197,5 +210,6 @@ final class ProfileViewModel: ObservableObject {
 
     private func checkIfModified() {
         didChangeFromInitial = (name != initialName) || (selectedRole != initialRole)
+        didChangeRole = (selectedRole != initialRole)
     }
 }

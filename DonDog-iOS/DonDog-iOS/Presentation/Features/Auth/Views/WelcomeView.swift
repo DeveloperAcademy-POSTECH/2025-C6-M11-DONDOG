@@ -12,19 +12,22 @@ struct WelcomeView: View {
     
     var body: some View {
         ZStack {
-            LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
+            Color.ppPrime
                 .ignoresSafeArea()
-                .opacity(0.35)
             
             VStack {
                 Spacer()
-                HStack {
+                
+                VStack(spacing: 12.6) {
                     Image("SplashLogo")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: 94)
+                        .frame(width: 245)
+                    Text("서로의 하루를 공유하는 가장 즐거운 방법")
+                        .foregroundStyle(Color.ppWhite)
+                        .font(.captionMedium14)
                 }
-
+                
                 Spacer()
                 
                 CustomButton(title: "전화번호로 시작하기", isEnable: true, action: {

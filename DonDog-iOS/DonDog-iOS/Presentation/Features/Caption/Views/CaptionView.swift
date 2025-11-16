@@ -14,105 +14,125 @@ struct CaptionView: View {
     @State private var isShowCaptionEditor: Bool = false
     @FocusState private var isCaptionFocused: Bool
     @State private var isFrontImageOnTop = true
+    @StateObject private var keyboard = KeyboardResponder()
     
     var body: some View {
-        ZStack(alignment: .center) {
-            VStack(spacing: 20) {
-                CustomNavigationBar(leadingType: .none, centerType: .none, trailingType: .close(action: {onCancel()}), navigationColor: .black)
-                    .padding(.trailing, 16)
+        GeometryReader { _ in
+            ZStack(alignment: .center) {
+                VStack(spacing: 0) {
+                    CustomNavigationBar(leadingType: .none, centerType: .timeTitle(title: "11월 9일", timeImage: "sun"), trailingType: .close(action: {onCancel()}), navigationColor: .black)
+                        .padding(.horizontal, 16)
                     if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
-                        HStack {
-                            Spacer()
-                            PolaroidSetView(frontImage: .uiImage(frontImage), backImage: .uiImage(backImage), name: "", createdAt: "", caption: nil, stickers: [:], selectedStickerType: nil, isMyPost: true)
-                                .allowsHitTesting(true)
-                                .padding(.trailing, 30)
-                        }
-                        .frame(minHeight: 260)
-                        .padding(.top, 103)
-                    }
-                
-                VStack(alignment: .leading, spacing: 15) {
-                    Text(viewModel.caption.isEmpty ? "눌러서 캡션 남기기..." : viewModel.caption)
-                        .onTapGesture {
-                            isShowCaptionEditor = true
-                            isCaptionFocused = true
-                        }
-                        .padding(.vertical, 8)
-                        .font(.subtitleMedium20)
-                        .foregroundStyle(viewModel.caption.isEmpty ? .ddGray600 : .ddBlack)
-                        .opacity(isShowCaptionEditor ? 0 : 1)
-                    
-                    TextField("", text: $viewModel.caption)
-                        .frame(width: 0, height: 0)
-                        .opacity(0)
-                        .focused($isCaptionFocused)
-                        .submitLabel(.done)
-                        .onChange(of: viewModel.caption) { _, newValue in
-                            if newValue.count > 8 {
-                                viewModel.caption = String(newValue.prefix(8))
+                        ZStack {
+                            TabView(selection: $viewModel.currentIndex) {
+                                Image(uiImage: frontImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .cornerRadius(12)
+                                    .padding(.horizontal, 20)
+                                    .tag(0)
+                                
+                                Image(uiImage: backImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .cornerRadius(12)
+                                    .padding(.horizontal, 20)
+                                    .tag(1)
+                                
+                            }
+                            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+                            .tint(.ppPrime)
+                            .onAppear {
+                                UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Color.ppPrime)
+                                UIPageControl.appearance().pageIndicatorTintColor = UIColor(Color.ppPrime50)
                             }
                         }
-                        .onSubmit {
-                            isShowCaptionEditor = false
+                        .frame(height: max(470 - keyboard.keyboardHeight, 366))
+                        .animation(.easeInOut(duration: 0.3), value: keyboard.keyboardHeight)
+                        .padding(.vertical, 8)
+                        .onTapGesture {
                             isCaptionFocused = false
                         }
-                }
-                .hapticFeedback(.medium)
-                .padding(.horizontal, 20)
-                
-                Spacer()
-                    .frame(maxHeight: 20)
-                
-                Button {
-                    onReturnToHome()
-                    viewModel.uploadPost()
-                } label: {
-                    Text("업로드")
-                        .font(.bodyRegular18)
-                        .foregroundColor(.ddWhite)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 52)
-                }
-                .background(.ddPrimaryBlue)
-                .cornerRadius(12)
-                .disabled(viewModel.isUploading)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 8)
-                .hapticFeedback(.medium)
-            }
-            if isShowCaptionEditor {
-                ZStack {
-                    Color.black
-                        .opacity(0.75)
-                    VStack(spacing: 4) {
-                        Spacer()
-                        Text(viewModel.caption.isEmpty ? "눌러서 캡션 남기기..." : viewModel.caption)
-                            .font(.subtitleMedium20)
-                            .foregroundStyle(viewModel.caption.isEmpty ? .ddGray600 : .ddWhite)
-                        if !viewModel.caption.isEmpty {
-                            Text("\(viewModel.caption.count)/8")
-                                .font(.captionRegular13)
-                                .foregroundStyle(.ddSecondaryBlue)
-                        }
-                        Spacer()
                     }
-                }.ignoresSafeArea()
+                    
+                    VStack(alignment: .center, spacing: 0) {
+                        HStack {
+                            Spacer()
+                            ZStack(alignment: .center) {
+                                Text(viewModel.caption.isEmpty ? "오늘 나의 낮을 설명해 주세요..." : viewModel.caption)
+                                    .font(.subtitleMedium18)
+                                    .foregroundStyle(viewModel.caption.isEmpty ? .ppGray400 : .ppBlack)
+                                    .multilineTextAlignment(.center)
+                                    .onTapGesture {
+                                        isCaptionFocused = true
+                                    }
+                                TextField("", text: $viewModel.caption)
+                                    .frame(width: 0, height: 0)
+                                    .focused($isCaptionFocused)
+                                    .submitLabel(.done)
+                                    .onChange(of: viewModel.caption) { _, newValue in
+                                        if newValue.count > 15 {
+                                            viewModel.caption = String(newValue.prefix(15))
+                                        }
+                                    }
+                                    .onSubmit {
+                                        isCaptionFocused = false
+                                    }
+                            }
+                            Spacer()
+                            if !viewModel.caption.isEmpty && isCaptionFocused {
+                                Text("\(viewModel.caption.count)/15")
+                                    .font(.captionRegular13)
+                                    .foregroundStyle(.ppGray400)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 16)
+                    }
+                    .hapticFeedback(.medium)
+                    .background {
+                        if isCaptionFocused {
+                            Rectangle()
+                                .foregroundStyle(.ppGray200)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
+                        onReturnToHome()
+                        viewModel.uploadPost()
+                    } label: {
+                        Text("업로드하기")
+                            .font(.bodyRegular18)
+                            .foregroundColor(.ddWhite)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 52)
+                    }
+                    .background(.red)
+                    .cornerRadius(12)
+                    .disabled(viewModel.isUploading)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 8)
+                    .hapticFeedback(.medium)
+                }
+            }
+            .background {
+                Color.ppWhite
+                    .ignoresSafeArea()
                     .onTapGesture {
-                        isShowCaptionEditor = false
                         isCaptionFocused = false
                     }
             }
         }
-        .background {
-            ZStack {
-                Color.ddWhite
-                LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
-                    .opacity(0.35)
-            }.ignoresSafeArea()
+        .ignoresSafeArea(.keyboard)
+        .onAppear {
+            isCaptionFocused = true
         }
+        
     }
 }
 
 #Preview {
-    CaptionView(viewModel: CaptionViewModel(frontImage: UIImage(), backImage: UIImage()), onCancel: {}, onReturnToHome: {})
+    CaptionView(viewModel: CaptionViewModel(frontImage: UIImage(named: "front"), backImage: UIImage()), onCancel: {}, onReturnToHome: {})
 }

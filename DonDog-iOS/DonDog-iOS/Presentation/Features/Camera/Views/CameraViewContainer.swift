@@ -26,6 +26,17 @@ struct CameraViewContainer: View {
             CameraView(viewModel: cameraViewModel)
                 .ignoresSafeArea()
             
+            ZStack {
+                Color.ppRealBlack
+                    .opacity(0.7)
+                    .ignoresSafeArea()
+                
+                Ellipse()
+                    .frame(width: 300, height: 350)
+                    .blendMode(.destinationOut)   // 이 부분을 구멍처럼 "빼버림"
+            }
+            .compositingGroup()
+            
             if cameraViewModel.showCaptionView {
                 if let captionVM = captionViewModel {
                     CaptionView(

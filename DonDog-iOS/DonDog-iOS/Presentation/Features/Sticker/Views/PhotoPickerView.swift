@@ -11,8 +11,8 @@ import Kingfisher
 import SwiftUI
 
 struct PhotoPickerView: View {
-    @StateObject var viewModel: PhotoPickerViewModel
     @EnvironmentObject var coordinator: AppCoordinator
+    @StateObject var viewModel: PhotoPickerViewModel
     
     @State private var stickerImage: UIImage?
     
@@ -49,6 +49,14 @@ struct PhotoPickerView: View {
             ScrollView {
                 if viewModel.isLoading {
                     ProgressView()
+                } else if viewModel.items.isEmpty {
+                    VStack {
+                        Spacer()
+                        // TODO: 캐릭터 이미지 넣기
+                        Text("게시물이 없어\n사진을 선택할 수 없어요")
+                            .font(.bodyRegular18)
+                        Spacer()
+                    }
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 8) {

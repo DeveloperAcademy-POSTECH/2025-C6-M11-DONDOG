@@ -1,5 +1,5 @@
 //
-//  StrokedLabel.swift
+//  OutlinedTitleImageMaker.swift
 //  Saboteur
 //
 //  Created by 이주현 on 11/12/25.

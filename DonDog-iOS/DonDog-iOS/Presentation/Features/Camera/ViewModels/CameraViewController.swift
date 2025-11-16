@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  CameraViewController.swift
 //  DonDog-iOS
@@ -26,8 +27,10 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     private var currentCamera: AVCaptureDevice?
     
     var isStickerCamera: Bool = false
+    private let stickerMaskView = UIView()
+    private let stickerMaskLayer = CAShapeLayer()
     var stickerKeyword: String?
-    var onStickerCreated: ((UIImage) -> Void)?
+    private var onStickerCreated: ((UIImage) -> Void)?
     
     private var isCapturingFront = true
     private var frontImage: UIImage?
@@ -66,6 +69,9 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
         setupCamera()
         setupUI()
         updateUIForCurrentState()  // 초기 UI 상태 설정
+        if isStickerCamera {
+            showStickerMaskOverlay()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -204,6 +210,10 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         videoPreviewLayer?.frame = previewContainerView.bounds
+        
+        if stickerMaskView.superview != nil {
+            updateStickerMaskPath()
+        }
     }
     
     private func setupBackground() {
@@ -222,6 +232,49 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     }
     
     // MARK: - 스티커 안내 UI
+    private func showStickerMaskOverlay() {
+        // 이미 추가되어 있으면 중복 추가 방지
+        if stickerMaskView.superview != nil { return }
+        
+        stickerMaskView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        // 마스크가 표시되는 동안 서브타이틀을 더 옅은 색으로 표시
+        stickerSubtitleLabel.textColor = .ppGray300
+        stickerMaskView.translatesAutoresizingMaskIntoConstraints = false
+        stickerMaskView.isUserInteractionEnabled = false
+        view.addSubview(stickerMaskView)
+        
+        NSLayoutConstraint.activate([
+            stickerMaskView.topAnchor.constraint(equalTo: view.topAnchor),
+            stickerMaskView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            stickerMaskView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stickerMaskView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        // 초기 레이아웃 강제 적용 후 마스크 경로 설정
+        view.layoutIfNeeded()
+        updateStickerMaskPath()
+        
+        // 처음엔 바로 보이게
+        stickerMaskView.alpha = 1.0
+        
+        // 0.8초 동안 유지 후 0.4초 동안 easeOut으로 사라지기
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            UIView.animate(
+                withDuration: 0.4,
+                delay: 0,
+                options: .curveEaseOut,
+                animations: {
+                    self.stickerMaskView.alpha = 0.0
+                },
+                completion: { _ in
+                    self.stickerMaskView.removeFromSuperview()
+                    // 마스크가 사라지면 서브타이틀 색을 진하게 변경
+                    self.stickerSubtitleLabel.textColor = .ppGray700
+                }
+            )
+        }
+    }
+
     private func setupStickerGuide() {
         guard isStickerCamera else { return }
         let tagText = stickerKeyword ?? StickerEmotionTagManager.shared.emotionTags.last ?? ""
@@ -238,7 +291,7 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
 
         stickerSubtitleLabel.text = "스티커에 어울리는 사진을 찍어주세요"
         stickerSubtitleLabel.font = UIFont(name: FontName.pretendardRegular.rawValue, size: 16) ?? UIFont.systemFont(ofSize: 16, weight: .regular)
-        stickerSubtitleLabel.textColor = .ddGray700
+        stickerSubtitleLabel.textColor = .ppGray300
         stickerSubtitleLabel.textAlignment = .center
 
         stickerGuideContainer.addArrangedSubview(stickerTitleLabel)
@@ -251,6 +304,29 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
             stickerGuideContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             stickerGuideContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
+    }
+
+    private func updateStickerMaskPath() {
+        let bounds = stickerMaskView.bounds
+        guard bounds.width > 0, bounds.height > 0 else { return }
+        
+        let path = UIBezierPath(rect: bounds)
+        
+        let ellipseWidth: CGFloat = 300
+        let ellipseHeight: CGFloat = 350
+        let ellipseRect = CGRect(
+            x: (bounds.width - ellipseWidth) / 2,
+            y: (bounds.height - ellipseHeight) / 2,
+            width: ellipseWidth,
+            height: ellipseHeight
+        )
+        
+        let holePath = UIBezierPath(ovalIn: ellipseRect)
+        path.append(holePath)
+        
+        stickerMaskLayer.path = path.cgPath
+        stickerMaskLayer.fillRule = .evenOdd   // 구멍 만들기 포인트
+        stickerMaskView.layer.mask = stickerMaskLayer
     }
     
     // MARK: - Step 안내 UI

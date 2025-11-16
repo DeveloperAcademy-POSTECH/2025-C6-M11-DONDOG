@@ -96,7 +96,7 @@ extension CustomCameraViewController {
         view.addSubview(stickerGuideContainer)
         stickerGuideContainer.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            stickerGuideContainer.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 16),
+            stickerGuideContainer.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 24),
             stickerGuideContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             stickerGuideContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])

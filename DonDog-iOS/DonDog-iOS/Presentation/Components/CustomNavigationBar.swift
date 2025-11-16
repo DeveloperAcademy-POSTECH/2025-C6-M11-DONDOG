@@ -117,7 +117,7 @@ struct CustomNavigationBar: View {
                 .font(.titleBold18)
             
         case .timeTitle(let text, let image):
-            HStack(spacing: 0) {
+            HStack(spacing: 5) {
                 Text(text)
                     .font(.titleBold18)
                 Image(systemName: image)
@@ -164,7 +164,8 @@ struct CustomNavigationBar: View {
             }
         
         case .timeType(let time):
-                Text("\(time)")
+            Text("\(time)")
+                .frame(width: 24)
             
         case .none:
             Spacer().frame(width: 24).opacity(0)

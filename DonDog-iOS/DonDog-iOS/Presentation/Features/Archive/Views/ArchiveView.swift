@@ -26,10 +26,11 @@ struct ArchiveView: View {
                 VStack {
                     CustomNavigationBar(
                         leadingType: .back(action: { coordinator.pop() }),
-                        centerType: .none,
+                        centerType: .title(title: "보관함"),
                         trailingType: .setting(action: { coordinator.push(.setting) }),
                         navigationColor: .black
                     )
+                    .padding(.horizontal, 20)
                     
                     // Month 이동
                     HStack(spacing: 16) {
@@ -38,10 +39,10 @@ struct ArchiveView: View {
                         Button {
                             viewModel.goToPreviousMonth()
                         } label: {
-                            Image(systemName: "arrowtriangle.left.fill")
-                                .font(.body)
-                                .frame(width: 24, height: 24)
+                            Image(viewModel.hasPreviousDisplayMonth ? "ArchiveLeftButton" : "ArchiveLeftButtonGray")
                         }
+                        .padding(.horizontal, 10)
+                        .disabled(!viewModel.hasPreviousDisplayMonth)
                         
                         if !viewModel.displayMonths.isEmpty {
                             Text(DateUtils.string(from: viewModel.displayMonths[viewModel.currentMonthIndex].date, format: .month))
@@ -54,16 +55,17 @@ struct ArchiveView: View {
                         Button {
                             viewModel.goToNextMonth()
                         } label: {
-                            Image(systemName: "arrowtriangle.right.fill")
-                                .font(.body)
-                                .frame(width: 24, height: 24)
+                            Image(viewModel.hasNextDisplayMonth ? "ArchiveRightButton" : "ArchiveRightButtonGray")
                         }
+                        .padding(.horizontal, 10)
+                        .disabled(!viewModel.hasNextDisplayMonth)
                         
                         Spacer()
                     }
-                    .foregroundStyle(.ddGray1000)
+                    .foregroundStyle(.ppBlack)
+                    .padding(.vertical, 23)
+                    .background(.ppGray200)
                 }
-                .padding(.horizontal, 20)
                 
                 // 사진 0장일 때 예외처리
                 if !viewModel.isLoading {
@@ -75,37 +77,40 @@ struct ArchiveView: View {
                                 Image(systemName: "photo.on.rectangle.angled")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 57, height: 48)
-                                Text("아직 사진이 없어요\n첫 게시물을 올려 볼까요?")
-                                    .multilineTextAlignment(.center)
-                                    .font(.bodyMedium16)
+                                    .frame(width: 60, height: 48)
+                                Text(
+                                    viewModel.isCurrentMonthDisplayed
+                                    ? "아직 사진이 없어요\n첫 게시물을 올려 볼까요?"
+                                    : "기록이 없어요"
+                                )
+                                .multilineTextAlignment(.center)
+                                .font(.bodyMedium16)
                             }
-                            .foregroundStyle(.ddGray1000)
+                            .foregroundStyle(.ppGray500)
                             Spacer()
                         } else {
                             ScrollView {
                                 VStack {
                                     VStack(alignment: .leading) {
-                                        LazyVGrid(columns: grid, spacing: 8) {
+                                        LazyVGrid(columns: grid, spacing: 4) {
                                             ForEach(month.days) { day in
-                                                let isBlurred = DateUtils.isOver3daysSinceLastUpload() && viewModel.selectedAuthorType == .partnerArchive && day.date > (UserPairingStore.shared.lastUploadedAt ?? Date())
                                                 Button {
-                                                    if !isBlurred {
+                                                    if !viewModel.isPostBlurred(for: day) {
                                                         viewModel.moveToPost(day: day)
                                                     } else {
                                                         showToastView = true
                                                     }
                                                 } label: {
-                                                    ArchivePostContainer(url: day.thumbnailURL, day: day.day, date: day.date, isBlurred: isBlurred)
+                                                    ArchivePostContainer(url: day.thumbnailURL, day: day.day, date: day.date, isBlurred: viewModel.isPostBlurred(for: day))
                                                 }
                                                 .hapticFeedback(.medium)
                                             }
                                         }
-                                        .padding(.horizontal, 12)
+                                        .padding(.horizontal, 10)
                                     }
-                                    .padding(.vertical, 8)
                                 }
                             }
+                            .padding(.top, 28)
                         }
                     } else {
                         Spacer()
@@ -113,12 +118,12 @@ struct ArchiveView: View {
                             Image(systemName: "photo.on.rectangle.angled")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 57, height: 48)
-                            Text("게시물이 없어요")
+                                .frame(width: 60, height: 48)
+                            Text("아직 사진이 없어요\n첫 게시물을 올려 볼까요?")
                                 .multilineTextAlignment(.center)
                                 .font(.bodyMedium16)
                         }
-                        .foregroundStyle(.ddGray1000)
+                        .foregroundStyle(.ppGray500)
                         Spacer()
                     }
                 }
@@ -137,18 +142,13 @@ struct ArchiveView: View {
                 VStack(alignment: .center, spacing: 16) {
                     ProgressView()
                         .scaleEffect(1.2)
-                        .tint(.ddPrimaryBlue)
+                        .tint(.ppPrime)
                     Text("로딩중...")
                         .font(.bodyMedium16)
-                        .foregroundStyle(.ddPrimaryBlue)
+                        .foregroundStyle(.ppPrime)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(.ddWhite)
-                .background(
-                    LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
-                        .opacity(0.35)
-                        .ignoresSafeArea()
-                )
+                .background(.ppWhite)
             }
             
             if showToastView {
@@ -168,7 +168,7 @@ struct ArchiveView: View {
                 }
             }
         }
-        .background(.ddWhite)
+        .background(.ppWhite)
         .backHiddenSwipeEnabled()
         .task {
             viewModel.attach(coordinator: coordinator)

@@ -15,7 +15,7 @@ enum TimeType: String {
 
 struct HomePost {
     let post: PostData
-    let authorId: String
+    let authorId: String //post에 있는걸로 쓸 수 있음, 추후 삭제 예정
     var frontImageURL: URL?
     var backImageURL: URL?
     let isMyPost: Bool

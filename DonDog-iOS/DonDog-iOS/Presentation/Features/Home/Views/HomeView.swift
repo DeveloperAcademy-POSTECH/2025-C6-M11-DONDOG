@@ -15,117 +15,171 @@ struct HomeView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "낮" : "밤"), navigationColor: .black)
+            CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "sun.max.fill" : "moon.fill"), navigationColor: .black)
                 .padding(.horizontal, 16)
             
             CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
-            .padding(.top, 33)
+                .padding(.top, 33)
             
-            TabView(selection: $viewModel.currentIndex) {
-                if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
-                    // 뷰빌더로 변경할 예정
-                    KFImage(frontURL)
-                        .resizable()
-                        .scaledToFit()
-                        .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                        .cornerRadius(12)
+            ZStack(alignment: .bottom) {
+                TabView(selection: $viewModel.currentIndex) {
+                    if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
+                        KFImage(frontURL)
+                            .resizable()
+                            .scaledToFit()
+                            .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
+                            .tag(0)
+                            .overlay(alignment: .bottom) {
+                                LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
+                                    .opacity(0.6)
+                                    .frame(maxHeight: 97)
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .padding(.horizontal, 20)
+                        
+                        KFImage(backURL)
+                            .resizable()
+                            .scaledToFit()
+                            .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
+                            .tag(1)
+                            .overlay(alignment: .bottom) {
+                                LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
+                                    .opacity(0.6)
+                                    .frame(maxHeight: 97)
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .padding(.horizontal, 20)
+                    } else {
+                        // 포스트가 없을 때
+                        HStack(spacing: 16) {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.ppGray200)
+                                .overlay {
+                                    Text(viewModel.selectedPostType == ArchiveSegment.partnerArchive ? "가족이 아직 사진을 올리지 않았어요." : "오전 게시물을 올릴 수 있는 시간이\n네 시간 남았어요!" )
+                                        .multilineTextAlignment(.center)
+                                }
+                        }
+                        .overlay(alignment: .bottom) {
+                            LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
+                                .opacity(0.6)
+                                .frame(maxHeight: 97)
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .padding(.horizontal, 20)
                         .tag(0)
-                    
-                    KFImage(backURL)
-                        .resizable()
-                        .scaledToFit()
-                        .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                        .cornerRadius(12)
-                        .padding(.horizontal, 20)
-                        .tag(1)
-                } else {
-                    // 포스트가 없을 때
-                    HStack(spacing: 16) {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(.ddGray200)
                     }
-                    .padding(.horizontal, 20)
-                    .tag(0)
-                    
-                    HStack(spacing: 16) {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(.ddGray400)
-                    }
-                    .padding(.horizontal, 20)
-                    .tag(1)
                 }
-            }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-            .frame(maxHeight: 468)
-            .padding(.top, 28)
-            
-            Spacer()
-            
-            ZStack {
-                Rectangle()
-                    .frame(maxHeight: 117)
-                    .foregroundStyle(.ddGray400)
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
+                .tint(.ppPrime)
+                .onAppear {
+                    UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Color.ppPrime)
+                    UIPageControl.appearance().pageIndicatorTintColor = UIColor(Color.ppPrime50)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 
-                HStack {
-                    Spacer()
-                    Button {
-                        coordinator.push(.archive)
-                    } label: {
-                        VStack(spacing: 2) {
-                            Image("CalendarButton")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 40)
-                                .foregroundStyle(.ddPrimaryBlue)
-                            Text("보관함")
-                                .foregroundStyle(.ddPrimaryBlue)
-                                .font(.captionRegular14)
+                if let currentPost = viewModel.currentPost {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(currentPost.post.caption)
+                                .font(.subtitleSemiBold16)
+                                .foregroundStyle(.ppWhite)
+                            
+                            Text(DateUtils.string(from: currentPost.createdAt, format: .home))
+                                .font(.captionRegular13)
+                                .foregroundStyle(.ppWhite)
                         }
-                    }
-                    .hapticFeedback(.medium)
-                    Spacer()
-                    Button {
-                        viewModel.isShowCameraView = true
-                    }label: {
-                        Circle()
-                            .foregroundColor(.ddWhite)
-                            .frame(width: 80, height: 80)
-                            .background {
-                                Circle()
-                                    .foregroundColor(.ddPrimaryBlue)
-                                    .frame(width: 90, height: 90)
-                            }
-                            .offset(y: -10)
-                    }
-                    .hapticFeedback(.medium)
-                    Spacer()
-                    Button {
-                        coordinator.push(.stickerCollection)
-                    } label: {
-                        VStack(spacing: 2) {
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 21)
+                        
+                        Spacer()
+                        Button {
+                            // editableView
+                        } label: {
                             Image("AddStickerButtonAbled")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 40)
-                            Text("스티커")
-                                .foregroundStyle(.ddPrimaryBlue)
-                                .font(.captionRegular14)
+                                .frame(width: 64, height: 64)
+                                .background {
+                                    Circle()
+                                        .frame(width: 70, height: 70)
+                                }
                         }
-                        
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 16)
+                        .buttonStyle(.plain)
                     }
-                    .hapticFeedback(.medium)
-                    Spacer()
-                }.padding(.bottom, 22)
+                    .padding(.horizontal, 20)
+                }
+            }
+            .frame(minHeight: 370, maxHeight: 468)
+            .padding(.top, 16)
+            
+            Spacer()
+            
+            HStack {
+                Spacer()
+                Button {
+                    coordinator.push(.archive)
+                } label: {
+                    VStack(spacing: 2) {
+                        Image("ArchiveIcon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 51)
+                        Text("보관함")
+                            .foregroundStyle(.ppGray500)
+                            .font(.captionRegular14)
+                    }
+                }
+                .frame(width: 65)
+                .hapticFeedback(.medium)
+                Spacer()
+                Button {
+                    viewModel.isShowCameraView = true
+                }label: {
+                    Circle()
+                        .foregroundColor(.ppWhite)
+                        .frame(width: 56, height: 56)
+                        .background {
+                            Circle()
+                                .foregroundColor(.ppPrime)
+                                .frame(width: 72, height: 72)
+                        }
+                }
+                .hapticFeedback(.medium)
+                Spacer()
+                Button {
+                    coordinator.push(.stickerCollection)
+                } label: {
+                    VStack(spacing: 2) {
+                        Image("MakeStickerIcon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 51)
+                        Text("스티커 제작")
+                            .foregroundStyle(.ppGray500)
+                            .font(.captionRegular14)
+                    }
+                    
+                }
+                .frame(width: 65)
+                .hapticFeedback(.medium)
+                Spacer()
+            }
+            .padding(.vertical, 22)
+            .padding(.bottom, 12)
+            .background {
+                Rectangle()
+                    .foregroundStyle(.ppGray200)
             }
         }
         .ignoresSafeArea(edges: .bottom)
         .background {
             if viewModel.isShowingATimePost {
-                Color.white
+                Color.ppWhite
                     .ignoresSafeArea()
             } else {
-                Color.indigo
+                Color.ppWhite
                     .ignoresSafeArea()
             }
         }
@@ -138,4 +192,8 @@ struct HomeView: View {
             )
         }
     }
+}
+
+#Preview {
+    HomeView(viewModel: HomeViewModel())
 }

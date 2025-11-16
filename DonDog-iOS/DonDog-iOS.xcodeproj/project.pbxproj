@@ -161,7 +161,6 @@
 		8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		8C62BF0F2EC2B9C700185CD3 /* ShootingGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShootingGuideView.swift; sourceTree = "<group>"; };
 		8C62BF112EC3614800185CD3 /* ShootingCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShootingCompleteView.swift; sourceTree = "<group>"; };
-		8C62C0172EC6B26900185CD3 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C62C0212EC8850000185CD3 /* CameraViewController+UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+UI.swift"; sourceTree = "<group>"; };
 		8C62C0232EC8851C00185CD3 /* CameraViewController+StepIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+StepIndicator.swift"; sourceTree = "<group>"; };
 		8C62C0252EC8853F00185CD3 /* CameraViewController+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+Actions.swift"; sourceTree = "<group>"; };
@@ -212,7 +211,6 @@
 		CAB6B1ED2EB6375A00F778EC /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 		CAB6B1F32EB63D9000F778EC /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		CAB6B30F2EBB20AF00F778EC /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
-		CAC4C6272EC6D20E00131F6A /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/yuu/Documents/GitHub/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		CAC4C62A2EC6D39800131F6A /* CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlert.swift; sourceTree = "<group>"; };
 		D219F1E22EAE0A3200BD82B7 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		D219F1E42EAE0A3D00BD82B7 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
@@ -510,7 +508,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
-				D27750A32EC3888100E27680 /* DonDog-iOS.app */
+				D27750A32EC3888100E27680 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -595,7 +593,6 @@
 		CAA9AECD2E8FC15C0047A89A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D293F37B2EA55B7100AECA1A /* SubViews */,
 				CAA9AED02E8FC15C0047A89A /* FeedView.swift */,
 			);
 			path = Views;
@@ -771,13 +768,6 @@
 				D24402A42E992CD800D837C8 /* ViewModels */,
 			);
 			path = Caption;
-			sourceTree = "<group>";
-		};
-		D293F37B2EA55B7100AECA1A /* SubViews */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = SubViews;
 			sourceTree = "<group>";
 		};
 		D297CE842EB05DC800F28395 /* Enums */ = {

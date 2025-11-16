@@ -9,6 +9,7 @@ import Foundation
 
 enum DateFormat: String {
     case full = "MM월 d일 HH:mm"
+    case home = "yyyy.MM.dd HH:mm"
     case yearMonth = "yyyy년 M월"
     case weekDay = "yyyy년 M월 d일 E요일"
     case monthDay = "MM월 d일"

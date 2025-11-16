@@ -10,11 +10,12 @@ import UIKit
 
 struct CameraView: UIViewControllerRepresentable {
     @StateObject var viewModel: CameraViewModel
-    
     @Environment(\.presentationMode) var presentationMode
     
     func makeUIViewController(context: Context) -> UIViewController {
         let customCameraVC = CustomCameraViewController()
+        customCameraVC.modalPresentationStyle = .fullScreen
+        
         customCameraVC.delegate = context.coordinator
         customCameraVC.viewModel = viewModel
         customCameraVC.isStickerCamera = viewModel.isStickerCamera

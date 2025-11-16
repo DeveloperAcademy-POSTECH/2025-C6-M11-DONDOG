@@ -75,10 +75,8 @@ struct StickerCellView: View {
                 KFImage(url)
                     .resizable()
                     .scaledToFit()
+                    .frame(width: 120, height: 100)
                     .onTapGesture(perform: onTapLoaded)
-                    .padding(.horizontal, 6)
-                    .contentShape(Rectangle())
-                    .frame(width: 105, height: 125)
                 
                 if isLoading {
                     ProgressView()

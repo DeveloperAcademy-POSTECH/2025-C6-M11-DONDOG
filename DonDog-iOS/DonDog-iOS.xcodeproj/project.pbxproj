@@ -402,8 +402,8 @@
 				8BD1C1362EC9C0E10064CF70 /* CameraViewController+PhotoCapture.swift */,
 				8BD1C1372EC9C0E10064CF70 /* CameraViewController+State.swift */,
 				8BD1C1382EC9C0E10064CF70 /* CameraViewController+StepIndicator.swift */,
-				8BD1C1392EC9C0E10064CF70 /* CameraViewController+Sticker.swift */,
 				8BD1C13A2EC9C0E10064CF70 /* CameraViewController+UI.swift */,
+				8BD1C1392EC9C0E10064CF70 /* CameraViewController+Sticker.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";

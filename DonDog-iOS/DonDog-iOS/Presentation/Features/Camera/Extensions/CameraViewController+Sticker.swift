@@ -23,13 +23,20 @@ extension CustomCameraViewController {
     }
     
     func showStickerMaskOverlay() {
-        /// 이미 추가되어 있으면 중복 추가 방지
+        setNeedsUpdateOfHomeIndicatorAutoHidden()
+        
         if stickerMaskView.superview != nil { return }
         
-        stickerMaskView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        stickerMaskView.backgroundColor = UIColor.ppRealBlack.withAlphaComponent(0.7)
         stickerMaskView.translatesAutoresizingMaskIntoConstraints = false
         stickerMaskView.isUserInteractionEnabled = false
         view.addSubview(stickerMaskView)
+        
+        /// 마스크는 전체 뷰를 덮되, 상단 가이드는 그 위에 보이도록 레이어 조정
+        if stickerGuideContainer.superview != nil {
+            view.bringSubviewToFront(stickerGuideContainer)
+        }
+        view.bringSubviewToFront(cancelButton)
         
         NSLayoutConstraint.activate([
             stickerMaskView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -38,14 +45,13 @@ extension CustomCameraViewController {
             stickerMaskView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
-        /// 초기 레이아웃 강제 적용 후 마스크 경로 설정
         view.layoutIfNeeded()
         updateStickerMaskPath()
         
-        /// 처음엔 바로 보이게
+        /// 딤드 - 카메라뷰 전환 직후 보이게
         stickerMaskView.alpha = 1.0
         
-        /// 0.8초 동안 유지 후 0.4초 동안 easeOut으로 사라지기
+        /// 딤드 - 0.8초 동안 유지 후 0.4초 동안 easeOut으로 사라지기
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             /// 마스크가 표시되는 동안 스티커 서브타이틀 더 옅은 색으로 표시
             self.stickerSubtitleLabel.textColor = .ppGray200
@@ -115,7 +121,7 @@ extension CustomCameraViewController {
         path.append(holePath)
         
         stickerMaskLayer.path = path.cgPath
-        stickerMaskLayer.fillRule = .evenOdd   // 구멍 만들기 포인트
+        stickerMaskLayer.fillRule = .evenOdd   /// 구멍 만들기
         stickerMaskView.layer.mask = stickerMaskLayer
     }
 }

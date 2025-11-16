@@ -838,10 +838,6 @@
 				8B822D7B2EAB617800D708D7 /* Kingfisher */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8C62C0172EC6B26900185CD3 /* DonDog-iOS.app */;
-			productReference = D27750A32EC3888100E27680 /* DonDog-iOS.app */;
-			productReference = 8C62BF0B2EC16B1300185CD3 /* DonDog-iOS.app */;
-			productReference = 8BFD78AE2EC2CD5800E519FF /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

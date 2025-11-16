@@ -20,7 +20,7 @@ struct CaptionView: View {
         GeometryReader { _ in
             ZStack(alignment: .center) {
                 VStack(spacing: 0) {
-                    CustomNavigationBar(leadingType: .none, centerType: .timeTitle(title: "11월 9일", timeImage: "sun.max"), trailingType: .close(action: {isShowCancelAlert = true}), navigationColor: .black)
+                    CustomNavigationBar(leadingType: .none, centerType: .timeTitle(title: "11월 9일", timeImage: DateUtils.isATime(date: .now) ? "sun.max" : "moon.fill"), trailingType: .close(action: {isShowCancelAlert = true}), navigationColor: .black)
                         .padding(.horizontal, 16)
                     if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
                         ZStack {

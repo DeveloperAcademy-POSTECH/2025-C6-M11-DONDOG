@@ -166,6 +166,7 @@ struct CustomNavigationBar: View {
         
         case .timeType(let time):
             Text("\(time)")
+                .frame(width: 24)
             
         case .textButton(let title, let isEnabled, let action):
             Button(action: action) {

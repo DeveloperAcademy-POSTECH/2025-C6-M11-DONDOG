@@ -26,16 +26,19 @@ struct CameraViewContainer: View {
             CameraView(viewModel: cameraViewModel)
                 .ignoresSafeArea()
             
-            ZStack {
-                Color.ppRealBlack
-                    .opacity(0.7)
-                    .ignoresSafeArea()
-                
-                Ellipse()
-                    .frame(width: 300, height: 350)
-                    .blendMode(.destinationOut)   // 이 부분을 구멍처럼 "빼버림"
+            if cameraViewModel.showGuideView {
+                if cameraViewModel.frontImage == nil {
+                    ShootingGuideView(step: .front, isVisible: $cameraViewModel.showGuideView)
+                } else {
+                    ShootingGuideView(step: .back, isVisible: $cameraViewModel.showGuideView)
+                }
             }
-            .compositingGroup()
+            
+            if cameraViewModel.showCompleteView {
+                ShootingCompleteView(isVisible: $cameraViewModel.showCompleteView) {
+                    cameraViewModel.showCaptionView = true
+                }
+            }
             
             if cameraViewModel.showCaptionView {
                 if let captionVM = captionViewModel {
@@ -51,7 +54,9 @@ struct CameraViewContainer: View {
                 }
             }
         }
-        .backHiddenSwipeEnabled()
+        .onAppear {
+            cameraViewModel.showGuideView = true
+        }
         .onChange(of: cameraViewModel.showCaptionView) { _, _ in
             let newCaptionVM = CaptionViewModel(
                 frontImage: cameraViewModel.frontImage,

@@ -28,12 +28,8 @@ final class StickerGridService: ObservableObject {
     func fetchStickerImage(for item: StickerItem, in category: StickerCategory) async {
         loadingItemIDs.insert(item.id)
         stickerImageURLs[item.id] = nil
-        
-        // defer { loadingItemIDs.remove(item.id) }
-        print("▶️ fetchStickerImage START — loadingItemIDs:", loadingItemIDs)
         defer {
             loadingItemIDs.remove(item.id)
-            print("⏹️ fetchStickerImage END — loadingItemIDs:", loadingItemIDs)
         }
 
         guard let uid = Auth.auth().currentUser?.uid else { return }

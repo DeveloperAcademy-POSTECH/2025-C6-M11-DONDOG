@@ -79,33 +79,7 @@ struct SitckerCollectionView: View {
             }
         )
         .onAppear {
-            reloadStickerIfNeeded()
-        }
-    }
-    
-    private func reloadStickerIfNeeded() {
-        let tags = StickerEmotionTagManager.shared.emotionTags
-        guard tags.count >= 2 else { return }
-        
-        let categoryRaw = tags[0]
-        let title = tags[1]
-        
-        guard let category = StickerCategory(rawValue: categoryRaw) else {
-            StickerEmotionTagManager.shared.emotionTags = []
-            return
-        }
-        
-        let items = gridService.stickerItems(for: category)
-        guard let item = items.first(where: { $0.title == title }) else {
-            StickerEmotionTagManager.shared.emotionTags = []
-            return
-        }
-        
-        Task {
-            await gridService.fetchStickerImage(for: item, in: category)
-            await MainActor.run {
-                StickerEmotionTagManager.shared.emotionTags = []
-            }
+            viewModel.reloadStickerIfNeeded()
         }
     }
     

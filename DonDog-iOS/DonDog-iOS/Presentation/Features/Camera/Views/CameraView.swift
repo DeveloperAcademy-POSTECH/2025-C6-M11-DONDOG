@@ -14,8 +14,7 @@ struct CameraView: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> UIViewController {
         let customCameraVC = CustomCameraViewController()
-        customCameraVC.modalPresentationStyle = .fullScreen
-        
+
         customCameraVC.delegate = context.coordinator
         customCameraVC.viewModel = viewModel
         customCameraVC.isStickerCamera = viewModel.isStickerCamera

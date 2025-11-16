@@ -13,15 +13,14 @@ import SwiftUI
 
 final class StickerConfirmViewModel: ObservableObject {
     @Published var image: UIImage?
-    
     @Published var isUploading: Bool = false
     @Published var uploadError: String?
+    @Published var isSaving = false
 
     private var currentTags: [String] { StickerEmotionTagManager.shared.emotionTags }
     
     init(image: UIImage?) {
         self.image = image
-        print("StickerConfirmViewModel init 완료")
     }
     
     func uploadSticker(onSuccess: (([String]) -> Void)? = nil) {

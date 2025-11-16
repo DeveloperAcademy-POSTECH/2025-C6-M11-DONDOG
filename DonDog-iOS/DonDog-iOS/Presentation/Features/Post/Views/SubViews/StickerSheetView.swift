@@ -11,7 +11,6 @@ import Kingfisher
 import SwiftUI
 
 struct StickerSheetView: View {    
-    @EnvironmentObject var coordinator: AppCoordinator
     @ObservedObject var viewModel: StickerViewModel
     let onRequestCamera: () -> Void
     

@@ -16,7 +16,6 @@ enum EntryRoute {
 
 struct StickerConfirmView: View {
     @StateObject var viewModel: StickerConfirmViewModel
-    @State private var isSaving = false
     @Environment(\.dismiss) private var dismiss
     let route: EntryRoute
     let onRetake: () -> Void
@@ -80,13 +79,13 @@ struct StickerConfirmView: View {
                     Spacer()
                         .frame(maxWidth: 16)
                     
-                    CustomButton(title: "스티커 저장", style: .primary, isEnable: !isSaving, action: {
-                        isSaving = true
+                    CustomButton(title: "스티커 저장", style: .primary, isEnable: !viewModel.isSaving, action: {
+                        viewModel.isSaving = true
                         viewModel.uploadSticker { tags in
                             onUploaded?(tags)
                             onComplete()
                         }
-                    }, isProgressView: isSaving)
+                    }, isProgressView: viewModel.isSaving)
                 }
                 .padding(.horizontal, 21)
             }

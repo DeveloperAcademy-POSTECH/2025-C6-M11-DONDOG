@@ -19,7 +19,7 @@ final class StickerGridService: ObservableObject {
     @Published var selectedCategory: StickerCategory = .affection
     @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
     
-    private init() {}
+    init() {}
     
     func stickerItems(for category: StickerCategory) -> [StickerItem] {
         itemsByCategory[category] ?? []

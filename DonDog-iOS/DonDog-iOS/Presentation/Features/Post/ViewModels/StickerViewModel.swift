@@ -33,13 +33,18 @@ final class StickerViewModel: ObservableObject {
     func addSticker(with url: URL) {
         let newSticker = AttachedSticker(
             stickerURL: url,
-            position: .zero,
+            position: randomPosition(),
             scale: 1.0,
             rotation: .zero
         )
         stickers.append(newSticker)
         selectedStickerID = newSticker.id
-        print("stickers: \(stickers)")
+    }
+    
+    private func randomPosition() -> CGPoint {
+        let x: CGFloat = [ -122, 0, 122 ].randomElement()!
+        let y: CGFloat = [ -125, 0, 125 ].randomElement()!
+        return CGPoint(x: x, y: y)
     }
     
     func removeSticker(_ sticker: AttachedSticker) {

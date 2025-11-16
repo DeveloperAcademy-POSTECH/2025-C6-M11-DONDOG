@@ -17,8 +17,6 @@ struct FeedView: View {
     @State private var isRefreshing = false
     @State private var isFrontImageOnTop = true
     @StateObject private var cameraViewModel = CameraViewModel()
-    @State private var isSelectingSticker = false
-    @State private var showStickerSheet = false
     @State private var showToastView = false
     @State private var toastWorkItem: DispatchWorkItem?
     
@@ -213,14 +211,6 @@ struct FeedView: View {
                         .hapticFeedback(.medium)
                         Spacer()
                         Button {
-                            if !viewModel.displayablePosts.isEmpty {
-                                let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
-                                if !currentPost.isMyPost {
-                                    showStickerSheet = true
-                                } else {
-                                    showToastView = true
-                                }
-                            }
                         } label: {
                             if !viewModel.displayablePosts.isEmpty {
                                 VStack(spacing: 2) {
@@ -292,66 +282,6 @@ struct FeedView: View {
                 delegate: viewModel,
                 isPresented: $showCameraView
             )
-        }
-        .sheet(isPresented: $showStickerSheet) {
-            if viewModel.stickers != nil {
-                let currentPost = viewModel.displayablePosts[viewModel.currentPostIndex]
-                StickerSheetView(
-                    initialSelectedType: StickerType(rawValue: currentPost.stickerType ?? ""),
-                    stickers: viewModel.stickers ?? [:],
-                    name: viewModel.currentUserName,
-                    onSelect: { type in
-                        if let type = type {
-                            viewModel.type = type.rawValue
-                            viewModel.updateStickerData()
-                        } else {
-                            viewModel.removeStickerData()
-                        }
-                    }
-                )
-                .presentationDetents([.height(392)])
-                .presentationDragIndicator(.visible)
-                .background(Color.ddWhite)
-            } else {
-                HStack {
-                    Spacer()
-                    VStack(spacing: 4) {
-                        Spacer()
-                        Text("스티커를 만들 사진이 없어요")
-                            .font(.subtitleSemiBold16)
-                            .foregroundStyle(.ddGray600)
-                        Text("첫 게시물을 올리면 감정 스티커를 붙일 수 있어요!")
-                            .font(.captionRegular13)
-                            .foregroundStyle(.ddGray500)
-                        Button {
-                            showStickerSheet = false
-                        } label: {
-                            ZStack {
-                                Rectangle()
-                                    .foregroundStyle(.ddPrimaryBlue)
-                                    .frame(width: 112, height: 34)
-                                    .cornerRadius(999)
-                                HStack {
-                                    Text("사진찍기")
-                                        .font(.captionRegular13)
-                                        .foregroundStyle(.ddGray100)
-                                    Image(systemName: "camera")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .foregroundStyle(.ddGray100)
-                                        .frame(height: 22)
-                                }
-                            }
-                        }.padding(.top, 4)
-                        Spacer()
-                    }
-                    Spacer()
-                }
-                .presentationDetents([.height(172)])
-                .presentationDragIndicator(.visible)
-                .background(Color.ddWhite)
-                .ignoresSafeArea()
-            }
         }
     }
 }

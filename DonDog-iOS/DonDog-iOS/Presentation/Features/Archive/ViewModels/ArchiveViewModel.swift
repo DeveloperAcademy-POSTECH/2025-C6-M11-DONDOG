@@ -25,9 +25,19 @@ final class ArchiveViewModel: ObservableObject {
     @Published var selectedAuthorType: ArchiveSegment = .partnerArchive {
         didSet { updateDisplayArchives() }
     }
-    
+
     func attach(coordinator: AppCoordinator) {
         self.coordinator = coordinator
+    }
+    
+    var hasPreviousDisplayMonth: Bool {
+        guard !displayMonths.isEmpty else { return false }
+        return currentMonthIndex < displayMonths.count - 1
+    }
+
+    var hasNextDisplayMonth: Bool {
+        guard !displayMonths.isEmpty else { return false }
+        return currentMonthIndex > 0
     }
     
     func goToPreviousMonth() {
@@ -168,5 +178,27 @@ final class ArchiveViewModel: ObservableObject {
         }
 
         return months
+    }
+    
+    // 현재 달 표시
+    var isCurrentMonthDisplayed: Bool {
+        guard !displayMonths.isEmpty else { return false }
+        let currentDisplayMonth = displayMonths[currentMonthIndex]
+        
+        let calendar = Calendar.current
+        let now = Date()
+        let currentYear = calendar.component(.year, from: now)
+        let currentMonth = calendar.component(.month, from: now)
+        
+        return currentDisplayMonth.year == currentYear && currentDisplayMonth.month == currentMonth
+    }
+    
+    // 게시물 업로드 3일 초과시 처리
+    func isPostBlurred(for day: ArchiveDay) -> Bool {
+        let isOver3Days = DateUtils.isOver3daysSinceLastUpload()
+        let isPartnerArchive = selectedAuthorType == .partnerArchive
+        let lastUploadedAt = connectUserInfo.lastUploadedAt ?? Date()
+        
+        return isOver3Days && isPartnerArchive && day.date > lastUploadedAt
     }
 }

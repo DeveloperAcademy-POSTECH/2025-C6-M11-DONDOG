@@ -118,11 +118,12 @@ struct CustomNavigationBar: View {
                 .font(.titleBold18)
             
         case .timeTitle(let text, let image):
-            HStack(spacing: 0) {
+            HStack(spacing: 5) {
                 Text(text)
                     .font(.titleBold18)
                 Image(systemName: image)
                     .font(.titleBold18)
+                    .foregroundStyle(image == "sun.max" ? .ppPrime : .ddFeelingYellow)
             }
         
         case .none:

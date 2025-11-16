@@ -68,7 +68,7 @@ struct StickerCellView: View {
     let isLoading: Bool
     let onTapLoaded: () -> Void
     let onTapEmpty: () -> Void
-
+    
     var body: some View {
         if let url {
             ZStack {
@@ -112,25 +112,5 @@ struct StickerCellView: View {
             }
             .onTapGesture { if !isLoading { onTapEmpty() } }
         }
-    }
-}
-
-extension View {
-    /// 카메라 촬영 플로우: 사진 찍기 버튼 탭 시 전면 카메라 화면을 fullScreenCover로 표시
-    func cameraCaptureFlow(isPresented: Binding<Bool>, cameraVM: CameraViewModel) -> some View {
-        self.modifier(CameraCoverModifier(isPresented: isPresented, cameraVM: cameraVM))
-    }
-}
-
-struct CameraCoverModifier: ViewModifier {
-    @Binding var isPresented: Bool
-    let cameraVM: CameraViewModel
-
-    func body(content: Content) -> some View {
-        content
-            .fullScreenCover(isPresented: $isPresented) {
-                CameraView(viewModel: cameraVM)
-                    .ignoresSafeArea()
-            }
     }
 }

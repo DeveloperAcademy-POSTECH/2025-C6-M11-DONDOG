@@ -15,7 +15,6 @@ protocol ModuleFactoryProtocol {
     func makeProfileView(mode: ProfileFormMode) -> ProfileView
     func makeInviteView(showSentHint: Bool) -> InviteView
     func makeCameraView() -> CameraView
-    func makeFeedView() -> FeedView
     func makeSettingView() -> SettingView
     func makeArchiveView() -> ArchiveView
     func makePostView(with post: PostData, for postType: PostType) -> PostView
@@ -60,12 +59,6 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makeCameraView() -> CameraView {
         let cameraViewModel = CameraViewModel()
         return CameraView(viewModel: cameraViewModel)
-    }
-    
-    func makeFeedView() -> FeedView {
-        let viewModel = FeedViewModel()
-        let view = FeedView(viewModel: viewModel)
-        return view
     }
 
     func makeSettingView() -> SettingView {

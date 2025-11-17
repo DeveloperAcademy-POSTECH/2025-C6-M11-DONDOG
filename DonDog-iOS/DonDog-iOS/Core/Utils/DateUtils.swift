@@ -89,10 +89,15 @@ final class DateUtils {
             return false
         }
         
-        let now = Date()
-        let timeInterval = now.timeIntervalSince(lastUploadedAt)
-        let threeDaysInSeconds: TimeInterval = 3 * 24 * 60 * 60
+        let uploadDateStart = startOfDay(for: lastUploadedAt)
         
-        return timeInterval >= threeDaysInSeconds
+        let now = Date()
+        let todayStart = startOfDay(for: now)
+        
+        guard let threeDaysLater = calendar.date(byAdding: .day, value: 3, to: uploadDateStart) else {
+            return false
+        }
+        
+        return todayStart >= threeDaysLater
     }
 }

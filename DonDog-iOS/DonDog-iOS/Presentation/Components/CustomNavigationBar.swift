@@ -129,7 +129,7 @@ struct CustomNavigationBar: View {
                     .font(.titleBold18)
                 Image(systemName: image)
                     .font(.titleBold18)
-                    .foregroundStyle(image == "sun.max" ? .ppPrime : .ddFeelingYellow)
+                    .foregroundStyle(image == "sun.max" ? .ppPrime : .ppYellow)
             }
         
         case .none:
@@ -175,7 +175,7 @@ struct CustomNavigationBar: View {
             Image(systemName: time)
                 .resizable()
                 .frame(width: 24, height: 24)
-                .foregroundStyle(.ppGray300)
+                .foregroundStyle(time == "sun.max.fill" ? .ppPrime : .ppYellow)
             
         case .none:
             Spacer().frame(width: 24).opacity(0)

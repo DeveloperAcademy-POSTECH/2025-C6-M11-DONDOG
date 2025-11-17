@@ -141,13 +141,13 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     }
     
     // MARK: - Session Management
-    private func startSession() {
+    func startSession() {
         DispatchQueue.global(qos: .userInitiated).async {
             self.captureSession.startRunning()
         }
     }
     
-    private func stopSession() {
+    func stopSession() {
         DispatchQueue.global(qos: .userInitiated).async {
             self.captureSession.stopRunning()
         }

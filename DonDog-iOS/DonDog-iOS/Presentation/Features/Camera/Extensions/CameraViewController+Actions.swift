@@ -143,6 +143,11 @@ extension CustomCameraViewController {
         captureButton.isEnabled = true
         captureButton.alpha = 1.0
         
+        DispatchQueue.main.async { [weak self] in
+            self?.viewModel?.frontImage = nil
+            self?.viewModel?.showGuideView = true
+        }
+        
         updateUIForCurrentState()
     }
 }

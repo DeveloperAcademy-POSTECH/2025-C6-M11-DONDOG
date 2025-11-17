@@ -47,13 +47,13 @@ struct ImageView: View {
                     sticker: $sticker,
                     isSelected: viewModel.selectedStickerID == sticker.id,
                     isEditable: isEditing,
-                    onDelete: { viewModel.removeSticker(sticker) }
-                )
-                .onTapGesture {
-                    if isEditing {
-                        viewModel.selectedStickerID = sticker.id
+                    onDelete: { viewModel.removeSticker(sticker) },
+                    onInteraction: {
+                        if isEditing {
+                            viewModel.selectedStickerID = sticker.id
+                        }
                     }
-                }
+                )
             }
         }
     }

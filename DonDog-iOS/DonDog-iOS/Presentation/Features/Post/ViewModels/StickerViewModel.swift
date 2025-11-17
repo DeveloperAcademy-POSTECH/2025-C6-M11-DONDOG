@@ -14,6 +14,7 @@ import SwiftUI
 
 struct AttachedSticker: Identifiable, Codable {
     var id = UUID()
+    var createdAt = Date()
     var stickerURL: URL
     var position: CGPoint
     var scale: CGFloat
@@ -30,8 +31,21 @@ final class StickerViewModel: ObservableObject {
     @Published var targetItemID: StickerItem.ID?
     @Published var previewURL: URL?
     
+    private let dataManager: DataManagerProtocol = DataManager.shared
+    let connectUserInfo = UserPairingStore.shared
+    var roomId: String = ""
+    
+    init() {
+        guard let id = connectUserInfo.roomId else {
+            print("roomId 가져오기 실패")
+            return
+        }
+        self.roomId = id
+    }
+    
     func addSticker(with url: URL) {
         let newSticker = AttachedSticker(
+            createdAt: Date.now,
             stickerURL: url,
             position: randomPosition(),
             scale: 1.0,
@@ -51,21 +65,32 @@ final class StickerViewModel: ObservableObject {
         stickers.removeAll { $0.id == sticker.id }
     }
     
-    func saveStickers() {
-        // print()로 상태 출력
-        print("===== StickerData 상태 =====")
+    func saveStickers(postId: String) async {
         for sticker in stickers {
-            print("ID: \(sticker.id)")
-            print("ImageURL: \(sticker.stickerURL)")
-            print("Position: \(sticker.position)")
-            print("Scale: \(sticker.scale)")
-            print("Rotation: \(sticker.rotation.degrees)°")
-            print("---------------------------")
-        }
-        print("============================\n")
-        
-        if let encoded = try? JSONEncoder().encode(stickers) {
-            UserDefaults.standard.set(encoded, forKey: "savedStickers")
+            let data: [String: Any] = [
+                "id": sticker.id.uuidString,
+                "stickerURL": sticker.stickerURL.absoluteString,
+                "position": [
+                    "x": sticker.position.x,
+                    "y": sticker.position.y
+                ],
+                "scale": sticker.scale,
+                "rotationDeg": sticker.rotation.degrees
+            ]
+            
+            do {
+                try await dataManager.batchUpdate([
+                    .upsert(
+                        path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments/\(sticker.id.uuidString)",
+                        data: data
+                    )
+                ])
+                print("붙여진 스티커 저장 성공")
+            } catch {
+                print("붙여진 스티커 저장 실패: \(error.localizedDescription)")
+                print("roomId: \(roomId)")
+                print("postId: \(postId)")
+            }
         }
     }
 }

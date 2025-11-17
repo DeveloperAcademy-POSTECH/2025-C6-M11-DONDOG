@@ -65,7 +65,7 @@ struct PostView: View {
                 }
             }
             .sheet(isPresented: $showStickerSheet) {
-                StickerSheetView(viewModel: stickerViewModel)
+                StickerSheetView(viewModel: stickerViewModel, postId: viewModel.post.postId)
                     .presentationDetents([.height(270)])
                     .presentationBackgroundInteraction(.enabled)
                     .presentationDragIndicator(.hidden)

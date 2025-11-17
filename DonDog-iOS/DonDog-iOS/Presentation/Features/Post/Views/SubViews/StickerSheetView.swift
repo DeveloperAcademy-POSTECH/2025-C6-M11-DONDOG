@@ -12,6 +12,8 @@ import SwiftUI
 
 struct StickerSheetView: View {
     @ObservedObject var viewModel: StickerViewModel
+    let postId: String
+    
     @State private var select = 0
     @Environment(\.dismiss) var dismiss
     private let categories = StickerCategory.allCases
@@ -19,8 +21,9 @@ struct StickerSheetView: View {
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 20), count: 3)
     @StateObject private var cameraVM = CameraViewModel()
     @ObservedObject private var gridService: StickerGridService
-    init(viewModel: StickerViewModel, gridService: StickerGridService = .shared) {
+    init(viewModel: StickerViewModel, postId: String, gridService: StickerGridService = .shared) {
         self.viewModel = viewModel
+        self.postId = postId
         self._gridService = ObservedObject(wrappedValue: gridService)
     }
 
@@ -71,15 +74,16 @@ struct StickerSheetView: View {
                     .frame(width: 300)
                     .onChange(of: select) { _, selectedValue in
                         gridService.selectedCategory = categories[selectedValue]
-                        print("selectedCategory: \(gridService.selectedCategory)")
                     }
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        viewModel.saveStickers()
-                        viewModel.selectedStickerID = nil
-                        dismiss()
+                        Task {
+                            await viewModel.saveStickers(postId: postId)
+                            viewModel.selectedStickerID = nil
+                            dismiss()
+                        }
                     } label: {
                         Image(systemName: "chevron.down")
                             .font(.headline)

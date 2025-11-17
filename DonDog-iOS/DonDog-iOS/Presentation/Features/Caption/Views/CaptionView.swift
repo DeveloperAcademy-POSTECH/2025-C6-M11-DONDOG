@@ -59,16 +59,11 @@ struct CaptionView: View {
                         HStack {
                             Spacer()
                             ZStack(alignment: .center) {
-                                Text(viewModel.caption.isEmpty ? DateUtils.isATime(date: .now) ? "오늘 나의 낮을 설명해 주세요..." : "오늘 나의 밤을 설명해 주세요..." : viewModel.caption)
+                                TextField(DateUtils.isATime(date: .now) ? "오늘 나의 낮을 설명해 주세요..." : "오늘 나의 밤을 설명해 주세요...", text: $viewModel.caption)
                                     .font(.subtitleMedium18)
-                                    .foregroundStyle(viewModel.caption.isEmpty ? .ppGray400 : .ppBlack)
-                                    .multilineTextAlignment(.center)
-                                    .onTapGesture {
-                                        isCaptionFocused = true
-                                    }
-                                TextField("", text: $viewModel.caption)
-                                    .frame(width: 0, height: 0)
                                     .focused($isCaptionFocused)
+                                    .multilineTextAlignment(.center)
+                                    .tint(.ppPrime)
                                     .submitLabel(.done)
                                     .onChange(of: viewModel.caption) { _, newValue in
                                         if newValue.count > 15 {

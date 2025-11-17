@@ -12,7 +12,7 @@ import SwiftUI
 struct PostContentsView: View {
     let post: PostData
     @Binding var isEditing: Bool
-    @ObservedObject var viewModel: StickerViewModel
+    @StateObject var viewModel: StickerViewModel
     
     @State private var isFrontOrBack: Int = 0
     
@@ -50,5 +50,11 @@ struct PostContentsView: View {
         }
         .padding(.horizontal, 20)
         .gesture(isEditing ? nil : DragGesture())
+        .onChange(of: isFrontOrBack) { _, newValue in
+            Task {
+                viewModel.postImageType = (newValue == 0) ? .front : .back
+                await viewModel.fetchStickers()
+            }
+        }
     }
 }

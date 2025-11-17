@@ -16,13 +16,20 @@ struct AttachedSticker: Identifiable, Codable {
     var id = UUID()
     var createdAt = Date()
     var stickerURL: URL
+    var postImageType: String
     var position: CGPoint
     var scale: CGFloat
     var rotation: Double
 }
 
+enum postImageType: String {
+    case front = "frontImage"
+    case back = "backImage"
+}
+
 final class StickerViewModel: ObservableObject {
     @Published var postId = ""
+    @Published var postImageType: postImageType = .front
     
     @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
     
@@ -47,7 +54,8 @@ final class StickerViewModel: ObservableObject {
     
     func fetchStickers() async {
         do {
-            stickers = try await dataManager.fetchCollection(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments")
+            stickers = try await dataManager.fetchWhereEqual(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments", field: "postImageType", isEqualTo: postImageType.rawValue)
+            print(postImageType)
             print(stickers)
         } catch {
             print("붙여진 스티커 로드 실패: \(error.localizedDescription)")
@@ -58,6 +66,7 @@ final class StickerViewModel: ObservableObject {
         let newSticker = AttachedSticker(
             createdAt: Date.now,
             stickerURL: url,
+            postImageType: postImageType.rawValue,
             position: randomPosition(),
             scale: 1.0,
             rotation: .zero
@@ -87,6 +96,7 @@ final class StickerViewModel: ObservableObject {
                 "id": sticker.id.uuidString,
                 "createdAt": sticker.createdAt,
                 "stickerURL": sticker.stickerURL.absoluteString,
+                "postImageType": postImageType.rawValue,
                 "position": [sticker.position.x, sticker.position.y],
                 "scale": sticker.scale,
                 "rotation": sticker.rotation

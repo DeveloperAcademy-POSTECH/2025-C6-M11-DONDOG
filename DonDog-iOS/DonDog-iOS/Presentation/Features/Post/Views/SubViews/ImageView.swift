@@ -58,6 +58,11 @@ struct ImageView: View {
                         }
                     }
                 )
+                .onTapGesture {
+                    if isEditing {
+                        viewModel.selectedStickerID = sticker.id
+                    }
+                }
             }
         }
     }

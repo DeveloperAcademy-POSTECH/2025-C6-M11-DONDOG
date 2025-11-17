@@ -82,15 +82,16 @@ struct SitckerCollectionView: View {
         .backHiddenSwipeEnabled()
         .background(dismissBackdrop)
         .background(.ppWhite)
-        .simultaneousGesture(
-            /// 뷰 전체에 탭 제스처 추가 - 화면 빈 곳을 탭하면 버튼을 닫기 위함
-            TapGesture().onEnded {
-                if viewModel.showMakeStickerButton {
-                    viewModel.showMakeStickerButton = false
-                    viewModel.targetItemID = nil
-                }
-            }
-        )
+        // TODO: 화면 빈곳 해결
+//        .simultaneousGesture(
+//            /// 뷰 전체에 탭 제스처 추가 - 화면 빈 곳을 탭하면 버튼을 닫기 위함
+//            TapGesture().onEnded {
+//                if viewModel.showMakeStickerButton {
+//                    viewModel.showMakeStickerButton = false
+//                    viewModel.targetItemID = nil
+//                }
+//            }
+//        )
         .onAppear {
             viewModel.reloadStickerIfNeeded()
         }

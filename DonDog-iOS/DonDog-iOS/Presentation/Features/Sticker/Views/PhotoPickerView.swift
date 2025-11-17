@@ -46,59 +46,65 @@ struct PhotoPickerView: View {
             )
             .padding(.horizontal, 16)
             
-            ScrollView {
-                if viewModel.isLoading {
-                    ProgressView()
-                } else if viewModel.items.isEmpty {
-                    VStack {
-                        Spacer()
-                        // TODO: 캐릭터 이미지 넣기
-                        Text("게시물이 없어\n사진을 선택할 수 없어요")
-                            .font(.bodyRegular18)
-                        Spacer()
-                    }
-                } else {
-                    ScrollView {
-                        LazyVGrid(columns: columns, spacing: 8) {
-                            ForEach(viewModel.items, id: \.postId) { post in
-                                if let imageURL = URL(string: post.frontImageURL) {
-                                    ZStack(alignment: .topTrailing) {
-                                        KFImage(imageURL)
-                                            .placeholder {
-                                                Color(.secondarySystemBackground)
-                                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                            }
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(maxWidth: .infinity, maxHeight: 150)
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                                            .contentShape(Rectangle())
-                                            .onTapGesture { viewModel.selectedURL = imageURL }
-                                        
-                                        if viewModel.selectedURL == imageURL {
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(Color(.ddBlack).opacity(0.4))
+            if viewModel.items.isEmpty {
+                VStack {
+                    Spacer()
+                   
+                    Text("게시물이 없어\n사진을 선택할 수 없어요")
+                        .font(.bodyRegular18)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Color.ppBlack)
+                        .lineSpacing(4)
+                        .padding(.top, 27)
+                    Spacer()
+                }
+            } else {
+                ScrollView {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    } else {
+                        ScrollView {
+                            LazyVGrid(columns: columns, spacing: 8) {
+                                ForEach(viewModel.items, id: \.postId) { post in
+                                    if let imageURL = URL(string: post.frontImageURL) {
+                                        ZStack(alignment: .topTrailing) {
+                                            KFImage(imageURL)
+                                                .placeholder {
+                                                    Color(.secondarySystemBackground)
+                                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                                }
+                                                .resizable()
+                                                .scaledToFill()
                                                 .frame(maxWidth: .infinity, maxHeight: 150)
-                                                .overlay(
-                                                    Image(systemName: "checkmark.circle")
-                                                        .font(.system(size: 24))
-                                                        .foregroundStyle(Color.ppPrime)
-                                                        .padding(8),
-                                                    alignment: .center
-                                                )
+                                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                                .contentShape(Rectangle())
+                                                .onTapGesture { viewModel.selectedURL = imageURL }
+                                            
+                                            if viewModel.selectedURL == imageURL {
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(Color(.ddBlack).opacity(0.4))
+                                                    .frame(maxWidth: .infinity, maxHeight: 150)
+                                                    .overlay(
+                                                        Image(systemName: "checkmark.circle")
+                                                            .font(.system(size: 24))
+                                                            .foregroundStyle(Color.ppPrime)
+                                                            .padding(8),
+                                                        alignment: .center
+                                                    )
+                                            }
                                         }
+                                    } else {
+                                        Color(.secondarySystemBackground)
+                                            .frame(width: 120, height: 160)
                                     }
-                                } else {
-                                    Color(.secondarySystemBackground)
-                                        .frame(width: 120, height: 160)
                                 }
                             }
                         }
                     }
                 }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 8)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 8)
         }
         .task { await viewModel.loadInitial() }
         .backHiddenSwipeEnabled()

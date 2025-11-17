@@ -159,18 +159,20 @@ final class ProfileViewModel: ObservableObject {
 
     @MainActor
     private func fetchCurrentProfile() async {
-        guard let myUid = myUid else { return }
-        do {
-            let user: UserData = try await dataManager.fetch(path: "Users/\(myUid)")
-            
-            self.name = user.name
-            self.selectedRole = Role(rawValue: user.role) ?? .parent
-            self.initialName = user.name
-            self.initialRole = self.selectedRole
-            self.checkIfModified()
-        } catch {
-            self.errorMessage = "프로필 정보를 불러오지 못했습니다. (\(error.localizedDescription))"
+        // guard let myUid = myUid else { return }
+        
+        // let user: UserData = try await dataManager.fetch(path: "Users/\(myUid)")
+        
+        if let myName = connectUserInfo.myName {
+            self.name = myName
         }
+        if let myRoleRaw = connectUserInfo.myRole, let role = Role(rawValue: myRoleRaw) {
+            self.selectedRole = role
+        }
+        self.initialName = self.name
+        self.initialRole = self.selectedRole
+        self.checkIfModified()
+        return
     }
 
     private func saveForEdit() {

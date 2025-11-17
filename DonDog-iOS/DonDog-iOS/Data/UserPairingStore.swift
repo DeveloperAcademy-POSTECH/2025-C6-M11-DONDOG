@@ -17,6 +17,7 @@ final class UserPairingStore: ObservableObject {
     @Published var roomId: String?
     @Published var myUid: String?
     @Published var myName: String?
+    @Published var myRole: String?
     @Published var partnerUid: String?
     @Published var partnerName: String?
     @Published var lastUploadedAt: Date?

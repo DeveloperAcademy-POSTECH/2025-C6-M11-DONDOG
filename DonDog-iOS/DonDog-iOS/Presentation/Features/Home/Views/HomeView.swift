@@ -14,27 +14,25 @@ struct HomeView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     
     var body: some View {
-        VStack(spacing: 0) {
-            if viewModel.connectUserInfo.isConnected == false {
-                HStack {
-                    Spacer()
-                    Button {
-                        coordinator.push(.setting)
-                    } label: {
-                        Image(systemName: "gear")
-                            .frame(width: 24, height: 24)
-                            .foregroundStyle(Color.ppPrime)
-                            .padding(.vertical, 8)
-                            .padding(.trailing, 20)
-                    }
-                }
-            } else {
-                CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "낮" : "밤"), navigationColor: .black)
-                    .padding(.horizontal, 16)
-            }
-            
-            if viewModel.connectUserInfo.isConnected == false {
+        if viewModel.connectUserInfo.isConnected == false {
+            ZStack {
                 VStack {
+                    HStack {
+                        Spacer()
+                        Button {
+                            coordinator.push(.setting)
+                        } label: {
+                            Image(systemName: "gear")
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(Color.ppPrime)
+                                .padding(.vertical, 8)
+                                .padding(.trailing, 20)
+                        }
+                    }
+                    Spacer()
+                }
+
+                VStack(spacing: 0) {
                     Spacer()
                     Image(systemName: "person.fill.xmark")
                         .foregroundStyle(Color.ppPrime50)
@@ -61,9 +59,15 @@ struct HomeView: View {
                     }
                     Spacer()
                 }
-            } else {
+            }
+            .background(.ppWhite)
+        } else {
+            VStack(spacing: 0) {
+                CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "낮" : "밤"), navigationColor: .black)
+                    .padding(.horizontal, 16)
+                
                 CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
-                .padding(.top, 33)
+                    .padding(.top, 33)
                 
                 TabView(selection: $viewModel.currentIndex) {
                     if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
@@ -170,27 +174,24 @@ struct HomeView: View {
                     }.padding(.bottom, 22)
                 }
             }
-        }
-        .ignoresSafeArea(edges: .bottom)
-        .background {
-            if viewModel.connectUserInfo.isConnected == false {
-                Color.ppWhite
-                    .ignoresSafeArea()
-            } else if viewModel.isShowingATimePost {
-                Color.ppWhite
-                    .ignoresSafeArea()
-            } else {
-                Color.indigo
-                    .ignoresSafeArea()
+            .ignoresSafeArea(edges: .bottom)
+            .background {
+                if viewModel.isShowingATimePost {
+                    Color.ppWhite
+                        .ignoresSafeArea()
+                } else {
+                    Color.indigo
+                        .ignoresSafeArea()
+                }
             }
-        }
-        .animation(.smooth(duration: 0.5), value: viewModel.isShowingATimePost)
-        .fullScreenCover(isPresented: $viewModel.isShowCameraView) {
-            CameraViewContainer(
-                cameraViewModel: cameraViewModel,
-                delegate: viewModel,
-                isPresented: $viewModel.isShowCameraView
-            )
+            .animation(.smooth(duration: 0.5), value: viewModel.isShowingATimePost)
+            .fullScreenCover(isPresented: $viewModel.isShowCameraView) {
+                CameraViewContainer(
+                    cameraViewModel: cameraViewModel,
+                    delegate: viewModel,
+                    isPresented: $viewModel.isShowCameraView
+                )
+            }
         }
     }
 }

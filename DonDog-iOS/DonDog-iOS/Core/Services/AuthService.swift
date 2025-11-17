@@ -72,10 +72,6 @@ final class AuthService {
                 return
             }
             
-            Task { @MainActor in
-                UserPairingStore.shared.reset()
-            }
-            
             self.uploadFCMAndSubscribe()
             
             let uid = refreshUser.uid
@@ -153,11 +149,12 @@ final class AuthService {
         processRoomRouting(coordinator: coordinator, refreshUser: refreshUser, userData: data, roomId: roomId)
     }
     
-    // MARK: - 라우팅 처리 3:  방/페어링 상태 라우팅
+    // MARK: - 라우팅 처리 3: 방/페어링 상태 라우팅
     private func processRoomRouting(coordinator: AppCoordinator, refreshUser: User, userData: [String: Any], roomId: String?) {
         let state = UserPairingStore.shared
         state.myUid = refreshUser.uid
         state.myName = userData["name"] as? String
+        state.myRole = userData["role"] as? String
         
         if let lastUploadTimestamp = userData["lastUploadedAt"] as? Timestamp {
             state.lastUploadedAt = lastUploadTimestamp.dateValue()
@@ -166,7 +163,7 @@ final class AuthService {
         }
         
         guard let rid = roomId, !rid.isEmpty else {
-            state.reset()
+            NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil"), role = \(state.myRole ?? "nil")")
             NSLog("[AuthService] 🔓 미연결 상태 (roomId 없음)")
             return
         }
@@ -194,7 +191,7 @@ final class AuthService {
                 state.roomId = rid
                 state.isConnected = true
                 
-                NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil")")
+                NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil"), role = \(state.myRole ?? "nil")")
                 NSLog("[AuthService] 상태: 연결 상태 =\(state.isConnected), roomId=\(state.roomId ?? "nil"), lastUploadedAt = \(DateUtils.string(from: state.lastUploadedAt ?? .now, format: .full))")
                 
                 replaceRootinAuthService(.home, coordinator: coordinator)

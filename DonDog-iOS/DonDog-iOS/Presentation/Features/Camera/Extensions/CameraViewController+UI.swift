@@ -75,6 +75,9 @@ extension CustomCameraViewController {
             capturedImageView.trailingAnchor.constraint(equalTo: previewContainerView.trailingAnchor),
             capturedImageView.bottomAnchor.constraint(equalTo: previewContainerView.bottomAnchor)
         ])
+        
+        setupFocusIndicator()
+        setupTapGestureForFocus()
     }
     
     private func setupCaptureButton() {

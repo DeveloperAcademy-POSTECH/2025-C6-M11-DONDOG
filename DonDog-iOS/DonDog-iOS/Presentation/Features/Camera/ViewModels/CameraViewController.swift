@@ -64,6 +64,9 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     var isFrontPhotoConfirmed = false
     var isBackPhotoConfirmed = false
     
+    let focusIndicatorView = UIView()
+    var focusObservation: NSKeyValueObservation?
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,6 +101,10 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
         navigationController?.setNavigationBarHidden(false, animated: false)
         stopSession()
     }
+    
+    deinit {
+        focusObservation?.invalidate()
+        }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()

@@ -77,6 +77,7 @@
 		8CF3BD8C2EAF215A0050003C /* Notification+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD882EAF215A0050003C /* Notification+.swift */; };
 		8CF3BD8D2EAF215A0050003C /* Font+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD872EAF215A0050003C /* Font+.swift */; };
 		8CF3BD8E2EAF215A0050003C /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD892EAF215A0050003C /* UIImage+.swift */; };
+		8CF89F002ECB156600F93B36 /* CameraViewController+Focus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF89EFF2ECB155500F93B36 /* CameraViewController+Focus.swift */; };
 		A192F2BF2E9F3ADA00995DCC /* PolaroidSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */; };
 		CA2A58302E9E38C700AC3500 /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */; };
 		CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */; };
@@ -183,6 +184,7 @@
 		8CF3BD872EAF215A0050003C /* Font+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+.swift"; sourceTree = "<group>"; };
 		8CF3BD882EAF215A0050003C /* Notification+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+.swift"; sourceTree = "<group>"; };
 		8CF3BD892EAF215A0050003C /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
+		8CF89EFF2ECB155500F93B36 /* CameraViewController+Focus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+Focus.swift"; sourceTree = "<group>"; };
 		A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolaroidSetView.swift; sourceTree = "<group>"; };
 		CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DonDog-iOS.entitlements"; sourceTree = "<group>"; };
@@ -398,6 +400,7 @@
 		8BD1C13B2EC9C0E10064CF70 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				8CF89EFF2ECB155500F93B36 /* CameraViewController+Focus.swift */,
 				8BD1C1352EC9C0E10064CF70 /* CameraViewController+Actions.swift */,
 				8BD1C1362EC9C0E10064CF70 /* CameraViewController+PhotoCapture.swift */,
 				8BD1C1372EC9C0E10064CF70 /* CameraViewController+State.swift */,
@@ -948,6 +951,7 @@
 				8B736DED2EBB404E00E2AB76 /* SitckerCollectionViewModel.swift in Sources */,
 				8B736DEE2EBB404E00E2AB76 /* SitckerCollectionView.swift in Sources */,
 				8B736DEF2EBB404E00E2AB76 /* StickerConfirmViewModel.swift in Sources */,
+				8CF89F002ECB156600F93B36 /* CameraViewController+Focus.swift in Sources */,
 				CAA9AEDA2E8FC15C0047A89A /* AuthViewModel.swift in Sources */,
 				D297CE862EB05DFE00F28395 /* StickerType.swift in Sources */,
 				D219F1E32EAE0A3700BD82B7 /* PostView.swift in Sources */,

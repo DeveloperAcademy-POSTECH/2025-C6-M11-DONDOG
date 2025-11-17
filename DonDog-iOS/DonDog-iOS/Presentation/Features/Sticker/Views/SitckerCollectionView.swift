@@ -72,26 +72,29 @@ struct SitckerCollectionView: View {
             )
             .padding(.vertical, 10)
             
-            Spacer()
+            /// 뷰 하단 빈 곳을 탭하면 버튼 닫힘
+            Rectangle()
+                .fill(Color.clear)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .contentShape(Rectangle())
+                .simultaneousGesture(
+                    TapGesture().onEnded {
+                        if viewModel.showMakeStickerButton {
+                            viewModel.showMakeStickerButton = false
+                            viewModel.targetItemID = nil
+                        }
+                    }
+                )
             
             if viewModel.showMakeStickerButton {
                 makeStickerButton
                     .padding(.horizontal, 20)
             }
         }
+        .frame(maxHeight: .infinity, alignment: .top)
         .backHiddenSwipeEnabled()
         .background(dismissBackdrop)
         .background(.ppWhite)
-        // TODO: 화면 빈곳 해결
-//        .simultaneousGesture(
-//            /// 뷰 전체에 탭 제스처 추가 - 화면 빈 곳을 탭하면 버튼을 닫기 위함
-//            TapGesture().onEnded {
-//                if viewModel.showMakeStickerButton {
-//                    viewModel.showMakeStickerButton = false
-//                    viewModel.targetItemID = nil
-//                }
-//            }
-//        )
         .onAppear {
             viewModel.reloadStickerIfNeeded()
         }

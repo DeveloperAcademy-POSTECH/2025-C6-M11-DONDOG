@@ -71,9 +71,6 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
         setupCamera()
         setupUI()
         updateUIForCurrentState()
-        if isStickerCamera {
-            showStickerMaskOverlay()
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -90,6 +87,12 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
         if let gesture = navigationController?.interactivePopGestureRecognizer {
             gesture.isEnabled = true
             gesture.delegate = self
+        }
+        
+        // 스티커 카메라 모드인 경우 SwiftUI 측에 안내 오버레이를 표시하도록 알림
+        if isStickerCamera {
+            print("[CustomCamera] isStickerCamera = true → showStickerConfirmView = true")
+            viewModel?.showStickerConfirmView = true
         }
     }
     

@@ -22,6 +22,7 @@ extension CustomCameraViewController {
         }
     }
     
+    // TODO: 삭제 예정
     func showStickerMaskOverlay() {
         setNeedsUpdateOfHomeIndicatorAutoHidden()
         

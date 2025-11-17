@@ -22,4 +22,5 @@ enum AppRoute: Hashable {
     case post(post: PostData, postType: PostType)
     case setting
     case editprofile
+    case photoPicker
 }

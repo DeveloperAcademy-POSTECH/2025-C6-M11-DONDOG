@@ -10,14 +10,14 @@ import UIKit
 
 struct CameraView: UIViewControllerRepresentable {
     @StateObject var viewModel: CameraViewModel
-    
     @Environment(\.presentationMode) var presentationMode
     
     func makeUIViewController(context: Context) -> UIViewController {
         let customCameraVC = CustomCameraViewController()
+
         customCameraVC.delegate = context.coordinator
         customCameraVC.viewModel = viewModel
-        customCameraVC.isFrontOnly = viewModel.isFrontOnly
+        customCameraVC.isStickerCamera = viewModel.isStickerCamera
         if let keyword = viewModel.stickerKeyword {
             customCameraVC.stickerKeyword = keyword
         }

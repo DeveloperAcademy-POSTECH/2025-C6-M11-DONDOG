@@ -65,11 +65,27 @@ struct PostView: View {
                 }
             }
             .sheet(isPresented: $showStickerSheet) {
-                StickerSheetView(viewModel: stickerViewModel)
-                    .presentationDetents([.height(270)])
-                    .presentationBackgroundInteraction(.enabled)
-                    .presentationDragIndicator(.hidden)
-                    .background(Color.ddGray100.opacity(0.5))
+                StickerSheetView(
+                    viewModel: stickerViewModel,
+                    onRequestCamera: {
+                        stickerViewModel.shouldReopenSheetAfterCamera = true
+                        showStickerSheet = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            coordinator.push(.camera)
+                        }
+                    }
+                    
+                )
+                .presentationDetents([.height(270)])
+                .presentationBackgroundInteraction(.enabled)
+                .presentationDragIndicator(.hidden)
+                .background(Color.ddGray100.opacity(0.5))
+            }
+            .onAppear {
+                if stickerViewModel.shouldReopenSheetAfterCamera {
+                    showStickerSheet = true
+                    stickerViewModel.shouldReopenSheetAfterCamera = false
+                }
             }
         }
         

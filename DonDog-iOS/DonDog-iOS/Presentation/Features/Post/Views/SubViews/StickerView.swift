@@ -81,11 +81,21 @@ struct StickerView: View {
             .onChanged { value in
                 onInteraction()
                 isDragging = true
-                localPosition.x = value.translation.width / sticker.scale + sticker.position.x
-                localPosition.y = value.translation.height / sticker.scale + sticker.position.y
+                
+                let scaleFactor = max(sticker.scale, 0.1)
+                let adjustedTranslation: CGSize
+                if scaleFactor < 1.0 {
+                    adjustedTranslation = CGSize(width: value.translation.width * scaleFactor, height: value.translation.height * scaleFactor)
+                } else {
+                    adjustedTranslation = CGSize(width: value.translation.width / scaleFactor, height: value.translation.height / scaleFactor)
+                }
+                
+                let newX = sticker.position.x + adjustedTranslation.width
+                let newY = sticker.position.y + adjustedTranslation.height
+                
                 localPosition = CGPoint(
-                    x: min(max(localPosition.x, -150), 150),
-                    y: min(max(localPosition.y, -200), 200)
+                    x: min(max(newX, -150), 150),
+                    y: min(max(newY, -200), 200)
                 )
                 sticker.position = localPosition
             }
@@ -109,7 +119,6 @@ struct StickerView: View {
                 sticker.scale = lastScale
             }
     }
-
     
     private var rotationGesture: some Gesture {
         RotationGesture()

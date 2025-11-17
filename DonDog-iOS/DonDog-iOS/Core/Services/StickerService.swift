@@ -19,9 +19,9 @@ final class StickerService {
         let tags = StickerEmotionTagManager.shared.emotionTags
         let title = tags[1]
         
-        // 0) 입력 프리-리사이즈 (성능용, 최대 변 1024pt)
+        // 0) 입력 프리-리사이즈 (성능용, 최대 변 500pt)
         let originalSize = image.size
-        let preMaxEdgePt: CGFloat = 1024
+        let preMaxEdgePt: CGFloat = 400
         let preScale = min(preMaxEdgePt / max(originalSize.width, originalSize.height), 1)
         let preSize = CGSize(width: originalSize.width * preScale, height: originalSize.height * preScale)
         let preFormat = UIGraphicsImageRendererFormat.default()
@@ -32,7 +32,9 @@ final class StickerService {
         }
         
         // 1) 누끼
-        let clipped = getClippedImage(of: resizedImage)
+        let clippedRaw = getClippedImage(of: resizedImage)
+        // 알파 있는 부분만 타이트하게 자르기
+        let clipped = clippedRaw.croppedToAlphaBounds(padding: 10)
         guard clipped.size.width >= 1, clipped.size.height >= 1 else { return nil }
         
         // 2) 스타일 해석 (StickerCategoryData에서 보더 색깔, 데코 이름 가져오기)
@@ -40,40 +42,73 @@ final class StickerService {
         
         // 2-1) 보더
         let uiColor = UIColor(style.outlineColor)
-        guard let outlined = clipped.addOutline(thickness: 40, color: uiColor) else { return nil }
+        guard let outlined = clipped.addOutline(thickness: 20, color: uiColor) else { return nil }
         
         // 2-2) 데코 합성 (해당 데코 키)
         let outlinedSize = outlined.size
         guard outlinedSize.width >= 1, outlinedSize.height >= 1 else { return nil }
         
-        // 3) 최종 사이즈 계산 320×320 px
-        let targetPx: CGFloat = 320
-        let screenScale = UIScreen.main.scale
+        // 3) 최종 사이즈 계산
+        let decoWidth = outlinedSize.width * 1.27
         
-        let canvasPt = CGSize(width: targetPx / screenScale, height: targetPx / screenScale)
-        let decoRatio: CGFloat = 0.90 // 데코 폭
-        let offsetXRatio: CGFloat = 0.12 // getStickers의 16을 320px에 대한 값으로 반영
-        let offsetYRatio: CGFloat = -0.18 // getStickers의 36을 320px에 대한 값으로 반영
-        
-        let decoWidthPt = canvasPt.width * decoRatio
-        let offsetPtX = canvasPt.width * offsetXRatio
-        let offsetPtY = canvasPt.height * offsetYRatio
+        let titleImage: UIImage = OutlinedTitleImageMaker.render (
+            text: title,
+            font: UIFont(name: "SejongGeulggot", size: 55) ?? .systemFont(ofSize: 55),
+            fill: .black,
+            stroke: UIColor(style.outlineColor),
+            strokeWidth: 7.5,
+            kerning: 0,
+            maxWidth: decoWidth
+        )
         
         let sticker = ImageUtils.renderViewAsImage(
             ZStack {
                 Image(uiImage: outlined)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: canvasPt.width, height: canvasPt.height)
+                    .frame(width: outlinedSize.width, height: outlinedSize.height)
                 
                 Image(style.stickerDecoString)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: decoWidthPt)
+                    .frame(width: decoWidth)
+                    .offset(x: 16, y: -36)
+                
+                VStack {
+                    Spacer()
+                    
+                    Image(uiImage: titleImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: outlinedSize.width * 0.7, alignment: .center)
+                }
             }
-            .offset(x: offsetPtX, y: offsetPtY), size: canvasPt
+            .offset(y: -20)
+            , size: CGSize(width: decoWidth, height: outlinedSize.height)
         )
-        return sticker
+        
+        /// 최종 스티커 이미지를 한 번 더 다운스케일
+        let finalSticker = resizedForStickerUpload(sticker, maxEdge: 360)
+        return finalSticker
+        func resizedForStickerUpload(_ image: UIImage, maxEdge: CGFloat = 360) -> UIImage {
+            let size = image.size
+            let maxOriginalEdge = max(size.width, size.height)
+            guard maxOriginalEdge > maxEdge, maxOriginalEdge > 0 else {
+                return image
+            }
+            
+            let scale = maxEdge / maxOriginalEdge
+            let newSize = CGSize(width: size.width * scale, height: size.height * scale)
+            
+            let format = UIGraphicsImageRendererFormat.default()
+            format.scale = 1
+            
+            let renderer = UIGraphicsImageRenderer(size: newSize, format: format)
+            let resized = renderer.image { _ in
+                image.draw(in: CGRect(origin: .zero, size: newSize))
+            }
+            return resized
+        }
     }
     
     func getStickerCollection(of postId: String) async -> [String: UIImage] {
@@ -203,5 +238,63 @@ final class StickerService {
         }
         
         return stickers
+    }
+}
+
+extension UIImage {
+    /// 알파가 0이 아닌 픽셀 영역만 감싸도록 잘라내기 (여백 제거)
+    func croppedToAlphaBounds(padding: CGFloat = 0) -> UIImage {
+        guard let cgImage = self.cgImage else { return self }
+        guard let dataProvider = cgImage.dataProvider,
+              let data = dataProvider.data,
+              let ptr = CFDataGetBytePtr(data) else {
+            return self
+        }
+
+        let width = cgImage.width
+        let height = cgImage.height
+        let bytesPerPixel = 4
+        let bytesPerRow = cgImage.bytesPerRow
+
+        var minX = width
+        var maxX = 0
+        var minY = height
+        var maxY = 0
+
+        for y in 0..<height {
+            for x in 0..<width {
+                let offset = y * bytesPerRow + x * bytesPerPixel
+                let alpha = ptr[offset + 3]
+                if alpha > 0 {
+                    if x < minX { minX = x }
+                    if x > maxX { maxX = x }
+                    if y < minY { minY = y }
+                    if y > maxY { maxY = y }
+                }
+            }
+        }
+
+        // 알파 있는 픽셀 없으면 원본 리턴
+        if minX > maxX || minY > maxY { return self }
+
+        var cropRect = CGRect(
+            x: minX,
+            y: minY,
+            width: maxX - minX + 1,
+            height: maxY - minY + 1
+        )
+
+        // 살짝 패딩을 주고, 이미지 범위 안으로 클램프
+        cropRect = cropRect
+            .insetBy(dx: -padding, dy: -padding)
+            .intersection(CGRect(x: 0, y: 0, width: width, height: height))
+
+        guard let croppedCG = cgImage.cropping(to: cropRect) else { return self }
+
+        return UIImage(
+            cgImage: croppedCG,
+            scale: self.scale,
+            orientation: self.imageOrientation
+        )
     }
 }

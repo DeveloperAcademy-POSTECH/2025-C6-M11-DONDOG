@@ -58,7 +58,6 @@ struct CameraViewContainer: View {
             cameraViewModel.showGuideView = true
         }
         .onChange(of: cameraViewModel.showCaptionView) { _, _ in
-            
             let newCaptionVM = CaptionViewModel(
                 frontImage: cameraViewModel.frontImage,
                 backImage: cameraViewModel.backImage

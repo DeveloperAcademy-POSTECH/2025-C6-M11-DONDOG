@@ -11,43 +11,80 @@ import Kingfisher
 import SwiftUI
 
 struct PhotoPickerView: View {
-    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: PhotoPickerViewModel
     
-    let selectPhoto: (UIImage) -> Void
+    @State private var stickerImage: UIImage?
+    
     private let columns = [GridItem(.adaptive(minimum: 100), spacing: 8)]
     private let screenWidth = UIScreen.main.bounds.width
     
     var body: some View {
-        NavigationStack {
+        VStack {
+            CustomNavigationBar(
+                leadingType: .back(action: { coordinator.pop() }),
+                centerType: .title(title: "사진 선택"),
+                trailingType: .textButton(
+                    title: "완료",
+                    isEnabled: viewModel.selectedURL != nil,
+                    action: {
+                        guard viewModel.selectedURL != nil else { return }
+                        Task {
+                            do {
+                                let sticker = try await viewModel.makeStickerFromSelected()
+                                
+                                await MainActor.run {
+                                    self.stickerImage = sticker
+                                }
+                            } catch {
+                                viewModel.errorMessage = error.localizedDescription
+                            }
+                        }
+                    }
+                ),
+                navigationColor: .black
+            )
+            .padding(.horizontal, 16)
+            
             ScrollView {
                 if viewModel.isLoading {
                     ProgressView()
+                } else if viewModel.items.isEmpty {
+                    VStack {
+                        Spacer()
+                        // TODO: 캐릭터 이미지 넣기
+                        Text("게시물이 없어\n사진을 선택할 수 없어요")
+                            .font(.bodyRegular18)
+                        Spacer()
+                    }
                 } else {
                     ScrollView {
-                        LazyVGrid(columns: columns, spacing: 0) {
+                        LazyVGrid(columns: columns, spacing: 8) {
                             ForEach(viewModel.items, id: \.postId) { post in
                                 if let imageURL = URL(string: post.frontImageURL) {
                                     ZStack(alignment: .topTrailing) {
                                         KFImage(imageURL)
-                                            .placeholder { Color(.secondarySystemBackground) }
+                                            .placeholder {
+                                                Color(.secondarySystemBackground)
+                                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                            }
                                             .resizable()
                                             .scaledToFill()
-                                            .frame(width: screenWidth/3 + 3, height: 160)
-                                            .clipped()
+                                            .frame(maxWidth: .infinity, maxHeight: 150)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
                                             .contentShape(Rectangle())
                                             .onTapGesture { viewModel.selectedURL = imageURL }
                                         
                                         if viewModel.selectedURL == imageURL {
-                                            Color(.systemGray5).opacity(0.35)
-                                                .frame(width: screenWidth/3 + 3, height: 160)
-                                                .allowsHitTesting(false)
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color(.ddBlack).opacity(0.4))
+                                                .frame(maxWidth: .infinity, maxHeight: 150)
                                                 .overlay(
-                                                    Image(systemName: "checkmark.circle.fill")
-                                                        .font(.system(size: 22, weight: .semibold))
-                                                        .foregroundStyle(Color.accentColor)
+                                                    Image(systemName: "checkmark.circle")
+                                                        .font(.system(size: 24))
+                                                        .foregroundStyle(Color.ppPrime)
                                                         .padding(8),
-                                                    alignment: .topTrailing
+                                                    alignment: .center
                                                 )
                                         }
                                     }
@@ -60,32 +97,41 @@ struct PhotoPickerView: View {
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("취소") { dismiss() }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 8)
+        }
+        .task { await viewModel.loadInitial() }
+        .backHiddenSwipeEnabled()
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { stickerImage != nil },
+                set: { newValue in
+                    if !newValue {
+                        stickerImage = nil
+                    }
                 }
-                ToolbarItem(placement: .principal) {
-                    Text("사진 선택")
-                        .font(.headline)
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("확인") {
-                        guard viewModel.selectedURL != nil else { return }
+            )
+        ) {
+            if stickerImage != nil {
+                StickerConfirmView(
+                    viewModel: StickerConfirmViewModel(image: stickerImage),
+                    route: .picker,
+                    onRetake: {
+                        viewModel.selectedURL = nil
+                        stickerImage = nil
+                    },
+                    onComplete: {
+                        viewModel.selectedURL = nil
+                        stickerImage = nil
+                        coordinator.pop()
+                    },
+                    onUploaded: { tags in
                         Task {
-                            do {
-                                let sticker = try await viewModel.makeStickerFromSelected()
-                                selectPhoto(sticker)
-                                dismiss()
-                            } catch {
-                                viewModel.errorMessage = error.localizedDescription
-                            }
+                            await StickerGridService.shared.reloadSticker(tags: tags)
                         }
                     }
-                    .disabled(viewModel.selectedURL == nil)
-                }
+                )
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .task { await viewModel.loadInitial() }
         }
     }
 }

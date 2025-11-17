@@ -19,7 +19,7 @@ final class StickerGridService: ObservableObject {
     @Published var selectedCategory: StickerCategory = .affection
     @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
     
-    private init() {}
+    init() {}
     
     func stickerItems(for category: StickerCategory) -> [StickerItem] {
         itemsByCategory[category] ?? []
@@ -27,7 +27,10 @@ final class StickerGridService: ObservableObject {
 
     func fetchStickerImage(for item: StickerItem, in category: StickerCategory) async {
         loadingItemIDs.insert(item.id)
-        defer { loadingItemIDs.remove(item.id) }
+        stickerImageURLs[item.id] = nil
+        defer {
+            loadingItemIDs.remove(item.id)
+        }
 
         guard let uid = Auth.auth().currentUser?.uid else { return }
 
@@ -54,4 +57,17 @@ final class StickerGridService: ObservableObject {
             print("❌ 스티커 이미지 로드 실패: \(error)")
         }
     }
+    
+    func reloadSticker(tags: [String]) async {
+            guard tags.count >= 2 else { return }
+            let categoryRaw = tags[0]
+            let title = tags[1]
+            
+            guard let category = StickerCategory(rawValue: categoryRaw) else { return }
+            
+            let items = stickerItems(for: category)
+            guard let item = items.first(where: { $0.title == title }) else { return }
+            
+            await fetchStickerImage(for: item, in: category)
+        }
 }

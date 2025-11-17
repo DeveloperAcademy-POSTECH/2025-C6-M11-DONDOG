@@ -17,7 +17,10 @@ struct StickerView: View {
     
     @State private var localPosition: CGPoint = .zero
     @State private var isDragging = false
+    
+    @GestureState private var gestureScale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
+    
     @State private var lastRotation: Double = .zero
     
     var body: some View {
@@ -67,7 +70,7 @@ struct StickerView: View {
         .onAppear {
             localPosition = sticker.position
         }
-        .scaleEffect(sticker.scale)
+        .scaleEffect(lastScale * gestureScale)
         .rotationEffect(.degrees(sticker.rotation))
         .offset(x: sticker.position.x, y: sticker.position.y)
         .animation(isDragging ? nil : .easeOut(duration: 0.15), value: localPosition)
@@ -94,14 +97,19 @@ struct StickerView: View {
 
     private var scaleGesture: some Gesture {
         MagnificationGesture()
-            .onChanged { value in
-                onInteraction()
-                sticker.scale = min(max(lastScale * value, 0.4), 3.0)
+            .updating($gestureScale) { currentState, gestureState, _ in
+                let clamped = min(max(currentState, 0.5), 3.0)
+                gestureState = clamped
             }
-            .onEnded { _ in
-                lastScale = sticker.scale
+            .onChanged { _ in
+                onInteraction()
+            }
+            .onEnded { value in
+                lastScale = min(max(lastScale * value, 0.5), 3.0)
+                sticker.scale = lastScale
             }
     }
+
     
     private var rotationGesture: some Gesture {
         RotationGesture()

@@ -45,6 +45,8 @@ final class StickerViewModel: ObservableObject {
     let connectUserInfo = UserPairingStore.shared
     var roomId: String = ""
     
+    private var offsetIndex = [0, 0]
+    
     init() {
         guard let id = connectUserInfo.roomId else {
             print("roomId 가져오기 실패")
@@ -67,7 +69,7 @@ final class StickerViewModel: ObservableObject {
             createdAt: Date.now,
             stickerURL: url,
             postImageType: postImageType.rawValue,
-            position: randomPosition(),
+            position: orderedPosition(),
             scale: 1.0,
             rotation: .zero
         )
@@ -79,10 +81,20 @@ final class StickerViewModel: ObservableObject {
         selectedStickerID = newSticker.id
     }
     
-    private func randomPosition() -> CGPoint {
-        let x: CGFloat = [ -122, 0, 122 ].randomElement()!
-        let y: CGFloat = [ -125, 0, 125 ].randomElement()!
-        return CGPoint(x: x, y: y)
+    private func orderedPosition() -> CGPoint {
+        let x = [ -97, 97 ]
+        let y = [ -161, -41, 79 ]
+        
+        let xIndex = offsetIndex[0] % 2
+        let yIndex = offsetIndex[1] % 3
+        let position = CGPoint(x: x[xIndex], y: y[yIndex])
+        
+        offsetIndex[0] += 1
+        if xIndex != 0 {
+            offsetIndex[1] += 1
+        }
+        
+        return position
     }
     
     func removeSticker(_ sticker: AttachedSticker) async {

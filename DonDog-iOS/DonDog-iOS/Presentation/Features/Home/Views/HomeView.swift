@@ -236,6 +236,11 @@ struct HomeView: View {
             }
         }
         .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+            Task {
+                await viewModel.loadPosts()
+            }
+        }
         .background {
             if viewModel.isShowingATimePost {
                 Color.ppWhite

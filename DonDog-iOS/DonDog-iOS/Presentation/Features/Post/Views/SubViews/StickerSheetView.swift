@@ -82,6 +82,7 @@ struct StickerSheetView: View {
                         Task {
                             await viewModel.saveStickers()
                             viewModel.selectedStickerID = nil
+                            gridService.selectedCategory = categories[0]
                             dismiss()
                         }
                     } label: {

@@ -88,12 +88,6 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
             gesture.isEnabled = true
             gesture.delegate = self
         }
-        
-        // 스티커 카메라 모드인 경우 SwiftUI 측에 안내 오버레이를 표시하도록 알림
-        if isStickerCamera {
-            print("[CustomCamera] isStickerCamera = true → showStickerConfirmView = true")
-            viewModel?.showStickerConfirmView = true
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {

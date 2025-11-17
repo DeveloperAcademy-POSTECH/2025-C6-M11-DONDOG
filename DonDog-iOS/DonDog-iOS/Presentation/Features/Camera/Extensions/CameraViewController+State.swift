@@ -35,23 +35,20 @@ extension CustomCameraViewController {
                 self.step1Label.isHidden = true
                 self.step1CheckmarkImageView.isHidden = false
                 self.step1Circle.backgroundColor = .ddAlert
-                
-                // Step 1 펄스 애니메이션 멈춤
                 self.step1PulseView.isHidden = true
                 self.removePulseAnimation(from: self.step1PulseView)
-                
                 self.bottomButtonContainer.isHidden = false
                 self.captureButton.isHidden = true
+                self.flashButton.isHidden = true
             } else {
                 self.step1Label.isHidden = false
                 self.step1CheckmarkImageView.isHidden = true
-                
-                // 다시 찍기 시 Step 1 펄스 애니메이션 다시 시작
                 self.step1PulseView.isHidden = false
                 self.addPulseAnimation(to: self.step1PulseView)
                 
                 self.bottomButtonContainer.isHidden = true
                 self.captureButton.isHidden = false
+                self.flashButton.isHidden = false
             }
         }
     }
@@ -64,23 +61,20 @@ extension CustomCameraViewController {
                 self.step2Label.isHidden = true
                 self.step2CheckmarkImageView.isHidden = false
                 self.step2Circle.backgroundColor = .ddAlert
-                
-                // Step 2 펄스 애니메이션 멈춤
                 self.step2PulseView.isHidden = true
                 self.removePulseAnimation(from: self.step2PulseView)
-                
                 self.bottomButtonContainer.isHidden = false
                 self.captureButton.isHidden = true
+                self.flashButton.isHidden = true
             } else {
                 self.step2Label.isHidden = false
                 self.step2CheckmarkImageView.isHidden = true
-                
-                // 다시 찍기 시 Step 2 펄스 애니메이션 다시 시작
                 self.step2PulseView.isHidden = false
                 self.addPulseAnimation(to: self.step2PulseView)
                 
                 self.bottomButtonContainer.isHidden = true
                 self.captureButton.isHidden = false
+                self.flashButton.isHidden = false
             }
         }
     }
@@ -91,7 +85,7 @@ extension CustomCameraViewController {
             
             self.bottomButtonContainer.isHidden = true
             self.captureButton.isHidden = false
-            
+            self.flashButton.isHidden = false
             self.isFrontPhotoConfirmed = false
         }
     }
@@ -122,7 +116,7 @@ extension CustomCameraViewController {
             
             self.bottomButtonContainer.isHidden = true
             self.captureButton.isHidden = false
-            
+            self.flashButton.isHidden = false
             self.updateUIForCurrentState()
             
             DispatchQueue.global(qos: .userInitiated).async {

@@ -67,6 +67,11 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     let focusIndicatorView = UIView()
     var focusObservation: NSKeyValueObservation?
     
+    let flashButton = UIButton()
+    var flashMode: AVCaptureDevice.FlashMode = .off
+    let screenFlashOverlay = UIView()
+    var savedBrightness: CGFloat = 0.5
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -18,8 +18,15 @@ extension CustomCameraViewController {
         captureButton.isEnabled = false
         captureButton.alpha = 0.5
         
-        let settings = AVCapturePhotoSettings()
-        photoOutput.capturePhoto(with: settings, delegate: self)
+        if isCapturingFront && flashMode == .on {
+            triggerScreenFlashAndCapture()
+        } else {
+            let settings = AVCapturePhotoSettings()
+            if !isCapturingFront {
+                settings.flashMode = flashMode
+            }
+            photoOutput.capturePhoto(with: settings, delegate: self)
+        }
     }
     
     @objc func cancelTapped() {
@@ -103,6 +110,7 @@ extension CustomCameraViewController {
         
         DispatchQueue.main.async { [weak self] in
             self?.viewModel?.showGuideView = true
+            self?.updateFlashButtonAppearance()
         }
         
         updateUIForBackCamera()
@@ -146,8 +154,59 @@ extension CustomCameraViewController {
         DispatchQueue.main.async { [weak self] in
             self?.viewModel?.frontImage = nil
             self?.viewModel?.showGuideView = true
+            self?.updateFlashButtonAppearance()
         }
         
         updateUIForCurrentState()
+    }
+    
+    @objc func toggleFlash() {
+        switch flashMode {
+        case .off:
+            flashMode = .on
+        case .on:
+            flashMode = .off
+        case .auto:
+            flashMode = .off
+        @unknown default:
+            flashMode = .off
+        }
+        
+        updateFlashButtonAppearance()
+        
+        HapticManager.shared.light()
+    }
+    
+    private func triggerScreenFlashAndCapture() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            
+            self.savedBrightness = UIScreen.main.brightness
+            
+            UIScreen.main.brightness = 1.0
+        
+            self.screenFlashOverlay.isHidden = false
+            self.screenFlashOverlay.alpha = 1.0
+            self.screenFlashOverlay.backgroundColor = .white
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                guard let self = self else { return }
+                
+                let settings = AVCapturePhotoSettings()
+                self.photoOutput.capturePhoto(with: settings, delegate: self)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                    guard let self = self else { return }
+                    
+                    UIScreen.main.brightness = self.savedBrightness
+                    
+                    UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
+                        self.screenFlashOverlay.alpha = 0.0
+                    }, completion: { _ in
+                        self.screenFlashOverlay.isHidden = true
+                    })
+                }
+            }
+        }
     }
 }

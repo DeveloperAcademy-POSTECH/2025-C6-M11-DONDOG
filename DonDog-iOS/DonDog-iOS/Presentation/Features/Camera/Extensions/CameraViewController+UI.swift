@@ -11,8 +11,7 @@ import UIKit
 
 extension CustomCameraViewController {
     func setupUI() {
-        view.backgroundColor = .white
-        
+        view.backgroundColor = .ppWhite
         setupCancelButton()
         if isStickerCamera {
             setupStickerGuide()
@@ -20,6 +19,7 @@ extension CustomCameraViewController {
             setupStepIndicator()
         }
         setupPreviewLayer()
+        setupFlashButton()
         setupCaptureButton()
         if !isStickerCamera {
             setupBottomButtons()
@@ -174,5 +174,66 @@ extension CustomCameraViewController {
             nextButton.centerYAnchor.constraint(equalTo: bottomButtonContainer.centerYAnchor),
             nextButton.heightAnchor.constraint(equalToConstant: 52)
         ])
+    }
+    
+    private func setupFlashButton() {
+        let flashImage = UIImage(systemName: "bolt.slash.fill")
+        let resizedImage = flashImage?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .medium))
+        flashButton.setImage(resizedImage, for: .normal)
+        flashButton.tintColor = .white
+        flashButton.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        flashButton.layer.cornerRadius = 24
+        flashButton.contentMode = .center
+        flashButton.imageView?.contentMode = .scaleAspectFit
+        
+        flashButton.addTarget(self, action: #selector(toggleFlash), for: .touchUpInside)
+        
+        view.addSubview(flashButton)
+        flashButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            flashButton.leadingAnchor.constraint(equalTo: previewContainerView.leadingAnchor, constant: 16),
+            flashButton.bottomAnchor.constraint(equalTo: previewContainerView.bottomAnchor, constant: -16),
+            flashButton.widthAnchor.constraint(equalToConstant: 48),
+            flashButton.heightAnchor.constraint(equalToConstant: 48)
+        ])
+        
+        setupScreenFlashOverlay()
+        
+        updateFlashButtonAppearance()
+    }
+    
+    private func setupScreenFlashOverlay() {
+        screenFlashOverlay.backgroundColor = .white
+        screenFlashOverlay.alpha = 0
+        screenFlashOverlay.isHidden = true
+        view.addSubview(screenFlashOverlay)
+        screenFlashOverlay.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            screenFlashOverlay.topAnchor.constraint(equalTo: view.topAnchor),
+            screenFlashOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            screenFlashOverlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            screenFlashOverlay.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    func updateFlashButtonAppearance() {
+        flashButton.isEnabled = true
+        flashButton.alpha = 1.0
+        
+        let flashImage: UIImage?
+        switch flashMode {
+        case .off:
+            flashImage = UIImage(systemName: "bolt.slash.fill")
+        case .on:
+            flashImage = UIImage(systemName: "bolt.fill")
+        case .auto:
+            flashImage = UIImage(systemName: "bolt.badge.a.fill")
+        @unknown default:
+            flashImage = UIImage(systemName: "bolt.slash.fill")
+        }
+        
+        let resizedImage = flashImage?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .medium))
+        flashButton.setImage(resizedImage, for: .normal)
     }
 }

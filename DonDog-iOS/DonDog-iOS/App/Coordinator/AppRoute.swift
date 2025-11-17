@@ -15,7 +15,6 @@ enum AppRoute: Hashable {
     case profileSetup
     case invite
     case camera
-    case feed
     case home
     case stickerCollection
     case archive

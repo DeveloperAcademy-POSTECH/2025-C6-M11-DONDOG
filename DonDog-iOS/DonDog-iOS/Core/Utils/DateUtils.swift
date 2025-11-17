@@ -9,6 +9,7 @@ import Foundation
 
 enum DateFormat: String {
     case full = "MM월 d일 HH:mm"
+    case home = "yyyy.MM.dd HH:mm"
     case yearMonth = "yyyy년 M월"
     case weekDay = "yyyy년 M월 d일 E요일"
     case monthDay = "MM월 d일"
@@ -88,10 +89,15 @@ final class DateUtils {
             return false
         }
         
-        let now = Date()
-        let timeInterval = now.timeIntervalSince(lastUploadedAt)
-        let threeDaysInSeconds: TimeInterval = 3 * 24 * 60 * 60
+        let uploadDateStart = startOfDay(for: lastUploadedAt)
         
-        return timeInterval >= threeDaysInSeconds
+        let now = Date()
+        let todayStart = startOfDay(for: now)
+        
+        guard let threeDaysLater = calendar.date(byAdding: .day, value: 3, to: uploadDateStart) else {
+            return false
+        }
+        
+        return todayStart >= threeDaysLater
     }
 }

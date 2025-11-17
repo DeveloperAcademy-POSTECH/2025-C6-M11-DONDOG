@@ -18,10 +18,12 @@ struct AttachedSticker: Identifiable, Codable {
     var stickerURL: URL
     var position: CGPoint
     var scale: CGFloat
-    var rotation: Angle
+    var rotation: Double
 }
 
 final class StickerViewModel: ObservableObject {
+    @Published var postId = ""
+    
     @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
     
     @Published var stickers: [AttachedSticker] = []
@@ -43,7 +45,7 @@ final class StickerViewModel: ObservableObject {
         self.roomId = id
     }
     
-    func fetchStickers(postId: String) async {
+    func fetchStickers() async {
         do {
             stickers = try await dataManager.fetchCollection(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments")
             print(stickers)
@@ -70,11 +72,16 @@ final class StickerViewModel: ObservableObject {
         return CGPoint(x: x, y: y)
     }
     
-    func removeSticker(_ sticker: AttachedSticker) {
+    func removeSticker(_ sticker: AttachedSticker) async {
         stickers.removeAll { $0.id == sticker.id }
+        do {
+            try await dataManager.delete(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments/\(sticker.id.uuidString)")
+        } catch {
+            print("붙여진 스티커 삭제 실패: \(error.localizedDescription)")
+        }
     }
     
-    func saveStickers(postId: String) async {
+    func saveStickers() async {
         for sticker in stickers {
             let data: [String: Any] = [
                 "id": sticker.id.uuidString,
@@ -82,7 +89,7 @@ final class StickerViewModel: ObservableObject {
                 "stickerURL": sticker.stickerURL.absoluteString,
                 "position": [sticker.position.x, sticker.position.y],
                 "scale": sticker.scale,
-                "rotation": sticker.rotation.degrees
+                "rotation": sticker.rotation
             ]
             
             do {

@@ -18,7 +18,7 @@ struct StickerView: View {
     @State private var dragOffset: CGSize = .zero
     @State private var lastOffset: CGSize = .zero
     @State private var lastScale: CGFloat = 1.0
-    @State private var lastRotation: Angle = .zero
+    @State private var lastRotation: Double = .zero
     
     var body: some View {
         ZStack {
@@ -65,7 +65,7 @@ struct StickerView: View {
             }
         }
         .scaleEffect(sticker.scale)
-        .rotationEffect(sticker.rotation)
+        .rotationEffect(.degrees(sticker.rotation))
         .offset(x: sticker.position.x, y: sticker.position.y)
     }
 
@@ -105,7 +105,7 @@ struct StickerView: View {
         RotationGesture()
             .onChanged { value in
                 onInteraction()
-                sticker.rotation = lastRotation + value
+                sticker.rotation = lastRotation + value.degrees
             }
             .onEnded { _ in
                 lastRotation = sticker.rotation
@@ -135,7 +135,7 @@ struct StickerView: View {
                 let startAngle = atan2(start.y, start.x)
                 let endAngle = atan2(end.y, end.x)
                 let angleDelta = endAngle - startAngle
-                sticker.rotation = lastRotation + Angle(radians: angleDelta)
+                sticker.rotation = lastRotation + Angle(radians: angleDelta).degrees
             }
             .onEnded { _ in
                 lastScale = sticker.scale

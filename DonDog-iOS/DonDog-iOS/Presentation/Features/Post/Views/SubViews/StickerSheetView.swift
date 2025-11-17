@@ -80,7 +80,7 @@ struct StickerSheetView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         Task {
-                            await viewModel.saveStickers(postId: postId)
+                            await viewModel.saveStickers()
                             viewModel.selectedStickerID = nil
                             dismiss()
                         }

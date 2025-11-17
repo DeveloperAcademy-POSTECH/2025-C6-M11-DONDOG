@@ -74,7 +74,8 @@ struct PostView: View {
         }
         .task {
             Task {
-                await stickerViewModel.fetchStickers(postId: viewModel.post.postId)
+                stickerViewModel.postId = viewModel.post.postId
+                await stickerViewModel.fetchStickers()
             }
         }
         

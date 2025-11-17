@@ -47,7 +47,11 @@ struct ImageView: View {
                     sticker: $sticker,
                     isSelected: viewModel.selectedStickerID == sticker.id,
                     isEditable: isEditing,
-                    onDelete: { viewModel.removeSticker(sticker) },
+                    onDelete: {
+                        Task {
+                            await viewModel.removeSticker(sticker)
+                        }
+                    },
                     onInteraction: {
                         if isEditing {
                             viewModel.selectedStickerID = sticker.id

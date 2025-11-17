@@ -7,8 +7,14 @@
 
 import SwiftUI
 
+enum CustomButtonStyleType {
+    case primary
+    case secondary // 취소 자리 - 회색 버튼
+}
+
 struct CustomButton: View {
     var title: String
+    var style: CustomButtonStyleType = .primary
     var isEnable: Bool = true
     var action: (() -> Void)?
     var isProgressView: Bool = false
@@ -17,19 +23,18 @@ struct CustomButton: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
-                .foregroundStyle(isEnable ? Color.ddPrimaryBlue : Color.ddSecondaryBlue)
+                .foregroundStyle(backgroundColor)
             
             HStack(spacing: 8) {
                 Text(title)
-                    .font(.subtitleMedium18)
-                    .foregroundStyle(Color.ddWhite)
+                    .font(.bodyMedium16)
+                    .foregroundStyle(Color.ppWhite)
                 if isProgressView {
                     ProgressView()
                         .frame(width: 16, height: 16)
-                        .tint(Color.ddWhite50)
+                        .tint(foregroundColor)
                 }
             }
-            
         }
         .disabled(!isEnable)
         .frame(height: 52)
@@ -41,9 +46,28 @@ struct CustomButton: View {
         }
         .padding(.bottom, keyboard.keyboardHeight == 0 ? 0 : 10)
     }
+    
+    private var backgroundColor: Color {
+        switch style {
+        case .primary:
+            return isEnable ? Color.ppPrime : Color.ppPrime50
+        case .secondary:
+            return Color.ppGray400
+        }
+    }
+
+    private var foregroundColor: Color {
+        switch style {
+        case .primary:
+            return Color.ddWhite
+        case .secondary:
+            return Color.ppBlack
+        }
+    }
 }
 
 #Preview {
-    CustomButton(title: "Continue", isEnable: true, action: { print("Disabled button tapped") })
+    CustomButton(title: "Continue", style: .primary, isEnable: true, action: { print("Disabled button tapped") })
+    CustomButton(title: "Continue", style: .secondary, isEnable: true, action: { print("Disabled button tapped") })
     CustomButton(title: "Submit", isEnable: false, action: { print("Enabled button tapped") }, isProgressView: true)
 }

@@ -26,7 +26,7 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
                 self.updateUIForFrontPhotoConfirmation(isConfirmed: true)
             }
             
-            if self.isFrontOnly {
+            if self.isStickerCamera {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     self.presentStickerConfirm(with: image)
                 }
@@ -68,21 +68,26 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
             
             let confirmVC = UIHostingController(
                 rootView: StickerConfirmView(
-                    viewModel: StickerConfirmViewModel(
-                        image: finalImage,
-                        onDone: { [weak self] _ in
-                            self?.dismissAllModals()
-                        }
-                    ),
+                    viewModel: StickerConfirmViewModel(image: finalImage),
                     route: .camera,
                     onRetake: { [weak self] in
-                        self?.presentedViewController?.dismiss(animated: true) {
-                            guard let self = self else { return }
+                        guard let self = self else { return }
+                        self.presentedViewController?.dismiss(animated: true) {
+                            self.navigationController?.setNavigationBarHidden(true, animated: false)
+                            self.navigationItem.hidesBackButton = true
                             self.resetCameraState()
                         }
                     },
-                    onClose: { [weak self] in
-                        self?.dismissAllModals()
+                    onComplete: { [weak self] in
+                        guard let self = self else { return }
+                        self.dismiss(animated: true) {
+                            self.delegate?.didCancel()
+                        }
+                    },
+                    onUploaded: { tags in
+                        Task {
+                            await StickerGridService.shared.reloadSticker(tags: tags)
+                        }
                     }
                 )
             )

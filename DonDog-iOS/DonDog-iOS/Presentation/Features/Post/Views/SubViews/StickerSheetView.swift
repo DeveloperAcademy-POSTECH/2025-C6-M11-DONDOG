@@ -10,8 +10,10 @@ import FirebaseFirestore
 import Kingfisher
 import SwiftUI
 
-struct StickerSheetView: View {
+struct StickerSheetView: View {    
     @ObservedObject var viewModel: StickerViewModel
+    let onRequestCamera: () -> Void
+    
     @State private var select = 0
     @Environment(\.dismiss) var dismiss
     private let categories = StickerCategory.allCases
@@ -19,8 +21,9 @@ struct StickerSheetView: View {
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 20), count: 3)
     @StateObject private var cameraVM = CameraViewModel()
     @ObservedObject private var gridService: StickerGridService
-    init(viewModel: StickerViewModel, gridService: StickerGridService = .shared) {
+    init(viewModel: StickerViewModel, onRequestCamera: @escaping () -> Void, gridService: StickerGridService = .shared) {
         self.viewModel = viewModel
+        self.onRequestCamera = onRequestCamera
         self._gridService = ObservedObject(wrappedValue: gridService)
     }
 
@@ -33,7 +36,6 @@ struct StickerSheetView: View {
                     loadingItemIDs: gridService.loadingItemIDs,
                     columns: columns,
                     rowSpacing: 8,
-                    isCameraPresented: $viewModel.showCamera,
                     onItemAppear: { id in
                         if let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id }) {
                             Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
@@ -46,18 +48,11 @@ struct StickerSheetView: View {
                         }
                     },
                     onPlusTap: { item in
-                        StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, item.title]
+                        let keyword = item.title
+                        StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, keyword]
                         viewModel.targetItemID = item.id
-                        cameraVM.isFrontOnly = true
-                        cameraVM.stickerKeyword = item.title
-                        cameraVM.resetCameraState()
-                        viewModel.showCamera = true
+                        onRequestCamera()
                     },
-                    onCameraDismiss: { id in
-                        if let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id }) {
-                            Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
-                        }
-                    }
                 )
             }
             .toolbar {
@@ -87,6 +82,5 @@ struct StickerSheetView: View {
                 }
             }
         }
-        .cameraCaptureFlow(isPresented: $viewModel.showCamera, cameraVM: cameraVM)
     }
 }

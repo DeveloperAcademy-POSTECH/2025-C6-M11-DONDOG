@@ -23,22 +23,29 @@ struct HomeView: View {
             
             TabView(selection: $viewModel.currentIndex) {
                 if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
-                    // 뷰빌더로 변경할 예정
-                    KFImage(frontURL)
-                        .resizable()
-                        .scaledToFit()
-                        .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                        .cornerRadius(12)
-                        .padding(.horizontal, 20)
-                        .tag(0)
-                    
-                    KFImage(backURL)
-                        .resizable()
-                        .scaledToFit()
-                        .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                        .cornerRadius(12)
-                        .padding(.horizontal, 20)
-                        .tag(1)
+                    Group {
+                        // 뷰빌더로 변경할 예정
+                        KFImage(frontURL)
+                            .resizable()
+                            .scaledToFit()
+                            .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
+                            .cornerRadius(12)
+                            .padding(.horizontal, 20)
+                            .tag(0)
+                        
+                        KFImage(backURL)
+                            .resizable()
+                            .scaledToFit()
+                            .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
+                            .cornerRadius(12)
+                            .padding(.horizontal, 20)
+                            .tag(1)
+                    }
+                    .onTapGesture {
+                        if let currentPost = viewModel.currentPost?.post {
+                            coordinator.push(.post(post: currentPost, postType: .post))
+                        }
+                    }
                 } else {
                     // 포스트가 없을 때
                     HStack(spacing: 16) {

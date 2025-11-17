@@ -16,7 +16,7 @@ protocol CustomCameraDelegate: AnyObject {
     func didCompleteBothPhotos()
 }
 
-class CustomCameraViewController: UIViewController {
+class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate {
     // MARK: - Properties
     weak var delegate: CustomCameraDelegate?
     var captureSession: AVCaptureSession!
@@ -25,9 +25,14 @@ class CustomCameraViewController: UIViewController {
     var currentCamera: AVCaptureDevice?
     weak var viewModel: CameraViewModel?
     
-    var isFrontOnly: Bool = false
+    var isStickerCamera: Bool = false
+    let stickerMaskView = UIView()
+    let stickerMaskLayer = CAShapeLayer()
     var stickerKeyword: String?
     var onStickerCreated: ((UIImage) -> Void)?
+    let stickerGuideContainer = UIStackView()
+    let stickerTitleLabel = UILabel()
+    let stickerSubtitleLabel = UILabel()
     
     var isCapturingFront = true
     var frontImage: UIImage?
@@ -62,24 +67,44 @@ class CustomCameraViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureModeFromEmotionTags()
         setupCamera()
         setupUI()
         updateUIForCurrentState()
+        if isStickerCamera {
+            showStickerMaskOverlay()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationItem.hidesBackButton = true
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         startSession()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        /// 네비게이션 바를 숨긴 상태에서도 좌우 스와이프(뒤로가기) 제스처가 동작하도록 설정
+        if let gesture = navigationController?.interactivePopGestureRecognizer {
+            gesture.isEnabled = true
+            gesture.delegate = self
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
         stopSession()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         videoPreviewLayer?.frame = previewContainerView.bounds
+        if stickerMaskView.superview != nil {
+            updateStickerMaskPath()
+        }
     }
     
     // MARK: - Camera Setup
@@ -164,7 +189,7 @@ class CustomCameraViewController: UIViewController {
 struct CameraViewControllerWrapper: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> CustomCameraViewController {
         let viewController = CustomCameraViewController()
-        viewController.isFrontOnly = false
+        viewController.isStickerCamera = false
         return viewController
     }
     

@@ -58,6 +58,7 @@ final class AuthViewModel: ObservableObject {
         print("서버로 보내는 전화번호: \(formattedDigitsWithCode)")
 
         // 탈퇴 플로우일 때: 입력 번호가 현재 로그인 계정의 번호와 일치하는지 확인
+        // TODO: 커스텀 알랏 디자인 나오면 수정
         if self.isWithDraw {
             let currentPhoneE164 = Auth.auth().currentUser?.phoneNumber
             if currentPhoneE164 != formattedDigitsWithCode {

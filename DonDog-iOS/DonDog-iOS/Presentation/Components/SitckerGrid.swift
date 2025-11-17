@@ -121,7 +121,7 @@ struct StickerCellView: View {
                 .contentShape(Rectangle())
                 
                 Text(title)
-                    .font(.polaroidCaptionRegular20)
+                    .font(.polaroidCaptionRegular16)
                     .lineLimit(1)
             }
             .onTapGesture { if !isLoading { onTapEmpty() } }

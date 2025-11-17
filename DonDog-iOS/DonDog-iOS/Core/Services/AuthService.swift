@@ -88,7 +88,7 @@ final class AuthService {
     // MARK: - 라우팅 처리 1: 라우팅 & FCM 토큰 관리
     private func replaceRootinAuthService(_ route: AppRoute, coordinator: AppCoordinator) {
         Task { @MainActor in
-            if coordinator.root == route { return }
+            // if coordinator.root == route { return }
             coordinator.replaceRoot(route)
             NSLog("[AuthService replaceRootinAuthService함수] 🔄 \(coordinator.root) → \(route)")
         }
@@ -127,6 +127,7 @@ final class AuthService {
         guard let userDoc = userDoc else {
             Task { @MainActor in
                 UserPairingStore.shared.reset()
+                UserPairingStore.shared.myUid = refreshUser.uid
             }
             replaceRootinAuthService(.profileSetup, coordinator: coordinator)
             return
@@ -136,6 +137,7 @@ final class AuthService {
         if userDoc.exists == false {
             Task { @MainActor in
                 UserPairingStore.shared.reset()
+                UserPairingStore.shared.myUid = refreshUser.uid
             }
             replaceRootinAuthService(.profileSetup, coordinator: coordinator)
             return
@@ -163,8 +165,14 @@ final class AuthService {
         }
         
         guard let rid = roomId, !rid.isEmpty else {
+            state.roomId = nil
+            state.partnerUid = nil
+            state.partnerName = nil
+            state.isConnected = false
+            
             NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil"), role = \(state.myRole ?? "nil")")
             NSLog("[AuthService] 🔓 미연결 상태 (roomId 없음)")
+            replaceRootinAuthService(.home, coordinator: coordinator)
             return
         }
         

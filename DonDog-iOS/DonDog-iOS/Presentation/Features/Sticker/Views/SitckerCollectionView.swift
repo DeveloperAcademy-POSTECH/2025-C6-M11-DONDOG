@@ -70,7 +70,8 @@ struct SitckerCollectionView: View {
                         .first(where: { $0.id == id }) {
                         Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
                     }
-                }
+                },
+                selectedItemID: viewModel.targetItemID
             )
             
             Spacer()

@@ -15,6 +15,7 @@ struct StickerGrid: View {
     let items: [StickerItem]
     let stickerImageURLs: [StickerItem.ID: URL]
     let loadingItemIDs: Set<StickerItem.ID>
+    let selectedItemID: StickerItem.ID?
 
     @Binding var isCameraPresented: Bool
     var isStickerConfirmPresented: Binding<Bool>?
@@ -36,7 +37,8 @@ struct StickerGrid: View {
         onItemTap: @escaping (StickerItem) -> Void,
         onPlusTap: ((StickerItem) -> Void)? = nil,
         onCameraDismiss: @escaping (StickerItem.ID) -> Void,
-        onConfirmDismiss: ((StickerItem.ID) -> Void)? = nil
+        onConfirmDismiss: ((StickerItem.ID) -> Void)? = nil,
+        selectedItemID: StickerItem.ID? = nil
     ) {
         self.items = items
         self.stickerImageURLs = remoteURLByItemID
@@ -50,6 +52,7 @@ struct StickerGrid: View {
         self.onPlusTap = onPlusTap ?? onItemTap
         self.onCameraDismiss = onCameraDismiss
         self.onConfirmDismiss = onConfirmDismiss
+        self.selectedItemID = selectedItemID
     }
     
     var body: some View {
@@ -60,6 +63,7 @@ struct StickerGrid: View {
                         title: item.title,
                         url: stickerImageURLs[item.id],
                         isLoading: loadingItemIDs.contains(item.id),
+                        isSelected: item.id == selectedItemID,
                         onTapLoaded: { onItemTap(item) },
                         onTapEmpty: { onPlusTap(item) }
                     )
@@ -89,6 +93,7 @@ struct StickerCellView: View {
     let title: String
     let url: URL?
     let isLoading: Bool
+    let isSelected: Bool
     let onTapLoaded: () -> Void
     let onTapEmpty: () -> Void
 
@@ -99,12 +104,13 @@ struct StickerCellView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 100)
+                    .opacity(isSelected ? 1.0 : 0.5)
                     .contentShape(Rectangle())
                     .onTapGesture(perform: onTapLoaded)
             } else {
                 ZStack {
                     Circle()
-                        .stroke(.secondary, style: StrokeStyle(lineWidth: 3, dash: [15, 5]))
+                        .stroke(isSelected ? Color.ppGray600 : .secondary, style: StrokeStyle(lineWidth: 3, dash: [15, 5]))
                         .frame(width: 100, height: 100)
 
                     if isLoading {
@@ -112,6 +118,7 @@ struct StickerCellView: View {
                     } else {
                         Image(systemName: "plus")
                             .font(.system(size: 20))
+                            .foregroundColor(isSelected ? .ppGray600 : .primary)
                     }
                 }
                 .contentShape(Rectangle())

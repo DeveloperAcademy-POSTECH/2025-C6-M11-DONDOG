@@ -125,6 +125,7 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
     
     func didUploadPost() {
         isLoading = false
+        selectedPostType = .myArchive
         Task {
             await loadPosts()
         }

@@ -97,7 +97,7 @@ final class AuthNumberViewModel: ObservableObject {
             
             await MainActor.run {
                 if exists {
-                    self.coordinator?.replaceRoot(.feed)
+                    self.coordinator?.replaceRoot(.home)
                 } else {
                     self.coordinator?.replaceRoot(.profileSetup)
                 }

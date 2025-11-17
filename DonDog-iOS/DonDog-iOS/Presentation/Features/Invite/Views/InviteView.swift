@@ -113,7 +113,7 @@ struct InviteView: View {
                     .underline(true, pattern: .solid)
                     .font(.captionRegular13)
                     .onTapGesture {
-                        coordinator.replaceRoot(.feed)
+                        coordinator.replaceRoot(.home)
                     }
                     .padding(.vertical, 8)
             }
@@ -123,7 +123,7 @@ struct InviteView: View {
         .dismissKeyboard()
         .task { viewModel.fetchInviteCodeandExpireDate() }
         .onChange(of: viewModel.connectSucceeded) {
-            coordinator.replaceRoot(.feed)
+            coordinator.replaceRoot(.home)
         }
     }
 }

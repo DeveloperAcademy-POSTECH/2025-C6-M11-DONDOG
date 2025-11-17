@@ -15,11 +15,11 @@ enum AppRoute: Hashable {
     case profileSetup
     case invite
     case camera
-    case feed
     case home
     case stickerCollection
     case archive
     case post(post: PostData, postType: PostType)
     case setting
     case editprofile
+    case photoPicker
 }

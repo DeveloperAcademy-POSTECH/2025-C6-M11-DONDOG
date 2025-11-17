@@ -14,13 +14,13 @@ protocol ModuleFactoryProtocol {
     func makeAuthNumberView(isNumberWithdraw: Bool) -> AuthNumberView
     func makeProfileView(mode: ProfileFormMode) -> ProfileView
     func makeInviteView(showSentHint: Bool) -> InviteView
-    func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView
-    func makeFeedView() -> FeedView
+    func makeCameraView() -> CameraView
     func makeSettingView() -> SettingView
     func makeArchiveView() -> ArchiveView
     func makePostView(with post: PostData, for postType: PostType) -> PostView
     func makeHomeView() -> HomeView
     func makeStickerCollectionView() -> SitckerCollectionView
+    func makePhotoPickerView() -> PhotoPickerView
 }
 
 final class ModuleFactory: ModuleFactoryProtocol {
@@ -56,16 +56,9 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeCameraView(with feedViewModel: FeedViewModel) -> CameraView {
+    func makeCameraView() -> CameraView {
         let cameraViewModel = CameraViewModel()
-        cameraViewModel.delegate = feedViewModel
         return CameraView(viewModel: cameraViewModel)
-    }
-    
-    func makeFeedView() -> FeedView {
-        let viewModel = FeedViewModel()
-        let view = FeedView(viewModel: viewModel)
-        return view
     }
 
     func makeSettingView() -> SettingView {
@@ -95,6 +88,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     func makeStickerCollectionView() -> SitckerCollectionView {
         let viewModel = SitckerCollectionViewModel()
         let view = SitckerCollectionView(viewModel: viewModel)
+        return view
+    }
+    
+    func makePhotoPickerView() -> PhotoPickerView {
+        let viewModel = PhotoPickerViewModel()
+        let view = PhotoPickerView(viewModel: viewModel)
         return view
     }
 }

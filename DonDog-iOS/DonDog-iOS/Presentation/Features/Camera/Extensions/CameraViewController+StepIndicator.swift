@@ -199,6 +199,8 @@ extension CustomCameraViewController {
     }
     
     func updateStepIndicator() {
+        guard !isStickerCamera else { return }
+        
         if isCapturingFront {
             step1Circle.backgroundColor = .ddAlert
             step1Label.isHidden = false

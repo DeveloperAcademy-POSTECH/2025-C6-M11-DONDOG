@@ -96,9 +96,7 @@ final class AppCoordinator: ObservableObject {
         case .invite:
             factory.makeInviteView(showSentHint: inviteShowSentHint)
         case .camera:
-            EmptyView()
-        case .feed:
-            factory.makeFeedView()
+            factory.makeCameraView()
         case .home:
             factory.makeHomeView()
         case .stickerCollection:
@@ -111,6 +109,8 @@ final class AppCoordinator: ObservableObject {
             factory.makeSettingView()
         case .editprofile:
             factory.makeProfileView(mode: .edit)
+        case .photoPicker:
+            factory.makePhotoPickerView()
         }
     }
     
@@ -120,8 +120,8 @@ final class AppCoordinator: ObservableObject {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         
         // 모든 딥링크는 피드에서 시작
-        if root != .feed {
-            replaceRoot(.feed)
+        if root != .home {
+            replaceRoot(.home)
         } else {
             popToRoot()
         }

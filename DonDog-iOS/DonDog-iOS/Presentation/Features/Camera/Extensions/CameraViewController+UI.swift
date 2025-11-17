@@ -14,10 +14,16 @@ extension CustomCameraViewController {
         view.backgroundColor = .white
         
         setupCancelButton()
-        setupStepIndicator()
+        if isStickerCamera {
+            setupStickerGuide()
+        } else {
+            setupStepIndicator()
+        }
         setupPreviewLayer()
         setupCaptureButton()
-        setupBottomButtons()
+        if !isStickerCamera {
+            setupBottomButtons()
+        }
     }
     
     private func setupPreviewLayer() {
@@ -28,10 +34,25 @@ extension CustomCameraViewController {
         view.addSubview(previewContainerView)
         previewContainerView.translatesAutoresizingMaskIntoConstraints = false
         
+        let topAnchor: NSLayoutYAxisAnchor
+        let topSpacing: CGFloat
+        if isStickerCamera {
+            if stickerGuideContainer.superview != nil {
+                topAnchor = stickerGuideContainer.bottomAnchor
+                topSpacing = 24
+            } else {
+                topAnchor = cancelButton.bottomAnchor
+                topSpacing = 24
+            }
+        } else {
+            topAnchor = stepIndicatorContainer.bottomAnchor
+            topSpacing = 20
+        }
+        
         NSLayoutConstraint.activate([
-            previewContainerView.topAnchor.constraint(equalTo: stepIndicatorContainer.bottomAnchor, constant: 8),
-            previewContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            previewContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            previewContainerView.topAnchor.constraint(equalTo: topAnchor, constant: topSpacing),
+            previewContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 22),
+            previewContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -22),
             previewContainerView.heightAnchor.constraint(equalTo: previewContainerView.widthAnchor, multiplier: 4.0/3.0)
         ])
         

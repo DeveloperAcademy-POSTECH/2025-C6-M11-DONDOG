@@ -27,6 +27,7 @@ enum CustomNavigationBarLeadingType {
 
 enum CustomNavigationBarCenterType {
     case title(title: String)
+    case logoImage(logoImage: String)
     case timeTitle(title: String, timeImage: String)
     case none
 }
@@ -36,6 +37,7 @@ enum CustomNavigationBarTrailingType {
     case menu(items: [CustomNavMenuItem])
     case setting(action: () -> Void)
     case timeType(time: String)
+    case textButton(title: String, isEnabled: Bool, action: () -> Void)
     case none
 }
 
@@ -116,13 +118,19 @@ struct CustomNavigationBar: View {
             Text(text)
                 .font(.titleBold18)
             
+        case .logoImage(let image):
+            Image(image)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 26)
+            
         case .timeTitle(let text, let image):
             HStack(spacing: 5) {
                 Text(text)
                     .font(.titleBold18)
                 Image(systemName: image)
                     .font(.titleBold18)
-                    .foregroundStyle(image == "sun.max" ? .ppPrime : .ddFeelingYellow)
+                    .foregroundStyle(image == "sun.max" ? .ppPrime : .ppYellow)
             }
         
         case .none:
@@ -165,8 +173,19 @@ struct CustomNavigationBar: View {
             }
         
         case .timeType(let time):
-            Text("\(time)")
-                .frame(width: 24)
+            Image(systemName: time)
+                .resizable()
+                .frame(width: 24, height: 24)
+                .foregroundStyle(time == "sun.max.fill" ? .ppPrime : .ppYellow)
+            
+        case .textButton(let title, let isEnabled, let action):
+            Button(action: action) {
+                Text(title)
+                    .font(.bodyRegular18)
+                    .foregroundStyle(isEnabled ? Color.ppPrime : Color.ppGray300)
+            }
+            .disabled(!isEnabled)
+            .opacity(isEnabled ? 1.0 : 0.3)
             
         case .none:
             Spacer().frame(width: 24).opacity(0)
@@ -190,7 +209,7 @@ struct CustomNavigationBar: View {
     )
     
     // 홈뷰
-    CustomNavigationBar(leadingType: .none, centerType: .title(title: "LOGO"), trailingType: .timeType(time: "낮"), navigationColor: .black)
+    CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: "sun.max.fill"), navigationColor: .black)
     
     // 카메라 상세 - 촬영
     CustomNavigationBar(leadingType: .back(action: {}), centerType: .none, trailingType: .none, navigationColor: .black)

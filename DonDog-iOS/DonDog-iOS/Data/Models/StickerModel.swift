@@ -22,13 +22,13 @@ struct StickerData: Codable, Identifiable {
 struct StickerItem: Identifiable, Hashable {
     let id = UUID()
     let title: String // 세부 감정 문구 (예: "보고싶다")
-    var image: UIImage? // 누끼 완료된 스티커 이미지 (없으면 + 버튼)
+    var image: UIImage? // 누끼 완료된 스티커 이미지
 }
 
 enum StickerCategory: String, CaseIterable, Identifiable {
-    case affection = "애정"
-    case worry = "걱정"
-    case praise = "칭찬"
+    case affection = "크게표현"
+    case worry = "픽픽캐릭터"
+    case praise = "말풍선"
     var id: String { rawValue }
 }
 
@@ -37,12 +37,12 @@ struct StickerCategoryData {
         var dict: [StickerCategory: [StickerItem]] = [:]
         
         dict[.affection] = [
-            .init(title: "보고싶다", image: nil),
-            .init(title: "사랑해", image: nil),
-            .init(title: "안아줄게", image: nil),
-            .init(title: "그리워", image: nil),
-            .init(title: "빨리 만나자", image: nil),
-            .init(title: "네 편이야", image: nil)
+            .init(title: "보고싶다!!!", image: nil),
+            .init(title: "사랑해!!!", image: nil),
+            .init(title: "안아줄게!!!", image: nil),
+            .init(title: "그리워!!!", image: nil),
+            .init(title: "얼른집가!!!", image: nil),
+            .init(title: "네 편이야!!!", image: nil)
         ]
 
         dict[.worry] = [
@@ -104,13 +104,12 @@ struct StickerStyleData {
     
     static let dummy: [StickerStyleData] = [
         // 애정
-        .init(title: "보고싶다", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
-        .init(title: "사랑해", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
-        .init(title: "안아줄게", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
-        .init(title: "그리워", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
-        .init(title: "빨리 만나자", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
-        .init(title: "네 편이야", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
-        .init(title: "고마워", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
+        .init(title: "보고싶다!!!", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
+        .init(title: "사랑해!!!", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
+        .init(title: "안아줄게!!!", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
+        .init(title: "그리워!!!", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
+        .init(title: "얼른집가!!!", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
+        .init(title: "네 편이야!!!", outlineColor: .ddAffectionPink, stickerDecoString: "loveSticker"),
         
         // 걱정
         .init(title: "괜찮아?", outlineColor: .ddWorryBlue, stickerDecoString: "sadSticker"),
@@ -119,8 +118,6 @@ struct StickerStyleData {
         .init(title: "아프지 마", outlineColor: .ddWorryBlue, stickerDecoString: "sadSticker"),
         .init(title: "조심히 들어가", outlineColor: .ddWorryBlue, stickerDecoString: "sadSticker"),
         .init(title: "연락 기다릴게", outlineColor: .ddWorryBlue, stickerDecoString: "sadSticker"),
-        .init(title: "천천히 해", outlineColor: .ddWorryBlue, stickerDecoString: "sadSticker"),
-        .init(title: "늦게까지 깨어있지 마", outlineColor: .ddWorryBlue, stickerDecoString: "sadSticker"),
         
         // 칭찬
         .init(title: "잘했어", outlineColor: .ddPraiseYellow, stickerDecoString: "coolSticker"),
@@ -128,25 +125,6 @@ struct StickerStyleData {
         .init(title: "대단해", outlineColor: .ddPraiseYellow, stickerDecoString: "coolSticker"),
         .init(title: "멋지다", outlineColor: .ddPraiseYellow, stickerDecoString: "coolSticker"),
         .init(title: "자랑스러워", outlineColor: .ddPraiseYellow, stickerDecoString: "coolSticker"),
-        .init(title: "고생했어", outlineColor: .ddPraiseYellow, stickerDecoString: "coolSticker"),
-        .init(title: "너답다", outlineColor: .ddPraiseYellow, stickerDecoString: "coolSticker"),
-        
-        // 유머
-        .init(title: "빵 터짐", outlineColor: .ddHumorGreen, stickerDecoString: "whatSticker"),
-        .init(title: "아재개그각", outlineColor: .ddHumorGreen, stickerDecoString: "whatSticker"),
-        .init(title: "오늘의 밈", outlineColor: .ddHumorGreen, stickerDecoString: "whatSticker"),
-        .init(title: "갸꿀잼", outlineColor: .ddHumorGreen, stickerDecoString: "whatSticker"),
-        .init(title: "드립 인정", outlineColor: .ddHumorGreen, stickerDecoString: "whatSticker"),
-        .init(title: "ㅋㅋㅋㅋ", outlineColor: .ddHumorGreen, stickerDecoString: "whatSticker"),
-        .init(title: "크크큭", outlineColor: .ddHumorGreen, stickerDecoString: "whatSticker"),
-        
-        // 일상
-        .init(title: "오늘도 화이팅", outlineColor: .ddDailyOrange, stickerDecoString: "angrySticker"),
-        .init(title: "커피 한 잔", outlineColor: .ddDailyOrange, stickerDecoString: "angrySticker"),
-        .init(title: "퇴근!", outlineColor: .ddDailyOrange, stickerDecoString: "angrySticker"),
-        .init(title: "운동 가자", outlineColor: .ddDailyOrange, stickerDecoString: "angrySticker"),
-        .init(title: "산책 갈래", outlineColor: .ddDailyOrange, stickerDecoString: "angrySticker"),
-        .init(title: "날씨 좋네", outlineColor: .ddDailyOrange, stickerDecoString: "angrySticker"),
-        .init(title: "휴식 모드", outlineColor: .ddDailyOrange, stickerDecoString: "angrySticker")
+        .init(title: "고생했어", outlineColor: .ddPraiseYellow, stickerDecoString: "coolSticker")
     ]
 }

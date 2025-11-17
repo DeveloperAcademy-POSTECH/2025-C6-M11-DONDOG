@@ -86,10 +86,10 @@ final class StickerViewModel: ObservableObject {
     }
     
     func removeSticker(_ sticker: AttachedSticker) async {
-        var targetArray = (sticker.postImageType == PostImageType.front.rawValue) ? frontStickers : backStickers
-        
-        if let index = targetArray.firstIndex(where: { $0.id == sticker.id }) {
-            targetArray.remove(at: index)
+        if postImageType == .front {
+            frontStickers.removeAll { $0.id == sticker.id }
+        } else {
+            backStickers.removeAll { $0.id == sticker.id }
         }
 
         do {

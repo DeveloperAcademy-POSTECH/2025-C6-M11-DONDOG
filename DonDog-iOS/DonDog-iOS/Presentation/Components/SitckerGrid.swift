@@ -55,6 +55,7 @@ struct StickerGrid: View {
                         url: stickerImageURLs[item.id],
                         isLoading: loadingItemIDs.contains(item.id),
                         isSelected: item.id == selectedItemID,
+                        hasSelection: selectedItemID != nil,
                         onTapLoaded: { onItemTap(item) },
                         onTapEmpty: { onPlusTap(item) },
                     )
@@ -71,6 +72,7 @@ struct StickerCellView: View {
     let url: URL?
     let isLoading: Bool
     let isSelected: Bool
+    let hasSelection: Bool
     let onTapLoaded: () -> Void
     let onTapEmpty: () -> Void
     
@@ -80,8 +82,8 @@ struct StickerCellView: View {
                 KFImage(url)
                     .resizable()
                     .scaledToFit()
-                    .opacity(isSelected ? 1.0 : 0.5)
-                    .frame(width: 120, height: 100)
+                    .opacity(hasSelection ? (isSelected ? 1.0 : 0.5) : 1.0)
+                    .frame(width: 120, height: 100, alignment: .center)
                     .onTapGesture(perform: onTapLoaded)
                 
                 if isLoading {
@@ -97,18 +99,23 @@ struct StickerCellView: View {
                 .frame(width: 24, height: 24)
                 .padding(.vertical, 50)
         } else {
-            VStack(spacing: 15) {
+            VStack(spacing: 0) {
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? Color.ppGray600 : .secondary, style: StrokeStyle(lineWidth: 3, dash: [10, 15]))
+                        .stroke(isSelected ? Color.ppGray600 : Color.ppGray300, style: StrokeStyle(lineWidth: 2, dash: [7, 10]))
                         .frame(width: 60, height: 60)
+                        .padding(.horizontal, 20)
+                        .padding(10)
 
                     if isLoading {
                         ProgressView()
+                            .tint(Color.ppPrime)
+                            .frame(width: 24, height: 24)
+                            .padding(.vertical, 50)
                     } else {
                         Image(systemName: "plus")
                             .font(.system(size: 18))
-                            .foregroundColor(isSelected ? .ppGray600 : .primary)
+                            .foregroundColor(isSelected ? .ppGray600 : Color.ppGray300)
                     }
                 }
                 .contentShape(Rectangle())

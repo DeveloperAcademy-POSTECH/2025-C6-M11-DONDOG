@@ -31,7 +31,7 @@ struct FeedView: View {
                         } label: {
                             Image(systemName: "gear")
                                 .frame(width: 24, height: 24)
-                                .foregroundStyle(Color.ppPrime50)
+                                .foregroundStyle(Color.ppPrime)
                                 .padding(.vertical, 8)
                                 .padding(.trailing, 20)
                         }
@@ -240,6 +240,7 @@ struct FeedView: View {
                     }.padding(.bottom, 22)
                 }
             }
+            
             if showToastView {
                 VStack {
                     Spacer()

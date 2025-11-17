@@ -65,7 +65,7 @@ struct InviteView: View {
                         
                         Rectangle()
                             .frame(height: 2)
-                            .foregroundColor(Color.ppPrime)
+                            .foregroundColor(Color.ppPrime50)
                     }
                     
                     if viewModel.remainTimeText == "00:00" || viewModel.inviteText == "초대코드를 불러오지 못했습니다." {
@@ -113,17 +113,18 @@ struct InviteView: View {
                     .underline(true, pattern: .solid)
                     .font(.captionRegular13)
                     .onTapGesture {
-                        coordinator.replaceRoot(.feed)
+                        coordinator.replaceRoot(.home)
                     }
                     .padding(.vertical, 8)
             }
         }
         .padding(.horizontal, 20)
+        .background(.ppWhite)
         .backHiddenSwipeEnabled()
         .dismissKeyboard()
         .task { viewModel.fetchInviteCodeandExpireDate() }
         .onChange(of: viewModel.connectSucceeded) {
-            coordinator.replaceRoot(.feed)
+            coordinator.replaceRoot(.home)
         }
     }
 }

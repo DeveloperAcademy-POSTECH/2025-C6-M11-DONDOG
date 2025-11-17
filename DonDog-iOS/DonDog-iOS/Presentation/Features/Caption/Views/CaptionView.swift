@@ -20,7 +20,7 @@ struct CaptionView: View {
         GeometryReader { _ in
             ZStack(alignment: .center) {
                 VStack(spacing: 0) {
-                    CustomNavigationBar(leadingType: .none, centerType: .timeTitle(title: "11월 9일", timeImage: DateUtils.isATime(date: .now) ? "sun.max" : "moon.fill"), trailingType: .close(action: {isShowCancelAlert = true}), navigationColor: .black)
+                    CustomNavigationBar(leadingType: .none, centerType: .timeTitle(title: DateUtils.string(from: .now, format: .monthDay), timeImage: DateUtils.isATime(date: .now) ? "sun.max" : "moon.fill"), trailingType: .close(action: {isShowCancelAlert = true}), navigationColor: .black)
                         .padding(.horizontal, 16)
                     if let frontImage = viewModel.frontImage, let backImage = viewModel.backImage {
                         ZStack {
@@ -59,7 +59,7 @@ struct CaptionView: View {
                         HStack {
                             Spacer()
                             ZStack(alignment: .center) {
-                                Text(viewModel.caption.isEmpty ? "오늘 나의 낮을 설명해 주세요..." : viewModel.caption)
+                                Text(viewModel.caption.isEmpty ? DateUtils.isATime(date: .now) ? "오늘 나의 낮을 설명해 주세요..." : "오늘 나의 밤을 설명해 주세요..." : viewModel.caption)
                                     .font(.subtitleMedium18)
                                     .foregroundStyle(viewModel.caption.isEmpty ? .ppGray400 : .ppBlack)
                                     .multilineTextAlignment(.center)

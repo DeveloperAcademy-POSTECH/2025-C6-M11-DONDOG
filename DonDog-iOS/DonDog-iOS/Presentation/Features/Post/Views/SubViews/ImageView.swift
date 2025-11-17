@@ -42,7 +42,7 @@ struct ImageView: View {
                     }
                 }
             
-            ForEach($viewModel.stickers) { $sticker in
+            ForEach(viewModel.postImageType == PostImageType.front ? $viewModel.frontStickers : $viewModel.backStickers) { $sticker in
                 StickerView(
                     sticker: $sticker,
                     isSelected: viewModel.selectedStickerID == sticker.id,

@@ -22,18 +22,19 @@ struct AttachedSticker: Identifiable, Codable {
     var rotation: Double
 }
 
-enum postImageType: String {
+enum PostImageType: String {
     case front = "frontImage"
     case back = "backImage"
 }
 
 final class StickerViewModel: ObservableObject {
     @Published var postId = ""
-    @Published var postImageType: postImageType = .front
+    @Published var postImageType: PostImageType = .front
     
     @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
     
-    @Published var stickers: [AttachedSticker] = []
+    @Published var frontStickers: [AttachedSticker] = []
+    @Published var backStickers: [AttachedSticker] = []
     @Published var selectedStickerID: UUID?
     
     @Published var showCamera = false
@@ -54,9 +55,8 @@ final class StickerViewModel: ObservableObject {
     
     func fetchStickers() async {
         do {
-            stickers = try await dataManager.fetchWhereEqual(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments", field: "postImageType", isEqualTo: postImageType.rawValue)
-            print(postImageType)
-            print(stickers)
+            frontStickers = try await dataManager.fetchWhereEqual(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments", field: "postImageType", isEqualTo: PostImageType.front.rawValue)
+            backStickers = try await dataManager.fetchWhereEqual(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments", field: "postImageType", isEqualTo: PostImageType.back.rawValue)
         } catch {
             print("붙여진 스티커 로드 실패: \(error.localizedDescription)")
         }
@@ -71,7 +71,11 @@ final class StickerViewModel: ObservableObject {
             scale: 1.0,
             rotation: .zero
         )
-        stickers.append(newSticker)
+        if postImageType == .front {
+            frontStickers.append(newSticker)
+        } else {
+            backStickers.append(newSticker)
+        }
         selectedStickerID = newSticker.id
     }
     
@@ -82,16 +86,23 @@ final class StickerViewModel: ObservableObject {
     }
     
     func removeSticker(_ sticker: AttachedSticker) async {
-        stickers.removeAll { $0.id == sticker.id }
+        var targetArray = (sticker.postImageType == PostImageType.front.rawValue) ? frontStickers : backStickers
+        
+        if let index = targetArray.firstIndex(where: { $0.id == sticker.id }) {
+            targetArray.remove(at: index)
+        }
+
         do {
-            try await dataManager.delete(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments/\(sticker.id.uuidString)")
+            try await dataManager.delete(
+                path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments/\(sticker.id.uuidString)"
+            )
         } catch {
             print("붙여진 스티커 삭제 실패: \(error.localizedDescription)")
         }
     }
     
     func saveStickers() async {
-        for sticker in stickers {
+        for sticker in postImageType == .front ? frontStickers : backStickers {
             let data: [String: Any] = [
                 "id": sticker.id.uuidString,
                 "createdAt": sticker.createdAt,

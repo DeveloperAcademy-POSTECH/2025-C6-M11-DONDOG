@@ -15,8 +15,8 @@ struct StickerView: View {
     var onDelete: () -> Void
     var onInteraction: () -> Void
     
-    @State private var dragOffset: CGSize = .zero
-    @State private var lastOffset: CGSize = .zero
+    @State private var localPosition: CGPoint = .zero
+    @State private var isDragging = false
     @State private var lastScale: CGFloat = 1.0
     @State private var lastRotation: Double = .zero
     
@@ -64,32 +64,34 @@ struct StickerView: View {
                     .gesture(transformGesture)
             }
         }
+        .onAppear {
+            localPosition = sticker.position
+        }
         .scaleEffect(sticker.scale)
         .rotationEffect(.degrees(sticker.rotation))
         .offset(x: sticker.position.x, y: sticker.position.y)
+        .animation(isDragging ? nil : .easeOut(duration: 0.15), value: localPosition)
     }
 
     private var dragGesture: some Gesture {
         DragGesture()
             .onChanged { value in
                 onInteraction()
-                let newX = lastOffset.width + value.translation.width / sticker.scale
-                let newY = lastOffset.height + value.translation.height / sticker.scale
-                
-                sticker.position = CGPoint(
-                    x: min(max(newX, -150), 150),
-                    y: min(max(newY, -200), 200)
+                isDragging = true
+                localPosition.x = value.translation.width / sticker.scale + sticker.position.x
+                localPosition.y = value.translation.height / sticker.scale + sticker.position.y
+                localPosition = CGPoint(
+                    x: min(max(localPosition.x, -150), 150),
+                    y: min(max(localPosition.y, -200), 200)
                 )
+                sticker.position = localPosition
             }
-            .onEnded { value in
-                let finalX = lastOffset.width + value.translation.width / sticker.scale
-                let finalY = lastOffset.height + value.translation.height / sticker.scale
-                
-                lastOffset.width = min(max(finalX, -150), 150)
-                lastOffset.height = min(max(finalY, -200), 200)
+            .onEnded { _ in
+                isDragging = false
+                sticker.position = localPosition
             }
     }
-    
+
     private var scaleGesture: some Gesture {
         MagnificationGesture()
             .onChanged { value in

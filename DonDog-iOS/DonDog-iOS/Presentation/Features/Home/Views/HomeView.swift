@@ -93,6 +93,7 @@ struct HomeView: View {
                     .hapticFeedback(.medium)
                     Spacer()
                     Button {
+                        cameraViewModel.resetCameraState()
                         viewModel.isShowCameraView = true
                     }label: {
                         Circle()

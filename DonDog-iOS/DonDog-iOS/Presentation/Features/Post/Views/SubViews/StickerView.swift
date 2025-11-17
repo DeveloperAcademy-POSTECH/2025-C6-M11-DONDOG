@@ -70,7 +70,7 @@ struct StickerView: View {
         .onAppear {
             localPosition = sticker.position
         }
-        .scaleEffect(lastScale * gestureScale)
+        .scaleEffect(sticker.scale * gestureScale)
         .rotationEffect(.degrees(sticker.rotation))
         .offset(x: sticker.position.x, y: sticker.position.y)
         .animation(isDragging ? nil : .easeOut(duration: 0.15), value: localPosition)
@@ -115,8 +115,8 @@ struct StickerView: View {
                 onInteraction()
             }
             .onEnded { value in
-                lastScale = min(max(lastScale * value, 0.5), 3.0)
-                sticker.scale = lastScale
+                let finalScale = sticker.scale * value
+                sticker.scale = min(max(finalScale, 0.5), 3.0)
             }
     }
     

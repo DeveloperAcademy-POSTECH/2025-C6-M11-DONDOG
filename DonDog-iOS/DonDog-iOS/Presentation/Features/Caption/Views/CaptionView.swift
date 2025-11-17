@@ -116,67 +116,6 @@ struct CaptionView: View {
                     .padding(.bottom, 8)
                     .hapticFeedback(.medium)
                 }
-                if isShowCancelAlert {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            isShowCancelAlert = false
-                        }
-                    
-                    VStack(spacing: 0) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(.ddAlert)
-                            .padding(.top, 24)
-                        
-                        Text("다시 촬영하시겠어요?")
-                            .font(.subtitleSemiBold16)
-                            .foregroundColor(.ddBlack)
-                            .padding(.top, 16)
-                        
-                        Text("지금까지 찍은 사진은 사라져요")
-                            .font(.bodyRegular16)
-                            .foregroundColor(.ddGray500)
-                            .padding(.top, 8)
-                            .padding(.bottom, 24)
-                        
-                        HStack(spacing: 8) {
-                            Button {
-                                isShowCancelAlert = false
-                            } label: {
-                                Text("취소")
-                                    .font(.subtitleSemiBold16)
-                                    .foregroundColor(.ddGray500)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 48)
-                                    .background(Color.ddWhite)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(Color.ddGray300, lineWidth: 1)
-                                    )
-                                    .cornerRadius(12)
-                            }
-                            
-                            Button {
-                                isShowCancelAlert = false
-                                onCancel()
-                            } label: {
-                                Text("재촬영")
-                                    .font(.subtitleSemiBold16)
-                                    .foregroundColor(.ddWhite)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 48)
-                                    .background(Color.ddAlert)
-                                    .cornerRadius(12)
-                            }
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
-                    }
-                    .background(Color.ddWhite)
-                    .cornerRadius(16)
-                    .padding(.horizontal, 40)
-                }
             }
             .background {
                 Color.ppWhite
@@ -190,6 +129,7 @@ struct CaptionView: View {
         .onAppear {
             isCaptionFocused = true
         }
+        .customAlert(isPresented: $isShowCancelAlert, title: "다시 촬영하시겠어요?", message: "지금까지 찍은 사진은 사라져요", confirmTitle: "재촬영", cancelTitle: "취소", onConfirm: { onCancel() }, onCancel: {})
         
     }
 }

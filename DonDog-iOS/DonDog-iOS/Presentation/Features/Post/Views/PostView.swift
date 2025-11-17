@@ -72,6 +72,11 @@ struct PostView: View {
                     .background(Color.ddGray100.opacity(0.5))
             }
         }
+        .task {
+            Task {
+                await stickerViewModel.fetchStickers(postId: viewModel.post.postId)
+            }
+        }
         
         Spacer()
     }

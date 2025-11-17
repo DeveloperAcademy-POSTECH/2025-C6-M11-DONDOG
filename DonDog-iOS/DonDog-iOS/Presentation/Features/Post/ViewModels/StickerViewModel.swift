@@ -43,6 +43,15 @@ final class StickerViewModel: ObservableObject {
         self.roomId = id
     }
     
+    func fetchStickers(postId: String) async {
+        do {
+            stickers = try await dataManager.fetchCollection(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments")
+            print(stickers)
+        } catch {
+            print("붙여진 스티커 로드 실패: \(error.localizedDescription)")
+        }
+    }
+    
     func addSticker(with url: URL) {
         let newSticker = AttachedSticker(
             createdAt: Date.now,
@@ -69,13 +78,11 @@ final class StickerViewModel: ObservableObject {
         for sticker in stickers {
             let data: [String: Any] = [
                 "id": sticker.id.uuidString,
+                "createdAt": sticker.createdAt,
                 "stickerURL": sticker.stickerURL.absoluteString,
-                "position": [
-                    "x": sticker.position.x,
-                    "y": sticker.position.y
-                ],
+                "position": [sticker.position.x, sticker.position.y],
                 "scale": sticker.scale,
-                "rotationDeg": sticker.rotation.degrees
+                "rotation": sticker.rotation.degrees
             ]
             
             do {
@@ -85,11 +92,8 @@ final class StickerViewModel: ObservableObject {
                         data: data
                     )
                 ])
-                print("붙여진 스티커 저장 성공")
             } catch {
                 print("붙여진 스티커 저장 실패: \(error.localizedDescription)")
-                print("roomId: \(roomId)")
-                print("postId: \(postId)")
             }
         }
     }

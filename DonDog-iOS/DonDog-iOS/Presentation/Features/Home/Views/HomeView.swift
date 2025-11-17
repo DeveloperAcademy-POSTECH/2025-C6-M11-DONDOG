@@ -25,55 +25,62 @@ struct HomeView: View {
                 ZStack(alignment: .bottom) {
                     TabView(selection: $viewModel.currentIndex) {
                         if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
-                            KFImage(frontURL)
-                                .resizable()
-                                .scaledToFit()
-                                .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                                .tag(0)
-                                .overlay(alignment: .bottom) {
-                                    LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                                        .opacity(0.6)
-                                        .frame(maxHeight: 97)
-                                }
-                                .overlay {
-                                    if DateUtils.isOver3daysSinceLastUpload() {
-                                        VStack {
-                                            Text("게시글을 작성한 지 3일이 지났어요.")
-                                                .font(.titleBold18)
-                                                .foregroundStyle(.ppWhite)
-                                            Text("게시글을 업로드해주세요")
-                                                .font(.titleBold18)
-                                                .foregroundStyle(.ppWhite)
+                            Group {
+                                KFImage(frontURL)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
+                                    .tag(0)
+                                    .overlay(alignment: .bottom) {
+                                        LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
+                                            .opacity(0.6)
+                                            .frame(maxHeight: 97)
+                                    }
+                                    .overlay {
+                                        if DateUtils.isOver3daysSinceLastUpload() {
+                                            VStack {
+                                                Text("게시글을 작성한 지 3일이 지났어요.")
+                                                    .font(.titleBold18)
+                                                    .foregroundStyle(.ppWhite)
+                                                Text("게시글을 업로드해주세요")
+                                                    .font(.titleBold18)
+                                                    .foregroundStyle(.ppWhite)
+                                            }
                                         }
                                     }
-                                }
-                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                                .padding(.horizontal, 20)
-                            
-                            KFImage(backURL)
-                                .resizable()
-                                .scaledToFit()
-                                .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                                .tag(1)
-                                .overlay(alignment: .bottom) {
-                                    LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                                        .opacity(0.6)
-                                        .frame(maxHeight: 97)
-                                }
-                                .overlay {
-                                    if DateUtils.isOver3daysSinceLastUpload() {
-                                        VStack {
-                                            Text("게시글을 작성한 지 3일이 지났어요.")
-                                                .font(.titleBold18)
-                                                .foregroundStyle(.ppWhite)
-                                            Text("게시글을 업로드해주세요")
-                                                .font(.titleBold18)
-                                                .foregroundStyle(.ppWhite)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    .padding(.horizontal, 20)
+                                
+                                KFImage(backURL)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
+                                    .tag(1)
+                                    .overlay(alignment: .bottom) {
+                                        LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
+                                            .opacity(0.6)
+                                            .frame(maxHeight: 97)
+                                    }
+                                    .overlay {
+                                        if DateUtils.isOver3daysSinceLastUpload() {
+                                            VStack {
+                                                Text("게시글을 작성한 지 3일이 지났어요.")
+                                                    .font(.titleBold18)
+                                                    .foregroundStyle(.ppWhite)
+                                                Text("게시글을 업로드해주세요")
+                                                    .font(.titleBold18)
+                                                    .foregroundStyle(.ppWhite)
+                                            }
                                         }
                                     }
+                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    .padding(.horizontal, 20)
+                            }
+                            .onTapGesture {
+                                if let currentPost = viewModel.currentPost?.post {
+                                    coordinator.push(.post(post: currentPost, postType: .post))
                                 }
-                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                                .padding(.horizontal, 20)
+                            }
                         } else {
                             // 포스트가 없을 때
                             HStack(spacing: 16) {
@@ -162,6 +169,7 @@ struct HomeView: View {
                     .hapticFeedback(.medium)
                     Spacer()
                     Button {
+                        cameraViewModel.resetCameraState()
                         viewModel.isShowCameraView = true
                     }label: {
                         Circle()

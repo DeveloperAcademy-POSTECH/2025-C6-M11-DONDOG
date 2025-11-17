@@ -26,7 +26,7 @@ final class StickerViewModel: ObservableObject {
     @Published var stickers: [AttachedSticker] = []
     @Published var selectedStickerID: UUID?
     
-    @Published var showCamera = false
+    @Published var shouldReopenSheetAfterCamera: Bool = false
     @Published var targetItemID: StickerItem.ID?
     @Published var previewURL: URL?
     

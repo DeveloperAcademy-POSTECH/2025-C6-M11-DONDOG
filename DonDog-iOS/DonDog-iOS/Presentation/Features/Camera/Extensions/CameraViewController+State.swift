@@ -13,7 +13,7 @@ extension CustomCameraViewController {
             if self.isCapturingFront {
                 self.captureButton.setTitle("", for: .normal)
             } else {
-                if self.isFrontOnly {
+                if self.isStickerCamera {
                     self.captureButton.setTitle("", for: .normal)
                 } else {
                     self.captureButton.setTitle("", for: .normal)
@@ -26,6 +26,8 @@ extension CustomCameraViewController {
     }
     
     func updateUIForFrontPhotoConfirmation(isConfirmed: Bool) {
+        guard !isStickerCamera else { return }
+        
         isFrontPhotoConfirmed = isConfirmed
         
         DispatchQueue.main.async {

@@ -76,6 +76,7 @@ struct PostView: View {
                     .sheet(isPresented: $showStickerSheet) {
                         StickerSheetView(
                             viewModel: stickerViewModel,
+                            postId: viewModel.post.postId,
                             onRequestCamera: {
                                 stickerViewModel.shouldReopenSheetAfterCamera = true
                                 showStickerSheet = false
@@ -91,20 +92,6 @@ struct PostView: View {
                         .background(Color.ddGray100.opacity(0.5))
                     }
                     .padding(.trailing, 14)
-                }
-            }
-            .sheet(isPresented: $showStickerSheet) {
-                StickerSheetView(
-                    viewModel: stickerViewModel, postId: viewModel.post.postId,
-                    onRequestCamera: {
-                        stickerViewModel.shouldReopenSheetAfterCamera = true
-                        showStickerSheet = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            coordinator.push(.camera)
-                        }
-                    }
-                    
-                    Spacer()
                 }
             } else {
                 let magnification = MagnificationGesture()

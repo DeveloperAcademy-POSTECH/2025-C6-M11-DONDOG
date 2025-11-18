@@ -54,6 +54,7 @@ struct CameraViewContainer: View {
                 }
             }
         }
+        .customAlert(isPresented: $cameraViewModel.showExitAlert, title: "나가시겠어요?", message: "지금까지 찍은 사진은 저장되지 않아요", confirmTitle: "나가기", cancelTitle: "취소", onConfirm: {isPresented = false}, onCancel: {})
         .onAppear {
             cameraViewModel.showGuideView = true
         }

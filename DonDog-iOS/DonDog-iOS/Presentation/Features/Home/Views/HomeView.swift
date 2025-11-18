@@ -264,10 +264,6 @@ struct HomeView: View {
                     await viewModel.loadPosts()
                 }
             }
-        }
-        .onAppear {
-            Task {
-                await viewModel.loadPosts()
             .background {
                 if viewModel.isShowingATimePost {
                     Color.ppWhite
@@ -275,6 +271,12 @@ struct HomeView: View {
                 } else {
                     Color.ppWhite
                         .ignoresSafeArea()
+                }
+            }
+            .task {
+                if coordinator.showCameraInDeeplink {
+                    viewModel.isShowCameraView = true
+                    coordinator.showCameraInDeeplink = false
                 }
             }
             .animation(.smooth(duration: 0.5), value: viewModel.isShowingATimePost)

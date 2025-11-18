@@ -100,4 +100,17 @@ final class DateUtils {
         
         return todayStart >= threeDaysLater
     }
+    
+    static func remainingHoursForUpload() -> (hours: Int, period: String) {
+        let now = Date()
+        let hour = calendar.component(.hour, from: now)
+        
+        if isATime(date: now) {
+            let remaining = 15 - hour
+            return (remaining, "오전")
+        } else {
+            let remaining = 24 - hour
+            return (remaining, "오후")
+        }
+    }
 }

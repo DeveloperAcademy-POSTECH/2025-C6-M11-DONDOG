@@ -16,7 +16,7 @@ struct HomeView: View {
     var body: some View {
         VStack(spacing: 0) {
             CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "sun.max.fill" : "moon.fill"), navigationColor: .black)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 26)
             
             if viewModel.connectUserInfo.isConnected {
                 CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
@@ -87,14 +87,33 @@ struct HomeView: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(.ppGray200)
                                     .overlay {
-                                        Text(viewModel.selectedPostType == ArchiveSegment.partnerArchive ? "가족이 아직 사진을 올리지 않았어요." : "오전 게시물을 올릴 수 있는 시간이\n네 시간 남았어요!" )
-                                            .multilineTextAlignment(.center)
+                                        VStack {
+                                            Image("EmptyImage")
+                                            if viewModel.selectedPostType == ArchiveSegment.partnerArchive {
+                                                Text("가족이 아직 사진을 올리지 않았어요.")
+                                                    .font(.subtitleSemiBold16)
+                                                    .foregroundStyle(.ppGray700)
+                                                Text("조금만 기다려 주세요. 사진이 곧 찾아올 거예요.")
+                                                    .font(.captionRegular14)
+                                                    .foregroundStyle(.ppGray500)
+                                                    .padding(.top, 2)
+                                            } else {
+                                                let remainingTime = DateUtils.remainingHoursForUpload()
+                                                Text("\(remainingTime.period) 게시물을 올릴 수 있는 시간이")
+                                                    .multilineTextAlignment(.center)
+                                                    .font(.subtitleSemiBold16)
+                                                    .foregroundStyle(.ppGray700)
+                                                HStack(spacing: 0) {
+                                                    Text("\(remainingTime.hours)시간")
+                                                        .foregroundStyle(.ppPrime)
+                                                    Text(" 남았어요!")
+                                                        .foregroundStyle(.ppGray700)
+                                                }
+                                                .font(.subtitleSemiBold16)
+                                                .padding(.top, 1)
+                                            }
+                                        }
                                     }
-                            }
-                            .overlay(alignment: .bottom) {
-                                LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                                    .opacity(0.6)
-                                    .frame(maxHeight: 97)
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                             .padding(.horizontal, 20)
@@ -128,13 +147,14 @@ struct HomeView: View {
                                 Button {
                                     // editableView
                                 } label: {
-                                    Image("AddStickerButtonAbled")
+                                    Image("AddStickerIcon")
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 64, height: 64)
                                         .background {
                                             Circle()
                                                 .frame(width: 70, height: 70)
+                                                .foregroundStyle(.ppPrime)
                                         }
                                 }
                                 .padding(.horizontal, 16)
@@ -175,6 +195,7 @@ struct HomeView: View {
                         Circle()
                             .foregroundColor(.ppWhite)
                             .frame(width: 56, height: 56)
+                            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 0)
                             .background {
                                 Circle()
                                     .foregroundColor(.ppPrime)

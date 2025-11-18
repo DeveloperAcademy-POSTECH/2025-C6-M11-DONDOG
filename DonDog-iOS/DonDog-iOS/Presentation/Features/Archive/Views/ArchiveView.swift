@@ -76,7 +76,7 @@ struct ArchiveView: View {
                         if month.days.isEmpty {
                             Spacer()
                             VStack(spacing: 16) {
-                                Image(systemName: "EmptyCharacter")
+                                Image("ArchiveEmptyView")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 160, height: 118)
@@ -117,7 +117,7 @@ struct ArchiveView: View {
                     } else {
                         Spacer()
                         VStack(spacing: 16) {
-                            Image("EmptyCharacter")
+                            Image("ArchiveEmptyView")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 160, height: 118)

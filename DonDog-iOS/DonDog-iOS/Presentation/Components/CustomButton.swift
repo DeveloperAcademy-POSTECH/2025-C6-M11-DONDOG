@@ -32,7 +32,7 @@ struct CustomButton: View {
                 if isProgressView {
                     ProgressView()
                         .frame(width: 16, height: 16)
-                        .tint(foregroundColor)
+                        .tint(Color.ppWhite)
                 }
             }
         }
@@ -53,15 +53,6 @@ struct CustomButton: View {
             return isEnable ? Color.ppPrime : Color.ppPrime50
         case .secondary:
             return Color.ppGray400
-        }
-    }
-
-    private var foregroundColor: Color {
-        switch style {
-        case .primary:
-            return Color.ddWhite
-        case .secondary:
-            return Color.ppBlack
         }
     }
 }

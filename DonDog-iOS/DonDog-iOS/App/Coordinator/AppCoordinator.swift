@@ -78,8 +78,8 @@ final class AppCoordinator: ObservableObject {
     
     /// replaceRoot: path에 쌓인 모든 화면을 지우고, 지정한 route 화면을 새로운 루트 화면으로 교체하는 메서드 (_ route 부분에 가고자 하는 화면 명시)
     func replaceRoot(_ route: AppRoute) {
-        path = NavigationPath()   // 스택 완전 초기화
-        root = route              // 루트 화면 교체 (뒤로가기 없음)
+        root = route
+        path = NavigationPath()
     }
     
     @ViewBuilder

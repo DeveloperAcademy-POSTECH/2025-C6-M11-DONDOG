@@ -236,6 +236,12 @@ struct HomeView: View {
             }
         }
         .ignoresSafeArea(edges: .bottom)
+        .task {
+            if coordinator.showCameraInDeeplink {
+                viewModel.isShowCameraView = true
+                coordinator.showCameraInDeeplink = false
+            }
+        }
         .onAppear {
             Task {
                 await viewModel.loadPosts()

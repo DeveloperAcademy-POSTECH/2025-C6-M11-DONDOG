@@ -16,7 +16,6 @@ enum EntryRoute {
 
 struct StickerConfirmView: View {
     @StateObject var viewModel: StickerConfirmViewModel
-    @Environment(\.dismiss) private var dismiss
     let route: EntryRoute
     let onRetake: () -> Void
     let onComplete: () -> Void
@@ -47,7 +46,8 @@ struct StickerConfirmView: View {
                 
                 Spacer()
                 
-                CustomButton(title: route == .camera ? "다시 촬영하기" : "사진 변경하기", style: .secondary, isEnable: true, action: { onRetake() })
+                CustomButton(title: route == .camera ? "다시 촬영하기" : "사진 변경하기", style: .secondary, isEnable: true, action: {
+                    onRetake() })
                     .padding(.horizontal, 21)
             } else {
                 Text("만들어진 스티커를 확인해 주세요!")

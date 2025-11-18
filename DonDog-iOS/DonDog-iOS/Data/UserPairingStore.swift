@@ -8,21 +8,28 @@
 import Combine
 import Foundation
 
+enum ConnectionState {
+    case unknown      // 아직 서버/스토리지에서 안 불러옴 - 홈뷰에서 
+    case connected
+    case notConnected
+}
+
 @MainActor
 final class UserPairingStore: ObservableObject {
     static let shared = UserPairingStore()
     private init() {}
     
-    @Published var isConnected: Bool = false
+    @Published var isConnected: ConnectionState = .unknown
     @Published var roomId: String?
     @Published var myUid: String?
     @Published var myName: String?
+    @Published var myRole: String?
     @Published var partnerUid: String?
     @Published var partnerName: String?
     @Published var lastUploadedAt: Date?
     
     func reset() {
-        self.isConnected = false
+        self.isConnected = .unknown
         self.roomId = nil
         self.myUid = nil
         self.myName = nil

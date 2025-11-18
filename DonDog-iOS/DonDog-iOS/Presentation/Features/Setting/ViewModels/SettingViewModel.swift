@@ -13,6 +13,7 @@ import FirebaseMessaging
 final class SettingViewModel: ObservableObject {
     @Published var showLogoutConfirm = false
     @Published var showDeleteConfirm = false
+    
     func logout() async {
         do {
             try await NotificationService.shared.deleteFCMToken()

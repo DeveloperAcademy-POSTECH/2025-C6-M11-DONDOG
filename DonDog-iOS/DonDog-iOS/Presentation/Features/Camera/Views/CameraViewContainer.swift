@@ -57,15 +57,21 @@ struct CameraViewContainer: View {
         .onAppear {
             cameraViewModel.showGuideView = true
         }
-        .onChange(of: cameraViewModel.showCaptionView) { _, _ in
-            let newCaptionVM = CaptionViewModel(
-                frontImage: cameraViewModel.frontImage,
-                backImage: cameraViewModel.backImage
-            )
-            
-            newCaptionVM.delegate = delegate
-            
-            captionViewModel = newCaptionVM
+        .onChange(of: cameraViewModel.showCaptionView) { _, newValue in
+            if newValue {
+                cameraViewModel.cameraController?.stopSession()
+                
+                let newCaptionVM = CaptionViewModel(
+                    frontImage: cameraViewModel.frontImage,
+                    backImage: cameraViewModel.backImage
+                )
+                
+                newCaptionVM.delegate = delegate
+                
+                captionViewModel = newCaptionVM
+            } else {
+                cameraViewModel.cameraController?.startSession()
+            }
         }
         .onChange(of: shouldDismiss) { _, newValue in
             if newValue {

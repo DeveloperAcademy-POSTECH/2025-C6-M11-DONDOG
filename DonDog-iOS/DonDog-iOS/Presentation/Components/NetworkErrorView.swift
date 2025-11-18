@@ -13,20 +13,17 @@ struct NetworkErrorView: View {
     var body: some View {
         if isUnstable {
             ZStack {
-                Color.white
-                
-                LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
-                    .ignoresSafeArea()
-                    .opacity(0.35)
+                Color.ppWhite
                 
                 VStack(spacing: 10) {
                     Image(systemName: "network.slash")
                         .font(.system(size: 32))
+                        .foregroundStyle(Color.ppSubPrime15)
                     Text("네트워크가 불안정해요.")
                         .font(.bodyMedium16)
+                        .foregroundStyle(Color.ppGray600)
                     Button {
-                        if let url = URL(string: UIApplication.openSettingsURLString),
-                            UIApplication.shared.canOpenURL(url) {
+                        if let url = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(url) {
                             UIApplication.shared.open(url)
                         }
                     } label: {
@@ -36,17 +33,16 @@ struct NetworkErrorView: View {
                             Image(systemName: "arrow.trianglehead.2.clockwise")
                                 .font(.system(size: 16))
                         }
-                        .foregroundStyle(Color.ddGray100)
+                        .foregroundStyle(Color.ppWhite)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
-                        .background(Color.ddPrimaryBlue)
+                        .background(Color.ppPrime)
                         .cornerRadius(999)
                     }
-
+                    
                 }
-                .foregroundStyle(Color.ddPrimaryBlue)
-                .transition(.opacity)
             }
+            .transition(.opacity)
         }
     }
 }

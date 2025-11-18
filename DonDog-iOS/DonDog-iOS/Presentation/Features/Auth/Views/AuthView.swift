@@ -70,12 +70,14 @@ struct AuthView: View {
         }
         .backHiddenSwipeEnabled()
         .dismissKeyboard()
-        .alert("", isPresented: $viewModel.showPhoneMismatchAlert) {
-            Button("확인", role: .cancel) {
-                viewModel.userPhoneNumber = ""
+        .customAlert(
+            isPresented: $viewModel.showPhoneMismatchAlert,
+            title: "가입한 전화번호가 아니에요",
+            message: "번호를 다시 확인해 주세요",
+            confirmTitle: "확인",
+            onConfirm: {
+                // 삭제 로직
             }
-        } message: {
-            Text(viewModel.mismatchAlertText)
-        }
+        )
     }
 }

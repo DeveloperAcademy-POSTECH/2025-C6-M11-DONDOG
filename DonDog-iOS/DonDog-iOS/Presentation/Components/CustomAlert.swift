@@ -13,9 +13,9 @@ struct CustomAlert: View {
     let title: String
     let message: String?
     let confirmTitle: String
-    let cancelTitle: String
+    let cancelTitle: String?
     let onConfirm: () -> Void
-    let onCancel: () -> Void
+    let onCancel: (() -> Void)?
     
     var body: some View {
         ZStack {
@@ -51,16 +51,18 @@ struct CustomAlert: View {
                 
                 // 버튼
                 HStack(spacing: 12) {
-                    Button {
-                        isPresented = false
-                        onCancel()
-                    } label: {
-                        Text(cancelTitle)
-                            .font(.bodyRegular16)
-                            .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
-                            .background(.ppSubPrime15)
-                            .foregroundColor(.ppPrime50)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    if let cancelTitle, let onCancel {
+                        Button {
+                            isPresented = false
+                            onCancel()
+                        } label: {
+                            Text(cancelTitle)
+                                .font(.bodyRegular16)
+                                .frame(maxWidth: .infinity, minHeight: 40, alignment: .center)
+                                .background(.ppSubPrime15)
+                                .foregroundColor(.ppPrime50)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
                     }
                     
                     Button {
@@ -90,9 +92,9 @@ struct CustomAlertModifier: ViewModifier {
     let title: String
     let message: String?
     let confirmTitle: String
-    let cancelTitle: String
+    let cancelTitle: String?
     let onConfirm: () -> Void
-    let onCancel: () -> Void
+    let onCancel: (() -> Void)?
     
     func body(content: Content) -> some View {
         ZStack {
@@ -129,9 +131,9 @@ extension View {
         title: String,
         message: String? = nil,
         confirmTitle: String = "확인",
-        cancelTitle: String = "취소",
+        cancelTitle: String? = nil,
         onConfirm: @escaping () -> Void,
-        onCancel: @escaping () -> Void = {}
+        onCancel: (() -> Void)? = nil
     ) -> some View {
         modifier(
             CustomAlertModifier(
@@ -159,6 +161,28 @@ extension View {
             onCancel: {}
         )
     }
+}
+
+#Preview("CustomAlert Withdraw View") {
+    @Previewable @State var showAlert = true
+    
+    ZStack {
+        Color.ppWhite
+            .ignoresSafeArea()
+        
+        Button("삭제 테스트") {
+            showAlert = true
+        }
+    }
+    .customAlert(
+        isPresented: $showAlert,
+        title: "가입한 전화번호가 아니에요",
+        message: "번호를 다시 확인해 주세요",
+        confirmTitle: "확인",
+        onConfirm: {
+            // 삭제 로직
+        }
+    )
 }
 
 #Preview("CustomAlert Modifier") {

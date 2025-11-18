@@ -68,7 +68,7 @@ struct SettingView: View {
         )
         .customAlert(
             isPresented: $viewModel.showDeleteConfirm,
-            title: "윙키를 탈퇴하시겠습니까?",
+            title: "회원을 탈퇴하시겠어요?",
             message: "탈퇴하면 모든 기록이 사라져요",
             confirmTitle: "탈퇴하기",
             cancelTitle: "취소",

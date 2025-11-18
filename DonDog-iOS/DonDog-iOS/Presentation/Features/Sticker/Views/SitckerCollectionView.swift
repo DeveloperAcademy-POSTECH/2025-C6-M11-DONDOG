@@ -50,19 +50,16 @@ struct SitckerCollectionView: View {
                     }
                 },
                 onItemTap: { item in
-                    guard let tapped = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == item.id }) else { return }
-                    
-                    if viewModel.targetItemID == tapped.id {
-                        // 이미 선택된 스티커를 다시 선택한 경우 → 선택 해제
+                    // 다시 stickerItems(for:)를 부르지 않고, 전달받은 item을 그대로 사용
+                    if viewModel.targetItemID == item.id {
+                        // 이미 선택된 스티커를 다시 탭 → 선택 해제
                         viewModel.targetItemID = nil
-                        StickerEmotionTagManager.shared.emotionTags = []
                         withAnimation(.easeInOut(duration: 0.25)) {
                             viewModel.showMakeStickerButton = false
                         }
                     } else {
                         // 새 스티커 선택
-                        viewModel.targetItemID = tapped.id
-                        StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, tapped.title]
+                        viewModel.targetItemID = item.id
                         withAnimation(.easeInOut(duration: 0.25)) {
                             viewModel.showMakeStickerButton = true
                         }

@@ -159,10 +159,6 @@ final class ProfileViewModel: ObservableObject {
 
     @MainActor
     private func fetchCurrentProfile() async {
-        // guard let myUid = myUid else { return }
-        
-        // let user: UserData = try await dataManager.fetch(path: "Users/\(myUid)")
-        
         if let myName = connectUserInfo.myName {
             self.name = myName
         }

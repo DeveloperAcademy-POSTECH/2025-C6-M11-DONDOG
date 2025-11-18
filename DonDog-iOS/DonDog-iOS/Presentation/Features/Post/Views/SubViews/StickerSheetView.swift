@@ -10,7 +10,7 @@ import FirebaseFirestore
 import Kingfisher
 import SwiftUI
 
-struct StickerSheetView: View {    
+struct StickerSheetView: View {
     @ObservedObject var viewModel: StickerViewModel
     let onRequestCamera: () -> Void
     

@@ -68,11 +68,13 @@ final class StickerConfirmViewModel: ObservableObject {
 
                 // 2) database 문서 생성
                 let uid = Auth.auth().currentUser?.uid ?? "anonymous"
+                let authorRole = UserPairingStore.shared.myRole ?? "child"
                 let data: [String: Any] = [
-                    "uid": uid,
-                    "url": url.absoluteString,
+                    "authorUid": uid,
+                    "stickerURL": url.absoluteString,
                     "emotionTags": selectedTags,
-                    "createdAt": FieldValue.serverTimestamp()
+                    "createdAt": FieldValue.serverTimestamp(),
+                    "authorRole": authorRole
                 ]
                 _ = try await DataManager.shared.createWithAutoId(path: "Stickers", data: data)
 

@@ -21,8 +21,6 @@ struct AttachedSticker: Identifiable, Codable {
 }
 
 final class StickerViewModel: ObservableObject {
-    @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
-    
     @Published var stickers: [AttachedSticker] = []
     @Published var selectedStickerID: UUID?
     

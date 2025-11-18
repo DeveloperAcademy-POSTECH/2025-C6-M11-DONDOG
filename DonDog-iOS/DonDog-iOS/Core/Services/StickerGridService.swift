@@ -16,11 +16,17 @@ final class StickerGridService: ObservableObject {
     @Published var stickerImageURLs: [StickerItem.ID: URL] = [:]
     @Published var loadingItemIDs: Set<StickerItem.ID> = []
     
-    @Published var selectedCategory: StickerCategory = .affection
-    @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
+    @Published var selectedCategory: StickerCategory = .bigEmotion
+    @Published var itemsByCategory: [StickerCategory: [StickerItem]]
     
-    init() {}
-    
+    private let role: String
+
+    init(role: String? = nil) {
+        let resolvedRole = role ?? UserPairingStore.shared.myRole ?? "child"
+        self.role = resolvedRole
+        self.itemsByCategory = StickerCategoryData.itemsByCategory(for: resolvedRole)
+    }
+
     func stickerItems(for category: StickerCategory) -> [StickerItem] {
         itemsByCategory[category] ?? []
     }
@@ -37,12 +43,13 @@ final class StickerGridService: ObservableObject {
         do {
             let stickers: [StickerData] = try await DataManager.shared.fetchWhereEqual(
                 path: "Stickers",
-                field: "uid",
+                field: "authorUid",
                 isEqualTo: uid
             )
 
+            let roleFiltered = stickers.filter { $0.authorRole == self.role }
             let tags = [category.rawValue, item.title]
-            let filtered = stickers.filter { $0.emotionTags == tags }
+            let filtered = roleFiltered.filter { $0.emotionTags == tags }
             let latest = filtered.max { lhs, rhs in
                 let lhsDate = lhs.createdAt
                 let rhsDate = rhs.createdAt
@@ -50,7 +57,7 @@ final class StickerGridService: ObservableObject {
             }
 
             if let latest,
-                let url = URL(string: latest.url) {
+               let url = URL(string: latest.stickerURL) {
                 stickerImageURLs[item.id] = url
             }
         } catch {

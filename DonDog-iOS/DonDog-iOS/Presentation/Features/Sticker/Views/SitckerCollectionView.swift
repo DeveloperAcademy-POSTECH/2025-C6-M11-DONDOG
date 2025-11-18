@@ -117,7 +117,11 @@ struct SitckerCollectionView: View {
             Spacer()
                 .frame(maxWidth: 16)
             
-            CustomButton(title: "스티커 만들기", style: .primary, isEnable: true, action: {
+            CustomButton(
+                title: (viewModel.targetItemID != nil && gridService.stickerImageURLs[viewModel.targetItemID!] != nil) ? "스티커 변경" : "스티커 만들기",
+                style: .primary,
+                isEnable: true,
+                action: {
                 guard
                     let id = viewModel.targetItemID,
                     let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id })

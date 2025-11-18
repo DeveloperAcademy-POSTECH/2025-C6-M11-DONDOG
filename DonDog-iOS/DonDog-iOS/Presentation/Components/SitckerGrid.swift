@@ -87,43 +87,48 @@ struct StickerCellView: View {
                     .onTapGesture(perform: onTapLoaded)
                 
                 if isLoading {
-                    ProgressView()
-                        .tint(Color.ppPrime)
-                        .frame(width: 24, height: 24)
-                        .padding(.vertical, 50)
+                    ZStack {
+                        ProgressView()
+                            .tint(Color.ppPrime)
+                            .frame(width: 24, height: 24)
+                            .padding(.horizontal, 48)
+                            .padding(.top, 28)
+                            .padding(.bottom, 48)
+                    }
+                    .frame(width: 120, height: 100)
                 }
             }
+            .frame(width: 120, height: 100)
         } else if isLoading {
-            ProgressView()
-                .tint(Color.ppPrime)
-                .frame(width: 24, height: 24)
-                .padding(.vertical, 50)
+            ZStack {
+                ProgressView()
+                    .tint(Color.ppPrime)
+                    .frame(width: 24, height: 24)
+                    .padding(.horizontal, 48)
+                    .padding(.top, 28)
+                    .padding(.bottom, 48)
+            }
+            .frame(width: 120, height: 100)
         } else {
             VStack(spacing: 0) {
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? Color.ppGray600 : Color.ppGray300, style: StrokeStyle(lineWidth: 2, dash: [7, 10]))
+                        .stroke(isSelected ? Color.ppGray600 : Color.ppGray300, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [7, 10]))
                         .frame(width: 60, height: 60)
                         .padding(.horizontal, 20)
                         .padding(10)
-
-                    if isLoading {
-                        ProgressView()
-                            .tint(Color.ppPrime)
-                            .frame(width: 24, height: 24)
-                            .padding(.vertical, 50)
-                    } else {
-                        Image(systemName: "plus")
-                            .font(.system(size: 18))
-                            .foregroundColor(isSelected ? .ppGray600 : Color.ppGray300)
-                    }
+                    
+                    Image(systemName: "plus")
+                        .font(.system(size: 18))
+                        .foregroundColor(isSelected ? .ppGray600 : Color.ppGray300)
+                    
                 }
                 .contentShape(Rectangle())
                 
                 Text(title)
                     .font(.polaroidCaptionRegular16)
-                    .lineLimit(1)
             }
+            .frame(width: 120, height: 100)
             .onTapGesture { if !isLoading { onTapEmpty() } }
         }
     }

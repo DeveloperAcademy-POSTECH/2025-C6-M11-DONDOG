@@ -172,7 +172,12 @@ final class AuthService {
             
             NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil"), role = \(state.myRole ?? "nil")")
             NSLog("[AuthService] 🔓 미연결 상태 (roomId 없음)")
-            replaceRootinAuthService(.home, coordinator: coordinator)
+
+            if coordinator.root == .invite {
+                /// roomId 없음 + 현재 라우트 .invite → 라우팅 유지"
+            } else {
+                replaceRootinAuthService(.home, coordinator: coordinator)
+            }
             return
         }
         

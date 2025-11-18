@@ -40,9 +40,13 @@ struct StickerConfirmView: View {
             CustomNavigationBar(leadingType: .none, centerType: .none, trailingType: .close(action: { onComplete() }), navigationColor: .black)
             .padding(.horizontal, 16)
             
-            if viewModel.image == nil {
-                // TODO: 캐릭터 추가
+            if viewModel.image == nil || (viewModel.uploadError != nil) {
+                Image(UserPairingStore.shared.myRole == "parent" ? "ParentEmptyView" : "ChildEmptyView")
+                    .padding(.bottom, 16)
+                
                 Text("스티커 만들기를 실패했어요")
+                    .foregroundStyle(Color.ppGray600)
+                    .font(.bodyRegular16)
                 
                 Spacer()
                 
@@ -50,44 +54,40 @@ struct StickerConfirmView: View {
                     onRetake() })
                     .padding(.horizontal, 21)
             } else {
-                Text("만들어진 스티커를 확인해 주세요!")
-                    .font(.subtitleMedium18)
-                    .padding(.vertical, 24)
-                
-                Spacer()
-                
-                if let image = viewModel.image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity)
-                        .clipped()
-                        .padding(.horizontal, 65)
-                        .padding(.bottom, 110)
-                }
+                VStack {
+                    Text("만들어진 스티커를 확인해 주세요!")
+                        .font(.subtitleMedium18)
+                        .padding(.vertical, 24)
                     
-                Spacer()
-                
-                if let error = viewModel.uploadError, !error.isEmpty {
-                    Text(error)
-                        .foregroundColor(.red)
-                }
-                
-                HStack {
-                    CustomButton(title: route == .camera ? "다시 찍기" : "사진 변경하기", style: .secondary, isEnable: true, action: { onRetake() })
-
                     Spacer()
-                        .frame(maxWidth: 16)
                     
-                    CustomButton(title: "스티커 저장", style: .primary, isEnable: !viewModel.isSaving, action: {
-                        viewModel.isSaving = true
-                        viewModel.uploadSticker { tags in
-                            onUploaded?(tags)
-                            onComplete()
-                        }
-                    }, isProgressView: viewModel.isSaving)
+                    if let image = viewModel.image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 300, height: 360)
+                            .clipped()
+                            .padding(.bottom, 150)
+                    }
+                        
+                    Spacer()
+                    
+                    HStack {
+                        CustomButton(title: route == .camera ? "다시 찍기" : "사진 변경하기", style: .secondary, isEnable: true, action: { onRetake() })
+
+                        Spacer()
+                            .frame(maxWidth: 16)
+                        
+                        CustomButton(title: "스티커 저장", style: .primary, isEnable: !viewModel.isSaving, action: {
+                            viewModel.isSaving = true
+                            viewModel.uploadSticker { tags in
+                                onUploaded?(tags)
+                                onComplete()
+                            }
+                        }, isProgressView: viewModel.isSaving)
+                    }
+                    .padding(.horizontal, 20)
                 }
-                .padding(.horizontal, 21)
             }
         }
     }

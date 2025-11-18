@@ -49,13 +49,15 @@ struct PhotoPickerView: View {
             if viewModel.items.isEmpty {
                 VStack {
                     Spacer()
+                    
+                    Image(UserPairingStore.shared.myRole == "parent" ? "ParentEmptyView" : "ChildEmptyView")
+                        .padding(.bottom, 16)
                    
                     Text("게시물이 없어\n사진을 선택할 수 없어요")
                         .font(.bodyRegular18)
                         .multilineTextAlignment(.center)
-                        .foregroundStyle(Color.ppBlack)
+                        .foregroundStyle(Color.ppGray600)
                         .lineSpacing(4)
-                        .padding(.top, 27)
                     Spacer()
                 }
             } else {

@@ -102,7 +102,17 @@ struct SitckerCollectionView: View {
     
     private var makeStickerButton: some View {
         HStack {
-            CustomButton(title: "내 게시물로 만들기", style: .secondary, isEnable: true, action: { coordinator.push(.photoPicker) })
+            CustomButton(title: "내 게시물로 만들기", style: .secondary, isEnable: true, action: {
+                guard
+                    let id = viewModel.targetItemID,
+                    let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id })
+                else { return }
+                
+                let keyword = item.title
+                StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, keyword]
+                
+                coordinator.push(.photoPicker)
+            })
             
             Spacer()
                 .frame(maxWidth: 16)

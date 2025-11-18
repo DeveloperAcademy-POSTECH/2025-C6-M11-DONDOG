@@ -124,6 +124,12 @@ struct PostView: View {
                         .frame(width: proxy.size.width, height: 524 * scale * pinchScale)
                         .position(x: proxy.size.width / 2, y: centerY)
                         .tabViewStyle(.page)
+                        .onChange(of: isFrontOrBack) { _, newValue in
+                            Task {
+                                stickerViewModel.postImageType = (newValue == 0) ? .front : .back
+                                await stickerViewModel.fetchStickers()
+                            }
+                        }
                     }
                     
                     Image(systemName: "xmark")

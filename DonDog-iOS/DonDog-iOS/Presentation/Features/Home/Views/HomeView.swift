@@ -38,13 +38,13 @@ struct HomeView: View {
                                     }
                                     .overlay {
                                         if DateUtils.isOver3daysSinceLastUpload() {
-                                            VStack {
-                                                Text("게시글을 작성한 지 3일이 지났어요.")
-                                                    .font(.titleBold18)
+                                            VStack(spacing: 6) {
+                                                Image("LockerIcon")
+                                                Text("사진을 업로드한 지 3일이 지나\n사진을 확인할 수 없어요")
+                                                    .font(.subtitleSemiBold16)
                                                     .foregroundStyle(.ppWhite)
-                                                Text("게시글을 업로드해주세요")
-                                                    .font(.titleBold18)
-                                                    .foregroundStyle(.ppWhite)
+                                                    .multilineTextAlignment(.center)
+                                                    .lineSpacing(3)
                                             }
                                         }
                                     }
@@ -63,13 +63,13 @@ struct HomeView: View {
                                     }
                                     .overlay {
                                         if DateUtils.isOver3daysSinceLastUpload() {
-                                            VStack {
-                                                Text("게시글을 작성한 지 3일이 지났어요.")
-                                                    .font(.titleBold18)
+                                            VStack(spacing: 6) {
+                                                Image("LockerIcon")
+                                                Text("사진을 업로드한 지 3일이 지나\n사진을 확인할 수 없어요")
+                                                    .font(.subtitleSemiBold16)
                                                     .foregroundStyle(.ppWhite)
-                                                Text("게시글을 업로드해주세요")
-                                                    .font(.titleBold18)
-                                                    .foregroundStyle(.ppWhite)
+                                                    .multilineTextAlignment(.center)
+                                                    .lineSpacing(3)
                                             }
                                         }
                                     }
@@ -91,13 +91,13 @@ struct HomeView: View {
                                     }
                                     .overlay {
                                         if DateUtils.isOver3daysSinceLastUpload() {
-                                            VStack {
-                                                Text("게시글을 작성한 지 3일이 지났어요.")
-                                                    .font(.titleBold18)
+                                            VStack(spacing: 6) {
+                                                Image("LockerIcon")
+                                                Text("사진을 업로드한 지 3일이 지나\n사진을 확인할 수 없어요")
+                                                    .font(.subtitleSemiBold16)
                                                     .foregroundStyle(.ppWhite)
-                                                Text("게시글을 업로드해주세요")
-                                                    .font(.titleBold18)
-                                                    .foregroundStyle(.ppWhite)
+                                                    .multilineTextAlignment(.center)
+                                                    .lineSpacing(3)
                                             }
                                         }
                                     }
@@ -117,13 +117,13 @@ struct HomeView: View {
                                     }
                                     .overlay {
                                         if DateUtils.isOver3daysSinceLastUpload() {
-                                            VStack {
-                                                Text("게시글을 작성한 지 3일이 지났어요.")
-                                                    .font(.titleBold18)
+                                            VStack(spacing: 6) {
+                                                Image("LockerIcon")
+                                                Text("사진을 업로드한 지 3일이 지나\n사진을 확인할 수 없어요")
+                                                    .font(.subtitleSemiBold16)
                                                     .foregroundStyle(.ppWhite)
-                                                Text("게시글을 업로드해주세요")
-                                                    .font(.titleBold18)
-                                                    .foregroundStyle(.ppWhite)
+                                                    .multilineTextAlignment(.center)
+                                                    .lineSpacing(3)
                                             }
                                         }
                                     }

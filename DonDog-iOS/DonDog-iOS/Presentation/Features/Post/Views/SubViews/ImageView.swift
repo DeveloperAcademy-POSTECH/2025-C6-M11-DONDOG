@@ -42,12 +42,21 @@ struct ImageView: View {
                     }
                 }
             
-            ForEach($viewModel.stickers) { $sticker in
+            ForEach(viewModel.postImageType == PostImageType.front ? $viewModel.frontStickers : $viewModel.backStickers) { $sticker in
                 StickerView(
                     sticker: $sticker,
                     isSelected: viewModel.selectedStickerID == sticker.id,
                     isEditable: isEditing,
-                    onDelete: { viewModel.removeSticker(sticker) }
+                    onDelete: {
+                        Task {
+                            await viewModel.removeSticker(sticker)
+                        }
+                    },
+                    onInteraction: {
+                        if isEditing {
+                            viewModel.selectedStickerID = sticker.id
+                        }
+                    }
                 )
                 .onTapGesture {
                     if isEditing {

@@ -66,7 +66,7 @@ struct PostView: View {
             }
             .sheet(isPresented: $showStickerSheet) {
                 StickerSheetView(
-                    viewModel: stickerViewModel,
+                    viewModel: stickerViewModel, postId: viewModel.post.postId,
                     onRequestCamera: {
                         stickerViewModel.shouldReopenSheetAfterCamera = true
                         showStickerSheet = false
@@ -86,6 +86,12 @@ struct PostView: View {
                     showStickerSheet = true
                     stickerViewModel.shouldReopenSheetAfterCamera = false
                 }
+            }
+        }
+        .task {
+            Task {
+                stickerViewModel.postId = viewModel.post.postId
+                await stickerViewModel.fetchStickers()
             }
         }
         

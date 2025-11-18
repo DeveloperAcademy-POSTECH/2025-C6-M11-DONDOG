@@ -20,6 +20,7 @@ final class CameraViewModel: ObservableObject {
     @Published var showCaptionView = false
     @Published var showGuideView: Bool = true
     @Published var showCompleteView: Bool = false
+    @Published var showExitAlert: Bool = false
     
     // 스티커 제작뷰에서 활성화한 카메라인지 여부
     var isStickerCamera: Bool = false
@@ -36,5 +37,6 @@ final class CameraViewModel: ObservableObject {
         isUploading = false
         showCaptionView = false
         showGuideView = true
+        showExitAlert = false
     }
 }

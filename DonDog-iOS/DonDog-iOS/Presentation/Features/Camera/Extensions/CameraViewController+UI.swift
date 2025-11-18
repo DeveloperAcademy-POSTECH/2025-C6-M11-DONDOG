@@ -11,9 +11,9 @@ import UIKit
 
 extension CustomCameraViewController {
     func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .ppWhite
         
-        setupCancelButton()
+        setupNavigationButtons()
         if isStickerCamera {
             setupStickerGuide()
         } else {
@@ -41,7 +41,7 @@ extension CustomCameraViewController {
                 topAnchor = stickerGuideContainer.bottomAnchor
                 topSpacing = 24
             } else {
-                topAnchor = cancelButton.bottomAnchor
+                topAnchor = closeButton.bottomAnchor
                 topSpacing = 24
             }
         } else {
@@ -78,14 +78,16 @@ extension CustomCameraViewController {
     }
     
     private func setupCaptureButton() {
-        captureButton.backgroundColor = .white
+        captureButton.backgroundColor = .ppPrime
         captureButton.layer.cornerRadius = 36
-        captureButton.layer.borderWidth = 3
-        captureButton.layer.borderColor = Color.ppPrime.uiColor.cgColor
         
-        captureButtonInnerCircle.backgroundColor = .ppPrime
+        captureButtonInnerCircle.backgroundColor = .ppWhite
         captureButtonInnerCircle.layer.cornerRadius = 28
         captureButtonInnerCircle.isUserInteractionEnabled = false
+        captureButtonInnerCircle.layer.shadowColor = Color.ppBlack.cgColor
+        captureButtonInnerCircle.layer.shadowOffset = CGSize(width: 0, height: 0)
+        captureButtonInnerCircle.layer.shadowRadius = 4
+        captureButtonInnerCircle.layer.shadowOpacity = 0.2
         captureButton.addSubview(captureButtonInnerCircle)
         captureButtonInnerCircle.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -105,6 +107,56 @@ extension CustomCameraViewController {
             captureButton.widthAnchor.constraint(equalToConstant: 72),
             captureButton.heightAnchor.constraint(equalToConstant: 72)
         ])
+    }
+    
+    private func setupNavigationButtons() {
+        let chevronImage = UIImage(systemName: "chevron.left")
+        let resizedChevron = chevronImage?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .regular))
+        cancelButton.setImage(resizedChevron, for: .normal)
+        cancelButton.tintColor = Color.ppBlack.uiColor
+        cancelButton.contentMode = .center
+        cancelButton.imageView?.contentMode = .scaleAspectFit
+        cancelButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        
+        view.addSubview(cancelButton)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
+            cancelButton.widthAnchor.constraint(equalToConstant: 24),
+            cancelButton.heightAnchor.constraint(equalToConstant: 24)
+        ])
+        
+        let xImage = UIImage(systemName: "xmark")
+        let resizedX = xImage?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 18, weight: .medium))
+        closeButton.setImage(resizedX, for: .normal)
+        closeButton.tintColor = Color.ppBlack.uiColor
+        closeButton.contentMode = .center
+        closeButton.imageView?.contentMode = .scaleAspectFit
+        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+        
+        view.addSubview(closeButton)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
+            closeButton.widthAnchor.constraint(equalToConstant: 24),
+            closeButton.heightAnchor.constraint(equalToConstant: 24)
+        ])
+        
+        updateNavigationButtons()
+    }
+    
+    func updateNavigationButtons() {
+        guard !isStickerCamera else { return }
+        
+        if isCapturingFront {
+            cancelButton.isHidden = true
+            closeButton.isHidden = false
+        } else {
+            cancelButton.isHidden = false
+            closeButton.isHidden = false
+        }
     }
     
     private func setupCancelButton() {

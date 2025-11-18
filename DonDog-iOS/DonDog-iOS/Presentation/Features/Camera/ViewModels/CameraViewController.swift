@@ -43,6 +43,7 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     let captureButton = UIButton()
     let captureButtonInnerCircle = UIView()
     let cancelButton = UIButton()
+    let closeButton = UIButton()
     
     let stepIndicatorContainer = UIView()
     let step1Circle = UIView()

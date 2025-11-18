@@ -22,6 +22,7 @@ extension CustomCameraViewController {
             }
             
             self.updateStepIndicator()
+            self.updateNavigationButtons()
         }
     }
     
@@ -93,6 +94,7 @@ extension CustomCameraViewController {
             self.captureButton.isHidden = false
             
             self.isFrontPhotoConfirmed = false
+            self.updateNavigationButtons()
         }
     }
     
@@ -124,6 +126,7 @@ extension CustomCameraViewController {
             self.captureButton.isHidden = false
             
             self.updateUIForCurrentState()
+            self.updateNavigationButtons()
             
             DispatchQueue.global(qos: .userInitiated).async {
                 self.performCameraSwitchToFront()

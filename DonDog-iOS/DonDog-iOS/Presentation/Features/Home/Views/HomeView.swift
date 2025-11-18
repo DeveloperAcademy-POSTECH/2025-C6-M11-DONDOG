@@ -24,11 +24,64 @@ struct HomeView: View {
                 
                 ZStack(alignment: .bottom) {
                     TabView(selection: $viewModel.currentIndex) {
-                        if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
+                        if viewModel.isUploadingLocalImage, viewModel.selectedPostType == .myArchive, let frontImage = viewModel.localFrontImage, let backImage = viewModel.localBackImage {
+                            Group {
+                                Image(uiImage: frontImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
+                                    .tag(0)
+                                    .overlay(alignment: .bottom) {
+                                        LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
+                                            .opacity(0.6)
+                                            .frame(maxHeight: 97)
+                                    }
+                                    .overlay {
+                                        if DateUtils.isOver3daysSinceLastUpload() {
+                                            VStack {
+                                                Text("게시글을 작성한 지 3일이 지났어요.")
+                                                    .font(.titleBold18)
+                                                    .foregroundStyle(.ppWhite)
+                                                Text("게시글을 업로드해주세요")
+                                                    .font(.titleBold18)
+                                                    .foregroundStyle(.ppWhite)
+                                            }
+                                        }
+                                    }
+                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    .padding(.horizontal, 20)
+                                
+                                Image(uiImage: backImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
+                                    .tag(1)
+                                    .overlay(alignment: .bottom) {
+                                        LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
+                                            .opacity(0.6)
+                                            .frame(maxHeight: 97)
+                                    }
+                                    .overlay {
+                                        if DateUtils.isOver3daysSinceLastUpload() {
+                                            VStack {
+                                                Text("게시글을 작성한 지 3일이 지났어요.")
+                                                    .font(.titleBold18)
+                                                    .foregroundStyle(.ppWhite)
+                                                Text("게시글을 업로드해주세요")
+                                                    .font(.titleBold18)
+                                                    .foregroundStyle(.ppWhite)
+                                            }
+                                        }
+                                    }
+                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    .padding(.horizontal, 20)
+                            }
+                        } else if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
                             Group {
                                 KFImage(frontURL)
                                     .resizable()
                                     .scaledToFit()
+                                    .frame(maxHeight: 468)
                                     .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
                                     .tag(0)
                                     .overlay(alignment: .bottom) {
@@ -54,6 +107,7 @@ struct HomeView: View {
                                 KFImage(backURL)
                                     .resizable()
                                     .scaledToFit()
+                                    .frame(maxHeight: 468)
                                     .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
                                     .tag(1)
                                     .overlay(alignment: .bottom) {
@@ -132,13 +186,62 @@ struct HomeView: View {
                         if !DateUtils.isOver3daysSinceLastUpload() {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(currentPost.post.caption)
+                                    if viewModel.isUploadingLocalImage, let localCaption = viewModel.localCaption {
+                                        Text(localCaption)
+                                            .font(.subtitleSemiBold16)
+                                            .foregroundStyle(.ppWhite)
+                                        
+                                        if let localDate = viewModel.localUploadDate {
+                                            Text(DateUtils.string(from: localDate, format: .home))
+                                                .font(.captionRegular13)
+                                                .foregroundStyle(.ppWhite)
+                                        }
+                                    } else {
+                                        Text(currentPost.post.caption)
+                                            .font(.subtitleSemiBold16)
+                                            .foregroundStyle(.ppWhite)
+                                        
+                                        Text(DateUtils.string(from: currentPost.createdAt, format: .home))
+                                            .font(.captionRegular13)
+                                            .foregroundStyle(.ppWhite)
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, 21)
+                                
+                                Spacer()
+                                Button {
+                                    // editableView
+                                } label: {
+                                    Image("AddStickerIcon")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 64, height: 64)
+                                        .background {
+                                            Circle()
+                                                .frame(width: 70, height: 70)
+                                                .foregroundStyle(.ppPrime)
+                                        }
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 16)
+                                .buttonStyle(.plain)
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                    } else if viewModel.isUploadingLocalImage, let localCaption = viewModel.localCaption {
+                        if !DateUtils.isOver3daysSinceLastUpload() {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(localCaption)
                                         .font(.subtitleSemiBold16)
                                         .foregroundStyle(.ppWhite)
                                     
-                                    Text(DateUtils.string(from: currentPost.createdAt, format: .home))
-                                        .font(.captionRegular13)
-                                        .foregroundStyle(.ppWhite)
+                                    if let localDate = viewModel.localUploadDate {
+                                        Text(DateUtils.string(from: localDate, format: .home))
+                                            .font(.captionRegular13)
+                                            .foregroundStyle(.ppWhite)
+                                    }
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.bottom, 21)

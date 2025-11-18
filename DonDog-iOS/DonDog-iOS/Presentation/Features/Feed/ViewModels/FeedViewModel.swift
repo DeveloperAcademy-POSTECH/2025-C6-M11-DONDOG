@@ -184,7 +184,7 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     
     // MARK: - CaptionViewModelDelegate
     
-    func didStartUploading() {
+    func didStartUploading(frontImage: UIImage?, backImage: UIImage?, caption: String) {
         isUploading = true
     }
     

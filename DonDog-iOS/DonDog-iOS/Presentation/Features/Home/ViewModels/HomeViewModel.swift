@@ -17,12 +17,16 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
             currentIndex = 0
         }
     }
-    
     @Published var isShowingATimePost: Bool = true {
         didSet {
             updateTimeTypeFromCurrentTime()
         }
     }
+    @Published var localFrontImage: UIImage?
+    @Published var localBackImage: UIImage?
+    @Published var localCaption: String?
+    @Published var localUploadDate: Date?
+    @Published var isUploadingLocalImage: Bool = false
     @Published var todayPosts: [HomePost] = []
     @Published var currentPost: HomePost?
     @Published var isLoading: Bool = false
@@ -119,13 +123,26 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
         currentIndex = 0
     }
     
-    func didStartUploading() {
+    func didStartUploading(frontImage: UIImage?, backImage: UIImage?, caption: String) {
         isLoading = true
+        isUploadingLocalImage = true
+        localFrontImage = frontImage
+        localBackImage = backImage
+        localCaption = caption
+        localUploadDate = Date()
+        selectedPostType = .myArchive
     }
     
     func didUploadPost() {
         isLoading = false
-        selectedPostType = .myArchive
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.isUploadingLocalImage = false
+            self?.localFrontImage = nil
+            self?.localBackImage = nil
+            self?.localCaption = nil
+            self?.localUploadDate = nil
+        }
         Task {
             await loadPosts()
         }

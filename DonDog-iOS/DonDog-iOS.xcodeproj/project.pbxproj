@@ -63,6 +63,7 @@
 		8BDF76982E9F72CE007F12BB /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF76972E9F72CE007F12BB /* SplashView.swift */; };
 		8BDF769E2E9FDF88007F12BB /* GenerateCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */; };
 		8BEA2CD52EC3A1E500BC27EC /* OutlinedTitleImageMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA2CD42EC3A1E500BC27EC /* OutlinedTitleImageMaker.swift */; };
+		8BF73ECB2ECB3FE3007BCBDA /* CameraStickerConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF73ECA2ECB3FE3007BCBDA /* CameraStickerConfirmView.swift */; };
 		8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */; };
 		8BFC73612EA5D18C00B54F03 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC73602EA5D18C00B54F03 /* NetworkService.swift */; };
 		8C3E791F2EBB2899000ADEF6 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */; };
@@ -151,6 +152,7 @@
 		8BA793C92EC06DF000FF05B3 /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		8BA793CB2EC073E500FF05B3 /* SitckerGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitckerGrid.swift; sourceTree = "<group>"; };
 		8BA793CD2EC0750900FF05B3 /* StickerGridService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerGridService.swift; sourceTree = "<group>"; };
+		8BB5B1C82ECC164000247C5B /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberView.swift; sourceTree = "<group>"; };
 		8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberViewModel.swift; sourceTree = "<group>"; };
 		8BD1C1352EC9C0E10064CF70 /* CameraViewController+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+Actions.swift"; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 		8BDF76972E9F72CE007F12BB /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeService.swift; sourceTree = "<group>"; };
 		8BEA2CD42EC3A1E500BC27EC /* OutlinedTitleImageMaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlinedTitleImageMaker.swift; sourceTree = "<group>"; };
+		8BF73ECA2ECB3FE3007BCBDA /* CameraStickerConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraStickerConfirmView.swift; sourceTree = "<group>"; };
 		8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorView.swift; sourceTree = "<group>"; };
 		8BFC73602EA5D18C00B54F03 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -224,7 +227,6 @@
 		D24402A52E992CD800D837C8 /* CaptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionView.swift; sourceTree = "<group>"; };
 		D27750922EBCFAA200E27680 /* StickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerViewModel.swift; sourceTree = "<group>"; };
 		D27750982EC0186400E27680 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
-		D27750A32EC3888100E27680 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D297CE7E2EB0305E00F28395 /* StickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerView.swift; sourceTree = "<group>"; };
 		D297CE852EB05DFB00F28395 /* StickerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerType.swift; sourceTree = "<group>"; };
 		D2A7FA3A2E9FFDCA005F5AF8 /* DisplayablePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayablePost.swift; sourceTree = "<group>"; };
@@ -422,6 +424,7 @@
 			children = (
 				8BD1C13F2EC9C0E10064CF70 /* ShootingCompleteView.swift */,
 				8BD1C1402EC9C0E10064CF70 /* ShootingGuideView.swift */,
+				8BF73ECA2ECB3FE3007BCBDA /* CameraStickerConfirmView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -543,7 +546,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
-				D27750A32EC3888100E27680 /* DonDog-iOS.app */,
+				8BB5B1C82ECC164000247C5B /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -835,7 +838,7 @@
 				8B822D7B2EAB617800D708D7 /* Kingfisher */,
 			);
 			productName = "DonDog-iOS";
-			productReference = D27750A32EC3888100E27680 /* DonDog-iOS.app */;
+			productReference = 8BB5B1C82ECC164000247C5B /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -989,6 +992,7 @@
 				8BD1C1502EC9C0E10064CF70 /* CameraViewController+Actions.swift in Sources */,
 				8BD1C1512EC9C0E10064CF70 /* ShootingGuideView.swift in Sources */,
 				CAA62D062EA1E57200C60E05 /* CustomPageIndicator.swift in Sources */,
+				8BF73ECB2ECB3FE3007BCBDA /* CameraStickerConfirmView.swift in Sources */,
 				D219F21F2EAEA10500BD82B7 /* PostContentsView.swift in Sources */,
 				8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */,
 				8BBE41F22EA1E9CB00057A23 /* AuthNumberViewModel.swift in Sources */,

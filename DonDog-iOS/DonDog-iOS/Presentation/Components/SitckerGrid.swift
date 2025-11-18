@@ -15,6 +15,7 @@ struct StickerGrid: View {
     let items: [StickerItem]
     let stickerImageURLs: [StickerItem.ID: URL]
     let loadingItemIDs: Set<StickerItem.ID>
+    let selectedItemID: StickerItem.ID?
 
     var isStickerConfirmPresented: Binding<Bool>?
     let onItemAppear: (StickerItem.ID) -> Void
@@ -30,7 +31,8 @@ struct StickerGrid: View {
         isStickerConfirmPresented: Binding<Bool>? = nil,
         onItemAppear: @escaping (StickerItem.ID) -> Void,
         onItemTap: @escaping (StickerItem) -> Void,
-        onPlusTap: ((StickerItem) -> Void)? = nil
+        onPlusTap: ((StickerItem) -> Void)? = nil,
+        selectedItemID: StickerItem.ID? = nil
     ) {
         self.items = items
         self.stickerImageURLs = remoteURLByItemID
@@ -41,6 +43,7 @@ struct StickerGrid: View {
         self.onItemAppear = onItemAppear
         self.onItemTap = onItemTap
         self.onPlusTap = onPlusTap ?? onItemTap
+        self.selectedItemID = selectedItemID
     }
     
     var body: some View {
@@ -51,6 +54,8 @@ struct StickerGrid: View {
                         title: item.title,
                         url: stickerImageURLs[item.id],
                         isLoading: loadingItemIDs.contains(item.id),
+                        isSelected: item.id == selectedItemID,
+                        hasSelection: selectedItemID != nil,
                         onTapLoaded: { onItemTap(item) },
                         onTapEmpty: { onPlusTap(item) },
                     )
@@ -66,6 +71,8 @@ struct StickerCellView: View {
     let title: String
     let url: URL?
     let isLoading: Bool
+    let isSelected: Bool
+    let hasSelection: Bool
     let onTapLoaded: () -> Void
     let onTapEmpty: () -> Void
     
@@ -75,39 +82,53 @@ struct StickerCellView: View {
                 KFImage(url)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 120, height: 100)
+                    .opacity(hasSelection ? (isSelected ? 1.0 : 0.5) : 1.0)
+                    .frame(width: 120, height: 100, alignment: .center)
                     .onTapGesture(perform: onTapLoaded)
                 
                 if isLoading {
-                    ProgressView()
-                        .tint(Color.ppPrime)
-                        .frame(width: 24, height: 24)
-                        .padding(.vertical, 50)
+                    ZStack {
+                        ProgressView()
+                            .tint(Color.ppPrime)
+                            .frame(width: 24, height: 24)
+                            .padding(.horizontal, 48)
+                            .padding(.top, 28)
+                            .padding(.bottom, 48)
+                    }
+                    .frame(width: 120, height: 100)
                 }
             }
+            .frame(width: 120, height: 100)
         } else if isLoading {
-            ProgressView()
-                .tint(Color.ppPrime)
-                .frame(width: 24, height: 24)
-                .padding(.vertical, 50)
+            ZStack {
+                ProgressView()
+                    .tint(Color.ppPrime)
+                    .frame(width: 24, height: 24)
+                    .padding(.horizontal, 48)
+                    .padding(.top, 28)
+                    .padding(.bottom, 48)
+            }
+            .frame(width: 120, height: 100)
         } else {
-            VStack(spacing: 15) {
+            VStack(spacing: 0) {
                 ZStack {
                     Circle()
-                        .stroke(Color.ppGray300, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [10, 15]))
-                        .frame(width: 80, height: 80)
+                        .stroke(isSelected ? Color.ppGray600 : Color.ppGray300, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [7, 10]))
+                        .frame(width: 60, height: 60)
+                        .padding(.horizontal, 20)
+                        .padding(10)
                     
                     Image(systemName: "plus")
                         .font(.system(size: 18))
-                        .foregroundStyle(Color.ppGray300)
+                        .foregroundColor(isSelected ? .ppGray600 : Color.ppGray300)
                     
                 }
                 .contentShape(Rectangle())
                 
                 Text(title)
-                    .font(.polaroidCaptionRegular20)
-                    .lineLimit(1)
+                    .font(.polaroidCaptionRegular16)
             }
+            .frame(width: 120, height: 100)
             .onTapGesture { if !isLoading { onTapEmpty() } }
         }
     }

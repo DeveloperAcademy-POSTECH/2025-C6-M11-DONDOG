@@ -20,20 +20,20 @@ struct AuthView: View {
             
             HStack {
                 if viewModel.isWithDraw {
-                    Text("윙키")
+                    Text("픽픽")
                         .font(.titleBold20)
                     +
-                    Text("를 탈퇴하기 위해\n")
+                    Text("을 탈퇴하기 위해\n")
                     +
-                    Text("전화번호 인증")
+                    Text("전화번호")
                         .font(.titleBold20)
                     +
-                    Text("이 필요해요")
+                    Text("를 이용한 인증이 필요해요")
                 } else {
-                    Text("윙키")
+                    Text("픽픽")
                         .font(.titleBold20)
                     +
-                    Text("를 이용하기 위해\n")
+                    Text("을 이용하기 위해\n")
                     +
                     Text("전화번호")
                         .font(.titleBold20)
@@ -63,18 +63,21 @@ struct AuthView: View {
             CustomButton(title: "다음", isEnable: !viewModel.userPhoneNumber.isEmpty && !viewModel.isLoading, action: viewModel.sendCode, isProgressView: viewModel.isLoading)
             
         }
+        .padding(.horizontal, 20)
+        .background(.ppWhite)
         .task {
             viewModel.attach(coordinator: coordinator)
         }
-        .padding(.horizontal, 20)
         .backHiddenSwipeEnabled()
         .dismissKeyboard()
-        .alert("", isPresented: $viewModel.showPhoneMismatchAlert) {
-            Button("확인", role: .cancel) {
-                viewModel.userPhoneNumber = ""
+        .customAlert(
+            isPresented: $viewModel.showPhoneMismatchAlert,
+            title: "가입한 전화번호가 아니에요",
+            message: "번호를 다시 확인해 주세요",
+            confirmTitle: "확인",
+            onConfirm: {
+                // 삭제 로직
             }
-        } message: {
-            Text(viewModel.mismatchAlertText)
-        }
+        )
     }
 }

@@ -16,6 +16,7 @@ struct ProfileView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: ProfileViewModel
     @StateObject private var keyboard = KeyboardResponder()
+    @State private var showRoleChangeAlert = false
 
     init(viewModel: ProfileViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -47,22 +48,18 @@ struct ProfileView: View {
             HStack(spacing: 56) {
                 ForEach(ProfileViewModel.Role.allCases, id: \.self) { role in
                     VStack(spacing: 8) {
-                        ZStack {
-                            Circle()
-                                .strokeBorder(
-                                    viewModel.selectedRole == role ? Color.ddPrimaryBlue : Color.ddGray100, lineWidth: 4
-                                )
-                                .frame(width: 120, height: 120)
-
-                            Text(role.displayIcon)
-                                .font(.custom(FontName.pretendardBold.rawValue, size: 48))
-                        }
-                        .contentShape(Circle())
-                        .onTapGesture { viewModel.selectedRole = role }
-
+                        Image(viewModel.selectedRole == role ? role.iconOnName : role.iconOffName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 120, height: 120)
+                            .contentShape(Rectangle())   // 전체 영역 탭 가능하게
+                            .onTapGesture {
+                                viewModel.selectedRole = role
+                            }
+                        
                         Text(role.displayName)
                             .font(viewModel.selectedRole == role ? .titleBold18 : .bodyRegular18)
-                            .foregroundStyle(viewModel.selectedRole == role ? Color.ddPrimaryBlue : Color.ddBlack)
+                            .foregroundStyle(Color.ppBlack)
                     }
                     .accessibilityLabel(Text(role.displayName))
                     .accessibilityAddTraits(viewModel.selectedRole == role ? .isSelected : [])
@@ -86,12 +83,30 @@ struct ProfileView: View {
             CustomButton(
                 title: viewModel.mode == .edit ? "저장" : "다음",
                 isEnable: viewModel.isButtonEnabled,
-                action: viewModel.save
+                action: {
+                    if viewModel.mode == .edit && viewModel.didChangeRole {
+                        showRoleChangeAlert = true
+                    } else {
+                        viewModel.save()
+                    }
+                }
             )
         }
         .padding(.horizontal, 20)
+        .background(.ppWhite)
         .dismissKeyboard()
         .backHiddenSwipeEnabled()
+        .customAlert(
+            isPresented: $showRoleChangeAlert,
+            title: "역할을 변경하시겠어요?",
+            message: "지금까지 제작한 스티커가 초기화 돼요",
+            confirmTitle: "변경",
+            cancelTitle: "취소",
+            onConfirm: {
+                viewModel.save()
+            },
+            onCancel: {}
+        )
         .task {
             viewModel.attach(coordinator: coordinator)
             await viewModel.onAppearIfNeeded()

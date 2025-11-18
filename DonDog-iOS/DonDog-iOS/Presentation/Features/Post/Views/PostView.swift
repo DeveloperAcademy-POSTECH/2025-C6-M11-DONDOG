@@ -90,10 +90,17 @@ struct PostView: View {
                         .presentationDragIndicator(.hidden)
                         .background(Color.ddGray100.opacity(0.5))
                     }
-                    .onAppear {
-                        if stickerViewModel.shouldReopenSheetAfterCamera {
-                            showStickerSheet = true
-                            stickerViewModel.shouldReopenSheetAfterCamera = false
+                    .padding(.trailing, 14)
+                }
+            }
+            .sheet(isPresented: $showStickerSheet) {
+                StickerSheetView(
+                    viewModel: stickerViewModel, postId: viewModel.post.postId,
+                    onRequestCamera: {
+                        stickerViewModel.shouldReopenSheetAfterCamera = true
+                        showStickerSheet = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            coordinator.push(.camera)
                         }
                     }
                     
@@ -143,5 +150,13 @@ struct PostView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .task {
+            Task {
+                stickerViewModel.postId = viewModel.post.postId
+                await stickerViewModel.fetchStickers()
+            }
+        }
+        
+        Spacer()
     }
 }

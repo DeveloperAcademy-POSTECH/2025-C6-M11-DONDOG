@@ -51,10 +51,11 @@ struct AuthNumberView: View {
             
             CustomButton(title: "인증하기", isEnable: !viewModel.verificationCode.isEmpty && !viewModel.isLoading, action: viewModel.logIn, isProgressView: viewModel.isLoading)
         }
+        .padding(.horizontal, 20)
+        .background(.ppWhite)
         .task {
             viewModel.attach(coordinator: coordinator)
         }
-        .padding(.horizontal, 20)
         .backHiddenSwipeEnabled()
         .dismissKeyboard()
         .alert("", isPresented: $viewModel.showWithdrawErrorAlert) {

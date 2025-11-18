@@ -12,13 +12,63 @@ struct HomeView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: HomeViewModel
     @StateObject private var cameraViewModel = CameraViewModel()
+    @EnvironmentObject var connectUserInfo: UserPairingStore
     
     var body: some View {
-        VStack(spacing: 0) {
-            CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "sun.max.fill" : "moon.fill"), navigationColor: .black)
-                .padding(.horizontal, 16)
-            
-            if viewModel.connectUserInfo.isConnected {
+        if connectUserInfo.isConnected == .unknown {
+            SplashView()
+        } else if connectUserInfo.isConnected == .notConnected {
+            ZStack {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button {
+                            coordinator.push(.setting)
+                        } label: {
+                            Image(systemName: "gear")
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(Color.ppPrime)
+                                .padding(.vertical, 8)
+                                .padding(.trailing, 20)
+                        }
+                    }
+                    Spacer()
+                }
+                
+                VStack(spacing: 0) {
+                    Spacer()
+                    Image(systemName: "person.fill.xmark")
+                        .foregroundStyle(Color.ppPrime50)
+                        .font(.system(size: 40))
+                    Text("아직 가족과 연결되지 않았어요\n아래 버튼으로 가족을 초대할 수 있어요")
+                        .font(.bodyRegular16)
+                        .lineSpacing(2)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Color.ppGray500)
+                        .padding(10)
+                    Button {
+                        coordinator.inviteShowSentHint = false
+                        coordinator.push(.invite)
+                    } label: {
+                        HStack(alignment: .center, spacing: 10) {
+                            Text("가족 초대하기")
+                                .foregroundStyle(Color.ppGray200)
+                                .font(.captionRegular14)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color.ppPrime)
+                        .cornerRadius(999)
+                    }
+                    Spacer()
+                }
+            }
+            .background(.ppWhite)
+        } else {
+            VStack(spacing: 0) {
+                CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "sun.max.fill" : "moon.fill"), navigationColor: .black)
+                    .padding(.horizontal, 16)
+                
                 CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
                     .padding(.top, 33)
                 
@@ -171,7 +221,7 @@ struct HomeView: View {
                     Button {
                         cameraViewModel.resetCameraState()
                         viewModel.isShowCameraView = true
-                    }label: {
+                    } label: {
                         Circle()
                             .foregroundColor(.ppWhite)
                             .frame(width: 56, height: 56)
@@ -207,56 +257,30 @@ struct HomeView: View {
                     Rectangle()
                         .foregroundStyle(.ppGray200)
                 }
-            } else {
-                VStack {
-                    Spacer()
-                    Image(systemName: "person.fill.xmark")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 58)
-                    Text("아직 가족과 연결되지 않았어요")
-                    Text("아래 버튼으로 가족을 초대할 수 있어요")
-                    Button {
-                        coordinator.inviteShowSentHint = false
-                        coordinator.push(.invite)
-                    } label: {
-                        HStack(alignment: .center, spacing: 10) {
-                            Text("가족 초대하기")
-                                .foregroundStyle(Color.ddGray100)
-                                .font(.captionRegular14)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.ppPrime)
-                        .cornerRadius(999)
-                    }
-                    Spacer()
+            }
+            .ignoresSafeArea(edges: .bottom)
+            .onAppear {
+                Task {
+                    await viewModel.loadPosts()
                 }
-                .padding(.bottom, 62)
             }
-        }
-        .ignoresSafeArea(edges: .bottom)
-        .onAppear {
-            Task {
-                await viewModel.loadPosts()
+            .background {
+                if viewModel.isShowingATimePost {
+                    Color.ppWhite
+                        .ignoresSafeArea()
+                } else {
+                    Color.ppWhite
+                        .ignoresSafeArea()
+                }
             }
-        }
-        .background {
-            if viewModel.isShowingATimePost {
-                Color.ppWhite
-                    .ignoresSafeArea()
-            } else {
-                Color.ppWhite
-                    .ignoresSafeArea()
+            .animation(.smooth(duration: 0.5), value: viewModel.isShowingATimePost)
+            .fullScreenCover(isPresented: $viewModel.isShowCameraView) {
+                CameraViewContainer(
+                    cameraViewModel: cameraViewModel,
+                    delegate: viewModel,
+                    isPresented: $viewModel.isShowCameraView
+                )
             }
-        }
-        .animation(.smooth(duration: 0.5), value: viewModel.isShowingATimePost)
-        .fullScreenCover(isPresented: $viewModel.isShowCameraView) {
-            CameraViewContainer(
-                cameraViewModel: cameraViewModel,
-                delegate: viewModel,
-                isPresented: $viewModel.isShowCameraView
-            )
         }
     }
 }

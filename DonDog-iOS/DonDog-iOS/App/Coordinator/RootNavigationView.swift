@@ -18,6 +18,9 @@ struct RootNavigationView: View {
     
     var body: some View {
         ZStack {
+            Color.ppWhite
+                .ignoresSafeArea()
+            
             if showMainView {
                 NavigationStack(path: $coordinator.path) {
                     coordinator.build(coordinator.root)

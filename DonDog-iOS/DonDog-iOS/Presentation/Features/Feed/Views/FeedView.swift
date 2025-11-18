@@ -25,13 +25,13 @@ struct FeedView: View {
             VStack(spacing: 0) {
                 HStack {
                     Spacer()
-                    if viewModel.connectUserInfo.isConnected == false {
+                    if viewModel.connectUserInfo.isConnected == .notConnected {
                         Button {
                             coordinator.push(.setting)
                         } label: {
                             Image(systemName: "gear")
                                 .frame(width: 24, height: 24)
-                                .foregroundStyle(Color.ddPrimaryBlue)
+                                .foregroundStyle(Color.ppPrime)
                                 .padding(.vertical, 8)
                                 .padding(.trailing, 20)
                         }
@@ -66,22 +66,23 @@ struct FeedView: View {
                     VStack(spacing: 16) {
                         ProgressView()
                             .scaleEffect(1.2)
-                            .tint(.ddPrimaryBlue)
+                            .tint(.ppPrime)
                         Text("로딩중...")
                             .font(.bodyMedium16)
-                            .foregroundStyle(.ddPrimaryBlue)
+                            .foregroundStyle(.ppPrime)
                     }
                     .padding(.top, 280)
-                } else if viewModel.connectUserInfo.isConnected == false {
+                } else if viewModel.connectUserInfo.isConnected == .notConnected {
                     VStack {
                         Spacer()
                         Image(systemName: "person.fill.xmark")
-                            .foregroundStyle(Color.ddSecondaryBlue)
+                            .foregroundStyle(Color.ppPrime50)
                             .font(.system(size: 40))
                         Text("아직 가족과 연결되지 않았어요\n아래 버튼으로 가족을 초대할 수 있어요")
                             .font(.bodyRegular16)
+                            .lineSpacing(2)
                             .multilineTextAlignment(.center)
-                            .foregroundStyle(Color.ddSecondaryBlue)
+                            .foregroundStyle(Color.ppGray500)
                             .padding(10)
                         Button {
                             coordinator.inviteShowSentHint = false
@@ -89,12 +90,12 @@ struct FeedView: View {
                         } label: {
                             HStack(alignment: .center, spacing: 10) {
                                 Text("가족 초대하기")
-                                    .foregroundStyle(Color.ddGray100)
+                                    .foregroundStyle(Color.ppGray200)
                                     .font(.captionRegular14)
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(Color.ddPrimaryBlue)
+                            .background(Color.ppPrime)
                             .cornerRadius(999)
                         }
                         Spacer()
@@ -177,7 +178,7 @@ struct FeedView: View {
                     .padding(.top, 280)
                 }
                 Spacer()
-                if viewModel.connectUserInfo.isConnected == true {
+                if viewModel.connectUserInfo.isConnected == .connected {
                     HStack {
                         Spacer()
                         Button {
@@ -239,6 +240,7 @@ struct FeedView: View {
                     }.padding(.bottom, 22)
                 }
             }
+            
             if showToastView {
                 VStack {
                     Spacer()
@@ -252,15 +254,11 @@ struct FeedView: View {
             }
         }
         .onAppear {
-            if viewModel.connectUserInfo.isConnected && !viewModel.isUploading && !viewModel.isLoading {
+            if viewModel.connectUserInfo.isConnected == .connected && !viewModel.isUploading && !viewModel.isLoading {
                 viewModel.loadTodayPosts()
             }
         }
-        .background {
-            LinearGradient(colors: [.ddWhite, .ddSecondaryBlue], startPoint: .top, endPoint: .bottom)
-                .ignoresSafeArea()
-                .opacity(0.35)
-        }
+        .background(.ppWhite)
         .onChange(of: showToastView) { _, newValue in
             if newValue {
                 toastWorkItem?.cancel()

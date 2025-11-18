@@ -40,6 +40,7 @@ struct ArchiveView: View {
                             viewModel.goToPreviousMonth()
                         } label: {
                             Image(viewModel.hasPreviousDisplayMonth ? "ArchiveLeftButton" : "ArchiveLeftButtonGray")
+                                .frame(width: 16, height: 16)
                         }
                         .padding(.horizontal, 10)
                         .disabled(!viewModel.hasPreviousDisplayMonth)
@@ -56,6 +57,7 @@ struct ArchiveView: View {
                             viewModel.goToNextMonth()
                         } label: {
                             Image(viewModel.hasNextDisplayMonth ? "ArchiveRightButton" : "ArchiveRightButtonGray")
+                                .frame(width: 16, height: 16)
                         }
                         .padding(.horizontal, 10)
                         .disabled(!viewModel.hasNextDisplayMonth)
@@ -74,10 +76,10 @@ struct ArchiveView: View {
                         if month.days.isEmpty {
                             Spacer()
                             VStack(spacing: 16) {
-                                Image(systemName: "photo.on.rectangle.angled")
+                                Image(systemName: "EmptyCharacter")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 60, height: 48)
+                                    .frame(width: 160, height: 118)
                                 Text(
                                     viewModel.isCurrentMonthDisplayed
                                     ? "아직 사진이 없어요\n첫 게시물을 올려 볼까요?"
@@ -110,15 +112,15 @@ struct ArchiveView: View {
                                     }
                                 }
                             }
-                            .padding(.top, 28)
+                            .padding(.top, 20)
                         }
                     } else {
                         Spacer()
                         VStack(spacing: 16) {
-                            Image(systemName: "photo.on.rectangle.angled")
+                            Image("EmptyCharacter")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 60, height: 48)
+                                .frame(width: 160, height: 118)
                             Text("아직 사진이 없어요\n첫 게시물을 올려 볼까요?")
                                 .multilineTextAlignment(.center)
                                 .font(.bodyMedium16)
@@ -155,9 +157,9 @@ struct ArchiveView: View {
                 VStack {
                     Spacer()
                     ToastView(toastText: "게시물을 올린지 3일이 지났어요!")
-                        .padding(.bottom, 114)
+                        .padding(.bottom, 101)
                         .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                                 withAnimation { showToastView = false }
                             }
                         }

@@ -41,16 +41,15 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
         
         connectUserInfo.$isConnected
             .dropFirst()
-            .sink { [weak self] isConnected in
-                if isConnected {
-                    Task {
-                        await self?.loadPosts()
-                    }
+            .sink { [weak self] state in
+                guard state == .connected else { return }
+                Task {
+                    await self?.loadPosts()
                 }
             }
             .store(in: &cancellables)
         
-        if connectUserInfo.isConnected {
+        if connectUserInfo.isConnected == .connected {
             Task {
                 await loadPosts()
             }

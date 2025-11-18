@@ -15,7 +15,9 @@ struct HomeView: View {
     @EnvironmentObject var connectUserInfo: UserPairingStore
     
     var body: some View {
-        if connectUserInfo.isConnected == false {
+        if connectUserInfo.isConnected == .unknown {
+            SplashView()
+        } else if connectUserInfo.isConnected == .notConnected {
             ZStack {
                 VStack {
                     HStack {

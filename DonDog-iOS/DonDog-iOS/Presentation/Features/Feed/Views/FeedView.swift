@@ -25,7 +25,7 @@ struct FeedView: View {
             VStack(spacing: 0) {
                 HStack {
                     Spacer()
-                    if viewModel.connectUserInfo.isConnected == false {
+                    if viewModel.connectUserInfo.isConnected == .notConnected {
                         Button {
                             coordinator.push(.setting)
                         } label: {
@@ -72,7 +72,7 @@ struct FeedView: View {
                             .foregroundStyle(.ppPrime)
                     }
                     .padding(.top, 280)
-                } else if viewModel.connectUserInfo.isConnected == false {
+                } else if viewModel.connectUserInfo.isConnected == .notConnected {
                     VStack {
                         Spacer()
                         Image(systemName: "person.fill.xmark")
@@ -178,7 +178,7 @@ struct FeedView: View {
                     .padding(.top, 280)
                 }
                 Spacer()
-                if viewModel.connectUserInfo.isConnected == true {
+                if viewModel.connectUserInfo.isConnected == .connected {
                     HStack {
                         Spacer()
                         Button {
@@ -254,7 +254,7 @@ struct FeedView: View {
             }
         }
         .onAppear {
-            if viewModel.connectUserInfo.isConnected && !viewModel.isUploading && !viewModel.isLoading {
+            if viewModel.connectUserInfo.isConnected == .connected && !viewModel.isUploading && !viewModel.isLoading {
                 viewModel.loadTodayPosts()
             }
         }

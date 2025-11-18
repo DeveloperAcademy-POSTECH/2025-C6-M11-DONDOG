@@ -168,7 +168,7 @@ final class AuthService {
             state.roomId = nil
             state.partnerUid = nil
             state.partnerName = nil
-            state.isConnected = false
+            state.isConnected = .notConnected
             
             NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil"), role = \(state.myRole ?? "nil")")
             NSLog("[AuthService] 🔓 미연결 상태 (roomId 없음)")
@@ -197,7 +197,7 @@ final class AuthService {
                 }
                 
                 state.roomId = rid
-                state.isConnected = true
+                state.isConnected = .connected
                 
                 NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil"), role = \(state.myRole ?? "nil")")
                 NSLog("[AuthService] 상태: 연결 상태 =\(state.isConnected), roomId=\(state.roomId ?? "nil"), lastUploadedAt = \(DateUtils.string(from: state.lastUploadedAt ?? .now, format: .full))")

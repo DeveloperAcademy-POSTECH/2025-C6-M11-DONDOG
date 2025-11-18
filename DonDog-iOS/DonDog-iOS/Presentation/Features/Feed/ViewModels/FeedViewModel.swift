@@ -38,21 +38,21 @@ final class FeedViewModel: ObservableObject, CameraViewModelDelegate, CaptionVie
     private let imageUtils = ImageUtils()
     private var cancellables = Set<AnyCancellable>()
     
-    init() {
-        connectUserInfo.$isConnected
-            .dropFirst()
-            .sink { [weak self] isConnected in
-                if isConnected {
-                    print("[FeedViewModel] 연결 상태 변경 감지 - 게시물 로드 시작")
-                    self?.loadTodayPosts()
-                }
-            }
-            .store(in: &cancellables)
-
-        if connectUserInfo.isConnected {
-            loadTodayPosts()
-        }
-    }
+//    init() {
+//        connectUserInfo.$isConnected
+//            .dropFirst()
+//            .sink { [weak self] isConnected in
+//                if isConnected {
+//                    print("[FeedViewModel] 연결 상태 변경 감지 - 게시물 로드 시작")
+//                    self?.loadTodayPosts()
+//                }
+//            }
+//            .store(in: &cancellables)
+//
+//        if connectUserInfo.isConnected {
+//            loadTodayPosts()
+//        }
+//    }
     
     func checkIsNotMyPost() {
         guard let roomId = connectUserInfo.roomId, !selectedPostId.isEmpty else {

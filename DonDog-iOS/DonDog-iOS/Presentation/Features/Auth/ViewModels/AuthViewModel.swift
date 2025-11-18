@@ -36,7 +36,6 @@ final class AuthViewModel: ObservableObject {
     @Published var isWithDraw: Bool = false
     
     @Published var showPhoneMismatchAlert: Bool = false
-    @Published var mismatchAlertText: String = "가입한 전화번호가 아닙니다. 확인해 주세요"
     
     init(isWithDraw: Bool = false) {
         self.isWithDraw = isWithDraw
@@ -61,7 +60,6 @@ final class AuthViewModel: ObservableObject {
         if self.isWithDraw {
             let currentPhoneE164 = Auth.auth().currentUser?.phoneNumber
             if currentPhoneE164 != formattedDigitsWithCode {
-                self.mismatchAlertText = "가입한 전화번호가 아닙니다"
                 self.showPhoneMismatchAlert = true
                 return
             }

@@ -71,9 +71,6 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
         setupCamera()
         setupUI()
         updateUIForCurrentState()
-        if isStickerCamera {
-            showStickerMaskOverlay()
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -95,7 +92,6 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: false)
         stopSession()
     }
     

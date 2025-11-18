@@ -43,21 +43,6 @@ struct PostView: View {
                     )
                     .padding(.horizontal, 20)
                     .backHiddenSwipeEnabled()
-                    .alert("삭제하시겠습니까?", isPresented: $showDeleteConfirmAlert) {
-                        Button("취소", role: .cancel) { }
-                        
-                        Button("삭제하기", role: .destructive) {
-                            Task {
-                                await viewModel.deletePost()
-                                
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    coordinator.pop()
-                                }
-                            }
-                        }
-                    } message: {
-                        Text("게시물이 완전히 사라져요")
-                    }
                     
                     ZStack(alignment: .bottomTrailing) {
                         PostContentsView(post: viewModel.post, isEditing: $showStickerSheet, viewModel: stickerViewModel, showDetail: $showImageDetail, isFrontOrBack: $isFrontOrBack)
@@ -92,7 +77,24 @@ struct PostView: View {
                         .background(Color.ddGray100.opacity(0.5))
                     }
                     .padding(.trailing, 14)
+                    
+                    Spacer()
                 }
+                .customAlert(
+                    isPresented: $showDeleteConfirmAlert,
+                    title: "정말 삭제하시겠어요?",
+                    message: "한 번 삭제한 게시물은 되돌릴 수 없어요",
+                    confirmTitle: "삭제하기",
+                    cancelTitle: "취소",
+                    onConfirm: {
+                        Task {
+                            await viewModel.deletePost()
+                            
+                            coordinator.pop()
+                        }
+                    },
+                    onCancel: {    }
+                )
             } else {
                 let magnification = MagnificationGesture()
                     .updating($pinchScale) { value, state, _ in
@@ -143,7 +145,5 @@ struct PostView: View {
                 await stickerViewModel.fetchStickers()
             }
         }
-        
-        Spacer()
     }
 }

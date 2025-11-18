@@ -17,7 +17,7 @@ struct PostContentsView: View {
     @Binding var isFrontOrBack: Int
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack {
             if !isEditing {
                 TabView(selection: $isFrontOrBack) {
                     ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel)
@@ -49,15 +49,17 @@ struct PostContentsView: View {
             
             Text(post.caption)
                 .font(.polaroidCaptionRegular16)
-                .foregroundStyle(.ddGray1000)
+                .foregroundStyle(.ppBlack)
+                .padding(.top, 8)
                 .padding(.bottom, 2)
-                .padding(.leading, 4)
             
             Text(DateUtils.relativeTimeString(from: post.createdAt.dateValue()))
                 .font(.captionRegular13)
-                .foregroundStyle(.ddGray500)
-                .padding(.leading, 4)
+                .foregroundStyle(.ppGray500)
+            
+            Spacer()
         }
+        .padding(.top, 64)
         .padding(.horizontal, 20)
         .gesture(isEditing ? nil : DragGesture())
         .onChange(of: isFrontOrBack) { _, newValue in

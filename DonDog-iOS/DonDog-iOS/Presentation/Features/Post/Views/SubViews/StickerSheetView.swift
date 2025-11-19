@@ -33,6 +33,7 @@ struct StickerSheetView: View {
         NavigationStack {
             VStack {
                 StickerGrid(
+                    showedAt: .sheet,
                     items: gridService.stickerItems(for: gridService.selectedCategory),
                     remoteURLByItemID: gridService.stickerImageURLs,
                     loadingItemIDs: gridService.loadingItemIDs,

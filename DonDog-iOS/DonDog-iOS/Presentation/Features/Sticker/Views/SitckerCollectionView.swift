@@ -37,6 +37,7 @@ struct SitckerCollectionView: View {
                 .padding(.vertical, 16)
             
             StickerGrid(
+                showedAt: .collection,
                 items: gridService.stickerItems(for: gridService.selectedCategory),
                 remoteURLByItemID: gridService.stickerImageURLs,
                 loadingItemIDs: gridService.loadingItemIDs,

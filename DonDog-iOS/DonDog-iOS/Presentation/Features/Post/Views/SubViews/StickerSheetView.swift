@@ -61,7 +61,10 @@ struct StickerSheetView: View {
                 ToolbarItem(placement: .principal) {
                     Picker("", selection: $select) {
                         ForEach(Array(categories.enumerated()), id: \.element) { index, category in
-                            Text(category.rawValue).tag(index)
+                            Text(category.rawValue)
+                                .font(.bodyRegular16)
+                                .foregroundColor(.ppWhite)
+                                .tag(index)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -80,8 +83,9 @@ struct StickerSheetView: View {
                             dismiss()
                         }
                     } label: {
-                        Image(systemName: "chevron.down")
-                            .font(.headline)
+                        Image(systemName: "checkmark")
+                            .font(.captionRegular13)
+                            .foregroundColor(.ppWhite)
                     }
                 }
             }

@@ -71,10 +71,10 @@ struct PostView: View {
                             }
                             
                         )
-                        .presentationDetents([.height(270)])
+                        .presentationDetents([.height(317)])
                         .presentationBackgroundInteraction(.enabled)
                         .presentationDragIndicator(.hidden)
-                        .background(Color.ddGray100.opacity(0.5))
+                        .background(.ppRealBlack.opacity(0.95))
                     }
                     
                     Spacer()

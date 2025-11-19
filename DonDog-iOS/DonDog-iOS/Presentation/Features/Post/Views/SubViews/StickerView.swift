@@ -28,7 +28,7 @@ struct StickerView: View {
             KFImage(sticker.stickerURL)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 120, height: 120)
+                .frame(width: 120, height: 100)
                 .gesture(isEditable ? dragGesture.simultaneously(with: scaleGesture).simultaneously(with: rotationGesture) : nil)
                 .overlay {
                     if isEditable && isSelected {
@@ -51,7 +51,7 @@ struct StickerView: View {
                                 .frame(width: 25, height: 25)
                         )
                 }
-                .offset(x: -65, y: -65)
+                .offset(x: -65, y: -55)
                 
                 Image(systemName: "arrow.up.backward.and.arrow.down.forward")
                     .resizable()
@@ -63,7 +63,7 @@ struct StickerView: View {
                             .fill(.ddBlack)
                             .frame(width: 25, height: 25)
                     )
-                    .offset(x: 65, y: 65)
+                    .offset(x: 65, y: 55)
                     .gesture(transformGesture)
             }
         }
@@ -107,7 +107,7 @@ struct StickerView: View {
     private var scaleGesture: some Gesture {
         MagnificationGesture()
             .updating($gestureScale) { currentState, gestureState, _ in
-                let clamped = min(max(currentState, 0.5), 3.0)
+                let clamped = min(max(currentState, 0.5), 2.94)
                 gestureState = clamped
             }
             .onChanged { _ in
@@ -115,7 +115,7 @@ struct StickerView: View {
             }
             .onEnded { value in
                 let finalScale = sticker.scale * value
-                sticker.scale = min(max(finalScale, 0.5), 3.0)
+                sticker.scale = min(max(finalScale, 0.5), 2.94)
             }
     }
     
@@ -148,7 +148,7 @@ struct StickerView: View {
                 let endDistance = hypot(end.x, end.y)
                 let scaleDelta = endDistance / max(startDistance, 1)
                 sticker.scale = lastScale * scaleDelta
-                sticker.scale = max(0.4, min(sticker.scale, 3.0))
+                sticker.scale = max(0.5, min(sticker.scale, 2.94))
                 
                 let startAngle = atan2(start.y, start.x)
                 let endAngle = atan2(end.y, end.x)

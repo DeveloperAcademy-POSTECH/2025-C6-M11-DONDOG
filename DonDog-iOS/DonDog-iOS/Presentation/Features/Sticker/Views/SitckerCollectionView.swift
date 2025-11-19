@@ -117,7 +117,7 @@ struct SitckerCollectionView: View {
                 .frame(maxWidth: 16)
             
             CustomButton(
-                title: (viewModel.targetItemID != nil && gridService.stickerImageURLs[viewModel.targetItemID!] != nil) ? "스티커 변경" : "스티커 만들기",
+                title: (viewModel.targetItemID != nil && gridService.stickerImageURLs[viewModel.targetItemID!] != nil) ? "촬영해서 변경하기" : "촬영해서 만들기",
                 style: .primary,
                 isEnable: true,
                 action: {

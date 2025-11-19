@@ -75,36 +75,20 @@ struct StickerCategoryData {
     }
 }
 
-extension Color {
-    static let ddAffectionPink = Color(hex: "#FF91A4")
-    static let ddWorryBlue = Color(hex: "#89CFF0")
-    static let ddPraiseYellow = Color(hex: "#FFE873")
-    static let ddHumorGreen = Color(hex: "#A4DE02")
-    static let ddDailyOrange = Color(hex: "#FFB347")
-    
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
-        }
-        self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
-    }
-}
-
 struct StickerLayout {
     let outlinedSize: CGSize /// 누끼+보더된 사용자 사진의 스케일
     let outlinedOffset: CGSize /// 누끼+보더된 사용자 사진의 위치 (상하좌우)
-    let outlinedOnTop: Bool = true/// 누끼+보더 사진과 꾸밈 이미지 중 어느 것이 먼저인지 (기본값 true = 사용자 사진이 상단)
+    let outlinedOnTop: Bool/// 누끼+보더 사진과 꾸밈 이미지 중 어느 것이 먼저인지 (기본값 true = 사용자 사진이 상단)
+    
+    init(
+        outlinedSize: CGSize,
+        outlinedOffset: CGSize,
+        outlinedOnTop: Bool = true
+    ) {
+        self.outlinedSize = outlinedSize
+        self.outlinedOffset = outlinedOffset
+        self.outlinedOnTop = outlinedOnTop
+    }
 
     /// 기본 레이아웃: 360x300 캔버스, 아웃라인 중앙, 데코 전체 배경
     static let `default` = StickerLayout(
@@ -128,37 +112,35 @@ struct StickerStyleData {
     
     static let styles: [StickerStyleData] = [
         // 크게표현
-        .init(title: "젤 사랑해", role: nil, stickerDecoBackground: "big_1",
-              layout: StickerLayout(outlinedSize: CGSize(width: 90, height: 120),
-                                    outlinedOffset: CGSize(width: 0, height: -4))),
-        .init(title: "넘 예쁘다", role: nil, stickerDecoBackground: "big_2", layout: .default),
-        .init(title: "보고 싶어", role: nil, stickerDecoBackground: "big_3", layout: .default),
-        .init(title: "안전귀가!", role: nil, stickerDecoBackground: "big_4", layout: .default),
-        .init(title: "밥이 보약", role: nil, stickerDecoBackground: "big_5", layout: .default),
-        .init(title: "행운부적", role: nil, stickerDecoBackground: "big_6", layout: .default),
+        .init(title: "젤 사랑해", role: nil, stickerDecoBackground: "big_1", layout: StickerLayout(outlinedSize: CGSize(width: 90, height: 120), outlinedOffset: CGSize(width: 135, height: 78))),
+        .init(title: "넘 예쁘다", role: nil, stickerDecoBackground: "big_2", layout: StickerLayout(outlinedSize: CGSize(width: 90, height: 120), outlinedOffset: CGSize(width: 258, height: 168))),
+        .init(title: "보고 싶어", role: nil, stickerDecoBackground: "big_3", layout: StickerLayout(outlinedSize: CGSize(width: 90, height: 120), outlinedOffset: CGSize(width: 261, height: 171))),
+        .init(title: "안전귀가!", role: nil, stickerDecoBackground: "big_4", layout: StickerLayout(outlinedSize: CGSize(width: 90, height: 120), outlinedOffset: CGSize(width: 9, height: 171))),
+        .init(title: "밥이 보약", role: nil, stickerDecoBackground: "big_5", layout: StickerLayout(outlinedSize: CGSize(width: 90, height: 120), outlinedOffset: CGSize(width: 129.81, height: 2))),
+        .init(title: "행운부적", role: nil, stickerDecoBackground: "big_6", layout: StickerLayout(outlinedSize: CGSize(width: 90, height: 120), outlinedOffset: CGSize(width: 135, height: 90))),
         
         // 픽픽 캐릭터
-        .init(title: "항상 네 편이야", role: "parent", stickerDecoBackground: "char_1_parent", layout: .default),
-        .init(title: "덕분에 늘 든든해", role: "child", stickerDecoBackground: "char_1_child", layout: .default),
-        .init(title: "날씨 짱인데", role: "parent", stickerDecoBackground: "char_2_parent", layout: .default),
-        .init(title: "날씨 짱인데", role: "child", stickerDecoBackground: "char_2_child", layout: .default),
-        .init(title: "파이팅!", role: "parent", stickerDecoBackground: "char_3_parent", layout: .default),
-        .init(title: "파이팅!", role: "child", stickerDecoBackground: "char_3_child", layout: .default),
-        .init(title: "밥 먹을 시간", role: "parent", stickerDecoBackground: "char_4_parent", layout: .default),
-        .init(title: "밥 먹을 시간", role: "child", stickerDecoBackground: "char_4_child", layout: .default),
-        .init(title: "이불 밖은 위험해", role: "parent", stickerDecoBackground: "char_5_parent", layout: .default),
-        .init(title: "이불 밖은 위험해", role: "child", stickerDecoBackground: "char_5_child", layout: .default),
-        .init(title: "건강이 최고", role: "parent", stickerDecoBackground: "char_6_parent", layout: .default),
-        .init(title: "건강이 최고", role: "child", stickerDecoBackground: "char_6_child", layout: .default),
+        .init(title: "항상 네 편이야", role: "parent", stickerDecoBackground: "char_1_parent", layout: StickerLayout(outlinedSize: CGSize(width: 162, height: 216), outlinedOffset: CGSize(width: 15, height: 69))),
+        .init(title: "덕분에 늘 든든해", role: "child", stickerDecoBackground: "char_1_child", layout: StickerLayout(outlinedSize: CGSize(width: 162, height: 216), outlinedOffset: CGSize(width: 15, height: 69))),
+        .init(title: "날씨 짱인데", role: "parent", stickerDecoBackground: "char_2_parent", layout: StickerLayout(outlinedSize: CGSize(width: 180, height: 240), outlinedOffset: CGSize(width: 126, height: 45), outlinedOnTop: false)),
+        .init(title: "날씨 짱인데", role: "child", stickerDecoBackground: "char_2_child", layout: StickerLayout(outlinedSize: CGSize(width: 180, height: 240), outlinedOffset: CGSize(width: 126, height: 45), outlinedOnTop: false)),
+        .init(title: "파이팅!", role: "parent", stickerDecoBackground: "char_3_parent", layout: StickerLayout(outlinedSize: CGSize(width: 198, height: 265), outlinedOffset: CGSize(width: 27, height: 16.23), outlinedOnTop: false)),
+        .init(title: "파이팅!", role: "child", stickerDecoBackground: "char_3_child", layout: StickerLayout(outlinedSize: CGSize(width: 198, height: 265), outlinedOffset: CGSize(width: 27, height: 16.23), outlinedOnTop: false)),
+        .init(title: "밥 먹을 시간", role: "parent", stickerDecoBackground: "char_4_parent", layout: StickerLayout(outlinedSize: CGSize(width: 117, height: 156), outlinedOffset: CGSize(width: 85.59, height: 95.52))),
+        .init(title: "밥 먹을 시간", role: "child", stickerDecoBackground: "char_4_child", layout: StickerLayout(outlinedSize: CGSize(width: 117, height: 156), outlinedOffset: CGSize(width: 85.59, height: 95.52))),
+        .init(title: "이불 밖은 위험해", role: "parent", stickerDecoBackground: "char_5_parent", layout: StickerLayout(outlinedSize: CGSize(width: 171, height: 228), outlinedOffset: CGSize(width: 164.1, height: 26.07), outlinedOnTop: false)),
+        .init(title: "이불 밖은 위험해", role: "child", stickerDecoBackground: "char_5_child", layout: StickerLayout(outlinedSize: CGSize(width: 171, height: 228), outlinedOffset: CGSize(width: 164.1, height: 26.07), outlinedOnTop: false)),
+        .init(title: "건강이 최고", role: "parent", stickerDecoBackground: "char_6_parent", layout: StickerLayout(outlinedSize: CGSize(width: 144, height: 192), outlinedOffset: CGSize(width: 180, height: 51), outlinedOnTop: false)),
+        .init(title: "건강이 최고", role: "child", stickerDecoBackground: "char_6_child", layout: StickerLayout(outlinedSize: CGSize(width: 144, height: 192), outlinedOffset: CGSize(width: 180, height: 51), outlinedOnTop: false)),
         
-        //말풍선
-        .init(title: "귀여워 죽겠어!", role: nil, stickerDecoBackground: "bubble_1", layout: .default),
-        .init(title: "100점!", role: nil, stickerDecoBackground: "bubble_2", layout: .default),
-        .init(title: "집에 언제 와?", role: "parent", stickerDecoBackground: "bubble_3_parent", layout: .default),
-        .init(title: "집에 가고 싶어", role: "child", stickerDecoBackground: "bubble_3_child", layout: .default),
-        .init(title: "아프지 마!", role: nil, stickerDecoBackground: "bubble_4", layout: .default),
-        .init(title: "무리하지 마!", role: "parent", stickerDecoBackground: "bubble_5_parent", layout: .default),
-        .init(title: "나 보고 힘내!", role: "child", stickerDecoBackground: "bubble_5_child", layout: .default),
-        .init(title: "잠이 보약", role: nil, stickerDecoBackground: "bubble_6", layout: .default)
+        // 말풍선
+        .init(title: "귀여워 죽겠어!", role: nil, stickerDecoBackground: "bubble_1", layout: StickerLayout(outlinedSize: CGSize(width: 162, height: 216), outlinedOffset: CGSize(width: 192, height: 78), outlinedOnTop: false)),
+        .init(title: "100점!", role: nil, stickerDecoBackground: "bubble_2", layout: StickerLayout(outlinedSize: CGSize(width: 162, height: 216), outlinedOffset: CGSize(width: 9, height: 9), outlinedOnTop: false)),
+        .init(title: "집에 언제 와?", role: "parent", stickerDecoBackground: "bubble_3_parent", layout: StickerLayout(outlinedSize: CGSize(width: 198, height: 264), outlinedOffset: CGSize(width: 12, height: 21), outlinedOnTop: false)),
+        .init(title: "집에 가고 싶어", role: "child", stickerDecoBackground: "bubble_3_child", layout: StickerLayout(outlinedSize: CGSize(width: 198, height: 264), outlinedOffset: CGSize(width: 12, height: 21), outlinedOnTop: false)),
+        .init(title: "아프지 마!", role: nil, stickerDecoBackground: "bubble_4", layout: StickerLayout(outlinedSize: CGSize(width: 162, height: 216), outlinedOffset: CGSize(width: 177, height: 75), outlinedOnTop: false)),
+        .init(title: "무리하지 마!", role: "parent", stickerDecoBackground: "bubble_5_parent", layout: StickerLayout(outlinedSize: CGSize(width: 162, height: 216), outlinedOffset: CGSize(width: 84, height: 0), outlinedOnTop: false)),
+        .init(title: "나 보고 힘내!", role: "child", stickerDecoBackground: "bubble_5_child", layout: StickerLayout(outlinedSize: CGSize(width: 162, height: 216), outlinedOffset: CGSize(width: 84, height: 0), outlinedOnTop: false)),
+        .init(title: "잠이 보약", role: nil, stickerDecoBackground: "bubble_6", layout: StickerLayout(outlinedSize: CGSize(width: 198, height: 264), outlinedOffset: CGSize(width: 156, height: 18), outlinedOnTop: false))
     ]
 }

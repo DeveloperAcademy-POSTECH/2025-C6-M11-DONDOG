@@ -34,8 +34,11 @@ final class StickerService {
         // 1) 누끼
         let clippedRaw = getClippedImage(of: resizedImage)
         // 알파 있는 부분만 타이트하게 자르기
-        let clipped = clippedRaw.croppedToAlphaBounds(padding: 10)
-        guard clipped.size.width >= 1, clipped.size.height >= 1 else { return nil }
+        let tightClipped = clippedRaw.croppedToAlphaBounds(padding: 10)
+        guard tightClipped.size.width >= 1, tightClipped.size.height >= 1 else { return nil }
+
+        // 1-1) 3:4 캔버스 하단 정렬 (세로가 더 긴 비율)
+        let clipped = tightClipped.paddedToThreeByFourBottomAligned()
         
         // 2) 스타일 해석 (사용자 역할에 따라 배경 이미지 선택)
         let role = connectUserInfo.myRole
@@ -57,23 +60,36 @@ final class StickerService {
                         .scaledToFit()
                         .frame(width: 360, height: 300)
 
-                    Image(uiImage: outlined)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(
-                            width: layout.outlinedSize.width,
-                            height: layout.outlinedSize.height
-                        )
-                        .offset(layout.outlinedOffset)
+                    HStack {
+                        VStack {
+                            Image(uiImage: outlined)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(
+                                    width: layout.outlinedSize.width,
+                                    height: layout.outlinedSize.height
+                                )
+                                .offset(layout.outlinedOffset)
+                            Spacer()
+                        }
+                        Spacer()
+                    }
                 } else {
-                    Image(uiImage: outlined)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(
-                            width: layout.outlinedSize.width,
-                            height: layout.outlinedSize.height
-                        )
-                        .offset(layout.outlinedOffset)
+                    HStack {
+                        VStack {
+                            Image(uiImage: outlined)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(
+                                    width: layout.outlinedSize.width,
+                                    height: layout.outlinedSize.height
+                                )
+                                .offset(layout.outlinedOffset)
+                            
+                            Spacer()
+                        }
+                        Spacer()
+                    }
 
                     Image(style.stickerDecoBackground)
                         .resizable()
@@ -96,18 +112,18 @@ final class StickerService {
 //            guard maxOriginalEdge > maxEdge, maxOriginalEdge > 0 else {
 //                return image
 //            }
-//            
+//
 //            let scale = maxEdge / maxOriginalEdge
 //            let newSize = CGSize(width: size.width * scale, height: size.height * scale)
-//            
+//
 //            let format = UIGraphicsImageRendererFormat.default()
 //            format.scale = 1
-//            
+//
 //            let renderer = UIGraphicsImageRenderer(size: newSize, format: format)
 //            let resized = renderer.image { _ in
 //                image.draw(in: CGRect(origin: .zero, size: newSize))
 //            }
-//            
+//
 //            return resized
 //        }
     }
@@ -297,5 +313,49 @@ extension UIImage {
             scale: self.scale,
             orientation: self.imageOrientation
         )
+    }
+
+    /// 현재 이미지를 세로로 더 긴 3:4 비율 캔버스의 하단 중앙에 배치하여 반환
+    func paddedToThreeByFourBottomAligned(backgroundColor: UIColor = .clear) -> UIImage {
+        let w = size.width
+        let h = size.height
+
+        // 사이즈가 유효하지 않으면 원본 반환
+        guard w > 0, h > 0 else { return self }
+
+        let aspect: CGFloat = 3.0 / 4.0 // width : height = 3:4 (세로가 긴 비율)
+
+        // 너비를 기준으로 3:4 비율의 높이를 계산
+        let widthBasedHeight = w / aspect
+
+        let canvasSize: CGSize
+        if widthBasedHeight >= h {
+            // 너비는 그대로 두고, 높이를 3:4 비율에 맞추면 클리핑 이미지가 모두 들어감
+            canvasSize = CGSize(width: w, height: widthBasedHeight)
+        } else {
+            // 높이를 기준으로 3:4 비율의 너비를 계산
+            let heightBasedWidth = h * aspect
+            // 이 경우 높이는 그대로 두고, 너비를 3:4 비율에 맞춘다
+            canvasSize = CGSize(width: heightBasedWidth, height: h)
+        }
+
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = self.scale
+        let renderer = UIGraphicsImageRenderer(size: canvasSize, format: format)
+
+        let result = renderer.image { context in
+            // 배경 채우기
+            backgroundColor.setFill()
+            context.fill(CGRect(origin: .zero, size: canvasSize))
+
+            // 클리핑 이미지를 캔버스 하단 중앙에 배치
+            let originX = (canvasSize.width - w) / 2
+            let originY = canvasSize.height - h
+            let drawRect = CGRect(origin: CGPoint(x: originX, y: originY), size: size)
+
+            self.draw(in: drawRect)
+        }
+
+        return result
     }
 }

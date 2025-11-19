@@ -43,8 +43,16 @@ struct PostView: View {
                     )
                     .padding(.horizontal, 20)
                     .backHiddenSwipeEnabled()
+                    .onTapGesture {
+                        showStickerSheet = false
+                    }
                     
                     ZStack(alignment: .bottomTrailing) {
+                        Color.clear
+                            .onTapGesture {
+                                showStickerSheet = false
+                            }
+                        
                         PostContentsView(post: viewModel.post, isEditing: $showStickerSheet, viewModel: stickerViewModel, showDetail: $showImageDetail, isFrontOrBack: $isFrontOrBack)
                         
                         if postType == .post {
@@ -74,6 +82,7 @@ struct PostView: View {
                         .presentationBackgroundInteraction(.enabled)
                         .presentationDragIndicator(.hidden)
                         .background(.ppRealBlack.opacity(0.95))
+                        .interactiveDismissDisabled(true)
                     }
                 }
                 .customAlert(

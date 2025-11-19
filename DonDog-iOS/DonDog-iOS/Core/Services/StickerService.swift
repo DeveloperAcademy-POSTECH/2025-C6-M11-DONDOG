@@ -33,6 +33,8 @@ final class StickerService {
         
         // 1) 누끼
         let clippedRaw = getClippedImage(of: resizedImage)
+        if clippedRaw.cgImage == nil { return nil }
+        
         // 알파 있는 부분만 타이트하게 자르기
         let tightClipped = clippedRaw.croppedToAlphaBounds(padding: 10)
         guard tightClipped.size.width >= 1, tightClipped.size.height >= 1 else { return nil }
@@ -44,12 +46,19 @@ final class StickerService {
         let role = connectUserInfo.myRole
         guard let style = StickerStyleData.style(forTitle: title, role: role) else { return nil }
         
-        // 2-1) ppWhite 보더 - 모든 스티커 동일
+        // 3) ppWhite 보더 - 모든 스티커 동일
         let uiColor = UIColor.ppWhite
         guard let outlined = clipped.addOutline(thickness: 10, color: uiColor) else { return nil }
         let outlinedSize = outlined.size
+
         guard outlinedSize.width >= 1, outlinedSize.height >= 1 else { return nil }
         
+        // outlined 이미지가 사실상 투명한 경우 실패로 처리
+        if outlined.isEffectivelyTransparent() {
+            print("❌ [makeSticker] outlined 이미지가 사실상 투명 — 스티커 생성 중단")
+            return nil
+        }
+
         let layout = style.layout
 
         let sticker = ImageUtils.renderViewAsImage(
@@ -357,5 +366,39 @@ extension UIImage {
         }
 
         return result
+    }
+    
+    /// 이미지가 사실상 완전히 투명한지(또는 매우 일부만 보이는지) 확인
+    func isEffectivelyTransparent(alphaThreshold: UInt8 = 5, visibleRatioThreshold: CGFloat = 0.001) -> Bool {
+        guard let cgImage = self.cgImage else { return false }
+        guard let dataProvider = cgImage.dataProvider,
+              let data = dataProvider.data,
+              let ptr = CFDataGetBytePtr(data) else {
+            return false
+        }
+
+        let width = cgImage.width
+        let height = cgImage.height
+        let bytesPerPixel = 4
+        let bytesPerRow = cgImage.bytesPerRow
+
+        var visibleCount: Int = 0
+        var totalCount: Int = 0
+
+        for y in 0..<height {
+            for x in 0..<width {
+                let offset = y * bytesPerRow + x * bytesPerPixel
+                let alpha = ptr[offset + 3]
+                if alpha > alphaThreshold {
+                    visibleCount += 1
+                }
+                totalCount += 1
+            }
+        }
+
+        guard totalCount > 0 else { return true }
+
+        let ratio = CGFloat(visibleCount) / CGFloat(totalCount)
+        return ratio < visibleRatioThreshold
     }
 }

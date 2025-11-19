@@ -40,7 +40,9 @@ struct StickerConfirmView: View {
             CustomNavigationBar(leadingType: .none, centerType: .none, trailingType: .close(action: { onComplete() }), navigationColor: .black)
             .padding(.horizontal, 16)
             
-            if viewModel.image == nil || (viewModel.uploadError != nil) {
+            if viewModel.image == nil {
+                Spacer()
+                
                 Image(UserPairingStore.shared.myRole == "parent" ? "ParentEmptyView" : "ChildEmptyView")
                     .padding(.bottom, 16)
                 
@@ -50,7 +52,7 @@ struct StickerConfirmView: View {
                 
                 Spacer()
                 
-                CustomButton(title: route == .camera ? "다시 촬영하기" : "사진 변경하기", style: .secondary, isEnable: true, action: {
+                CustomButton(title: route == .camera ? "다시 촬영하기" : "사진 변경하기", style: .primary, isEnable: true, action: {
                     onRetake() })
                     .padding(.horizontal, 21)
             } else {

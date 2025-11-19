@@ -98,6 +98,9 @@ final class AppCoordinator: ObservableObject {
             factory.makeInviteView(showSentHint: inviteShowSentHint)
         case .camera(let isStickerCamear):
             factory.makeCameraView(isStickerCamera: isStickerCamear)
+                .navigationBarBackButtonHidden(true)
+                .toolbar(.hidden, for: .navigationBar)
+                .background(Color.ppWhite)
         case .home:
             factory.makeHomeView()
         case .stickerCollection:

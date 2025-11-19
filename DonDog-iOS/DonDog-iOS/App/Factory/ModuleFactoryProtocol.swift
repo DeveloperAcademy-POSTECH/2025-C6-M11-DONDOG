@@ -58,7 +58,7 @@ final class ModuleFactory: ModuleFactoryProtocol {
     
     func makeCameraView(isStickerCamera: Bool) -> CameraView {
         let cameraViewModel = CameraViewModel()
-        cameraViewModel.isStickerCamera = isStickerCamera   // ✅ 진입 모드 주입
+        cameraViewModel.isStickerCamera = isStickerCamera
         return CameraView(viewModel: cameraViewModel)
     }
 

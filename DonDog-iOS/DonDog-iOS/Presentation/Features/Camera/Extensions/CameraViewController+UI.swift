@@ -149,7 +149,6 @@ extension CustomCameraViewController {
     
     func updateNavigationButtons() {
         if isStickerCamera {
-            print("updateNavigationButtons의 isStickerCamera=true")
             cancelButton.isHidden = false
             closeButton.isHidden = true
         } else if isCapturingFront {

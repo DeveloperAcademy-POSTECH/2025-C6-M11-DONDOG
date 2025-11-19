@@ -14,7 +14,6 @@ import SwiftUI
 final class StickerConfirmViewModel: ObservableObject {
     @Published var image: UIImage?
     @Published var isUploading: Bool = false
-    @Published var uploadError: String?
     @Published var isSaving = false
 
     private var currentTags: [String] { StickerEmotionTagManager.shared.emotionTags }
@@ -30,7 +29,6 @@ final class StickerConfirmViewModel: ObservableObject {
         let selectedTags = Array(currentTags)
 
         isUploading = true
-        uploadError = nil
 
         Task {
             do {
@@ -86,7 +84,7 @@ final class StickerConfirmViewModel: ObservableObject {
             } catch {
                 await MainActor.run {
                     self.isUploading = false
-                    self.uploadError = error.localizedDescription
+                    print("스티커 전송 오류: \(error.localizedDescription)")
                 }
             }
         }

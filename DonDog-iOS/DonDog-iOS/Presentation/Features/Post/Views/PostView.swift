@@ -76,7 +76,6 @@ struct PostView: View {
                         .presentationDragIndicator(.hidden)
                         .background(Color.ddGray100.opacity(0.5))
                     }
-                    .padding(.trailing, 14)
                     
                     Spacer()
                 }
@@ -111,12 +110,12 @@ struct PostView: View {
                         let centerY = proxy.size.height / 2
                         
                         TabView(selection: $isFrontOrBack) {
-                            ImageView(urlString: viewModel.post.frontImageURL, isEditing: $showStickerSheet, viewModel: stickerViewModel)
+                            ImageOnlyView(urlString: viewModel.post.frontImageURL)
                                 .tag(0)
                                 .scaleEffect(scale * pinchScale)
                                 .gesture(magnification)
                             
-                            ImageView(urlString: viewModel.post.backImageURL, isEditing: $showStickerSheet, viewModel: stickerViewModel)
+                            ImageOnlyView(urlString: viewModel.post.backImageURL)
                                 .tag(1)
                                 .scaleEffect(scale * pinchScale)
                                 .gesture(magnification)
@@ -151,5 +150,33 @@ struct PostView: View {
                 await stickerViewModel.fetchStickers()
             }
         }
+    }
+}
+
+private struct ImageOnlyView: View {
+    var urlString: String
+    @State private var loadFailed = false
+    
+    var body: some View {
+        KFImage(URL(string: urlString))
+            .placeholder {
+                Rectangle()
+                    .fill(.ddGray500)
+            }
+            .onFailure { _ in
+                loadFailed = true
+            }
+            .cancelOnDisappear(true)
+            .fade(duration: 0.25)
+            .resizable()
+            .scaledToFill()
+            .clipped()
+            .overlay(alignment: .center) {
+                if loadFailed {
+                    Rectangle()
+                        .fill(.ddGray500)
+                        .overlay(Image(systemName: "photo"))
+                }
+            }
     }
 }

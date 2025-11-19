@@ -37,7 +37,7 @@ struct ArchivePostContainer: View {
                 .scaledToFill()
                 .frame(width: 72, height: 96)
                 .transition(.opacity)
-                .blur(radius: isBlurred ? 8 : 0)
+                .blur(radius: isBlurred ? 4 : 0)
                 .cornerRadius(2)
                 .clipped()
                 .overlay(

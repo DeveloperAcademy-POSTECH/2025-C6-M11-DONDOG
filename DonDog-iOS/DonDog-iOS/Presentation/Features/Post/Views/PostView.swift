@@ -6,6 +6,7 @@
 //
 
 import FirebaseFirestore
+import Kingfisher
 import SwiftUI
 
 struct PostView: View {
@@ -16,79 +17,166 @@ struct PostView: View {
     @State private var showDeleteConfirmAlert: Bool = false
     @State private var showStickerSheet = false
     
+    @State private var showImageDetail = false
+    @State private var isFrontOrBack: Int = 0
+    
+    @State private var scale: CGFloat = 1.0
+    @GestureState private var pinchScale: CGFloat = 1.0
+    
     let postType: PostType
     
     var body: some View {
         let createdAt = viewModel.post.createdAt.dateValue()
         
-        VStack {
-            CustomNavigationBar(
-                leadingType: .back(action: { coordinator.pop() }),
-                centerType: .timeTitle(title: DateUtils.string(from: createdAt, format: .monthDay), timeImage: DateUtils.isATime(date: createdAt) ? "sun.max" : "moon.fill"),
-                trailingType: viewModel.isMyPost ? .menu(items: [
-                    CustomNavMenuItem("삭제하기", role: .destructive) {
-                        showDeleteConfirmAlert = true
-                    }
-                ]) : .none,
-                navigationColor: .black
-            )
-            .padding(.horizontal, 20)
-            .backHiddenSwipeEnabled()
-            .alert("삭제하시겠습니까?", isPresented: $showDeleteConfirmAlert) {
-                Button("취소", role: .cancel) { }
-                
-                Button("삭제하기", role: .destructive) {
-                    Task {
-                        await viewModel.deletePost()
+        ZStack {
+            if !showImageDetail {
+                VStack {
+                    CustomNavigationBar(
+                        leadingType: .back(action: { coordinator.pop() }),
+                        centerType: .timeTitle(title: DateUtils.string(from: createdAt, format: .monthDay), timeImage: DateUtils.isATime(date: createdAt) ? "sun.max" : "moon.fill"),
+                        trailingType: viewModel.isMyPost ? .menu(items: [
+                            CustomNavMenuItem("삭제하기", role: .destructive) {
+                                showDeleteConfirmAlert = true
+                            }
+                        ]) : .none,
+                        navigationColor: .black
+                    )
+                    .padding(.horizontal, 20)
+                    .backHiddenSwipeEnabled()
+                    
+                    ZStack(alignment: .bottomTrailing) {
+                        PostContentsView(post: viewModel.post, isEditing: $showStickerSheet, viewModel: stickerViewModel, showDetail: $showImageDetail, isFrontOrBack: $isFrontOrBack)
                         
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        if postType == .post {
+                            Button {
+                                showStickerSheet = true
+                            } label: {
+                                Circle()
+                                    .fill(Color.red)
+                                    .frame(width: 90, height: 90)
+                            }
+                            .padding(.trailing, 14)
+                        }
+                    }
+                    .sheet(isPresented: $showStickerSheet) {
+                        StickerSheetView(
+                            viewModel: stickerViewModel,
+                            postId: viewModel.post.postId,
+                            onRequestCamera: {
+                                stickerViewModel.shouldReopenSheetAfterCamera = true
+                                showStickerSheet = false
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    coordinator.push(.camera)
+                                }
+                            },
+                            gridService: StickerGridService(role: UserPairingStore.shared.myRole ?? "child")
+                        )
+                        .presentationDetents([.height(270)])
+                        .presentationBackgroundInteraction(.enabled)
+                        .presentationDragIndicator(.hidden)
+                        .background(Color.ddGray100.opacity(0.5))
+                    }
+                    
+                    Spacer()
+                }
+                .customAlert(
+                    isPresented: $showDeleteConfirmAlert,
+                    title: "정말 삭제하시겠어요?",
+                    message: "한 번 삭제한 게시물은 되돌릴 수 없어요",
+                    confirmTitle: "삭제하기",
+                    cancelTitle: "취소",
+                    onConfirm: {
+                        Task {
+                            await viewModel.deletePost()
+                            
                             coordinator.pop()
                         }
-                    }
-                }
-            } message: {
-                Text("게시물이 완전히 사라져요")
-            }
-            
-            ZStack(alignment: .bottomTrailing) {
-                PostContentsView(post: viewModel.post, isEditing: $showStickerSheet, viewModel: stickerViewModel)
-                
-                if postType == .post {
-                    Button {
-                        showStickerSheet = true
-                    } label: {
-                        Circle()
-                            .fill(Color.red)
-                            .frame(width: 90, height: 90)
-                    }
-                    .padding(.trailing, 14)
-                }
-            }
-            .sheet(isPresented: $showStickerSheet) {
-                StickerSheetView(
-                    viewModel: stickerViewModel,
-                    onRequestCamera: {
-                        stickerViewModel.shouldReopenSheetAfterCamera = true
-                        showStickerSheet = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            coordinator.push(.camera)
-                        }
                     },
-                    gridService: StickerGridService(role: UserPairingStore.shared.myRole ?? "child")
+                    onCancel: {    }
                 )
-                .presentationDetents([.height(270)])
-                .presentationBackgroundInteraction(.enabled)
-                .presentationDragIndicator(.hidden)
-                .background(Color.ddGray100.opacity(0.5))
-            }
-            .onAppear {
-                if stickerViewModel.shouldReopenSheetAfterCamera {
-                    showStickerSheet = true
-                    stickerViewModel.shouldReopenSheetAfterCamera = false
+            } else {
+                let magnification = MagnificationGesture()
+                    .updating($pinchScale) { value, state, _ in
+                        state = value
+                    }
+                    .onEnded { value in
+                        scale = min(max(scale * value, 1.0), 4.0)
+                    }
+                
+                ZStack(alignment: .topTrailing) {
+                    Color.ppBlack.ignoresSafeArea()
+                    
+                    GeometryReader { proxy in
+                        let centerY = proxy.size.height / 2
+                        
+                        TabView(selection: $isFrontOrBack) {
+                            ImageOnlyView(urlString: viewModel.post.frontImageURL)
+                                .tag(0)
+                                .scaleEffect(scale * pinchScale)
+                                .gesture(magnification)
+                            
+                            ImageOnlyView(urlString: viewModel.post.backImageURL)
+                                .tag(1)
+                                .scaleEffect(scale * pinchScale)
+                                .gesture(magnification)
+                        }
+                        .frame(width: proxy.size.width, height: 524 * scale * pinchScale)
+                        .position(x: proxy.size.width / 2, y: centerY)
+                        .tabViewStyle(.page)
+                        .onChange(of: isFrontOrBack) { _, newValue in
+                            Task {
+                                stickerViewModel.postImageType = (newValue == 0) ? .front : .back
+                                await stickerViewModel.fetchStickers()
+                            }
+                        }
+                    }
+                    
+                    Image(systemName: "xmark")
+                        .font(.system(size: 17))
+                        .foregroundColor(.white)
+                        .padding(.top, 54)
+                        .padding(.horizontal, 16)
+                        .onTapGesture {
+                            showImageDetail = false
+                        }
                 }
+                .ignoresSafeArea()
             }
         }
-        
-        Spacer()
+        .navigationBarBackButtonHidden(true)
+        .task {
+            Task {
+                stickerViewModel.postId = viewModel.post.postId
+                await stickerViewModel.fetchStickers()
+            }
+        }
+    }
+}
+
+private struct ImageOnlyView: View {
+    var urlString: String
+    @State private var loadFailed = false
+    
+    var body: some View {
+        KFImage(URL(string: urlString))
+            .placeholder {
+                Rectangle()
+                    .fill(.ddGray500)
+            }
+            .onFailure { _ in
+                loadFailed = true
+            }
+            .cancelOnDisappear(true)
+            .fade(duration: 0.25)
+            .resizable()
+            .scaledToFill()
+            .clipped()
+            .overlay(alignment: .center) {
+                if loadFailed {
+                    Rectangle()
+                        .fill(.ddGray500)
+                        .overlay(Image(systemName: "photo"))
+                }
+            }
     }
 }

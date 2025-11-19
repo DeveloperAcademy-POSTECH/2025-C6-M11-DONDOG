@@ -13,11 +13,15 @@ struct StickerView: View {
     var isSelected: Bool
     var isEditable: Bool
     var onDelete: () -> Void
+    var onInteraction: () -> Void
     
-    @State private var dragOffset: CGSize = .zero
-    @State private var lastOffset: CGSize = .zero
+    @State private var localPosition: CGPoint = .zero
+    @State private var isDragging = false
+    
+    @GestureState private var gestureScale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
-    @State private var lastRotation: Angle = .zero
+    
+    @State private var lastRotation: Double = .zero
     
     var body: some View {
         ZStack {
@@ -63,57 +67,67 @@ struct StickerView: View {
                     .gesture(transformGesture)
             }
         }
-        .scaleEffect(sticker.scale)
-        .rotationEffect(sticker.rotation)
+        .onAppear {
+            localPosition = sticker.position
+        }
+        .scaleEffect(sticker.scale * gestureScale)
+        .rotationEffect(.degrees(sticker.rotation))
         .offset(x: sticker.position.x, y: sticker.position.y)
     }
 
     private var dragGesture: some Gesture {
         DragGesture()
             .onChanged { value in
-                let newX = lastOffset.width + value.translation.width / sticker.scale
-                let newY = lastOffset.height + value.translation.height / sticker.scale
+                onInteraction()
+                isDragging = true
                 
-                sticker.position = CGPoint(
+                let scaleFactor = max(sticker.scale, 0.1)
+                let adjustedTranslation: CGSize
+                if scaleFactor < 1.0 {
+                    adjustedTranslation = CGSize(width: value.translation.width * scaleFactor, height: value.translation.height * scaleFactor)
+                } else {
+                    adjustedTranslation = CGSize(width: value.translation.width / scaleFactor, height: value.translation.height / scaleFactor)
+                }
+                
+                let newX = sticker.position.x + adjustedTranslation.width
+                let newY = sticker.position.y + adjustedTranslation.height
+                
+                localPosition = CGPoint(
                     x: min(max(newX, -150), 150),
                     y: min(max(newY, -200), 200)
                 )
-            }
-            .onEnded { value in
-                let finalX = lastOffset.width + value.translation.width / sticker.scale
-                let finalY = lastOffset.height + value.translation.height / sticker.scale
-                
-                lastOffset.width = min(max(finalX, -150), 150)
-                lastOffset.height = min(max(finalY, -200), 200)
-            }
-    }
-    
-    private var scaleGesture: some Gesture {
-        MagnificationGesture()
-            .onChanged { value in
-                sticker.scale = min(max(lastScale * value, 0.4), 3.0)
+                sticker.position = localPosition
             }
             .onEnded { _ in
-                lastScale = sticker.scale
+                isDragging = false
+                sticker.position = localPosition
+            }
+    }
+
+    private var scaleGesture: some Gesture {
+        MagnificationGesture()
+            .updating($gestureScale) { currentState, gestureState, _ in
+                let clamped = min(max(currentState, 0.5), 3.0)
+                gestureState = clamped
+            }
+            .onChanged { _ in
+                onInteraction()
+            }
+            .onEnded { value in
+                let finalScale = sticker.scale * value
+                sticker.scale = min(max(finalScale, 0.5), 3.0)
             }
     }
     
     private var rotationGesture: some Gesture {
         RotationGesture()
             .onChanged { value in
-                sticker.rotation = lastRotation + value
+                onInteraction()
+                sticker.rotation = lastRotation + value.degrees
             }
             .onEnded { _ in
                 lastRotation = sticker.rotation
             }
-    }
-    
-    func cornerOffset(xSign: CGFloat, ySign: CGFloat) -> (CGFloat, CGFloat) {
-        let halfSize = 65 * sticker.scale
-        let radians = sticker.rotation.radians
-        let x = xSign * halfSize * cos(radians) - ySign * halfSize * sin(radians)
-        let y = xSign * halfSize * sin(radians) + ySign * halfSize * cos(radians)
-        return (x, y)
     }
     
     private var transformGesture: some Gesture {
@@ -139,7 +153,7 @@ struct StickerView: View {
                 let startAngle = atan2(start.y, start.x)
                 let endAngle = atan2(end.y, end.x)
                 let angleDelta = endAngle - startAngle
-                sticker.rotation = lastRotation + Angle(radians: angleDelta)
+                sticker.rotation = lastRotation + Angle(radians: angleDelta).degrees
             }
             .onEnded { _ in
                 lastScale = sticker.scale

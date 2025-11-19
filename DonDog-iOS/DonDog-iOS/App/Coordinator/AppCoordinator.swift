@@ -21,6 +21,7 @@ final class AppCoordinator: ObservableObject {
     @Published var inviteShowSentHint: Bool = false
     @Published var authShowWithdraw: Bool = false
     @Published var authNumberShowWithdraw: Bool = false
+    @Published var showCameraInDeeplink: Bool = false
     
     private var notificationToken: NSObjectProtocol?
     var sessionKey: String { Auth.auth().currentUser?.uid ?? "loggedout" }
@@ -143,6 +144,9 @@ final class AppCoordinator: ObservableObject {
                     }
                 }
             }
+            
+        case "camera":
+            self.showCameraInDeeplink = true
             
         default:
             // 처리할 수 없는 host일 경우 피드로 이동

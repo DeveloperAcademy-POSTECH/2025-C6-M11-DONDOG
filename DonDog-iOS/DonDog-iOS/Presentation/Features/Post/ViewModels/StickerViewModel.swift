@@ -14,51 +14,127 @@ import SwiftUI
 
 struct AttachedSticker: Identifiable, Codable {
     var id = UUID()
+    var createdAt = Date()
     var stickerURL: URL
+    var postImageType: String
     var position: CGPoint
     var scale: CGFloat
-    var rotation: Angle
+    var rotation: Double
+}
+
+enum PostImageType: String {
+    case front = "frontImage"
+    case back = "backImage"
 }
 
 final class StickerViewModel: ObservableObject {
-    @Published var stickers: [AttachedSticker] = []
+    @Published var postId = ""
+    @Published var postImageType: PostImageType = .front
+    
+    // @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
+    
+    @Published var frontStickers: [AttachedSticker] = []
+    @Published var backStickers: [AttachedSticker] = []
     @Published var selectedStickerID: UUID?
     
     @Published var shouldReopenSheetAfterCamera: Bool = false
     @Published var targetItemID: StickerItem.ID?
     @Published var previewURL: URL?
     
+    private let dataManager: DataManagerProtocol = DataManager.shared
+    let connectUserInfo = UserPairingStore.shared
+    var roomId: String = ""
+    
+    private var offsetIndex = [0, 0]
+    
+    init() {
+        guard let id = connectUserInfo.roomId else {
+            print("roomId 가져오기 실패")
+            return
+        }
+        self.roomId = id
+    }
+    
+    func fetchStickers() async {
+        do {
+            frontStickers = try await dataManager.fetchWhereEqual(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments", field: "postImageType", isEqualTo: PostImageType.front.rawValue)
+            backStickers = try await dataManager.fetchWhereEqual(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments", field: "postImageType", isEqualTo: PostImageType.back.rawValue)
+        } catch {
+            print("붙여진 스티커 로드 실패: \(error.localizedDescription)")
+        }
+    }
+    
     func addSticker(with url: URL) {
         let newSticker = AttachedSticker(
+            createdAt: Date.now,
             stickerURL: url,
-            position: .zero,
+            postImageType: postImageType.rawValue,
+            position: orderedPosition(),
             scale: 1.0,
             rotation: .zero
         )
-        stickers.append(newSticker)
-        selectedStickerID = newSticker.id
-        print("stickers: \(stickers)")
-    }
-    
-    func removeSticker(_ sticker: AttachedSticker) {
-        stickers.removeAll { $0.id == sticker.id }
-    }
-    
-    func saveStickers() {
-        // print()로 상태 출력
-        print("===== StickerData 상태 =====")
-        for sticker in stickers {
-            print("ID: \(sticker.id)")
-            print("ImageURL: \(sticker.stickerURL)")
-            print("Position: \(sticker.position)")
-            print("Scale: \(sticker.scale)")
-            print("Rotation: \(sticker.rotation.degrees)°")
-            print("---------------------------")
+        if postImageType == .front {
+            frontStickers.append(newSticker)
+        } else {
+            backStickers.append(newSticker)
         }
-        print("============================\n")
+        selectedStickerID = newSticker.id
+    }
+    
+    private func orderedPosition() -> CGPoint {
+        let x = [ -97, 97 ]
+        let y = [ -161, -41, 79 ]
         
-        if let encoded = try? JSONEncoder().encode(stickers) {
-            UserDefaults.standard.set(encoded, forKey: "savedStickers")
+        let xIndex = offsetIndex[0] % 2
+        let yIndex = offsetIndex[1] % 3
+        let position = CGPoint(x: x[xIndex], y: y[yIndex])
+        
+        offsetIndex[0] += 1
+        if xIndex != 0 {
+            offsetIndex[1] += 1
+        }
+        
+        return position
+    }
+    
+    func removeSticker(_ sticker: AttachedSticker) async {
+        if postImageType == .front {
+            frontStickers.removeAll { $0.id == sticker.id }
+        } else {
+            backStickers.removeAll { $0.id == sticker.id }
+        }
+
+        do {
+            try await dataManager.delete(
+                path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments/\(sticker.id.uuidString)"
+            )
+        } catch {
+            print("붙여진 스티커 삭제 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    func saveStickers() async {
+        for sticker in postImageType == .front ? frontStickers : backStickers {
+            let data: [String: Any] = [
+                "id": sticker.id.uuidString,
+                "createdAt": sticker.createdAt,
+                "stickerURL": sticker.stickerURL.absoluteString,
+                "postImageType": postImageType.rawValue,
+                "position": [sticker.position.x, sticker.position.y],
+                "scale": sticker.scale,
+                "rotation": sticker.rotation
+            ]
+            
+            do {
+                try await dataManager.batchUpdate([
+                    .upsert(
+                        path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments/\(sticker.id.uuidString)",
+                        data: data
+                    )
+                ])
+            } catch {
+                print("붙여진 스티커 저장 실패: \(error.localizedDescription)")
+            }
         }
     }
 }

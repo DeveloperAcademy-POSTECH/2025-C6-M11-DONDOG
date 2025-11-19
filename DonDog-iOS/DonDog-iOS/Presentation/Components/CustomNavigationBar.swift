@@ -130,7 +130,7 @@ struct CustomNavigationBar: View {
                     .font(.titleBold18)
                 Image(systemName: image)
                     .font(.titleBold18)
-                    .foregroundStyle(image == "sun.max" ? .ppPrime : .ppYellow)
+                    .foregroundStyle(image == "sun.max.fill" ? .ppPrime : .ppYellow)
             }
         
         case .none:

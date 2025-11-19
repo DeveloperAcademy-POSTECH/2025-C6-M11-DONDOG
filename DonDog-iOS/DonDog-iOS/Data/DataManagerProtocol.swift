@@ -21,6 +21,12 @@ protocol DataManagerProtocol {
     /// 날짜 지정 컬렉션 조회
     func fetchWhere<T: Decodable>(path: String, field: String, isGreaterThanOrEqualTo value: Any, orderBy: String, descending: Bool) async throws -> [T]
     
+    func fetchWhereEqual<T: Decodable>(
+        path: String,
+        field: String,
+        isEqualTo value: String
+    ) async throws -> [T]
+    
     // MARK: - Firestore 쓰기
     
     /// 문서 생성 (ID 지정)

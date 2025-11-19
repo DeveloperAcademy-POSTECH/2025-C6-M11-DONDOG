@@ -1,5 +1,5 @@
 //
-//  WinkyApp.swift
+//  PicPeekApp.swift
 //  DonDog-iOS
 //
 //  Created by 조유진 on 10/3/25.
@@ -9,7 +9,7 @@ import FirebaseAuth
 import SwiftUI
 
 @main
-struct WinkyApp: App {
+struct PicPeekApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {

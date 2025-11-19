@@ -125,20 +125,10 @@ final class DataManager: DataManagerProtocol {
     func fetchWhereEqual<T: Decodable>(
         path: String,
         field: String,
-        isEqualTo value: String,
-        orderBy: String? = nil,
-        descending: Bool = false,
-        limit: Int? = nil
+        isEqualTo value: String
     ) async throws -> [T] {
         let collectionRef = try parseCollectionPath(path)
-        var query: Query = collectionRef.whereField(field, isEqualTo: value)
-        
-        if let orderBy {
-            query = query.order(by: orderBy, descending: descending)
-        }
-        if let limit {
-            query = query.limit(to: limit)
-        }
+        let query: Query = collectionRef.whereField(field, isEqualTo: value)
         
         let snapshot = try await query.getDocuments()
         

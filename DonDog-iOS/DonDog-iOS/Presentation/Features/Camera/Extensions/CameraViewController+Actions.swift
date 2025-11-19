@@ -30,6 +30,23 @@ extension CustomCameraViewController {
         }
     }
     
+    @objc func backButtonTapped() {
+        switchToFrontCamera()
+    }
+    
+    @objc func closeButtonTapped() {
+        let hasCapturedPhoto = (isCapturingFront && frontImage != nil) ||
+        (!isCapturingFront && backImage != nil)
+        
+        if hasCapturedPhoto {
+            DispatchQueue.main.async { [weak self] in
+                self?.viewModel?.showExitAlert = true
+            }
+        } else {
+            delegate?.didCancel()
+        }
+    }
+    
     @objc func retakePhoto() {
         if isCapturingFront {
             isFrontPhotoConfirmed = false
@@ -138,6 +155,10 @@ extension CustomCameraViewController {
         
         isCapturingFront = true
         frontImage = nil
+        backImage = nil
+        
+        isFrontPhotoConfirmed = false
+        isBackPhotoConfirmed = false
         
         isCaptureButtonEnabled = true
         captureButton.isEnabled = true
@@ -146,6 +167,8 @@ extension CustomCameraViewController {
         DispatchQueue.main.async { [weak self] in
             self?.viewModel?.frontImage = nil
             self?.viewModel?.showGuideView = true
+            self?.bottomButtonContainer.isHidden = true
+            self?.captureButton.isHidden = false
         }
         
         updateUIForCurrentState()

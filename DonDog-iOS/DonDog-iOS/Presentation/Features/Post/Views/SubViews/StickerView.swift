@@ -73,7 +73,6 @@ struct StickerView: View {
         .scaleEffect(sticker.scale * gestureScale)
         .rotationEffect(.degrees(sticker.rotation))
         .offset(x: sticker.position.x, y: sticker.position.y)
-        .animation(isDragging ? nil : .easeOut(duration: 0.15), value: localPosition)
     }
 
     private var dragGesture: some Gesture {

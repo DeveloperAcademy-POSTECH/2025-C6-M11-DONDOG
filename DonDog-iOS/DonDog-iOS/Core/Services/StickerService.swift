@@ -44,8 +44,8 @@ final class StickerService {
         let role = connectUserInfo.myRole
         guard let style = StickerStyleData.style(forTitle: title, role: role) else { return nil }
         
-        // 2-1) 기본 흰색 보더 - 모든 스티커 동일
-        let uiColor = UIColor.white
+        // 2-1) ppWhite 보더 - 모든 스티커 동일
+        let uiColor = UIColor.ppWhite
         guard let outlined = clipped.addOutline(thickness: 10, color: uiColor) else { return nil }
         let outlinedSize = outlined.size
         guard outlinedSize.width >= 1, outlinedSize.height >= 1 else { return nil }

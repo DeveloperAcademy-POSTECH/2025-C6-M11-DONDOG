@@ -93,7 +93,7 @@ struct SitckerCollectionView: View {
         .background(dismissBackdrop)
         .background(.ppWhite)
         .onAppear {
-            viewModel.reloadStickerIfNeeded()
+            gridService.selectedCategory = viewModel.lastSelectedCategory
             viewModel.targetItemID = nil
             viewModel.showMakeStickerButton = false
         }
@@ -109,8 +109,10 @@ struct SitckerCollectionView: View {
                 
                 let keyword = item.title
                 StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, keyword]
+                viewModel.lastSelectedCategory = gridService.selectedCategory
                 
                 coordinator.push(.photoPicker)
+                
             })
             
             Spacer()
@@ -128,6 +130,7 @@ struct SitckerCollectionView: View {
                 
                 let keyword = item.title
                 StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, keyword]
+                viewModel.lastSelectedCategory = gridService.selectedCategory
                 
                 coordinator.push(.camera(isStickerCamera: true))
             })

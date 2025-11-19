@@ -94,6 +94,7 @@ struct StickerConfirmView: View {
                 }
             }
         }
+        .background(.ppWhite)
     }
 }
 

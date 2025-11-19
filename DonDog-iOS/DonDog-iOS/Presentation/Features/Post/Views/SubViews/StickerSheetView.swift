@@ -19,7 +19,7 @@ struct StickerSheetView: View {
     @Environment(\.dismiss) var dismiss
     private let categories = StickerCategory.allCases
     
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 20), count: 3)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 3)
     @StateObject private var cameraVM = CameraViewModel()
     @ObservedObject private var gridService: StickerGridService
     init(viewModel: StickerViewModel, postId: String, onRequestCamera: @escaping () -> Void, gridService: StickerGridService = .shared) {
@@ -38,7 +38,7 @@ struct StickerSheetView: View {
                     remoteURLByItemID: gridService.stickerImageURLs,
                     loadingItemIDs: gridService.loadingItemIDs,
                     columns: columns,
-                    rowSpacing: 2,
+                    rowSpacing: 8,
                     onItemAppear: { id in
                         if let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id }) {
                             Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }

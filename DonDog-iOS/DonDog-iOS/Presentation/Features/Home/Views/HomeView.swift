@@ -273,6 +273,12 @@ struct HomeView: View {
                         .ignoresSafeArea()
                 }
             }
+            .task {
+                if coordinator.showCameraInDeeplink {
+                    viewModel.isShowCameraView = true
+                    coordinator.showCameraInDeeplink = false
+                }
+            }
             .animation(.smooth(duration: 0.5), value: viewModel.isShowingATimePost)
             .fullScreenCover(isPresented: $viewModel.isShowCameraView) {
                 CameraViewContainer(

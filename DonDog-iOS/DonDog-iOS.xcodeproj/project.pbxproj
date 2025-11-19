@@ -96,7 +96,7 @@
 		CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */; };
 		CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */; };
 		CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */; };
-		CAA9AED92E8FC15C0047A89A /* WinkyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBD2E8FC15C0047A89A /* WinkyApp.swift */; };
+		CAA9AED92E8FC15C0047A89A /* PicPeekApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEBD2E8FC15C0047A89A /* PicPeekApp.swift */; };
 		CAA9AEDA2E8FC15C0047A89A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEC32E8FC15C0047A89A /* AuthViewModel.swift */; };
 		CAA9AEDB2E8FC15C0047A89A /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEC52E8FC15C0047A89A /* AuthView.swift */; };
 		CAA9AEDE2E8FC15C0047A89A /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AECE2E8FC15C0047A89A /* FeedViewModel.swift */; };
@@ -205,7 +205,7 @@
 		CAA9AEB92E8FC15C0047A89A /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		CAA9AEBA2E8FC15C0047A89A /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
 		CAA9AEBB2E8FC15C0047A89A /* RootNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootNavigationView.swift; sourceTree = "<group>"; };
-		CAA9AEBD2E8FC15C0047A89A /* WinkyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinkyApp.swift; sourceTree = "<group>"; };
+		CAA9AEBD2E8FC15C0047A89A /* PicPeekApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PicPeekApp.swift; sourceTree = "<group>"; };
 		CAA9AEC32E8FC15C0047A89A /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		CAA9AEC52E8FC15C0047A89A /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		CAA9AECE2E8FC15C0047A89A /* FeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
@@ -563,7 +563,7 @@
 		CAA9AEBE2E8FC15C0047A89A /* App */ = {
 			isa = PBXGroup;
 			children = (
-				CAA9AEBD2E8FC15C0047A89A /* WinkyApp.swift */,
+				CAA9AEBD2E8FC15C0047A89A /* PicPeekApp.swift */,
 				8BA62EA32E9149A00054EB8F /* AppDelegate.swift */,
 				CAA9AEBC2E8FC15C0047A89A /* Coordinator */,
 				CAA9AEEE2E8FE27B0047A89A /* Factory */,
@@ -946,7 +946,7 @@
 				8B7729072EA73A3000344491 /* InWebSheetView.swift in Sources */,
 				CA2A58302E9E38C700AC3500 /* CustomNavigationBar.swift in Sources */,
 				CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */,
-				CAA9AED92E8FC15C0047A89A /* WinkyApp.swift in Sources */,
+				CAA9AED92E8FC15C0047A89A /* PicPeekApp.swift in Sources */,
 				8B736DEC2EBB404E00E2AB76 /* StickerConfirmView.swift in Sources */,
 				8B736DED2EBB404E00E2AB76 /* SitckerCollectionViewModel.swift in Sources */,
 				8B736DEE2EBB404E00E2AB76 /* SitckerCollectionView.swift in Sources */,

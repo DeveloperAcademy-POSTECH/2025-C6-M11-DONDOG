@@ -33,6 +33,8 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
     @Published var isShowCameraView: Bool = false
     @Published var isShowStickerSheet: Bool = false
     @Published var isEditingStickers: Bool = false
+    @Published var isShowToast: Bool = false
+    @Published var toastMessage: String = ""
     
     let connectUserInfo = UserPairingStore.shared
     private let dataManager: DataManagerProtocol = DataManager.shared
@@ -86,7 +88,10 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
             
             await MainActor.run {
                 self.todayPosts = todayPosts
-                self.isLoading = false
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                    self?.isLoading = false
+                }
             }
         } catch {
             print("게시물 로드 실패: \(error.localizedDescription)")
@@ -116,6 +121,31 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
             DispatchQueue.main.async { [weak self] in
                 self?.isShowingATimePost = currentIsATime
             }
+        }
+    }
+    
+    func checkAndShowCamera() {
+        let currentIsATime = DateUtils.isATime(date: Date())
+        let currentTimeType: TimeType = currentIsATime ? .a : .b
+        
+        // 오늘 게시물 중 내 게시물이고 현재 시간대에 해당하는 게시물이 있는지 확인
+        let hasPostInCurrentTime = todayPosts.contains { post in
+            post.isMyPost && post.timeType == currentTimeType
+        }
+        
+        if hasPostInCurrentTime {
+            let timeString = currentIsATime ? "오전" : "오후"
+            toastMessage = "\(timeString) 게시물을 이미 올렸어요!"
+            isShowToast = true
+            
+            // 2초 후 토스트 자동 숨김
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                withAnimation {
+                    self.isShowToast = false
+                }
+            }
+        } else {
+            isShowCameraView = true
         }
     }
     

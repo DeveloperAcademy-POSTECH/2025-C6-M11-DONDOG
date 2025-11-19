@@ -20,6 +20,7 @@ struct TabItemView: View {
     let imageSource: HomeImageSource
     let tag: Int
     let postId: String?
+    var isShowGradient: Bool?
     
     private var postImageType: PostImageType {
         tag == 0 ? .front : .back
@@ -32,16 +33,36 @@ struct TabItemView: View {
     var body: some View {
         Group {
             switch imageSource {
-            case .local(let uiImage):
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
+            case .local:
+                HStack {
+                    Spacer()
+                    VStack {
+                        Spacer()
+                        Image("LoadingView")
+                        Text("지금 사진을 업로드하는 중이에요.")
+                            .font(.subtitleSemiBold16)
+                            .foregroundStyle(.ppGray700)
+                        Text("곧 사진이 도착해요! 잠시만 기다려 주세요.")
+                            .font(.captionRegular14)
+                            .foregroundStyle(.ppGray500)
+                            .padding(.top, 2)
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .frame(maxHeight: 468)
+                .background {
+                    Color.ppGray200
+                }
                 
             case .remote(let url):
                 ZStack {
                     KFImage(url)
+                        .fade(duration: 0.25)
                         .resizable()
                         .scaledToFit()
+                        .frame(maxHeight: 468)
+                    
                     if isEditing {
                         Color.clear
                             .contentShape(Rectangle())
@@ -80,9 +101,13 @@ struct TabItemView: View {
         .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
         .tag(tag)
         .overlay(alignment: .bottom) {
-            LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                .opacity(0.6)
-                .frame(maxHeight: 97)
+            if let isShowGradient = isShowGradient {
+                if isShowGradient && !isEditing {
+                    LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
+                        .opacity(0.6)
+                        .frame(maxHeight: 97)
+                }
+            }
         }
         .overlay {
             if DateUtils.isOver3daysSinceLastUpload() {

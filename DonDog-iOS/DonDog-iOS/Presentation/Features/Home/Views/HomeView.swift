@@ -39,8 +39,8 @@ struct HomeView: View {
                             }
                         } else if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
                             Group {
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(frontURL), tag: 0, postId: post.postId)
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(backURL), tag: 1, postId: post.postId)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(frontURL), tag: 0, postId: post.postId, isShowGradient: !viewModel.isLoading)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(backURL), tag: 1, postId: post.postId, isShowGradient: !viewModel.isLoading)
                             }
                         } else {
                             HomeEmptyView(selectedPostType: viewModel.selectedPostType)
@@ -59,16 +59,13 @@ struct HomeView: View {
                         if !DateUtils.isOver3daysSinceLastUpload() && !viewModel.isShowStickerSheet {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
-                                    if viewModel.isUploadingLocalImage, let localCaption = viewModel.localCaption {
-                                        Text(localCaption)
+                                    if viewModel.isUploadingLocalImage {
+                                        Text("")
                                             .font(.subtitleSemiBold16)
                                             .foregroundStyle(.ppWhite)
-                                        
-                                        if let localDate = viewModel.localUploadDate {
-                                            Text(DateUtils.string(from: localDate, format: .home))
-                                                .font(.captionRegular13)
-                                                .foregroundStyle(.ppWhite)
-                                        }
+                                        Text("")
+                                            .font(.captionRegular13)
+                                            .foregroundStyle(.ppWhite)
                                     } else {
                                         Text(currentPost.post.caption)
                                             .font(.subtitleSemiBold16)
@@ -176,7 +173,7 @@ struct HomeView: View {
                     Spacer()
                     Button {
                         cameraViewModel.resetCameraState()
-                        viewModel.isShowCameraView = true
+                        viewModel.checkAndShowCamera()
                     } label: {
                         Circle()
                             .foregroundColor(.ppWhite)
@@ -256,6 +253,19 @@ struct HomeView: View {
                     delegate: viewModel,
                     isPresented: $viewModel.isShowCameraView
                 )
+            }
+            .overlay {
+                if viewModel.isShowToast {
+                    VStack {
+                        Spacer()
+                        ToastView(toastText: viewModel.toastMessage)
+                            .padding(.bottom, 114)
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .bottom).animation(.spring()),
+                                removal: .opacity.animation(.easeOut(duration: 0.7))
+                            ))
+                    }
+                }
             }
         }
     }

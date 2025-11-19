@@ -96,8 +96,8 @@ final class AppCoordinator: ObservableObject {
             factory.makeProfileView(mode: .setup)
         case .invite:
             factory.makeInviteView(showSentHint: inviteShowSentHint)
-        case .camera:
-            factory.makeCameraView()
+        case .camera(let isStickerCamear):
+            factory.makeCameraView(isStickerCamera: isStickerCamear)
         case .home:
             factory.makeHomeView()
         case .stickerCollection:

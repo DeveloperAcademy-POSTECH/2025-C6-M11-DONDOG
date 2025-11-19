@@ -140,7 +140,8 @@ struct StickerStyleData {
         // 픽픽 캐릭터
         .init(title: "항상 네 편이야", role: "parent", stickerDecoBackground: "char_1_parent", layout: .default),
         .init(title: "덕분에 늘 든든해", role: "child", stickerDecoBackground: "char_1_child", layout: .default),
-        .init(title: "날씨 짱인데", role: nil, stickerDecoBackground: "char_2", layout: .default),
+        .init(title: "날씨 짱인데", role: "parent", stickerDecoBackground: "char_2_parent", layout: .default),
+        .init(title: "날씨 짱인데", role: "child", stickerDecoBackground: "char_2_child", layout: .default),
         .init(title: "파이팅!", role: "parent", stickerDecoBackground: "char_3_parent", layout: .default),
         .init(title: "파이팅!", role: "child", stickerDecoBackground: "char_3_child", layout: .default),
         .init(title: "밥 먹을 시간", role: "parent", stickerDecoBackground: "char_4_parent", layout: .default),

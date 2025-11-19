@@ -116,7 +116,7 @@ extension CustomCameraViewController {
         cancelButton.tintColor = Color.ppBlack.uiColor
         cancelButton.contentMode = .center
         cancelButton.imageView?.contentMode = .scaleAspectFit
-        cancelButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        cancelButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         
         view.addSubview(cancelButton)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
@@ -148,9 +148,11 @@ extension CustomCameraViewController {
     }
     
     func updateNavigationButtons() {
-        guard !isStickerCamera else { return }
-        
-        if isCapturingFront {
+        if isStickerCamera {
+            print("updateNavigationButtons의 isStickerCamera=true")
+            cancelButton.isHidden = false
+            closeButton.isHidden = true
+        } else if isCapturingFront {
             cancelButton.isHidden = true
             closeButton.isHidden = false
         } else {

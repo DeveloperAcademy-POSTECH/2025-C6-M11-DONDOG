@@ -284,7 +284,8 @@ struct HomeView: View {
                 CameraViewContainer(
                     cameraViewModel: cameraViewModel,
                     delegate: viewModel,
-                    isPresented: $viewModel.isShowCameraView
+                    isPresented: $viewModel.isShowCameraView,
+                    isStickerCamera: false
                 )
             }
         }

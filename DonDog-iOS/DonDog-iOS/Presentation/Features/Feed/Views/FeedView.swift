@@ -278,7 +278,8 @@ struct FeedView: View {
             CameraViewContainer(
                 cameraViewModel: cameraViewModel,
                 delegate: viewModel,
-                isPresented: $showCameraView
+                isPresented: $showCameraView,
+                isStickerCamera: false
             )
         }
     }

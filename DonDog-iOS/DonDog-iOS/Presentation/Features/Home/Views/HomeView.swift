@@ -12,215 +12,39 @@ struct HomeView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: HomeViewModel
     @StateObject private var cameraViewModel = CameraViewModel()
+    @StateObject private var stickerViewModel = StickerViewModel()
     @EnvironmentObject var connectUserInfo: UserPairingStore
     
     var body: some View {
         if connectUserInfo.isConnected == .unknown {
             SplashView()
         } else if connectUserInfo.isConnected == .notConnected {
-            ZStack {
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button {
-                            coordinator.push(.setting)
-                        } label: {
-                            Image(systemName: "gear")
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(Color.ppPrime)
-                                .padding(.vertical, 8)
-                                .padding(.trailing, 20)
-                        }
-                    }
-                    Spacer()
-                }
-                
-                VStack(spacing: 0) {
-                    Spacer()
-                    Image(systemName: "person.fill.xmark")
-                        .foregroundStyle(Color.ppPrime50)
-                        .font(.system(size: 40))
-                    Text("아직 가족과 연결되지 않았어요\n아래 버튼으로 가족을 초대할 수 있어요")
-                        .font(.bodyRegular16)
-                        .lineSpacing(2)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(Color.ppGray500)
-                        .padding(10)
-                    Button {
-                        coordinator.inviteShowSentHint = false
-                        coordinator.push(.invite)
-                    } label: {
-                        HStack(alignment: .center, spacing: 10) {
-                            Text("가족 초대하기")
-                                .foregroundStyle(Color.ppGray200)
-                                .font(.captionRegular14)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.ppPrime)
-                        .cornerRadius(999)
-                    }
-                    Spacer()
-                }
-            }
-            .background(.ppWhite)
+            NotConnectedView()
         } else {
             VStack(spacing: 0) {
                 CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "sun.max.fill" : "moon.fill"), navigationColor: .black)
-                    .padding(.horizontal, 16)
-                CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
-                    .padding(.top, 33)
+                    .padding(.horizontal, 26)
+                
+                if !viewModel.isShowStickerSheet {
+                    CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
+                        .padding(.top, 33)
+                }
                 
                 ZStack(alignment: .bottom) {
                     TabView(selection: $viewModel.currentIndex) {
                         if viewModel.isUploadingLocalImage, viewModel.selectedPostType == .myArchive, let frontImage = viewModel.localFrontImage, let backImage = viewModel.localBackImage {
                             Group {
-                                Image(uiImage: frontImage)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                                    .tag(0)
-                                    .overlay(alignment: .bottom) {
-                                        LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                                            .opacity(0.6)
-                                            .frame(maxHeight: 97)
-                                    }
-                                    .overlay {
-                                        if DateUtils.isOver3daysSinceLastUpload() {
-                                            VStack(spacing: 6) {
-                                                Image("LockerIcon")
-                                                Text("사진을 업로드한 지 3일이 지나\n사진을 확인할 수 없어요")
-                                                    .font(.subtitleSemiBold16)
-                                                    .foregroundStyle(.ppWhite)
-                                                    .multilineTextAlignment(.center)
-                                                    .lineSpacing(3)
-                                            }
-                                        }
-                                    }
-                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                                    .padding(.horizontal, 20)
-                                
-                                Image(uiImage: backImage)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                                    .tag(1)
-                                    .overlay(alignment: .bottom) {
-                                        LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                                            .opacity(0.6)
-                                            .frame(maxHeight: 97)
-                                    }
-                                    .overlay {
-                                        if DateUtils.isOver3daysSinceLastUpload() {
-                                            VStack(spacing: 6) {
-                                                Image("LockerIcon")
-                                                Text("사진을 업로드한 지 3일이 지나\n사진을 확인할 수 없어요")
-                                                    .font(.subtitleSemiBold16)
-                                                    .foregroundStyle(.ppWhite)
-                                                    .multilineTextAlignment(.center)
-                                                    .lineSpacing(3)
-                                            }
-                                        }
-                                    }
-                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                                    .padding(.horizontal, 20)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(frontImage), tag: 0, postId: nil)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(backImage), tag: 1, postId: nil)
                             }
                         } else if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
                             Group {
-                                KFImage(frontURL)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(maxHeight: 468)
-                                    .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                                    .tag(0)
-                                    .overlay(alignment: .bottom) {
-                                        LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                                            .opacity(0.6)
-                                            .frame(maxHeight: 97)
-                                    }
-                                    .overlay {
-                                        if DateUtils.isOver3daysSinceLastUpload() {
-                                            VStack(spacing: 6) {
-                                                Image("LockerIcon")
-                                                Text("사진을 업로드한 지 3일이 지나\n사진을 확인할 수 없어요")
-                                                    .font(.subtitleSemiBold16)
-                                                    .foregroundStyle(.ppWhite)
-                                                    .multilineTextAlignment(.center)
-                                                    .lineSpacing(3)
-                                            }
-                                        }
-                                    }
-                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                                    .padding(.horizontal, 20)
-                                
-                                KFImage(backURL)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(maxHeight: 468)
-                                    .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                                    .tag(1)
-                                    .overlay(alignment: .bottom) {
-                                        LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                                            .opacity(0.6)
-                                            .frame(maxHeight: 97)
-                                    }
-                                    .overlay {
-                                        if DateUtils.isOver3daysSinceLastUpload() {
-                                            VStack(spacing: 6) {
-                                                Image("LockerIcon")
-                                                Text("사진을 업로드한 지 3일이 지나\n사진을 확인할 수 없어요")
-                                                    .font(.subtitleSemiBold16)
-                                                    .foregroundStyle(.ppWhite)
-                                                    .multilineTextAlignment(.center)
-                                                    .lineSpacing(3)
-                                            }
-                                        }
-                                    }
-                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                                    .padding(.horizontal, 20)
-                            }
-                            .onTapGesture {
-                                if let currentPost = viewModel.currentPost?.post {
-                                    coordinator.push(.post(post: currentPost, postType: .post))
-                                }
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(frontURL), tag: 0, postId: post.postId)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(backURL), tag: 1, postId: post.postId)
                             }
                         } else {
-                            // 포스트가 없을 때
-                            HStack(spacing: 16) {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(.ppGray200)
-                                    .overlay {
-                                        VStack {
-                                            Image("HomeEmptyView")
-                                            if viewModel.selectedPostType == ArchiveSegment.partnerArchive {
-                                                Text("가족이 아직 사진을 올리지 않았어요.")
-                                                    .font(.subtitleSemiBold16)
-                                                    .foregroundStyle(.ppGray700)
-                                                Text("조금만 기다려 주세요. 사진이 곧 찾아올 거예요.")
-                                                    .font(.captionRegular14)
-                                                    .foregroundStyle(.ppGray500)
-                                                    .padding(.top, 2)
-                                            } else {
-                                                let remainingTime = DateUtils.remainingHoursForUpload()
-                                                Text("\(remainingTime.period) 게시물을 올릴 수 있는 시간이")
-                                                    .multilineTextAlignment(.center)
-                                                    .font(.subtitleSemiBold16)
-                                                    .foregroundStyle(.ppGray700)
-                                                HStack(spacing: 0) {
-                                                    Text("\(remainingTime.hours)시간")
-                                                        .foregroundStyle(.ppPrime)
-                                                    Text(" 남았어요!")
-                                                        .foregroundStyle(.ppGray700)
-                                                }
-                                                .font(.subtitleSemiBold16)
-                                                .padding(.top, 1)
-                                            }
-                                        }
-                                    }
-                            }
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                            .padding(.horizontal, 20)
-                            .tag(0)
+                            HomeEmptyView(selectedPostType: viewModel.selectedPostType)
+                                .tag(0)
                         }
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
@@ -232,7 +56,7 @@ struct HomeView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     
                     if let currentPost = viewModel.currentPost {
-                        if !DateUtils.isOver3daysSinceLastUpload() {
+                        if !DateUtils.isOver3daysSinceLastUpload() && !viewModel.isShowStickerSheet {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
                                     if viewModel.isUploadingLocalImage, let localCaption = viewModel.localCaption {
@@ -259,8 +83,16 @@ struct HomeView: View {
                                 .padding(.bottom, 21)
                                 
                                 Spacer()
+                                
                                 Button {
-                                    // editableView
+                                    if let currentPost = viewModel.currentPost {
+                                        stickerViewModel.postId = currentPost.postId
+                                        stickerViewModel.postImageType = viewModel.currentIndex == 0 ? .front : .back
+                                        Task {
+                                            await stickerViewModel.fetchStickers()
+                                        }
+                                    }
+                                    viewModel.isShowStickerSheet = true
                                 } label: {
                                     Image("AddStickerIcon")
                                         .resizable()
@@ -275,6 +107,7 @@ struct HomeView: View {
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 16)
                                 .buttonStyle(.plain)
+                                .opacity(viewModel.selectedPostType == .myArchive ? 0 : 1)
                             }
                             .padding(.horizontal, 20)
                         }
@@ -312,6 +145,7 @@ struct HomeView: View {
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 16)
                                 .buttonStyle(.plain)
+                                .opacity(viewModel.selectedPostType == .myArchive ? 0 : 1)
                             }
                             .padding(.horizontal, 20)
                         }
@@ -387,6 +221,24 @@ struct HomeView: View {
                     await viewModel.loadPosts()
                 }
             }
+            .sheet(isPresented: $viewModel.isShowStickerSheet) {
+                if let currentPost = viewModel.currentPost {
+                    StickerSheetView(
+                        viewModel: stickerViewModel, postId: currentPost.postId,
+                        onRequestCamera: {
+                            stickerViewModel.shouldReopenSheetAfterCamera = true
+                            viewModel.isShowStickerSheet = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                coordinator.push(.camera)
+                            }
+                        }
+                    )
+                    .presentationDetents([.height(270)])
+                    .presentationBackgroundInteraction(.enabled)
+                    .presentationDragIndicator(.hidden)
+                    .background(Color.ddGray100.opacity(0.5))
+                }
+            }
             .background {
                 if viewModel.isShowingATimePost {
                     Color.ppWhite
@@ -397,6 +249,7 @@ struct HomeView: View {
                 }
             }
             .animation(.smooth(duration: 0.5), value: viewModel.isShowingATimePost)
+            .animation(.smooth(duration: 0.5), value: viewModel.isShowStickerSheet)
             .fullScreenCover(isPresented: $viewModel.isShowCameraView) {
                 CameraViewContainer(
                     cameraViewModel: cameraViewModel,

@@ -31,6 +31,8 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
     @Published var currentPost: HomePost?
     @Published var isLoading: Bool = false
     @Published var isShowCameraView: Bool = false
+    @Published var isShowStickerSheet: Bool = false
+    @Published var isEditingStickers: Bool = false
     
     let connectUserInfo = UserPairingStore.shared
     private let dataManager: DataManagerProtocol = DataManager.shared

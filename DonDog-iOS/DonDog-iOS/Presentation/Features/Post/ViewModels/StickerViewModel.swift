@@ -41,7 +41,7 @@ final class StickerViewModel: ObservableObject {
     @Published var targetItemID: StickerItem.ID?
     @Published var previewURL: URL?
     
-    private let dataManager: DataManagerProtocol = DataManager.shared
+    let dataManager: DataManagerProtocol = DataManager.shared
     let connectUserInfo = UserPairingStore.shared
     var roomId: String = ""
     

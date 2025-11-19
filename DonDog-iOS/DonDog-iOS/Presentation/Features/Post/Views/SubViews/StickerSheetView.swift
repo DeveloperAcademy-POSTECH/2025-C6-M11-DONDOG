@@ -38,7 +38,7 @@ struct StickerSheetView: View {
                     remoteURLByItemID: gridService.stickerImageURLs,
                     loadingItemIDs: gridService.loadingItemIDs,
                     columns: columns,
-                    rowSpacing: 8,
+                    rowSpacing: 2,
                     onItemAppear: { id in
                         if let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id }) {
                             Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }

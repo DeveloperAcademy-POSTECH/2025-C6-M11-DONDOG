@@ -23,7 +23,7 @@ struct ImageView: View {
         ZStack {
             KFImage(url)
                 .placeholder {
-                    RoundedRectangle(cornerRadius: 15)
+                    Rectangle()
                         .fill(.ddGray500)
                 }
                 .onFailure { _ in
@@ -36,7 +36,7 @@ struct ImageView: View {
                 .clipped()
                 .overlay(alignment: .center) {
                     if loadFailed {
-                        RoundedRectangle(cornerRadius: 15)
+                        Rectangle()
                             .fill(.ddGray500)
                             .overlay(Image(systemName: "photo"))
                     }
@@ -63,6 +63,7 @@ struct ImageView: View {
                         viewModel.selectedStickerID = sticker.id
                     }
                 }
+                .allowsHitTesting(isEditing)
             }
         }
     }

@@ -136,5 +136,20 @@ final class StickerViewModel: ObservableObject {
                 print("붙여진 스티커 저장 실패: \(error.localizedDescription)")
             }
         }
+        
+        let postData: [String: Any] = [
+            "stickerUpdatedAt": Date.now
+        ]
+        
+        do {
+            try await dataManager.batchUpdate([
+                .update(
+                    path: "Rooms/\(roomId)/posts/\(postId)",
+                    data: postData
+                )
+            ])
+        } catch {
+            print("stickerUdpatedAt 최신화 실패: \(error.localizedDescription)")
+        }
     }
 }

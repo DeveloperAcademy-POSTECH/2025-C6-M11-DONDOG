@@ -18,12 +18,24 @@ final class PostService {
     private let dataManager: DataManagerProtocol = DataManager.shared
     
     func deletePost(postId: String) async throws {
-        let post: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(postId)")
-        
+        let roomId = connectUserInfo.roomId ?? ""
+        let basePath = "Rooms/\(roomId)/posts/\(postId)"
+
+        let post: PostData = try await dataManager.fetch(path: "\(basePath)")
+
         try await dataManager.deleteStorageFile(urlString: post.frontImageURL)
-        
         try await dataManager.deleteStorageFile(urlString: post.backImageURL)
-        
-        try await dataManager.delete(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(postId)")
+
+        let stickers: [AttachedSticker] = try await dataManager.fetchCollection(
+            path: "\(basePath)/stickerAttachments"
+        )
+
+        let stickerPaths = stickers.map { "\(basePath)/stickerAttachments/\($0.id)" }
+
+        if !stickerPaths.isEmpty {
+            try await dataManager.batchDelete(paths: stickerPaths)
+        }
+
+        try await dataManager.delete(path: "\(basePath)")
     }
 }

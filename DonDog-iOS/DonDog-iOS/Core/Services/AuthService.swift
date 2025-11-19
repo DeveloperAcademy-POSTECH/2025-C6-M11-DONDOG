@@ -98,13 +98,6 @@ final class AuthService {
         Messaging.messaging().token { token, error in
             if let token = token {
                 NotificationService.shared.uploadFCMToken(token)
-                Messaging.messaging().subscribe(toTopic: "daily_random_notification") { error in
-                    if let error = error {
-                        NSLog("토픽 구독 실패: \(error.localizedDescription)")
-                    } else {
-                        NSLog("토픽 구독 성공")
-                    }
-                }
             } else if let error = error {
                 NSLog("FCM 토큰 획득 실패 (AuthService): \(error.localizedDescription)")
             }

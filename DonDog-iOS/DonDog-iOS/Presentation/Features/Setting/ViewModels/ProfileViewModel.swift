@@ -110,7 +110,7 @@ final class ProfileViewModel: ObservableObject {
 
         guard let uid = myUid else { return }
         isLoading = true
-
+        
         Task { [weak self] in
             guard let self = self else { return }
             do {
@@ -136,6 +136,8 @@ final class ProfileViewModel: ObservableObject {
                 }
             }
         }
+        
+        StickerGridService.shared.deleteCache()
     }
 
     private func saveForSetup() {

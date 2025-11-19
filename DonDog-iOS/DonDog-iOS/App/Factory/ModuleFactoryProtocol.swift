@@ -87,18 +87,14 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func makeStickerCollectionView() -> SitckerCollectionView {
-        let role = UserPairingStore.shared.myRole ?? "child"
-        let gridService = StickerGridService(role: role)
-        let viewModel = SitckerCollectionViewModel(gridService: gridService)
-        let view = SitckerCollectionView(viewModel: viewModel, gridService: gridService)
+        let viewModel = SitckerCollectionViewModel()
+        let view = SitckerCollectionView(viewModel: viewModel)
         return view
     }
     
     func makePhotoPickerView() -> PhotoPickerView {
-        let role = UserPairingStore.shared.myRole ?? "child"
-        let gridService = StickerGridService(role: role)
         let viewModel = PhotoPickerViewModel()
-        let view = PhotoPickerView(viewModel: viewModel, gridService: gridService)
+        let view = PhotoPickerView(viewModel: viewModel)
         return view
     }
 }

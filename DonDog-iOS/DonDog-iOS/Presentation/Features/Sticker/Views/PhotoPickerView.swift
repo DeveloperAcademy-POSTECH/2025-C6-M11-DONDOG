@@ -18,7 +18,6 @@ struct PhotoPickerView: View {
     
     private let columns = [GridItem(.adaptive(minimum: 100), spacing: 8)]
     private let screenWidth = UIScreen.main.bounds.width
-    let gridService: StickerGridService
     
     var body: some View {
         VStack {
@@ -109,6 +108,7 @@ struct PhotoPickerView: View {
                 .padding(.vertical, 8)
             }
         }
+        .background(.ppWhite)
         .task { await viewModel.loadInitial() }
         .backHiddenSwipeEnabled()
         .fullScreenCover(
@@ -136,7 +136,7 @@ struct PhotoPickerView: View {
                     },
                     onUploaded: { tags in
                         Task {
-                            await gridService.reloadSticker(tags: tags)
+                            await StickerGridService.shared.reloadSticker(tags: tags)
                         }
                     }
                 )

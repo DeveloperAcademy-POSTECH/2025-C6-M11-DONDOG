@@ -23,7 +23,7 @@ struct SitckerCollectionView: View {
     @Namespace private var categoryUnderlineNamespace
     
     @ObservedObject private var gridService: StickerGridService
-    init(viewModel: SitckerCollectionViewModel, gridService: StickerGridService) {
+    init(viewModel: SitckerCollectionViewModel, gridService: StickerGridService = .shared) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._gridService = ObservedObject(wrappedValue: gridService)
     }

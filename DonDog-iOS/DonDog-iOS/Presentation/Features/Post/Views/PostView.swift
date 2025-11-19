@@ -69,15 +69,12 @@ struct PostView: View {
                                     coordinator.push(.camera)
                                 }
                             }
-                            
                         )
                         .presentationDetents([.height(317)])
                         .presentationBackgroundInteraction(.enabled)
                         .presentationDragIndicator(.hidden)
                         .background(.ppRealBlack.opacity(0.95))
                     }
-                    
-                    Spacer()
                 }
                 .customAlert(
                     isPresented: $showDeleteConfirmAlert,

@@ -109,7 +109,7 @@ struct CaptionView: View {
                     .disabled(viewModel.isUploading)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 8)
-                    .hapticFeedback(.medium)
+                    .hapticFeedback(.heavy)
                 }
             }
             .background {

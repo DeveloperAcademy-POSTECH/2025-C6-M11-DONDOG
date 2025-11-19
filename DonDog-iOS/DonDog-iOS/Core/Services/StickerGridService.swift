@@ -11,7 +11,7 @@ import FirebaseFirestore
 import SwiftUI
 
 final class StickerGridService: ObservableObject {
-    static let shared = StickerGridService()
+    // static let shared = StickerGridService()
     
     @Published var stickerImageURLs: [StickerItem.ID: URL] = [:]
     @Published var loadingItemIDs: Set<StickerItem.ID> = []
@@ -21,10 +21,9 @@ final class StickerGridService: ObservableObject {
     
     private let role: String
 
-    init(role: String? = nil) {
-        let resolvedRole = role ?? UserPairingStore.shared.myRole ?? "child"
-        self.role = resolvedRole
-        self.itemsByCategory = StickerCategoryData.itemsByCategory(for: resolvedRole)
+    init(role: String) {
+        self.role = role
+        self.itemsByCategory = StickerCategoryData.itemsByCategory(for: role)
     }
 
     func stickerItems(for category: StickerCategory) -> [StickerItem] {

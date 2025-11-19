@@ -84,9 +84,10 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
                             self.delegate?.didCancel()
                         }
                     },
-                    onUploaded: { tags in
+                    onUploaded: { [weak self] tags in
+                        guard let self, let gridService = self.stickerGridService else { return }
                         Task {
-                            await StickerGridService.shared.reloadSticker(tags: tags)
+                            await gridService.reloadSticker(tags: tags)
                         }
                     }
                 )

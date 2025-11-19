@@ -228,6 +228,25 @@ final class DataManager: DataManagerProtocol {
         try await batch.commit()
     }
     
+    func deleteWhereEqual(
+        path: String,
+        field: String,
+        isEqualTo value: String
+    ) async throws {
+        let collectionRef = try parseCollectionPath(path)
+        let query = collectionRef.whereField(field, isEqualTo: value)
+        let snapshot = try await query.getDocuments()
+
+        guard snapshot.documents.isEmpty == false else { return }
+
+        let batch = db.batch()
+        for doc in snapshot.documents {
+            batch.deleteDocument(doc.reference)
+        }
+
+        try await batch.commit()
+    }
+    
     // MARK: - Storage
     func uploadImage(image: UIImage, path: String) async throws -> String {
         guard let resizedImage = image.resized(maxWidth: 1080) else {

@@ -21,7 +21,11 @@ struct StickerSheetView: View {
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 20), count: 3)
     @StateObject private var cameraVM = CameraViewModel()
     @ObservedObject private var gridService: StickerGridService
-    init(viewModel: StickerViewModel, onRequestCamera: @escaping () -> Void, gridService: StickerGridService = .shared) {
+    init(
+        viewModel: StickerViewModel,
+        onRequestCamera: @escaping () -> Void,
+        gridService: StickerGridService
+    ) {
         self.viewModel = viewModel
         self.onRequestCamera = onRequestCamera
         self._gridService = ObservedObject(wrappedValue: gridService)

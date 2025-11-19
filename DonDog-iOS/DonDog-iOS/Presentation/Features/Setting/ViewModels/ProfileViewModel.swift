@@ -100,6 +100,44 @@ final class ProfileViewModel: ObservableObject {
         }
     }
 
+    func saveWithStickerReset() {
+        errorMessage = nil
+
+        guard mode == .edit else {
+            save()
+            return
+        }
+
+        guard let uid = myUid else { return }
+        isLoading = true
+
+        Task { [weak self] in
+            guard let self = self else { return }
+            do {
+                guard let manager = self.dataManager as? DataManager else {
+                    await MainActor.run {
+                        self.errorMessage = "데이터 매니저를 찾을 수 없습니다. 잠시 후 다시 시도해 주세요."
+                        self.isLoading = false
+                    }
+                    return
+                }
+                try await manager.deleteWhereEqual(
+                    path: "Stickers",
+                    field: "authorUid",
+                    isEqualTo: uid
+                )
+                await MainActor.run {
+                    self.saveForEdit()
+                }
+            } catch {
+                await MainActor.run {
+                    self.errorMessage = "스티커 초기화 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요. (\(error.localizedDescription))"
+                    self.isLoading = false
+                }
+            }
+        }
+    }
+
     private func saveForSetup() {
         guard let myUid = myUid else { return }
         isLoading = true

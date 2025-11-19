@@ -15,13 +15,15 @@ struct SplashView: View {
             
             VStack {
                 Spacer()
-                Image("SplashLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 245)
-                Text("서로의 하루를 공유하는 가장 즐거운 방법")
-                    .foregroundStyle(Color.ppBlack)
-                    .font(.captionMedium14)
+                VStack(spacing: 16) {
+                    Image("SplashLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 245)
+                    Text("서로의 하루를 공유하는 가장 즐거운 방법")
+                        .foregroundStyle(Color.ppBlack)
+                        .font(.captionMedium14)
+                }
                 Spacer()
                 Rectangle()
                     .fill(Color.clear)

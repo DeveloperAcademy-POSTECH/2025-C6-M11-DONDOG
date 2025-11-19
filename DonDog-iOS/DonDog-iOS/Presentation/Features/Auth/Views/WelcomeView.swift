@@ -14,7 +14,7 @@ struct WelcomeView: View {
         VStack {
             Spacer()
             
-            VStack(spacing: 12.6) {
+            VStack(spacing: 16) {
                 Image("SplashLogo")
                     .resizable()
                     .scaledToFit()

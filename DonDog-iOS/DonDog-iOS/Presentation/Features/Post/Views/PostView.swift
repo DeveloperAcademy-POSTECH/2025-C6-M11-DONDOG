@@ -73,8 +73,8 @@ struct PostView: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             coordinator.push(.camera)
                         }
-                    }
-                    
+                    },
+                    gridService: StickerGridService(role: UserPairingStore.shared.myRole ?? "child")
                 )
                 .presentationDetents([.height(270)])
                 .presentationBackgroundInteraction(.enabled)

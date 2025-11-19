@@ -55,17 +55,21 @@ struct StickerConfirmView: View {
                     .padding(.horizontal, 21)
             } else {
                 VStack {
+                    Spacer()
+                        .frame(height: 80)
+                    
                     Text("만들어진 스티커를 확인해 주세요!")
                         .font(.subtitleMedium18)
                         .padding(.vertical, 24)
                     
                     Spacer()
+                        .frame(height: 16)
                     
                     if let image = viewModel.image {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 300, height: 360)
+                            .frame(width: 360, height: 300)
                             .clipped()
                             .padding(.bottom, 150)
                     }

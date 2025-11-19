@@ -20,7 +20,13 @@ final class SitckerCollectionViewModel: ObservableObject {
     @Published var pickedImage: UIImage?
     @Published var capturedImage: UIImage?
     
+    private let gridService: StickerGridService
+    
     private let dataManager: DataManagerProtocol = DataManager.shared
+    
+    init(gridService: StickerGridService) {
+        self.gridService = gridService
+    }
     
     func reloadStickerIfNeeded() {
         let tags = StickerEmotionTagManager.shared.emotionTags
@@ -34,14 +40,14 @@ final class SitckerCollectionViewModel: ObservableObject {
             return
         }
         
-        let items = StickerGridService().stickerItems(for: category)
+        let items = gridService.stickerItems(for: category)
         guard let item = items.first(where: { $0.title == title }) else {
             StickerEmotionTagManager.shared.emotionTags = []
             return
         }
         
         Task {
-            await StickerGridService().fetchStickerImage(for: item, in: category)
+            await gridService.fetchStickerImage(for: item, in: category)
             await MainActor.run {
                 StickerEmotionTagManager.shared.emotionTags = []
             }

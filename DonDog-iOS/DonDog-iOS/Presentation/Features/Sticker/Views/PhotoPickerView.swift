@@ -18,6 +18,7 @@ struct PhotoPickerView: View {
     
     private let columns = [GridItem(.adaptive(minimum: 100), spacing: 8)]
     private let screenWidth = UIScreen.main.bounds.width
+    let gridService: StickerGridService
     
     var body: some View {
         VStack {
@@ -135,7 +136,7 @@ struct PhotoPickerView: View {
                     },
                     onUploaded: { tags in
                         Task {
-                            await StickerGridService.shared.reloadSticker(tags: tags)
+                            await gridService.reloadSticker(tags: tags)
                         }
                     }
                 )

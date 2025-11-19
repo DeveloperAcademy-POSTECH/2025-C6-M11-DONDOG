@@ -37,78 +37,79 @@ final class StickerService {
         let clipped = clippedRaw.croppedToAlphaBounds(padding: 10)
         guard clipped.size.width >= 1, clipped.size.height >= 1 else { return nil }
         
-        // 2) 스타일 해석 (StickerCategoryData에서 보더 색깔, 데코 이름 가져오기)
-        guard let style = StickerStyleData.style(forTitle: title) else { return nil }
+        // 2) 스타일 해석 (사용자 역할에 따라 배경 이미지 선택)
+        let role = connectUserInfo.myRole
+        guard let style = StickerStyleData.style(forTitle: title, role: role) else { return nil }
         
-        // 2-1) 보더
-        let uiColor = UIColor(style.outlineColor)
-        guard let outlined = clipped.addOutline(thickness: 20, color: uiColor) else { return nil }
-        
-        // 2-2) 데코 합성 (해당 데코 키)
+        // 2-1) 기본 흰색 보더 - 모든 스티커 동일
+        let uiColor = UIColor.white
+        guard let outlined = clipped.addOutline(thickness: 10, color: uiColor) else { return nil }
         let outlinedSize = outlined.size
         guard outlinedSize.width >= 1, outlinedSize.height >= 1 else { return nil }
         
-        // 3) 최종 사이즈 계산
-        let decoWidth = outlinedSize.width * 1.27
-        
-        let titleImage: UIImage = OutlinedTitleImageMaker.render (
-            text: title,
-            font: UIFont(name: "SejongGeulggot", size: 55) ?? .systemFont(ofSize: 55),
-            fill: .black,
-            stroke: UIColor(style.outlineColor),
-            strokeWidth: 7.5,
-            kerning: 0,
-            maxWidth: decoWidth
-        )
-        
+        let layout = style.layout
+
         let sticker = ImageUtils.renderViewAsImage(
             ZStack {
-                Image(uiImage: outlined)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: outlinedSize.width, height: outlinedSize.height)
-                
-                Image(style.stickerDecoString)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: decoWidth)
-                    .offset(x: 16, y: -36)
-                
-                VStack {
-                    Spacer()
-                    
-                    Image(uiImage: titleImage)
+                if layout.outlinedOnTop {
+                    Image(style.stickerDecoBackground)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: outlinedSize.width * 0.7, alignment: .center)
+                        .frame(width: 360, height: 300)
+
+                    Image(uiImage: outlined)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(
+                            width: layout.outlinedSize.width,
+                            height: layout.outlinedSize.height
+                        )
+                        .offset(layout.outlinedOffset)
+                } else {
+                    Image(uiImage: outlined)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(
+                            width: layout.outlinedSize.width,
+                            height: layout.outlinedSize.height
+                        )
+                        .offset(layout.outlinedOffset)
+
+                    Image(style.stickerDecoBackground)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 360, height: 300)
                 }
             }
-            .offset(y: -20)
-            , size: CGSize(width: decoWidth, height: outlinedSize.height)
+            .frame(width: 360, height: 300),
+            size: CGSize(width: 360, height: 300)
         )
         
+        return sticker
+
         /// 최종 스티커 이미지를 한 번 더 다운스케일
-        let finalSticker = resizedForStickerUpload(sticker, maxEdge: 360)
-        return finalSticker
-        func resizedForStickerUpload(_ image: UIImage, maxEdge: CGFloat = 360) -> UIImage {
-            let size = image.size
-            let maxOriginalEdge = max(size.width, size.height)
-            guard maxOriginalEdge > maxEdge, maxOriginalEdge > 0 else {
-                return image
-            }
-            
-            let scale = maxEdge / maxOriginalEdge
-            let newSize = CGSize(width: size.width * scale, height: size.height * scale)
-            
-            let format = UIGraphicsImageRendererFormat.default()
-            format.scale = 1
-            
-            let renderer = UIGraphicsImageRenderer(size: newSize, format: format)
-            let resized = renderer.image { _ in
-                image.draw(in: CGRect(origin: .zero, size: newSize))
-            }
-            return resized
-        }
+//        let finalSticker = resizedForStickerUpload(sticker, maxEdge: 360)
+//        return finalSticker
+//        func resizedForStickerUpload(_ image: UIImage, maxEdge: CGFloat = 360) -> UIImage {
+//            let size = image.size
+//            let maxOriginalEdge = max(size.width, size.height)
+//            guard maxOriginalEdge > maxEdge, maxOriginalEdge > 0 else {
+//                return image
+//            }
+//            
+//            let scale = maxEdge / maxOriginalEdge
+//            let newSize = CGSize(width: size.width * scale, height: size.height * scale)
+//            
+//            let format = UIGraphicsImageRendererFormat.default()
+//            format.scale = 1
+//            
+//            let renderer = UIGraphicsImageRenderer(size: newSize, format: format)
+//            let resized = renderer.image { _ in
+//                image.draw(in: CGRect(origin: .zero, size: newSize))
+//            }
+//            
+//            return resized
+//        }
     }
     
     func getStickerCollection(of postId: String) async -> [String: UIImage] {

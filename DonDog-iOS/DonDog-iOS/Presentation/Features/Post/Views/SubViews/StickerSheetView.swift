@@ -10,7 +10,7 @@ import FirebaseFirestore
 import Kingfisher
 import SwiftUI
 
-struct StickerSheetView: View {    
+struct StickerSheetView: View {
     @ObservedObject var viewModel: StickerViewModel
     let postId: String
     let onRequestCamera: () -> Void
@@ -22,7 +22,13 @@ struct StickerSheetView: View {
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 20), count: 3)
     @StateObject private var cameraVM = CameraViewModel()
     @ObservedObject private var gridService: StickerGridService
-    init(viewModel: StickerViewModel, postId: String, onRequestCamera: @escaping () -> Void, gridService: StickerGridService = .shared) {
+    
+    init(
+        viewModel: StickerViewModel,
+        postId: String,
+        onRequestCamera: @escaping () -> Void,
+        gridService: StickerGridService
+    ) {
         self.viewModel = viewModel
         self.postId = postId
         self.onRequestCamera = onRequestCamera

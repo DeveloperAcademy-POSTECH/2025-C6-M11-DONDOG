@@ -12,13 +12,16 @@ struct CameraViewContainer: View {
     var delegate: CaptionViewModelDelegate
     @Binding var isPresented: Bool
     
+    let isStickerCamera: Bool
+    
     @State private var captionViewModel: CaptionViewModel?
     @State private var shouldDismiss = false
     
-    init(cameraViewModel: CameraViewModel, delegate: CaptionViewModelDelegate, isPresented: Binding<Bool>) {
+    init(cameraViewModel: CameraViewModel, delegate: CaptionViewModelDelegate, isPresented: Binding<Bool>,  isStickerCamera: Bool) {
         _cameraViewModel = StateObject(wrappedValue: cameraViewModel)
         self.delegate = delegate
         self._isPresented = isPresented
+        self.isStickerCamera = isStickerCamera
     }
     
     var body: some View {
@@ -71,6 +74,7 @@ struct CameraViewContainer: View {
         .customAlert(isPresented: $cameraViewModel.showExitAlert, title: "나가시겠어요?", message: "지금까지 찍은 사진은 저장되지 않아요", confirmTitle: "나가기", cancelTitle: "취소", onConfirm: {isPresented = false}, onCancel: {})
         .animation(.easeInOut(duration: 0.3), value: cameraViewModel.showGuideView)
         .onAppear {
+            cameraViewModel.isStickerCamera = isStickerCamera
             cameraViewModel.showGuideView = true
         }
         .onChange(of: cameraViewModel.showCaptionView) { _, newValue in

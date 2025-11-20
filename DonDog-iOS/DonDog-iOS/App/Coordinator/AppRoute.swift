@@ -14,7 +14,7 @@ enum AppRoute: Hashable {
     case authNumber
     case profileSetup
     case invite
-    case camera
+    case camera(isStickerCamera: Bool)
     case home
     case stickerCollection
     case archive

@@ -103,7 +103,7 @@ struct ProfileView: View {
             confirmTitle: "변경",
             cancelTitle: "취소",
             onConfirm: {
-                viewModel.save()
+                viewModel.saveWithStickerReset()
             },
             onCancel: {}
         )

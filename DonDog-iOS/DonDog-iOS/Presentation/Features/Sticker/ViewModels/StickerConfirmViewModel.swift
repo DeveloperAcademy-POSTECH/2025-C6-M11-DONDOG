@@ -14,7 +14,6 @@ import SwiftUI
 final class StickerConfirmViewModel: ObservableObject {
     @Published var image: UIImage?
     @Published var isUploading: Bool = false
-    @Published var uploadError: String?
     @Published var isSaving = false
 
     private var currentTags: [String] { StickerEmotionTagManager.shared.emotionTags }
@@ -30,7 +29,6 @@ final class StickerConfirmViewModel: ObservableObject {
         let selectedTags = Array(currentTags)
 
         isUploading = true
-        uploadError = nil
 
         Task {
             do {
@@ -68,11 +66,13 @@ final class StickerConfirmViewModel: ObservableObject {
 
                 // 2) database 문서 생성
                 let uid = Auth.auth().currentUser?.uid ?? "anonymous"
+                let authorRole = UserPairingStore.shared.myRole ?? "child"
                 let data: [String: Any] = [
-                    "uid": uid,
-                    "url": url.absoluteString,
+                    "authorUid": uid,
+                    "stickerURL": url.absoluteString,
                     "emotionTags": selectedTags,
-                    "createdAt": FieldValue.serverTimestamp()
+                    "createdAt": FieldValue.serverTimestamp(),
+                    "authorRole": authorRole
                 ]
                 _ = try await DataManager.shared.createWithAutoId(path: "Stickers", data: data)
 
@@ -84,7 +84,7 @@ final class StickerConfirmViewModel: ObservableObject {
             } catch {
                 await MainActor.run {
                     self.isUploading = false
-                    self.uploadError = error.localizedDescription
+                    print("스티커 전송 오류: \(error.localizedDescription)")
                 }
             }
         }

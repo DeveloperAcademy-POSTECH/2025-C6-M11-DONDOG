@@ -33,82 +33,108 @@ final class StickerService {
         
         // 1) 누끼
         let clippedRaw = getClippedImage(of: resizedImage)
+        if clippedRaw.cgImage == nil { return nil }
+        
         // 알파 있는 부분만 타이트하게 자르기
-        let clipped = clippedRaw.croppedToAlphaBounds(padding: 10)
-        guard clipped.size.width >= 1, clipped.size.height >= 1 else { return nil }
+        let tightClipped = clippedRaw.croppedToAlphaBounds(padding: 10)
+        guard tightClipped.size.width >= 1, tightClipped.size.height >= 1 else { return nil }
+
+        // 1-1) 3:4 캔버스 하단 정렬 (세로가 더 긴 비율)
+        let clipped = tightClipped.paddedToThreeByFourBottomAligned()
         
-        // 2) 스타일 해석 (StickerCategoryData에서 보더 색깔, 데코 이름 가져오기)
-        guard let style = StickerStyleData.style(forTitle: title) else { return nil }
+        // 2) 스타일 해석 (사용자 역할에 따라 배경 이미지 선택)
+        let role = connectUserInfo.myRole
+        guard let style = StickerStyleData.style(forTitle: title, role: role) else { return nil }
         
-        // 2-1) 보더
-        let uiColor = UIColor(style.outlineColor)
-        guard let outlined = clipped.addOutline(thickness: 20, color: uiColor) else { return nil }
-        
-        // 2-2) 데코 합성 (해당 데코 키)
+        // 3) ppWhite 보더 - 모든 스티커 동일
+        let uiColor = UIColor.ppWhite
+        guard let outlined = clipped.addOutline(thickness: 10, color: uiColor) else { return nil }
         let outlinedSize = outlined.size
+
         guard outlinedSize.width >= 1, outlinedSize.height >= 1 else { return nil }
         
-        // 3) 최종 사이즈 계산
-        let decoWidth = outlinedSize.width * 1.27
-        
-        let titleImage: UIImage = OutlinedTitleImageMaker.render (
-            text: title,
-            font: UIFont(name: "SejongGeulggot", size: 55) ?? .systemFont(ofSize: 55),
-            fill: .black,
-            stroke: UIColor(style.outlineColor),
-            strokeWidth: 7.5,
-            kerning: 0,
-            maxWidth: decoWidth
-        )
-        
+        // outlined 이미지가 사실상 투명한 경우 실패로 처리
+        if outlined.isEffectivelyTransparent() {
+            print("❌ [makeSticker] outlined 이미지가 사실상 투명 — 스티커 생성 중단")
+            return nil
+        }
+
+        let layout = style.layout
+
         let sticker = ImageUtils.renderViewAsImage(
             ZStack {
-                Image(uiImage: outlined)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: outlinedSize.width, height: outlinedSize.height)
-                
-                Image(style.stickerDecoString)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: decoWidth)
-                    .offset(x: 16, y: -36)
-                
-                VStack {
-                    Spacer()
-                    
-                    Image(uiImage: titleImage)
+                if layout.outlinedOnTop {
+                    Image(style.stickerDecoBackground)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: outlinedSize.width * 0.7, alignment: .center)
+                        .frame(width: 360, height: 300)
+
+                    HStack {
+                        VStack {
+                            Image(uiImage: outlined)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(
+                                    width: layout.outlinedSize.width,
+                                    height: layout.outlinedSize.height
+                                )
+                                .offset(layout.outlinedOffset)
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                } else {
+                    HStack {
+                        VStack {
+                            Image(uiImage: outlined)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(
+                                    width: layout.outlinedSize.width,
+                                    height: layout.outlinedSize.height
+                                )
+                                .offset(layout.outlinedOffset)
+                            
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+
+                    Image(style.stickerDecoBackground)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 360, height: 300)
                 }
             }
-            .offset(y: -20)
-            , size: CGSize(width: decoWidth, height: outlinedSize.height)
+            .frame(width: 360, height: 300),
+            size: CGSize(width: 360, height: 300)
         )
         
+        return sticker
+
         /// 최종 스티커 이미지를 한 번 더 다운스케일
-        let finalSticker = resizedForStickerUpload(sticker, maxEdge: 360)
-        return finalSticker
-        func resizedForStickerUpload(_ image: UIImage, maxEdge: CGFloat = 360) -> UIImage {
-            let size = image.size
-            let maxOriginalEdge = max(size.width, size.height)
-            guard maxOriginalEdge > maxEdge, maxOriginalEdge > 0 else {
-                return image
-            }
-            
-            let scale = maxEdge / maxOriginalEdge
-            let newSize = CGSize(width: size.width * scale, height: size.height * scale)
-            
-            let format = UIGraphicsImageRendererFormat.default()
-            format.scale = 1
-            
-            let renderer = UIGraphicsImageRenderer(size: newSize, format: format)
-            let resized = renderer.image { _ in
-                image.draw(in: CGRect(origin: .zero, size: newSize))
-            }
-            return resized
-        }
+//        let finalSticker = resizedForStickerUpload(sticker, maxEdge: 360)
+//        return finalSticker
+//        func resizedForStickerUpload(_ image: UIImage, maxEdge: CGFloat = 360) -> UIImage {
+//            let size = image.size
+//            let maxOriginalEdge = max(size.width, size.height)
+//            guard maxOriginalEdge > maxEdge, maxOriginalEdge > 0 else {
+//                return image
+//            }
+//
+//            let scale = maxEdge / maxOriginalEdge
+//            let newSize = CGSize(width: size.width * scale, height: size.height * scale)
+//
+//            let format = UIGraphicsImageRendererFormat.default()
+//            format.scale = 1
+//
+//            let renderer = UIGraphicsImageRenderer(size: newSize, format: format)
+//            let resized = renderer.image { _ in
+//                image.draw(in: CGRect(origin: .zero, size: newSize))
+//            }
+//
+//            return resized
+//        }
     }
     
     func getStickerCollection(of postId: String) async -> [String: UIImage] {
@@ -296,5 +322,83 @@ extension UIImage {
             scale: self.scale,
             orientation: self.imageOrientation
         )
+    }
+
+    /// 현재 이미지를 세로로 더 긴 3:4 비율 캔버스의 하단 중앙에 배치하여 반환
+    func paddedToThreeByFourBottomAligned(backgroundColor: UIColor = .clear) -> UIImage {
+        let w = size.width
+        let h = size.height
+
+        // 사이즈가 유효하지 않으면 원본 반환
+        guard w > 0, h > 0 else { return self }
+
+        let aspect: CGFloat = 3.0 / 4.0 // width : height = 3:4 (세로가 긴 비율)
+
+        // 너비를 기준으로 3:4 비율의 높이를 계산
+        let widthBasedHeight = w / aspect
+
+        let canvasSize: CGSize
+        if widthBasedHeight >= h {
+            // 너비는 그대로 두고, 높이를 3:4 비율에 맞추면 클리핑 이미지가 모두 들어감
+            canvasSize = CGSize(width: w, height: widthBasedHeight)
+        } else {
+            // 높이를 기준으로 3:4 비율의 너비를 계산
+            let heightBasedWidth = h * aspect
+            // 이 경우 높이는 그대로 두고, 너비를 3:4 비율에 맞춘다
+            canvasSize = CGSize(width: heightBasedWidth, height: h)
+        }
+
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = self.scale
+        let renderer = UIGraphicsImageRenderer(size: canvasSize, format: format)
+
+        let result = renderer.image { context in
+            // 배경 채우기
+            backgroundColor.setFill()
+            context.fill(CGRect(origin: .zero, size: canvasSize))
+
+            // 클리핑 이미지를 캔버스 하단 중앙에 배치
+            let originX = (canvasSize.width - w) / 2
+            let originY = canvasSize.height - h
+            let drawRect = CGRect(origin: CGPoint(x: originX, y: originY), size: size)
+
+            self.draw(in: drawRect)
+        }
+
+        return result
+    }
+    
+    /// 이미지가 사실상 완전히 투명한지(또는 매우 일부만 보이는지) 확인
+    func isEffectivelyTransparent(alphaThreshold: UInt8 = 5, visibleRatioThreshold: CGFloat = 0.001) -> Bool {
+        guard let cgImage = self.cgImage else { return false }
+        guard let dataProvider = cgImage.dataProvider,
+              let data = dataProvider.data,
+              let ptr = CFDataGetBytePtr(data) else {
+            return false
+        }
+
+        let width = cgImage.width
+        let height = cgImage.height
+        let bytesPerPixel = 4
+        let bytesPerRow = cgImage.bytesPerRow
+
+        var visibleCount: Int = 0
+        var totalCount: Int = 0
+
+        for y in 0..<height {
+            for x in 0..<width {
+                let offset = y * bytesPerRow + x * bytesPerPixel
+                let alpha = ptr[offset + 3]
+                if alpha > alphaThreshold {
+                    visibleCount += 1
+                }
+                totalCount += 1
+            }
+        }
+
+        guard totalCount > 0 else { return true }
+
+        let ratio = CGFloat(visibleCount) / CGFloat(totalCount)
+        return ratio < visibleRatioThreshold
     }
 }

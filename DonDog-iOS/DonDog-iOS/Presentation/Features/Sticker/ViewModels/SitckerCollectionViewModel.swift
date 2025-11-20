@@ -19,6 +19,7 @@ final class SitckerCollectionViewModel: ObservableObject {
     
     @Published var pickedImage: UIImage?
     @Published var capturedImage: UIImage?
+    @Published var lastSelectedCategory: StickerCategory = .bigEmotion
     
     private let dataManager: DataManagerProtocol = DataManager.shared
     
@@ -33,7 +34,7 @@ final class SitckerCollectionViewModel: ObservableObject {
             StickerEmotionTagManager.shared.emotionTags = []
             return
         }
-        
+
         let items = StickerGridService().stickerItems(for: category)
         guard let item = items.first(where: { $0.title == title }) else {
             StickerEmotionTagManager.shared.emotionTags = []

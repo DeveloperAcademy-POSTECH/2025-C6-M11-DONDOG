@@ -23,8 +23,6 @@ class YourAppCheckProviderFactory: NSObject, AppCheckProviderFactory {
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
-    var initialDeepLink: String?
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         let providerFactory = YourAppCheckProviderFactory()
         AppCheck.setAppCheckProviderFactory(providerFactory)
@@ -56,7 +54,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         if let userInfo = launchOptions?[.remoteNotification] as? [AnyHashable: Any] {
             if let link = userInfo["link"] as? String {
                 print("앱 실행 시 딥링크 처리: \(userInfo)")
-                self.initialDeepLink = link
+                NotificationCenter.default.post(name: .openDeepLink, object: link)
             }
         }
         return true
@@ -79,14 +77,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         Messaging.messaging().apnsToken = deviceToken
 
     }
-
-    private func userNotificationCenter(
-        center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.list, .banner])
-    }
-
+    
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         NSLog("APNs 등록 실패: \(error.localizedDescription)")
     }
@@ -114,16 +105,24 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         NotificationService.shared.uploadFCMToken(token)
     }
 
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let userInfo = notification.request.content.userInfo
+        NSLog("foreground notification: \(userInfo)")
+
+        // 포그라운드에서도 배너/사운드/뱃지 보여주기
+        completionHandler([.banner, .sound, .badge])
+    }
+    
     // 푸시 알림을 누르면 포함된 link의 정보를 추출하여 딥링크 수행
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-
         let userInfo = response.notification.request.content.userInfo
         NSLog("tapped notification: \(userInfo)")
         if let link = userInfo["link"] as? String {
             NotificationCenter.default.post(name: .openDeepLink, object: link)
         }
+        completionHandler()
     }
-
+    
     private func ensureFCMTokenAndSubscribe() {
         Messaging.messaging().token { token, error in
             if let token {

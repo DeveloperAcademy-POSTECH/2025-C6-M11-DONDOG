@@ -12,6 +12,7 @@ import FirebaseFirestore
 final class PostViewModel: ObservableObject {
     @Published var post: PostData
     @Published var isMyPost = false
+    @Published var postOwnerNickname: String = ""
     
     private let connectUserInfo = UserPairingStore.shared
     
@@ -21,7 +22,9 @@ final class PostViewModel: ObservableObject {
     }
     
     private func checkIfItsMyPost() {
-        isMyPost = post.authorId == connectUserInfo.myUid
+        let isMine = post.authorId == connectUserInfo.myUid
+        isMyPost = isMine
+        postOwnerNickname = isMine ? "\(connectUserInfo.myName ?? "")" : "\(connectUserInfo.partnerName ?? "")"
     }
     
     func deletePost() async {

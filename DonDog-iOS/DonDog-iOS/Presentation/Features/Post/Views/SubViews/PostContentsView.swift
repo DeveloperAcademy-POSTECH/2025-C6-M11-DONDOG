@@ -18,50 +18,50 @@ struct PostContentsView: View {
     
     var body: some View {
         VStack {
-            if !isEditing {
-                TabView(selection: $isFrontOrBack) {
+            TabView(selection: $isFrontOrBack) {
+                VStack(spacing: 0) {
                     ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel)
-                        .tag(0)
                         .onTapGesture {
-                            if !isEditing {
                                 showDetail = true
-                            }
                         }
-                    
-                    ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel)
-                        .tag(1)
-                        .onTapGesture {
-                            if !isEditing {
-                                showDetail = true
-                            }
-                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                    Rectangle()
+                        .frame(height: 40)
+                        .foregroundStyle(.ppWhite)
                 }
-                .tabViewStyle(.page(indexDisplayMode: .automatic))
-                .frame(height: 470)
-                .clipShape(RoundedRectangle(cornerRadius: 15))
-                .padding(.bottom, 10)
-            } else {
-                ImageView(urlString: isFrontOrBack == 0 ? post.frontImageURL : post.backImageURL, isEditing: $isEditing, viewModel: viewModel)
-                    .frame(height: 470)
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                    .padding(.bottom, 10)
+                .tag(0)
+                .padding(.horizontal, 20)
+                
+                VStack(spacing: 0) {
+                    ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel)
+                        .onTapGesture {
+                                showDetail = true
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                    Rectangle()
+                        .frame(height: 40)
+                        .foregroundStyle(.ppWhite)
+                }
+                .tag(1)
+                .padding(.horizontal, 20)
             }
+            .tabViewStyle(.page(indexDisplayMode: .automatic))
+            .frame(maxHeight: 510)
             
-            Text(post.caption)
-                .font(.polaroidCaptionRegular16)
-                .foregroundStyle(.ppBlack)
-                .padding(.top, 8)
-                .padding(.bottom, 2)
-            
-            Text(DateUtils.relativeTimeString(from: post.createdAt.dateValue()))
-                .font(.captionRegular13)
-                .foregroundStyle(.ppGray500)
+            VStack(spacing: 4) {
+                Text(post.caption)
+                    .font(.bodyRegular16)
+                    .foregroundStyle(.ppBlack)
+                
+                Text(DateUtils.relativeTimeString(from: post.createdAt.dateValue()))
+                    .font(.captionRegular13)
+                    .foregroundStyle(.ppGray500)
+            }
+            .padding(.bottom, 50)
             
             Spacer()
         }
-        .padding(.top, 64)
-        .padding(.horizontal, 20)
-        .gesture(isEditing ? nil : DragGesture())
+        .padding(.top, 44)
         .onChange(of: isFrontOrBack) { _, newValue in
             Task {
                 viewModel.postImageType = (newValue == 0) ? .front : .back

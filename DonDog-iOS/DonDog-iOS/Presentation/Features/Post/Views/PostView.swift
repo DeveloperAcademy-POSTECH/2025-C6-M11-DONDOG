@@ -33,7 +33,7 @@ struct PostView: View {
                 VStack {
                     CustomNavigationBar(
                         leadingType: .back(action: { coordinator.pop() }),
-                        centerType: .timeTitle(title: DateUtils.string(from: createdAt, format: .monthDay), timeImage: DateUtils.isATime(date: createdAt) ? "sun.max" : "moon.fill"),
+                        centerType: .timeTitle(title: "\(viewModel.postOwnerNickname)의 \(DateUtils.isATime(date: createdAt) ? "오전" : "오후")", timeImage: DateUtils.isATime(date: createdAt) ? "sun.max.fill" : "moon.fill"),
                         trailingType: viewModel.isMyPost ? .menu(items: [
                             CustomNavMenuItem("삭제하기", role: .destructive) {
                                 showDeleteConfirmAlert = true
@@ -149,6 +149,10 @@ struct PostView: View {
                 }
                 .ignoresSafeArea()
             }
+        }
+        .background {
+            Color.ppWhite
+                .ignoresSafeArea()
         }
         .navigationBarBackButtonHidden(true)
         .task {

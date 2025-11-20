@@ -226,9 +226,9 @@ struct HomeView: View {
                             stickerViewModel.shouldReopenSheetAfterCamera = true
                             viewModel.isShowStickerSheet = false
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                coordinator.push(.camera)
+                                coordinator.push(.camera(isStickerCamera: true))
                             }
-                        }
+                        }, gridService: StickerGridService()
                     )
                     .presentationDetents([.height(270)])
                     .presentationBackgroundInteraction(.enabled)

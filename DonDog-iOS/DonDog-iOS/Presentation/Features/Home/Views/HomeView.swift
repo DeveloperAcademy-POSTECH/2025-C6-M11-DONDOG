@@ -230,10 +230,10 @@ struct HomeView: View {
                             }
                         }, gridService: StickerGridService()
                     )
-                    .presentationDetents([.height(270)])
+                    .presentationDetents([.height(317)])
                     .presentationBackgroundInteraction(.enabled)
                     .presentationDragIndicator(.hidden)
-                    .background(Color.ddGray100.opacity(0.5))
+                    .background(Color.ppRealBlack.opacity(0.95))
                 }
             }
             .background {

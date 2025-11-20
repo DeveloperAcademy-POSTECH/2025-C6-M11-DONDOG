@@ -41,7 +41,7 @@ struct SitckerCollectionView: View {
                 remoteURLByItemID: gridService.stickerImageURLs,
                 loadingItemIDs: gridService.loadingItemIDs,
                 columns: columns,
-                rowSpacing: 26,
+                rowSpacing: 25,
                 onItemAppear: { id in
                     guard gridService.stickerImageURLs[id] == nil, gridService.loadingItemIDs.contains(id) == false, let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id }) else { return }
                     
@@ -65,7 +65,10 @@ struct SitckerCollectionView: View {
                         }
                     }
                 },
-                selectedItemID: viewModel.targetItemID
+                selectedItemID: viewModel.targetItemID,
+                categoryKey: gridService.selectedCategory.assetKey,
+                role: UserPairingStore.shared.myRole
+                
             )
             .padding(.vertical, 10)
             

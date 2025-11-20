@@ -34,11 +34,7 @@ struct PostView: View {
                     CustomNavigationBar(
                         leadingType: .back(action: { coordinator.pop() }),
                         centerType: .timeTitle(title: "\(viewModel.postOwnerNickname)의 \(DateUtils.isATime(date: createdAt) ? "오전" : "오후")", timeImage: DateUtils.isATime(date: createdAt) ? "sun.max.fill" : "moon.fill"),
-                        trailingType: viewModel.isMyPost ? .menu(items: [
-                            CustomNavMenuItem("삭제하기", role: .destructive) {
-                                showDeleteConfirmAlert = true
-                            }
-                        ]) : .none,
+                        trailingType: viewModel.isMyPost ? .menu(items: [CustomNavMenuItem("삭제하기", role: .destructive) { showDeleteConfirmAlert = true }]) : .none,
                         navigationColor: .black
                     )
                     .padding(.horizontal, 20)
@@ -136,18 +132,16 @@ struct PostView: View {
                                 await stickerViewModel.fetchStickers()
                             }
                         }
-                    }
+                    }.ignoresSafeArea()
                     
                     Image(systemName: "xmark")
-                        .font(.system(size: 17))
+                        .font(.system(size: 23))
                         .foregroundColor(.white)
-                        .padding(.top, 54)
                         .padding(.horizontal, 16)
                         .onTapGesture {
                             showImageDetail = false
                         }
                 }
-                .ignoresSafeArea()
             }
         }
         .background {

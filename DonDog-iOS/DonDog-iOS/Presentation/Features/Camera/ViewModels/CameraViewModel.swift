@@ -21,9 +21,7 @@ final class CameraViewModel: ObservableObject {
     @Published var showGuideView: Bool = true
     @Published var showCompleteView: Bool = false
     @Published var showExitAlert: Bool = false
-    
-    // 스티커 제작뷰에서 활성화한 카메라인지 여부
-    var isStickerCamera: Bool = false
+    @Published var isStickerCamera: Bool = false
     @Published var stickerKeyword: String? = nil
     
     // 카메라 컨트롤러 참조 (리셋을 위해 필요)

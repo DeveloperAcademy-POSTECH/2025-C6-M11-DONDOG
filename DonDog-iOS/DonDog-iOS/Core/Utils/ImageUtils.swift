@@ -75,14 +75,51 @@ final class ImageUtils {
         return UIImage(cgImage: cgImage)
     }
     
+//    static func renderViewAsImage<V: View>(_ view: V, size: CGSize) -> UIImage {
+//        let controller = UIHostingController(rootView: view)
+//        // controller.view.bounds = CGRect(origin: .zero, size: size)
+//        controller.view.frame  = CGRect(origin: .zero, size: size)
+//        controller.view.backgroundColor = .clear
+//        
+//        controller.view.setNeedsLayout()
+//        controller.view.layoutIfNeeded()
+//        
+//        let renderer = UIGraphicsImageRenderer(size: size)
+//        return renderer.image { _ in
+//            controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+//        }
+//    }
+    
     static func renderViewAsImage<V: View>(_ view: V, size: CGSize) -> UIImage {
-        let controller = UIHostingController(rootView: view)
-        controller.view.bounds = CGRect(origin: .zero, size: size)
+        if #available(iOS 16.0, *) {
+            let renderer = ImageRenderer(
+                content: view
+                    .frame(width: size.width, height: size.height, alignment: .center)
+                    .ignoresSafeArea()
+            )
+            renderer.scale = UIScreen.main.scale
+            
+            if let image = renderer.uiImage {
+                return image
+            }
+        }
+        
+        // Fallback: UIHostingController + layer.render
+        let controller = UIHostingController(
+            rootView: view
+                .frame(width: size.width, height: size.height, alignment: .center)
+        )
         controller.view.backgroundColor = .clear
+        controller.view.bounds = CGRect(origin: .zero, size: size)
+        controller.view.frame = CGRect(origin: .zero, size: size)
+        
+        controller.view.setNeedsLayout()
+        controller.view.layoutIfNeeded()
         
         let renderer = UIGraphicsImageRenderer(size: size)
-        return renderer.image { _ in
-            controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+        return renderer.image { ctx in
+            controller.view.layer.render(in: ctx.cgContext)
         }
     }
+    
 }

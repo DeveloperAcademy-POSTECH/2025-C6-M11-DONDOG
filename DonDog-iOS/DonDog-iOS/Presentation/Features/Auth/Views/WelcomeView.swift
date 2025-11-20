@@ -14,7 +14,7 @@ struct WelcomeView: View {
         VStack {
             Spacer()
             
-            VStack(spacing: 12.6) {
+            VStack(spacing: 16) {
                 Image("SplashLogo")
                     .resizable()
                     .scaledToFit()
@@ -28,6 +28,7 @@ struct WelcomeView: View {
             
             CustomButton(title: "전화번호로 시작하기", isEnable: true, action: {
                 UserPairingStore.shared.reset()
+                StickerGridService.shared.deleteCache()
                 AuthService.isAccountDeletionInProgress = false
                 coordinator.authShowWithdraw = false
                 coordinator.push(.auth)

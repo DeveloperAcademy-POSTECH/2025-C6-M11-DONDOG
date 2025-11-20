@@ -26,6 +26,12 @@ struct CustomButton: View {
                 .foregroundStyle(backgroundColor)
             
             HStack(spacing: 8) {
+                if title == "다시 촬영하기" {
+                    Image(systemName: "arrow.trianglehead.clockwise")
+                        .foregroundStyle(Color.ppWhite)
+                        .font(.system(size: 22))
+                        .padding(.leading, 2)
+                }
                 Text(title)
                     .font(.bodyMedium16)
                     .foregroundStyle(Color.ppWhite)

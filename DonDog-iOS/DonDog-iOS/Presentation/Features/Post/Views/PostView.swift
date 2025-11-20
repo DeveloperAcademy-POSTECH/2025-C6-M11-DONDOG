@@ -74,9 +74,10 @@ struct PostView: View {
                                 stickerViewModel.shouldReopenSheetAfterCamera = true
                                 showStickerSheet = false
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    coordinator.push(.camera)
+                                    coordinator.push(.camera(isStickerCamera: true))
                                 }
-                            }
+                            },
+                            gridService: StickerGridService(role: UserPairingStore.shared.myRole ?? "child")
                         )
                         .presentationDetents([.height(317)])
                         .presentationBackgroundInteraction(.enabled)

@@ -31,7 +31,7 @@ final class StickerViewModel: ObservableObject {
     @Published var postId = ""
     @Published var postImageType: PostImageType = .front
     
-    @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
+    // @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
     
     @Published var frontStickers: [AttachedSticker] = []
     @Published var backStickers: [AttachedSticker] = []

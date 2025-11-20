@@ -24,6 +24,7 @@ class CustomCameraViewController: UIViewController, UIGestureRecognizerDelegate 
     var photoOutput: AVCapturePhotoOutput!
     var currentCamera: AVCaptureDevice?
     weak var viewModel: CameraViewModel?
+    var stickerGridService: StickerGridService?
     
     var isStickerCamera: Bool = false
     let stickerMaskView = UIView()

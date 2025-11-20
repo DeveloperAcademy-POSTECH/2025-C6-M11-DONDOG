@@ -17,6 +17,7 @@ struct PicPeekApp: App {
             let factory = ModuleFactory.shared
             let coordinator = AppCoordinator(factory: factory)
             RootNavigationView(coordinator: coordinator)
+                .toolbarBackground(.hidden, for: .navigationBar)
                 .onOpenURL { url in
                     if Auth.auth().canHandle(url) {
                         return

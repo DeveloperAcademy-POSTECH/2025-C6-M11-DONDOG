@@ -27,6 +27,10 @@ final class SettingViewModel: ObservableObject {
             await MainActor.run {
                 URLCache.shared.removeAllCachedResponses()
                 
+                let gridService = StickerGridService.shared
+                gridService.stickerImageURLs.removeAll()
+                gridService.loadingItemIDs.removeAll()
+                gridService.fetchedItemIDs.removeAll()
             }
             NSLog("로그아웃 성공")
         } catch {

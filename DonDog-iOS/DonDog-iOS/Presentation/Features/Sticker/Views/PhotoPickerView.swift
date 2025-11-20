@@ -108,6 +108,7 @@ struct PhotoPickerView: View {
                 .padding(.vertical, 8)
             }
         }
+        .background(.ppWhite)
         .task { await viewModel.loadInitial() }
         .backHiddenSwipeEnabled()
         .fullScreenCover(

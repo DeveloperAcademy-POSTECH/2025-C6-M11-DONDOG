@@ -69,75 +69,77 @@ struct ArchiveView: View {
                     .background(.ppGray200)
                 }
                 
-                // 사진 0장일 때 예외처리
-                if !viewModel.isLoading {
-                    if !viewModel.displayMonths.isEmpty {
-                        let month = viewModel.displayMonths[viewModel.currentMonthIndex]
-                        if month.days.isEmpty {
+                ZStack(alignment: .bottom) {
+                    // 사진 0장일 때 예외처리
+                    if !viewModel.isLoading {
+                        if !viewModel.displayMonths.isEmpty {
+                            let month = viewModel.displayMonths[viewModel.currentMonthIndex]
+                            if month.days.isEmpty {
+                                Spacer()
+                                VStack(spacing: 16) {
+                                    Image("ArchiveEmptyView")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 160, height: 118)
+                                    Text(
+                                        viewModel.isCurrentMonthDisplayed
+                                        ? "아직 사진이 없어요\n첫 게시물을 올려 볼까요?"
+                                        : "기록이 없어요"
+                                    )
+                                    .multilineTextAlignment(.center)
+                                    .font(.bodyMedium16)
+                                }
+                                .foregroundStyle(.ppGray500)
+                                Spacer()
+                            } else {
+                                ScrollView {
+                                    VStack {
+                                        VStack(alignment: .leading) {
+                                            LazyVGrid(columns: grid, spacing: 4) {
+                                                ForEach(month.days) { day in
+                                                    Button {
+                                                        if !viewModel.isPostBlurred(for: day) {
+                                                            viewModel.moveToPost(day: day)
+                                                        } else {
+                                                            showToastView = true
+                                                        }
+                                                    } label: {
+                                                        ArchivePostContainer(url: day.thumbnailURL, day: day.day, date: day.date, isBlurred: viewModel.isPostBlurred(for: day))
+                                                    }
+                                                    .hapticFeedback(.medium)
+                                                }
+                                            }
+                                            .padding(.horizontal, 10)
+                                        }
+                                    }
+                                }
+                                .padding(.top, 20)
+                            }
+                        } else {
                             Spacer()
                             VStack(spacing: 16) {
                                 Image("ArchiveEmptyView")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 160, height: 118)
-                                Text(
-                                    viewModel.isCurrentMonthDisplayed
-                                    ? "아직 사진이 없어요\n첫 게시물을 올려 볼까요?"
-                                    : "기록이 없어요"
-                                )
-                                .multilineTextAlignment(.center)
-                                .font(.bodyMedium16)
+                                Text("아직 사진이 없어요\n첫 게시물을 올려 볼까요?")
+                                    .multilineTextAlignment(.center)
+                                    .font(.bodyMedium16)
                             }
                             .foregroundStyle(.ppGray500)
                             Spacer()
-                        } else {
-                            ScrollView {
-                                VStack {
-                                    VStack(alignment: .leading) {
-                                        LazyVGrid(columns: grid, spacing: 4) {
-                                            ForEach(month.days) { day in
-                                                Button {
-                                                    if !viewModel.isPostBlurred(for: day) {
-                                                        viewModel.moveToPost(day: day)
-                                                    } else {
-                                                        showToastView = true
-                                                    }
-                                                } label: {
-                                                    ArchivePostContainer(url: day.thumbnailURL, day: day.day, date: day.date, isBlurred: viewModel.isPostBlurred(for: day))
-                                                }
-                                                .hapticFeedback(.medium)
-                                            }
-                                        }
-                                        .padding(.horizontal, 10)
-                                    }
-                                }
-                            }
-                            .padding(.top, 20)
                         }
-                    } else {
-                        Spacer()
-                        VStack(spacing: 16) {
-                            Image("ArchiveEmptyView")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 160, height: 118)
-                            Text("아직 사진이 없어요\n첫 게시물을 올려 볼까요?")
-                                .multilineTextAlignment(.center)
-                                .font(.bodyMedium16)
-                        }
-                        .foregroundStyle(.ppGray500)
-                        Spacer()
                     }
+                    
+                    Spacer()
+                    
+                    CustomSegmentedControl(
+                        items: ArchiveSegment.allCases,
+                        selectedItem: $viewModel.selectedAuthorType,
+                        titleProvider: { $0.rawValue }
+                    )
+                    .padding(.bottom, 34)
                 }
-                
-                Spacer()
-                
-                CustomSegmentedControl(
-                    items: ArchiveSegment.allCases,
-                    selectedItem: $viewModel.selectedAuthorType,
-                    titleProvider: { $0.rawValue }
-                )
-                .padding(.bottom, 34)
             }
             
             if viewModel.isLoading {

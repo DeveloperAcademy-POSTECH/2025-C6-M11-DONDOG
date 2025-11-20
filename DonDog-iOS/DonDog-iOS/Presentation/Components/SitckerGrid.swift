@@ -108,7 +108,7 @@ struct StickerCellView: View {
             ZStack {
                 ProgressView()
                     .tint(showedAt == .sheet ? .ppGray300 : Color.ppPrime)
-                    .opacity(showedAt == .sheet ? 0.1 : 1.0)
+                    .opacity(showedAt == .sheet ? 0.5 : 1.0)
                     .frame(width: 24, height: 24)
                     .padding(.horizontal, 48)
                     .padding(.top, 28)

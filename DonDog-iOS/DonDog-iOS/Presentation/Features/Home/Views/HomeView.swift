@@ -24,6 +24,9 @@ struct HomeView: View {
             VStack(spacing: 0) {
                 CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "sun.max.fill" : "moon.fill"), navigationColor: .black)
                     .padding(.horizontal, 26)
+                    .onTapGesture {
+                        viewModel.isShowStickerSheet = false
+                    }
                 
                 if !viewModel.isShowStickerSheet {
                     CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
@@ -235,6 +238,14 @@ struct HomeView: View {
                     .presentationDragIndicator(.hidden)
                     .background(Color.ppRealBlack.opacity(0.95))
                     .interactiveDismissDisabled(true)
+                }
+            }
+            .onChange(of: viewModel.isShowStickerSheet) {
+                if !viewModel.isShowStickerSheet {
+                    Task {
+                        await stickerViewModel.saveStickers()
+                        stickerViewModel.selectedStickerID = nil
+                    }
                 }
             }
             .background {

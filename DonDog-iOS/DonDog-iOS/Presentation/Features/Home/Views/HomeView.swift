@@ -234,6 +234,7 @@ struct HomeView: View {
                     .presentationBackgroundInteraction(.enabled)
                     .presentationDragIndicator(.hidden)
                     .background(Color.ppRealBlack.opacity(0.95))
+                    .interactiveDismissDisabled(true)
                 }
             }
             .background {

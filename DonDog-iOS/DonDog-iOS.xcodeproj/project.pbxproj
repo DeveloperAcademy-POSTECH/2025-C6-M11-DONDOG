@@ -154,7 +154,6 @@
 		8BA793C92EC06DF000FF05B3 /* StickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerSheetView.swift; sourceTree = "<group>"; };
 		8BA793CB2EC073E500FF05B3 /* SitckerGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitckerGrid.swift; sourceTree = "<group>"; };
 		8BA793CD2EC0750900FF05B3 /* StickerGridService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerGridService.swift; sourceTree = "<group>"; };
-		8BB5B1C82ECC164000247C5B /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberView.swift; sourceTree = "<group>"; };
 		8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNumberViewModel.swift; sourceTree = "<group>"; };
 		8BD1C1352EC9C0E10064CF70 /* CameraViewController+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraViewController+Actions.swift"; sourceTree = "<group>"; };
@@ -386,6 +385,7 @@
 				8BA793CB2EC073E500FF05B3 /* SitckerGrid.swift */,
 				8BEA2CD42EC3A1E500BC27EC /* OutlinedTitleImageMaker.swift */,
 				CAC4C62A2EC6D39800131F6A /* CustomAlert.swift */,
+				D297CE7E2EB0305E00F28395 /* StickerView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -494,6 +494,7 @@
 				8C5A1EDD2ECD5B5E00C08B0E /* HomeEmptyView.swift */,
 				8C5A1EDB2ECD589400C08B0E /* TabItemView.swift */,
 				8C5A1ED92ECD57DB00C08B0E /* NotConnectedView.swift */,
+				8BA793C92EC06DF000FF05B3 /* StickerSheetView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -737,8 +738,6 @@
 			children = (
 				D219F21E2EAEA10100BD82B7 /* PostContentsView.swift */,
 				D27750982EC0186400E27680 /* ImageView.swift */,
-				8BA793C92EC06DF000FF05B3 /* StickerSheetView.swift */,
-				D297CE7E2EB0305E00F28395 /* StickerView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";

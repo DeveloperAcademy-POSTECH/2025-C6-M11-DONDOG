@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 enum AppRoute: Hashable {
+    case initialOnboarding
     case welcome
     case auth
     case authNumber

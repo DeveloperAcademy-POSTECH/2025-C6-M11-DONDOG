@@ -9,6 +9,7 @@ import Combine
 import SwiftUI
 
 protocol ModuleFactoryProtocol {
+    func makeInitialOnboarding() -> InitialOnBoardingView
     func makeWelcomeView() -> WelcomeView
     func makeAuthView(isWithDraw: Bool) -> AuthView
     func makeAuthNumberView(isNumberWithdraw: Bool) -> AuthNumberView
@@ -26,6 +27,10 @@ protocol ModuleFactoryProtocol {
 final class ModuleFactory: ModuleFactoryProtocol {
     static let shared = ModuleFactory()
     private init() {}
+    
+    func makeInitialOnboarding() -> InitialOnBoardingView {
+        InitialOnBoardingView()
+    }
 
     func makeWelcomeView() -> WelcomeView {
         let view = WelcomeView()

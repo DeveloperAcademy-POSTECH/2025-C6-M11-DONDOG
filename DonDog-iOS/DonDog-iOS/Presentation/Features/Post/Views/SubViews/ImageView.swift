@@ -11,14 +11,14 @@ import SwiftUI
 struct ImageView: View {
     let urlString: String
     @Binding var isEditing: Bool
-    
     @ObservedObject var viewModel: StickerViewModel
+    @Binding var isZooming: Bool  // @Environment 대신 Binding 사용
     @State private var loadFailed: Bool = false
-
+    
     private var url: URL? {
         URL(string: urlString)
     }
-
+    
     var body: some View {
         ZStack {
             KFImage(url)
@@ -60,28 +60,30 @@ struct ImageView: View {
                     }
                 }
             
-            ForEach(viewModel.postImageType == PostImageType.front ? $viewModel.frontStickers : $viewModel.backStickers) { $sticker in
-                StickerView(
-                    sticker: $sticker,
-                    isSelected: viewModel.selectedStickerID == sticker.id,
-                    isEditable: isEditing,
-                    onDelete: {
-                        Task {
-                            await viewModel.removeSticker(sticker)
+            if !isZooming {
+                ForEach(viewModel.postImageType == PostImageType.front ? $viewModel.frontStickers : $viewModel.backStickers) { $sticker in
+                    StickerView(
+                        sticker: $sticker,
+                        isSelected: viewModel.selectedStickerID == sticker.id,
+                        isEditable: isEditing,
+                        onDelete: {
+                            Task {
+                                await viewModel.removeSticker(sticker)
+                            }
+                        },
+                        onInteraction: {
+                            if isEditing {
+                                viewModel.selectedStickerID = sticker.id
+                            }
                         }
-                    },
-                    onInteraction: {
+                    )
+                    .onTapGesture {
                         if isEditing {
                             viewModel.selectedStickerID = sticker.id
                         }
                     }
-                )
-                .onTapGesture {
-                    if isEditing {
-                        viewModel.selectedStickerID = sticker.id
-                    }
+                    .allowsHitTesting(isEditing)
                 }
-                .allowsHitTesting(isEditing)
             }
         }
     }

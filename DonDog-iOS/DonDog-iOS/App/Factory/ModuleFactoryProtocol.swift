@@ -26,7 +26,7 @@ protocol ModuleFactoryProtocol {
 final class ModuleFactory: ModuleFactoryProtocol {
     static let shared = ModuleFactory()
     private init() {}
-
+    
     func makeWelcomeView() -> WelcomeView {
         let view = WelcomeView()
         return view

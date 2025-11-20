@@ -147,6 +147,8 @@ final class AuthService {
     // MARK: - 라우팅 처리 3: 방/페어링 상태 라우팅
     private func processRoomRouting(coordinator: AppCoordinator, refreshUser: User, userData: [String: Any], roomId: String?) {
         let state = UserPairingStore.shared
+        let previousRoomId = state.roomId
+        
         state.myUid = refreshUser.uid
         state.myName = userData["name"] as? String
         state.myRole = userData["role"] as? String
@@ -167,9 +169,11 @@ final class AuthService {
             NSLog("[AuthService] 🔓 미연결 상태 (roomId 없음)")
 
             if coordinator.root == .invite {
-                /// roomId 없음 + 현재 라우트 .invite → 라우팅 유지"
+                /// roomId 없음 + 현재 라우트 .invite → 라우팅 유지
             } else {
-                replaceRootinAuthService(.home, coordinator: coordinator)
+                if previousRoomId != nil {
+                    replaceRootinAuthService(.home, coordinator: coordinator)
+                }
             }
             return
         }
@@ -200,7 +204,11 @@ final class AuthService {
                 NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil"), role = \(state.myRole ?? "nil")")
                 NSLog("[AuthService] 상태: 연결 상태 =\(state.isConnected), roomId=\(state.roomId ?? "nil"), lastUploadedAt = \(DateUtils.string(from: state.lastUploadedAt ?? .now, format: .full))")
                 
-                replaceRootinAuthService(.home, coordinator: coordinator)
+                if previousRoomId == nil {
+                    replaceRootinAuthService(.home, coordinator: coordinator)
+                } else {
+                    //
+                }
             } catch {
                 NSLog("AuthService에서 정보 로딩 중 에러: \(error.localizedDescription)")
                 state.reset()

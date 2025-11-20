@@ -14,7 +14,7 @@ protocol ModuleFactoryProtocol {
     func makeAuthNumberView(isNumberWithdraw: Bool) -> AuthNumberView
     func makeProfileView(mode: ProfileFormMode) -> ProfileView
     func makeInviteView(showSentHint: Bool) -> InviteView
-    func makeCameraView() -> CameraView
+    func makeCameraView(isStickerCamera: Bool) -> CameraView
     func makeSettingView() -> SettingView
     func makeArchiveView() -> ArchiveView
     func makePostView(with post: PostData, for postType: PostType) -> PostView
@@ -56,8 +56,9 @@ final class ModuleFactory: ModuleFactoryProtocol {
         return view
     }
     
-    func makeCameraView() -> CameraView {
+    func makeCameraView(isStickerCamera: Bool) -> CameraView {
         let cameraViewModel = CameraViewModel()
+        cameraViewModel.isStickerCamera = isStickerCamera
         return CameraView(viewModel: cameraViewModel)
     }
 

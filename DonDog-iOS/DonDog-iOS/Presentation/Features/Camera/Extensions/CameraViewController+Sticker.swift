@@ -14,10 +14,8 @@ extension CustomCameraViewController {
         let tags = StickerEmotionTagManager.shared.emotionTags
         
         if tags.count >= 2 {
-            isStickerCamera = true
             stickerKeyword = tags[1]
         } else {
-            isStickerCamera = false
             stickerKeyword = nil
         }
     }

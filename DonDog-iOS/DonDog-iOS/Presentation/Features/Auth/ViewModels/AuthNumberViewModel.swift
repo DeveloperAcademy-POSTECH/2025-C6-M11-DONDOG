@@ -106,6 +106,11 @@ final class AuthNumberViewModel: ObservableObject {
     }
     
     private func performAccountDeletion() {
+        let gridService = StickerGridService.shared
+        gridService.stickerImageURLs.removeAll()
+        gridService.loadingItemIDs.removeAll()
+        gridService.fetchedItemIDs.removeAll()
+        
         Task {
             await MainActor.run {
                 AuthService.isAccountDeletionInProgress = true

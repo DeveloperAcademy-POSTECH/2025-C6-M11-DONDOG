@@ -23,8 +23,26 @@ struct ImageView: View {
         ZStack {
             KFImage(url)
                 .placeholder {
-                    Rectangle()
-                        .fill(.ddGray500)
+                    HStack {
+                        VStack {
+                            Spacer()
+                            Image("LoadingView")
+                            Text("지금 사진을 불러오는 중이에요.")
+                                .font(.subtitleSemiBold16)
+                                .foregroundStyle(.ppGray700)
+                            Text("곧 사진이 도착해요! 잠시만 기다려 주세요.")
+                                .font(.captionRegular14)
+                                .foregroundStyle(.ppGray500)
+                                .padding(.top, 2)
+                            Spacer()
+                        }
+                    }
+                    .frame(maxHeight: 468)
+                    .frame(width: 353)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .background {
+                        Color.ppGray200
+                    }
                 }
                 .onFailure { _ in
                     loadFailed = true

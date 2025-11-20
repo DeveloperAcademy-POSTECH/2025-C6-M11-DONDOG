@@ -13,7 +13,7 @@ import SwiftUI
 
 protocol CaptionViewModelDelegate: AnyObject {
     func didUploadPost()
-    func didStartUploading()
+    func didStartUploading(frontImage: UIImage?, backImage: UIImage?, caption: String)
 }
 
 final class CaptionViewModel: ObservableObject {
@@ -39,7 +39,8 @@ final class CaptionViewModel: ObservableObject {
             return
         }
         
-        delegate?.didStartUploading()
+        let captionSnapshot = self.caption
+        delegate?.didStartUploading(frontImage: frontImage, backImage: backImage, caption: captionSnapshot)
         
         Task {
             let captionSnapshot = await MainActor.run { self.caption }

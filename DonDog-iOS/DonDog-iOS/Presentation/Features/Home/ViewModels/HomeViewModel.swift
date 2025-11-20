@@ -17,16 +17,24 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
             currentIndex = 0
         }
     }
-    
     @Published var isShowingATimePost: Bool = true {
         didSet {
             updateTimeTypeFromCurrentTime()
         }
     }
+    @Published var localFrontImage: UIImage?
+    @Published var localBackImage: UIImage?
+    @Published var localCaption: String?
+    @Published var localUploadDate: Date?
+    @Published var isUploadingLocalImage: Bool = false
     @Published var todayPosts: [HomePost] = []
     @Published var currentPost: HomePost?
     @Published var isLoading: Bool = false
     @Published var isShowCameraView: Bool = false
+    @Published var isShowStickerSheet: Bool = false
+    @Published var isEditingStickers: Bool = false
+    @Published var isShowToast: Bool = false
+    @Published var toastMessage: String = ""
     
     let connectUserInfo = UserPairingStore.shared
     private let dataManager: DataManagerProtocol = DataManager.shared
@@ -80,7 +88,10 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
             
             await MainActor.run {
                 self.todayPosts = todayPosts
-                self.isLoading = false
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                    self?.isLoading = false
+                }
             }
         } catch {
             print("게시물 로드 실패: \(error.localizedDescription)")
@@ -113,18 +124,56 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
         }
     }
     
+    func checkAndShowCamera() {
+        let currentIsATime = DateUtils.isATime(date: Date())
+        let currentTimeType: TimeType = currentIsATime ? .a : .b
+        
+        // 오늘 게시물 중 내 게시물이고 현재 시간대에 해당하는 게시물이 있는지 확인
+        let hasPostInCurrentTime = todayPosts.contains { post in
+            post.isMyPost && post.timeType == currentTimeType
+        }
+        
+        if hasPostInCurrentTime {
+            let timeString = currentIsATime ? "오전" : "오후"
+            toastMessage = "\(timeString) 게시물을 이미 올렸어요!"
+            isShowToast = true
+            
+            // 2초 후 토스트 자동 숨김
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                withAnimation {
+                    self.isShowToast = false
+                }
+            }
+        } else {
+            isShowCameraView = true
+        }
+    }
+    
     func togglePostType() {
         isShowingMyPost.toggle()
         currentIndex = 0
     }
     
-    func didStartUploading() {
+    func didStartUploading(frontImage: UIImage?, backImage: UIImage?, caption: String) {
         isLoading = true
+        isUploadingLocalImage = true
+        localFrontImage = frontImage
+        localBackImage = backImage
+        localCaption = caption
+        localUploadDate = Date()
+        selectedPostType = .myArchive
     }
     
     func didUploadPost() {
         isLoading = false
-        selectedPostType = .myArchive
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.isUploadingLocalImage = false
+            self?.localFrontImage = nil
+            self?.localBackImage = nil
+            self?.localCaption = nil
+            self?.localUploadDate = nil
+        }
         Task {
             await loadPosts()
         }

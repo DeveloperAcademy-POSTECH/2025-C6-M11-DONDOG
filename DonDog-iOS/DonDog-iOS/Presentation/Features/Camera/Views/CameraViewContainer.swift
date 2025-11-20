@@ -31,9 +31,23 @@ struct CameraViewContainer: View {
             
             if cameraViewModel.showGuideView {
                 if cameraViewModel.frontImage == nil {
-                    ShootingGuideView(step: .front, isVisible: $cameraViewModel.showGuideView)
+                    ShootingGuideView(step: .front)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                withAnimation(.easeOut(duration: 0.7)) {
+                                    cameraViewModel.showGuideView = false
+                                }
+                            }
+                        }
                 } else {
-                    ShootingGuideView(step: .back, isVisible: $cameraViewModel.showGuideView)
+                    ShootingGuideView(step: .back)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                withAnimation(.easeOut(duration: 0.7)) {
+                                    cameraViewModel.showGuideView = false
+                                }
+                            }
+                        }
                 }
             }
             
@@ -58,6 +72,7 @@ struct CameraViewContainer: View {
             }
         }
         .customAlert(isPresented: $cameraViewModel.showExitAlert, title: "나가시겠어요?", message: "지금까지 찍은 사진은 저장되지 않아요", confirmTitle: "나가기", cancelTitle: "취소", onConfirm: {isPresented = false}, onCancel: {})
+        .animation(.easeInOut(duration: 0.3), value: cameraViewModel.showGuideView)
         .onAppear {
             cameraViewModel.isStickerCamera = isStickerCamera
             cameraViewModel.showGuideView = true

@@ -28,10 +28,8 @@ enum StepIntroType {
 
 struct ShootingGuideView: View {
     var step: StepIntroType
-    @Binding var isVisible: Bool
     
     var body: some View {
-        if isVisible {
             ZStack {
                 Color.black.opacity(0.7).ignoresSafeArea()
                 VStack(spacing: 16) {
@@ -48,17 +46,5 @@ struct ShootingGuideView: View {
                 }
                 .padding()
             }
-            .opacity(isVisible ? 1 : 0)
-            .animation(.easeInOut(duration: 0.3), value: isVisible)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    if isVisible {
-                        withAnimation {
-                            isVisible = false
-                        }
-                    }
-                }
-            }
-        }
     }
 }

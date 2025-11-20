@@ -12,143 +12,39 @@ struct HomeView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: HomeViewModel
     @StateObject private var cameraViewModel = CameraViewModel()
+    @StateObject private var stickerViewModel = StickerViewModel()
     @EnvironmentObject var connectUserInfo: UserPairingStore
     
     var body: some View {
         if connectUserInfo.isConnected == .unknown {
             SplashView()
         } else if connectUserInfo.isConnected == .notConnected {
-            ZStack {
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button {
-                            coordinator.push(.setting)
-                        } label: {
-                            Image(systemName: "gear")
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(Color.ppPrime)
-                                .padding(.vertical, 8)
-                                .padding(.trailing, 20)
-                        }
-                    }
-                    Spacer()
-                }
-                
-                VStack(spacing: 0) {
-                    Spacer()
-                    Image(systemName: "person.fill.xmark")
-                        .foregroundStyle(Color.ppPrime50)
-                        .font(.system(size: 40))
-                    Text("아직 가족과 연결되지 않았어요\n아래 버튼으로 가족을 초대할 수 있어요")
-                        .font(.bodyRegular16)
-                        .lineSpacing(2)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(Color.ppGray500)
-                        .padding(10)
-                    Button {
-                        coordinator.inviteShowSentHint = false
-                        coordinator.push(.invite)
-                    } label: {
-                        HStack(alignment: .center, spacing: 10) {
-                            Text("가족 초대하기")
-                                .foregroundStyle(Color.ppGray200)
-                                .font(.captionRegular14)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.ppPrime)
-                        .cornerRadius(999)
-                    }
-                    Spacer()
-                }
-            }
-            .background(.ppWhite)
+            NotConnectedView()
         } else {
             VStack(spacing: 0) {
                 CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "sun.max.fill" : "moon.fill"), navigationColor: .black)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 26)
                 
-                CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
-                    .padding(.top, 33)
+                if !viewModel.isShowStickerSheet {
+                    CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
+                        .padding(.top, 33)
+                }
                 
                 ZStack(alignment: .bottom) {
                     TabView(selection: $viewModel.currentIndex) {
-                        if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
+                        if viewModel.isUploadingLocalImage, viewModel.selectedPostType == .myArchive, let frontImage = viewModel.localFrontImage, let backImage = viewModel.localBackImage {
                             Group {
-                                KFImage(frontURL)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                                    .tag(0)
-                                    .overlay(alignment: .bottom) {
-                                        LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                                            .opacity(0.6)
-                                            .frame(maxHeight: 97)
-                                    }
-                                    .overlay {
-                                        if DateUtils.isOver3daysSinceLastUpload() {
-                                            VStack {
-                                                Text("게시글을 작성한 지 3일이 지났어요.")
-                                                    .font(.titleBold18)
-                                                    .foregroundStyle(.ppWhite)
-                                                Text("게시글을 업로드해주세요")
-                                                    .font(.titleBold18)
-                                                    .foregroundStyle(.ppWhite)
-                                            }
-                                        }
-                                    }
-                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                                    .padding(.horizontal, 20)
-                                
-                                KFImage(backURL)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
-                                    .tag(1)
-                                    .overlay(alignment: .bottom) {
-                                        LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                                            .opacity(0.6)
-                                            .frame(maxHeight: 97)
-                                    }
-                                    .overlay {
-                                        if DateUtils.isOver3daysSinceLastUpload() {
-                                            VStack {
-                                                Text("게시글을 작성한 지 3일이 지났어요.")
-                                                    .font(.titleBold18)
-                                                    .foregroundStyle(.ppWhite)
-                                                Text("게시글을 업로드해주세요")
-                                                    .font(.titleBold18)
-                                                    .foregroundStyle(.ppWhite)
-                                            }
-                                        }
-                                    }
-                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                                    .padding(.horizontal, 20)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(frontImage), tag: 0, postId: nil)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(backImage), tag: 1, postId: nil)
                             }
-                            .onTapGesture {
-                                if let currentPost = viewModel.currentPost?.post {
-                                    coordinator.push(.post(post: currentPost, postType: .post))
-                                }
+                        } else if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
+                            Group {
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(frontURL), tag: 0, postId: post.postId, isShowGradient: !viewModel.isLoading)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(backURL), tag: 1, postId: post.postId, isShowGradient: !viewModel.isLoading)
                             }
                         } else {
-                            // 포스트가 없을 때
-                            HStack(spacing: 16) {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(.ppGray200)
-                                    .overlay {
-                                        Text(viewModel.selectedPostType == ArchiveSegment.partnerArchive ? "가족이 아직 사진을 올리지 않았어요." : "오전 게시물을 올릴 수 있는 시간이\n네 시간 남았어요!" )
-                                            .multilineTextAlignment(.center)
-                                    }
-                            }
-                            .overlay(alignment: .bottom) {
-                                LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                                    .opacity(0.6)
-                                    .frame(maxHeight: 97)
-                            }
-                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                            .padding(.horizontal, 20)
-                            .tag(0)
+                            HomeEmptyView(selectedPostType: viewModel.selectedPostType)
+                                .tag(0)
                         }
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
@@ -160,16 +56,71 @@ struct HomeView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     
                     if let currentPost = viewModel.currentPost {
+                        if !DateUtils.isOver3daysSinceLastUpload() && !viewModel.isShowStickerSheet {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    if viewModel.isUploadingLocalImage {
+                                        Text("")
+                                            .font(.subtitleSemiBold16)
+                                            .foregroundStyle(.ppWhite)
+                                        Text("")
+                                            .font(.captionRegular13)
+                                            .foregroundStyle(.ppWhite)
+                                    } else {
+                                        Text(currentPost.post.caption)
+                                            .font(.subtitleSemiBold16)
+                                            .foregroundStyle(.ppWhite)
+                                        
+                                        Text(DateUtils.string(from: currentPost.createdAt, format: .home))
+                                            .font(.captionRegular13)
+                                            .foregroundStyle(.ppWhite)
+                                    }
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, 21)
+                                
+                                Spacer()
+                                
+                                Button {
+                                    if let currentPost = viewModel.currentPost {
+                                        stickerViewModel.postId = currentPost.postId
+                                        stickerViewModel.postImageType = viewModel.currentIndex == 0 ? .front : .back
+                                        Task {
+                                            await stickerViewModel.fetchStickers()
+                                        }
+                                    }
+                                    viewModel.isShowStickerSheet = true
+                                } label: {
+                                    Image("AddStickerIcon")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 64, height: 64)
+                                        .background {
+                                            Circle()
+                                                .frame(width: 70, height: 70)
+                                                .foregroundStyle(.ppPrime)
+                                        }
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 16)
+                                .buttonStyle(.plain)
+                                .opacity(viewModel.selectedPostType == .myArchive ? 0 : 1)
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                    } else if viewModel.isUploadingLocalImage, let localCaption = viewModel.localCaption {
                         if !DateUtils.isOver3daysSinceLastUpload() {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(currentPost.post.caption)
+                                    Text(localCaption)
                                         .font(.subtitleSemiBold16)
                                         .foregroundStyle(.ppWhite)
                                     
-                                    Text(DateUtils.string(from: currentPost.createdAt, format: .home))
-                                        .font(.captionRegular13)
-                                        .foregroundStyle(.ppWhite)
+                                    if let localDate = viewModel.localUploadDate {
+                                        Text(DateUtils.string(from: localDate, format: .home))
+                                            .font(.captionRegular13)
+                                            .foregroundStyle(.ppWhite)
+                                    }
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.bottom, 21)
@@ -178,18 +129,20 @@ struct HomeView: View {
                                 Button {
                                     // editableView
                                 } label: {
-                                    Image("AddStickerButtonAbled")
+                                    Image("AddStickerIcon")
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 64, height: 64)
                                         .background {
                                             Circle()
                                                 .frame(width: 70, height: 70)
+                                                .foregroundStyle(.ppPrime)
                                         }
                                 }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 16)
                                 .buttonStyle(.plain)
+                                .opacity(viewModel.selectedPostType == .myArchive ? 0 : 1)
                             }
                             .padding(.horizontal, 20)
                         }
@@ -220,11 +173,12 @@ struct HomeView: View {
                     Spacer()
                     Button {
                         cameraViewModel.resetCameraState()
-                        viewModel.isShowCameraView = true
+                        viewModel.checkAndShowCamera()
                     } label: {
                         Circle()
                             .foregroundColor(.ppWhite)
                             .frame(width: 56, height: 56)
+                            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 0)
                             .background {
                                 Circle()
                                     .foregroundColor(.ppPrime)
@@ -264,6 +218,24 @@ struct HomeView: View {
                     await viewModel.loadPosts()
                 }
             }
+            .sheet(isPresented: $viewModel.isShowStickerSheet) {
+                if let currentPost = viewModel.currentPost {
+                    StickerSheetView(
+                        viewModel: stickerViewModel, postId: currentPost.postId,
+                        onRequestCamera: {
+                            stickerViewModel.shouldReopenSheetAfterCamera = true
+                            viewModel.isShowStickerSheet = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                coordinator.push(.camera)
+                            }
+                        }
+                    )
+                    .presentationDetents([.height(270)])
+                    .presentationBackgroundInteraction(.enabled)
+                    .presentationDragIndicator(.hidden)
+                    .background(Color.ddGray100.opacity(0.5))
+                }
+            }
             .background {
                 if viewModel.isShowingATimePost {
                     Color.ppWhite
@@ -280,6 +252,7 @@ struct HomeView: View {
                 }
             }
             .animation(.smooth(duration: 0.5), value: viewModel.isShowingATimePost)
+            .animation(.smooth(duration: 0.5), value: viewModel.isShowStickerSheet)
             .fullScreenCover(isPresented: $viewModel.isShowCameraView) {
                 CameraViewContainer(
                     cameraViewModel: cameraViewModel,
@@ -287,6 +260,19 @@ struct HomeView: View {
                     isPresented: $viewModel.isShowCameraView,
                     isStickerCamera: false
                 )
+            }
+            .overlay {
+                if viewModel.isShowToast {
+                    VStack {
+                        Spacer()
+                        ToastView(toastText: viewModel.toastMessage)
+                            .padding(.bottom, 114)
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .bottom).animation(.spring()),
+                                removal: .opacity.animation(.easeOut(duration: 0.7))
+                            ))
+                    }
+                }
             }
         }
     }

@@ -41,7 +41,7 @@ final class StickerViewModel: ObservableObject {
     @Published var targetItemID: StickerItem.ID?
     @Published var previewURL: URL?
     
-    private let dataManager: DataManagerProtocol = DataManager.shared
+    let dataManager: DataManagerProtocol = DataManager.shared
     let connectUserInfo = UserPairingStore.shared
     var roomId: String = ""
     
@@ -135,6 +135,21 @@ final class StickerViewModel: ObservableObject {
             } catch {
                 print("붙여진 스티커 저장 실패: \(error.localizedDescription)")
             }
+        }
+        
+        let postData: [String: Any] = [
+            "stickerUpdatedAt": Date.now
+        ]
+        
+        do {
+            try await dataManager.batchUpdate([
+                .update(
+                    path: "Rooms/\(roomId)/posts/\(postId)",
+                    data: postData
+                )
+            ])
+        } catch {
+            print("stickerUdpatedAt 최신화 실패: \(error.localizedDescription)")
         }
     }
 }

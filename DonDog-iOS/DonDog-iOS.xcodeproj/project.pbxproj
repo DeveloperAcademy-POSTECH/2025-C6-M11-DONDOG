@@ -69,6 +69,9 @@
 		8C3E791F2EBB2899000ADEF6 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */; };
 		8C3E79222EBB28F5000ADEF6 /* HomePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3E79212EBB28EF000ADEF6 /* HomePost.swift */; };
 		8C3F8FBF2EB8DAB000699BC3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */; };
+		8C5A1EDA2ECD57E800C08B0E /* NotConnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5A1ED92ECD57DB00C08B0E /* NotConnectedView.swift */; };
+		8C5A1EDC2ECD58E900C08B0E /* TabItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5A1EDB2ECD589400C08B0E /* TabItemView.swift */; };
+		8C5A1EDE2ECD5B6900C08B0E /* HomeEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5A1EDD2ECD5B5E00C08B0E /* HomeEmptyView.swift */; };
 		8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */; };
 		8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */; };
 		8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD752EAE0EA40050003C /* DataManager.swift */; };
@@ -78,7 +81,6 @@
 		8CF3BD8C2EAF215A0050003C /* Notification+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD882EAF215A0050003C /* Notification+.swift */; };
 		8CF3BD8D2EAF215A0050003C /* Font+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD872EAF215A0050003C /* Font+.swift */; };
 		8CF3BD8E2EAF215A0050003C /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD892EAF215A0050003C /* UIImage+.swift */; };
-		A192F2BF2E9F3ADA00995DCC /* PolaroidSetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */; };
 		CA2A58302E9E38C700AC3500 /* CustomNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */; };
 		CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */; };
 		CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = CA957CF52E98FCD700AEAB49 /* Pretendard-Medium.otf */; };
@@ -174,6 +176,9 @@
 		8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		8C3E79212EBB28EF000ADEF6 /* HomePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePost.swift; sourceTree = "<group>"; };
 		8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		8C5A1ED92ECD57DB00C08B0E /* NotConnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotConnectedView.swift; sourceTree = "<group>"; };
+		8C5A1EDB2ECD589400C08B0E /* TabItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabItemView.swift; sourceTree = "<group>"; };
+		8C5A1EDD2ECD5B5E00C08B0E /* HomeEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEmptyView.swift; sourceTree = "<group>"; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
 		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -183,7 +188,6 @@
 		8CF3BD872EAF215A0050003C /* Font+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+.swift"; sourceTree = "<group>"; };
 		8CF3BD882EAF215A0050003C /* Notification+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+.swift"; sourceTree = "<group>"; };
 		8CF3BD892EAF215A0050003C /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
-		A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolaroidSetView.swift; sourceTree = "<group>"; };
 		CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBar.swift; sourceTree = "<group>"; };
 		CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DonDog-iOS.entitlements"; sourceTree = "<group>"; };
 		CA957CF12E98FCD700AEAB49 /* Pretendard-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Bold.otf"; sourceTree = "<group>"; };
@@ -367,7 +371,6 @@
 				8BA7184C2E9DE2C3001F7857 /* CustomTextfield.swift */,
 				CA2A582F2E9E38C700AC3500 /* CustomNavigationBar.swift */,
 				CAA62D052EA1E57200C60E05 /* CustomPageIndicator.swift */,
-				A192F2BE2E9F3ACF00995DCC /* PolaroidSetView.swift */,
 				8BDF76972E9F72CE007F12BB /* SplashView.swift */,
 				8B7729062EA73A3000344491 /* InWebSheetView.swift */,
 				8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */,
@@ -472,9 +475,20 @@
 		8C3F8FBC2EB8DA9A00699BC3 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8C5A1ED82ECD57D500C08B0E /* SubViews */,
 				8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		8C5A1ED82ECD57D500C08B0E /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				8C5A1EDD2ECD5B5E00C08B0E /* HomeEmptyView.swift */,
+				8C5A1EDB2ECD589400C08B0E /* TabItemView.swift */,
+				8C5A1ED92ECD57DB00C08B0E /* NotConnectedView.swift */,
+			);
+			path = SubViews;
 			sourceTree = "<group>";
 		};
 		8CF3BD792EAF1C2B0050003C /* Models */ = {
@@ -887,7 +901,6 @@
 				CAB6B1E42EB5089600F778EC /* DateUtils.swift in Sources */,
 				8BA7184D2E9DE2C3001F7857 /* CustomTextfield.swift in Sources */,
 				8C3E791F2EBB2899000ADEF6 /* HomeViewModel.swift in Sources */,
-				A192F2BF2E9F3ADA00995DCC /* PolaroidSetView.swift in Sources */,
 				CAA9AED62E8FC15C0047A89A /* AppCoordinator.swift in Sources */,
 				61C9B1A62E9BFCBE0007C8F4 /* ArchiveDate.swift in Sources */,
 				CAA9AED72E8FC15C0047A89A /* AppRoute.swift in Sources */,
@@ -906,6 +919,7 @@
 				CAA9AED82E8FC15C0047A89A /* RootNavigationView.swift in Sources */,
 				CAA9AED92E8FC15C0047A89A /* PicPeekApp.swift in Sources */,
 				8B736DEC2EBB404E00E2AB76 /* StickerConfirmView.swift in Sources */,
+				8C5A1EDA2ECD57E800C08B0E /* NotConnectedView.swift in Sources */,
 				8B736DED2EBB404E00E2AB76 /* SitckerCollectionViewModel.swift in Sources */,
 				8B736DEE2EBB404E00E2AB76 /* SitckerCollectionView.swift in Sources */,
 				8B736DEF2EBB404E00E2AB76 /* StickerConfirmViewModel.swift in Sources */,
@@ -954,11 +968,13 @@
 				8BFC735F2EA5CB4800B54F03 /* NetworkErrorView.swift in Sources */,
 				8BBE41F22EA1E9CB00057A23 /* AuthNumberViewModel.swift in Sources */,
 				CAB6B3102EBB20AF00F778EC /* CustomSegmentedControl.swift in Sources */,
+				8C5A1EDC2ECD58E900C08B0E /* TabItemView.swift in Sources */,
 				D2AB17672EB75107005292FD /* OutlinedText.swift in Sources */,
 				8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */,
 				8BBE41F02EA1E9AD00057A23 /* AuthNumberView.swift in Sources */,
 				CAB6B1E22EB5082D00F778EC /* UserPairingStore.swift in Sources */,
 				D27750932EBCFAAC00E27680 /* StickerViewModel.swift in Sources */,
+				8C5A1EDE2ECD5B6900C08B0E /* HomeEmptyView.swift in Sources */,
 				D24402A82E992CD800D837C8 /* CaptionView.swift in Sources */,
 				D24402A92E992CD800D837C8 /* CaptionViewModel.swift in Sources */,
 				619343842E9D3C9B004B5F01 /* NotificationService.swift in Sources */,
@@ -1118,7 +1134,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "윙키(Winky)";
+				INFOPLIST_KEY_CFBundleDisplayName = "픽픽(PicPeek)";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSCameraUsageDescription = "가족과의 사진 공유 및 스티커 생성을 위해 카메라 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1165,7 +1181,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DonDog-iOS/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "윙키(Winky)";
+				INFOPLIST_KEY_CFBundleDisplayName = "픽픽(PicPeek)";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSCameraUsageDescription = "가족과의 사진 공유 및 스티커 생성을 위해 카메라 접근이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

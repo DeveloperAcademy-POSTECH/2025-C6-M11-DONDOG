@@ -23,7 +23,7 @@ struct PostContentsView: View {
                 VStack(spacing: 0) {
                     GeometryReader {
                         let size = $0.size
-                        ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming)
+                        ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail)
                             .frame(width: size.width, height: size.height)
                             .clipShape(RoundedRectangle(cornerRadius: isShowDetail ? 0 : 15))
                             .pinchZoom(isZooming: $isZooming)
@@ -40,7 +40,7 @@ struct PostContentsView: View {
                 VStack(spacing: 0) {
                     GeometryReader {
                         let size = $0.size
-                        ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming)
+                        ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail)
                             .frame(width: size.width, height: size.height)
                             .clipShape(RoundedRectangle(cornerRadius: isShowDetail ? 0 : 15))
                             .pinchZoom(isZooming: $isZooming)
@@ -54,7 +54,7 @@ struct PostContentsView: View {
                 .tag(1)
                 .padding(.horizontal, isShowDetail ? 0 : 20)
             }
-            .tabViewStyle(.page(indexDisplayMode: .automatic))
+            .tabViewStyle(.page(indexDisplayMode: isShowDetail ? .never : .always))
             .frame(maxHeight: isShowDetail ? 524 : 510)
             
             VStack(spacing: 4) {
@@ -66,7 +66,18 @@ struct PostContentsView: View {
                     .font(.captionRegular13)
                     .foregroundStyle(.ppGray500)
             }
-            .padding(.bottom, 50)
+            .padding(.bottom, isShowDetail ? 0 : 50)
+            
+            if isShowDetail {
+                HStack(spacing: 7) {
+                    Circle()
+                        .frame(width: 7, height: 7)
+                        .foregroundStyle(isFrontOrBack == 0 ? .ppWhite : .ppWhite.opacity(0.3))
+                    Circle()
+                        .frame(width: 7, height: 7)
+                        .foregroundStyle(isFrontOrBack == 1 ? .ppWhite : .ppWhite.opacity(0.3))
+                }
+            }
             
             Spacer()
         }

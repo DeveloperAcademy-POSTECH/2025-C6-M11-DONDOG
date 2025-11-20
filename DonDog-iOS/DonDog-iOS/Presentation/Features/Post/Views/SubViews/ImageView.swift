@@ -13,6 +13,7 @@ struct ImageView: View {
     @Binding var isEditing: Bool
     @ObservedObject var viewModel: StickerViewModel
     @Binding var isZooming: Bool  // @Environment 대신 Binding 사용
+    @Binding var isShowDetail: Bool
     @State private var loadFailed: Bool = false
     
     private var url: URL? {
@@ -60,7 +61,7 @@ struct ImageView: View {
                     }
                 }
             
-            if !isZooming {
+            if !isShowDetail {
                 ForEach(viewModel.postImageType == PostImageType.front ? $viewModel.frontStickers : $viewModel.backStickers) { $sticker in
                     StickerView(
                         sticker: $sticker,

@@ -111,7 +111,7 @@ struct PostView: View {
                     }
                 
                 ZStack(alignment: .topTrailing) {
-                    Color.ppBlack.ignoresSafeArea()
+                    Color.ppRealBlack.ignoresSafeArea()
                     
                     GeometryReader { proxy in
                         let centerY = proxy.size.height / 2

@@ -22,6 +22,7 @@ enum InitialOnBoardingStep: Int, CaseIterable {
 struct InitialOnBoardingContentView: View {
     let content: InitialOnBoardingContent
     let onNext: () -> Void
+    let screenWidth = UIScreen.main.bounds.width
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -29,14 +30,10 @@ struct InitialOnBoardingContentView: View {
                 .ignoresSafeArea()
             
             VStack {
-                GeometryReader { geometry in
-                    VStack {
-                        Image(content.imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: geometry.size.width)
-                    }
-                }
+                Image(content.imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: UIScreen.main.bounds.width)
                 
                 VStack(spacing: 68) {
                     VStack(spacing: 10) {
@@ -56,6 +53,7 @@ struct InitialOnBoardingContentView: View {
                 .padding(.top, 22)
             }
         }
+        // .ignoresSafeArea(.container, edges: .vertical)
     }
 }
 

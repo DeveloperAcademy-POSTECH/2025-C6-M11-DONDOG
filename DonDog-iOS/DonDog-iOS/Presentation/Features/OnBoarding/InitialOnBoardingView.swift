@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct InitialOnBoardingView: View {
+    @EnvironmentObject var coordinator: AppCoordinator
     @State private var currentStep: InitialOnBoardingStep = .first
+    @AppStorage("hasSeenInitialOnboarding") var hasSeenInitialOnboarding: Bool = false
     
     private var firstContent: InitialOnBoardingContent {
         InitialOnBoardingContent(
@@ -53,6 +55,9 @@ struct InitialOnBoardingView: View {
         .animation(.easeInOut(duration: 0.3), value: currentStep)
         .navigationBarBackButtonHidden(true)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .task {
+            currentStep = .first
+        }
     }
     
     private func goToNextStep() {
@@ -60,7 +65,8 @@ struct InitialOnBoardingView: View {
         case .first:
             currentStep = .second
         case .second:
-            print("온보딩 끝!")
+            hasSeenInitialOnboarding = true
+            
         }
     }
 }

@@ -86,8 +86,6 @@ final class AppCoordinator: ObservableObject {
     @ViewBuilder
     func build(_ route: AppRoute) -> some View {
         switch route {
-        case .initialOnboarding:
-            factory.makeInitialOnboarding()
         case .welcome:
             factory.makeWelcomeView()
         case .auth:

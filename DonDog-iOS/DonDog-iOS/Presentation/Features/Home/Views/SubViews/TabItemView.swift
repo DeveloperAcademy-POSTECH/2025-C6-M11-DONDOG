@@ -39,7 +39,7 @@ struct TabItemView: View {
                     VStack {
                         Spacer()
                         Image("LoadingView")
-                        Text("지금 사진을 업로드하는 중이에요.")
+                        Text("지금 사진을 불러오는 중이에요.")
                             .font(.subtitleSemiBold16)
                             .foregroundStyle(.ppGray700)
                         Text("곧 사진이 도착해요! 잠시만 기다려 주세요.")
@@ -58,9 +58,31 @@ struct TabItemView: View {
             case .remote(let url):
                 ZStack {
                     KFImage(url)
+                        .placeholder {
+                            HStack {
+                                VStack {
+                                    Spacer()
+                                    Image("LoadingView")
+                                    Text("지금 사진을 불러오는 중이에요.")
+                                        .font(.subtitleSemiBold16)
+                                        .foregroundStyle(.ppGray700)
+                                    Text("곧 사진이 도착해요! 잠시만 기다려 주세요.")
+                                        .font(.captionRegular14)
+                                        .foregroundStyle(.ppGray500)
+                                        .padding(.top, 2)
+                                    Spacer()
+                                }
+                            }
+                            .frame(maxHeight: 468)
+                            .frame(width: 353)
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                            .background {
+                                Color.ppGray200
+                            }
+                        }
                         .fade(duration: 0.25)
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
                         .frame(maxHeight: 468)
                     
                     if isEditing {

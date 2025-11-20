@@ -9,6 +9,7 @@ import Kingfisher
 import SwiftUI
 
 struct StickerGrid: View {
+    let showedAt: StickerGridPlace
     let columns: [GridItem]
     let rowSpacing: CGFloat
     
@@ -23,6 +24,7 @@ struct StickerGrid: View {
     let onPlusTap: (StickerItem) -> Void
     
     init(
+        showedAt: StickerGridPlace,
         items: [StickerItem],
         remoteURLByItemID: [StickerItem.ID: URL],
         loadingItemIDs: Set<StickerItem.ID>,
@@ -34,6 +36,7 @@ struct StickerGrid: View {
         onPlusTap: ((StickerItem) -> Void)? = nil,
         selectedItemID: StickerItem.ID? = nil
     ) {
+        self.showedAt = showedAt
         self.items = items
         self.stickerImageURLs = remoteURLByItemID
         self.loadingItemIDs = loadingItemIDs
@@ -51,6 +54,7 @@ struct StickerGrid: View {
             ForEach(items) { item in
                 VStack {
                     StickerCellView(
+                        showedAt: showedAt,
                         title: item.title,
                         url: stickerImageURLs[item.id],
                         isLoading: loadingItemIDs.contains(item.id),
@@ -68,6 +72,7 @@ struct StickerGrid: View {
 }
 
 struct StickerCellView: View {
+    let showedAt: StickerGridPlace
     let title: String
     let url: URL?
     let isLoading: Bool
@@ -127,9 +132,15 @@ struct StickerCellView: View {
                 
                 Text(title)
                     .font(.polaroidCaptionRegular16)
+                    .foregroundColor(showedAt == .sheet ? .ppGray200 : .ppBlack)
             }
             .frame(width: 120, height: 100)
             .onTapGesture { if !isLoading { onTapEmpty() } }
         }
     }
+}
+
+enum StickerGridPlace {
+    case sheet
+    case collection
 }

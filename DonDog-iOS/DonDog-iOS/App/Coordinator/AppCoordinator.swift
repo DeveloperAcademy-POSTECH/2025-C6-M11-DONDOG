@@ -22,6 +22,7 @@ final class AppCoordinator: ObservableObject {
     @Published var authShowWithdraw: Bool = false
     @Published var authNumberShowWithdraw: Bool = false
     @Published var showCameraInDeeplink: Bool = false
+    @Published var navigateToMyPost: Bool = false
     
     private var notificationToken: NSObjectProtocol?
     var sessionKey: String { Auth.auth().currentUser?.uid ?? "loggedout" }
@@ -38,9 +39,9 @@ final class AppCoordinator: ObservableObject {
         ) { [weak self] note in
             guard
                 let self,
-                let deeplink = note.object as? String
+                let userInfo = note.object as? [AnyHashable: Any]
             else { return }
-            self.handleDeepLink(deeplink)
+            self.handleNotificationPayload(userInfo)
         }
         
     }
@@ -109,8 +110,26 @@ final class AppCoordinator: ObservableObject {
         }
     }
     
-    func handleDeepLink(_ urlString: String) {
-        guard let url = URL(string: urlString), let scheme = url.scheme, scheme == "dondog" else { return }
+    func handleNotificationPayload(_ userInfo: [AnyHashable: Any]) {
+        // 스티커 알림은 HomeView의 '내 사진' 탭으로 이동
+        if let kind = userInfo["kind"] as? String, kind == "sticker" {
+            if root != .home {
+                replaceRoot(.home)
+            } else {
+                popToRoot()
+            }
+            self.navigateToMyPost = true
+            return
+        }
+        
+        // 그 외 모든 알림은 기존 딥링크 URL 기반으로 처리
+        if let link = userInfo["link"] as? String, let url = URL(string: link) {
+            handleDeepLink(url: url)
+        }
+    }
+    
+    func handleDeepLink(url: URL) {
+        guard url.scheme == "dondog" else { return }
         
         // 모든 딥링크는 홈에서 시작
         if root != .home {
@@ -122,9 +141,7 @@ final class AppCoordinator: ObservableObject {
         switch url.host {
         case "camera":
             self.showCameraInDeeplink = true
-            
         default:
-            // 처리할 수 없는 host일 경우 피드로 이동
             break
         }
     }

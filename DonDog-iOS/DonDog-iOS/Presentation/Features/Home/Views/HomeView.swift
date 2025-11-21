@@ -197,21 +197,30 @@ struct HomeView: View {
             }
             .sheet(isPresented: $viewModel.isShowStickerSheet) {
                 if let currentPost = viewModel.currentPost {
-                    StickerSheetView(
-                        stickerViewModel: stickerViewModel, postId: currentPost.postId,
+                    let content = StickerSheetView(
+                        stickerViewModel: stickerViewModel,
+                        postId: currentPost.postId,
                         onRequestCamera: {
                             stickerViewModel.shouldReopenSheetAfterCamera = true
                             viewModel.isShowStickerSheet = false
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 coordinator.push(.camera(isStickerCamera: true))
                             }
-                        }, gridService: stickerGridService
+                        },
+                        gridService: stickerGridService
                     )
                     .presentationDetents([.height(317)])
                     .presentationBackgroundInteraction(.enabled)
                     .presentationDragIndicator(.hidden)
-                    .background(Color.ppRealBlack.opacity(0.95))
                     .interactiveDismissDisabled(true)
+
+                    if #available(iOS 17.0, *) {
+                        content
+                            .presentationBackground(Color.ppRealBlack.opacity(0.95))
+                    } else {
+                        content
+                            .background(Color.ppRealBlack.opacity(0.95))
+                    }
                 }
             }
             .onChange(of: viewModel.isShowStickerSheet) {

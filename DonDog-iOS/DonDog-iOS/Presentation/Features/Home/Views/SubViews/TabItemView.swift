@@ -92,7 +92,9 @@ struct TabItemView: View {
                             .onTapGesture {
                                 isEditing = false
                                 Task {
-                                    await viewModel.saveStickers()
+                                    if viewModel.isStickerAttached {
+                                        await viewModel.saveStickers()
+                                    }
                                     viewModel.selectedStickerID = nil
                                 }
                             }

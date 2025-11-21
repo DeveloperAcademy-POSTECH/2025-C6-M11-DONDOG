@@ -205,7 +205,9 @@ struct HomeView: View {
             .onChange(of: viewModel.isShowStickerSheet) {
                 if !viewModel.isShowStickerSheet {
                     Task {
-                        await stickerViewModel.saveStickers()
+                        if stickerViewModel.isStickerAttached {
+                            await stickerViewModel.saveStickers()
+                        }
                         stickerViewModel.selectedStickerID = nil
                     }
                 }

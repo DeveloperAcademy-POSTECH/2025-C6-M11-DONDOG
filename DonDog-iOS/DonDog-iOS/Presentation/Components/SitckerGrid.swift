@@ -7,6 +7,7 @@
 
 import Kingfisher
 import SwiftUI
+import UIKit
 
 struct StickerGrid: View {
     let showedAt: StickerGridPlace
@@ -17,6 +18,8 @@ struct StickerGrid: View {
     let stickerImageURLs: [StickerItem.ID: URL]
     let loadingItemIDs: Set<StickerItem.ID>
     let selectedItemID: StickerItem.ID?
+    let categoryKey: String?
+    let role: String?
 
     var isStickerConfirmPresented: Binding<Bool>?
     let onItemAppear: (StickerItem.ID) -> Void
@@ -34,7 +37,9 @@ struct StickerGrid: View {
         onItemAppear: @escaping (StickerItem.ID) -> Void,
         onItemTap: @escaping (StickerItem) -> Void,
         onPlusTap: ((StickerItem) -> Void)? = nil,
-        selectedItemID: StickerItem.ID? = nil
+        selectedItemID: StickerItem.ID? = nil,
+        categoryKey: String? = nil,
+        role: String? = nil
     ) {
         self.showedAt = showedAt
         self.items = items
@@ -47,11 +52,13 @@ struct StickerGrid: View {
         self.onItemTap = onItemTap
         self.onPlusTap = onPlusTap ?? onItemTap
         self.selectedItemID = selectedItemID
+        self.categoryKey = categoryKey
+        self.role = role
     }
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: rowSpacing) {
-            ForEach(items) { item in
+            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                 VStack {
                     StickerCellView(
                         showedAt: showedAt,
@@ -60,8 +67,11 @@ struct StickerGrid: View {
                         isLoading: loadingItemIDs.contains(item.id),
                         isSelected: item.id == selectedItemID,
                         hasSelection: selectedItemID != nil,
+                        index: index,
+                        categoryKey: categoryKey,
+                        role: role,
                         onTapLoaded: { onItemTap(item) },
-                        onTapEmpty: { onPlusTap(item) },
+                        onTapEmpty: { onPlusTap(item) }
                     )
                 }
                 .contentShape(Rectangle())
@@ -78,19 +88,42 @@ struct StickerCellView: View {
     let isLoading: Bool
     let isSelected: Bool
     let hasSelection: Bool
+    let index: Int
+    let categoryKey: String?
+    let role: String?
     let onTapLoaded: () -> Void
     let onTapEmpty: () -> Void
     
+    private func resolvedPlaceholderName() -> String? {
+        guard let categoryKey else { return nil }
+        
+        let order = index + 1
+        let stateSuffix: String
+        if hasSelection {
+            stateSuffix = isSelected ? "off" : "on"
+        } else {
+            stateSuffix = "on"
+        }
+        
+        // 1) (배열)_(순서)_(role)_blank_on/off로 검색
+        if let role, !role.isEmpty {
+            let roleCandidate = "\(categoryKey)_\(order)_\(role)_blank_\(stateSuffix)"
+            if UIImage(named: roleCandidate) != nil {
+                return roleCandidate
+            }
+        }
+        // 2) 역할 없는 경우: (배열)_(순서)_blank_on/off
+        let baseCandidate = "\(categoryKey)_\(order)_blank_\(stateSuffix)"
+        if UIImage(named: baseCandidate) != nil {
+            return baseCandidate
+        }
+        // 3) 둘 다 없으면 nil 반환 → 기본 동그라미+플러스 UI 사용
+        return nil
+    }
+    
     var body: some View {
         if let url {
-            ZStack {
-                KFImage(url)
-                    .resizable()
-                    .scaledToFit()
-                    .opacity(hasSelection ? (isSelected ? 1.0 : 0.5) : 1.0)
-                    .frame(width: 120, height: 100, alignment: .center)
-                    .onTapGesture(perform: onTapLoaded)
-                
+            VStack(spacing: 4) {
                 if isLoading {
                     ZStack {
                         ProgressView()
@@ -101,9 +134,18 @@ struct StickerCellView: View {
                             .padding(.bottom, 48)
                     }
                     .frame(width: 120, height: 100)
+                } else {
+                    KFImage(url)
+                        .resizable()
+                        .scaledToFit()
+                        .opacity(hasSelection ? (isSelected ? 1.0 : 0.5) : 1.0)
+                        .frame(width: 120, height: 100, alignment: .center)
+                        .onTapGesture(perform: onTapLoaded)
                 }
+                
+                Text(title)
+                    .font(.polaroidCaptionRegular16)
             }
-            .frame(width: 120, height: 100)
         } else if isLoading {
             ZStack {
                 ProgressView()
@@ -115,26 +157,34 @@ struct StickerCellView: View {
             }
             .frame(width: 120, height: 100)
         } else {
-            VStack(spacing: 0) {
-                ZStack {
-                    Circle()
-                        .stroke(isSelected ? Color.ppGray600 : Color.ppGray300, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [7, 10]))
-                        .frame(width: 60, height: 60)
-                        .padding(.horizontal, 20)
-                        .padding(10)
-                    
-                    Image(systemName: "plus")
-                        .font(.system(size: 18))
-                        .foregroundColor(isSelected ? .ppGray600 : Color.ppGray300)
-                    
+            VStack(spacing: 4) {
+                if let name = resolvedPlaceholderName() {
+                    Image(name)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 120, height: 100)
+                        // .opacity(hasSelection ? (isSelected ? 1.0 : 0.5) : 1.0)
+                } else {
+                    ZStack {
+                        Circle()
+                            .stroke(isSelected ? Color.ppGray600 : Color.ppGray300, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [7, 10]))
+                            .frame(width: 60, height: 60)
+                            .padding(.horizontal, 20)
+                            .padding(10)
+                        
+                        Image(systemName: "plus")
+                            .font(.system(size: 18))
+                            .foregroundColor(isSelected ? .ppGray600 : Color.ppGray300)
+                        
+                    }
+                    .contentShape(Rectangle())
+                    .frame(width: 120, height: 100)
                 }
-                .contentShape(Rectangle())
                 
                 Text(title)
                     .font(.polaroidCaptionRegular16)
                     .foregroundColor(showedAt == .sheet ? .ppGray200 : .ppBlack)
             }
-            .frame(width: 120, height: 100)
             .onTapGesture { if !isLoading { onTapEmpty() } }
         }
     }

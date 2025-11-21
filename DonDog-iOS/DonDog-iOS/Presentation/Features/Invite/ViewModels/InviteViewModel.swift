@@ -118,13 +118,6 @@ final class InviteViewModel: ObservableObject {
         
         let inputcode = inputInviteCode.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        guard !inputcode.isEmpty else {
-            message = "초대 코드를 입력해 주세요."
-            self.allowInviteCodeError = true
-            isLoading = false
-            return
-        }
-        
         if inputcode == inviteCode {
             message = "초대 코드를 다시 확인해 주세요."
             self.allowInviteCodeError = true
@@ -211,6 +204,12 @@ final class InviteViewModel: ObservableObject {
                     Task {
                         await attemptGenerateUniqueRoomIdAndSave()
                     }
+                }
+            } catch {
+                await MainActor.run {
+                    self.message = "초대 코드를 다시 확인해 주세요."
+                    self.allowInviteCodeError = true
+                    self.isLoading = false
                 }
             }
         }

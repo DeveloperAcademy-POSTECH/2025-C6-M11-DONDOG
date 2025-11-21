@@ -26,7 +26,7 @@ struct PostContentsView: View {
                         ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail)
                             .frame(width: size.width, height: size.height)
                             .clipShape(RoundedRectangle(cornerRadius: isShowDetail ? 0 : 15))
-                            .pinchZoom(isZooming: $isZooming)
+                            .pinchZoom(isZooming: $isZooming, isShowDetail: isShowDetail)
                     }
                     .frame(height: isShowDetail ? 524 : 470)
                     
@@ -43,7 +43,7 @@ struct PostContentsView: View {
                         ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail)
                             .frame(width: size.width, height: size.height)
                             .clipShape(RoundedRectangle(cornerRadius: isShowDetail ? 0 : 15))
-                            .pinchZoom(isZooming: $isZooming)
+                            .pinchZoom(isZooming: $isZooming, isShowDetail: isShowDetail)
                     }
                     .frame(height: isShowDetail ? 524 : 470)
                     

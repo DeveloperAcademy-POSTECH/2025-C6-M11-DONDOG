@@ -19,7 +19,7 @@ struct StickerSheetView: View {
     @Environment(\.dismiss) var dismiss
     private let categories = StickerCategory.allCases
     
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 20), count: 3)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 3)
     @StateObject private var cameraVM = CameraViewModel()
     @ObservedObject private var gridService: StickerGridService
     
@@ -39,6 +39,7 @@ struct StickerSheetView: View {
         NavigationStack {
             VStack {
                 StickerGrid(
+                    showedAt: .sheet,
                     items: gridService.stickerItems(for: gridService.selectedCategory),
                     remoteURLByItemID: gridService.stickerImageURLs,
                     loadingItemIDs: gridService.loadingItemIDs,
@@ -62,32 +63,37 @@ struct StickerSheetView: View {
                         onRequestCamera()
                     },
                 )
-            }
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Picker("", selection: $select) {
-                        ForEach(Array(categories.enumerated()), id: \.element) { index, category in
-                            Text(category.rawValue).tag(index)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Picker("", selection: $select) {
+                            ForEach(Array(categories.enumerated()), id: \.element) { index, category in
+                                Text(category.rawValue)
+                                    .font(.bodyRegular16)
+                                    .foregroundColor(.ppWhite)
+                                    .tag(index)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 300)
+                        .onChange(of: select) { _, selectedValue in
+                            gridService.selectedCategory = categories[selectedValue]
                         }
                     }
-                    .pickerStyle(.segmented)
-                    .frame(width: 300)
-                    .onChange(of: select) { _, selectedValue in
-                        gridService.selectedCategory = categories[selectedValue]
-                    }
-                }
-                
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        Task {
-                            await viewModel.saveStickers()
-                            viewModel.selectedStickerID = nil
-                            gridService.selectedCategory = categories[0]
-                            dismiss()
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            Task {
+                                await viewModel.saveStickers()
+                                viewModel.selectedStickerID = nil
+                                gridService.selectedCategory = categories[0]
+                                dismiss()
+                            }
+                        } label: {
+                            Image(systemName: "checkmark")
+                                .font(.captionRegular13)
+                                .foregroundColor(.ppWhite)
                         }
-                    } label: {
-                        Image(systemName: "chevron.down")
-                            .font(.headline)
                     }
                 }
             }

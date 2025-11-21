@@ -160,12 +160,5 @@ struct TabItemView: View {
                 await viewModel.fetchStickers()
             }
         }
-        .onChange(of: viewModel.postImageType) { _, newType in
-            if newType == postImageType {
-                Task {
-                    await viewModel.fetchStickers()
-                }
-            }
-        }
     }
 }

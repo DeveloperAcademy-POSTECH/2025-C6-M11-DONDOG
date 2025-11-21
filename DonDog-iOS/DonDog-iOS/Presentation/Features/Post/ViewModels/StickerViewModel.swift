@@ -65,20 +65,35 @@ final class StickerViewModel: ObservableObject {
     }
     
     func addSticker(with url: URL) {
-        let newSticker = AttachedSticker(
-            createdAt: Date.now,
-            stickerURL: url,
-            postImageType: postImageType.rawValue,
-            position: orderedPosition(),
-            scale: 1.0,
-            rotation: .zero
-        )
         if postImageType == .front {
-            frontStickers.append(newSticker)
+            if frontStickers.count < 24 {
+                let newSticker = AttachedSticker(
+                    createdAt: Date.now,
+                    stickerURL: url,
+                    postImageType: postImageType.rawValue,
+                    position: orderedPosition(),
+                    scale: 1.0,
+                    rotation: .zero
+                )
+                
+                frontStickers.append(newSticker)
+                selectedStickerID = newSticker.id
+            }
         } else {
-            backStickers.append(newSticker)
+            if backStickers.count < 24 {
+                let newSticker = AttachedSticker(
+                    createdAt: Date.now,
+                    stickerURL: url,
+                    postImageType: postImageType.rawValue,
+                    position: orderedPosition(),
+                    scale: 1.0,
+                    rotation: .zero
+                )
+                
+                backStickers.append(newSticker)
+                selectedStickerID = newSticker.id
+            }
         }
-        selectedStickerID = newSticker.id
     }
     
     private func orderedPosition() -> CGPoint {

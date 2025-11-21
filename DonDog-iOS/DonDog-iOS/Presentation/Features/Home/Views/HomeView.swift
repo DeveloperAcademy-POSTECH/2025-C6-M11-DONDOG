@@ -14,7 +14,7 @@ struct HomeView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @StateObject private var stickerViewModel = StickerViewModel()
     @EnvironmentObject var connectUserInfo: UserPairingStore
-    @StateObject var stickerGridService = StickerGridService()
+    @ObservedObject var stickerGridService = StickerGridService.shared
     
     var body: some View {
         if connectUserInfo.isConnected == .unknown {
@@ -92,6 +92,9 @@ struct HomeView: View {
                                         Task {
                                             await stickerViewModel.fetchStickers()
                                         }
+                                    }
+                                    if let firstCategory = StickerCategory.allCases.first {
+                                        stickerGridService.selectedCategory = firstCategory
                                     }
                                     viewModel.isShowStickerSheet = true
                                 } label: {

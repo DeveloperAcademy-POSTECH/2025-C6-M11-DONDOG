@@ -15,7 +15,7 @@ struct StickerSheetView: View {
     let postId: String
     let onRequestCamera: () -> Void
     
-    @State private var select = 0
+    @State private var select: Int
     @Environment(\.dismiss) var dismiss
     private let categories = StickerCategory.allCases
     
@@ -33,6 +33,10 @@ struct StickerSheetView: View {
         self.postId = postId
         self.onRequestCamera = onRequestCamera
         self._gridService = ObservedObject(wrappedValue: gridService)
+        
+        let allCategories = StickerCategory.allCases
+        let initialIndex = allCategories.firstIndex(of: gridService.selectedCategory) ?? 0
+        self._select = State(initialValue: initialIndex)
     }
 
     var body: some View {

@@ -137,62 +137,6 @@ final class StickerService {
 //        }
     }
     
-    func getStickerCollection(of postId: String) async -> [String: UIImage] {
-        let stickerPostId = await getStickerPostId(of: postId) // 스티커 원본 이미지가 있는 postId 가져오기
-        
-        let stickerImage = await fetchStickerImage(of: stickerPostId) // 스티커 원본 이미지 가져오기
-        
-        let clippedImage = getClippedImage(of: stickerImage) // 누끼 따기
-        
-        let outlinedImages = getOutlinedImage(for: clippedImage) // 테두리 적용 후 [stickerType : 테두리 적용된 이미지] - outline: 테두리
-        
-        return getStickers(with: outlinedImages) // 데코까지 적용된 스티커 배열
-    }
-    
-    private func getStickerPostId(of postId: String) async -> String {
-        do {
-            let currentUser: UserData = try await dataManager.fetch(path: "Users/\(connectUserInfo.myUid ?? "")")
-            
-            let post: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(postId)")
-            
-            let stickerPostIdToFetch: String?
-            if post.stickerPostId != nil && post.stickerPostId != "" {
-                stickerPostIdToFetch = post.stickerPostId
-            } else if let recentPostId = currentUser.recentPostId, !recentPostId.isEmpty {
-                stickerPostIdToFetch = recentPostId
-            } else {
-                print("stickerPostId와 recentPostId 모두 없음")
-                return ""
-            }
-            
-            let postData: PostData = try await dataManager.fetch(path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(stickerPostIdToFetch ?? "")")
-            
-            return postData.postId
-        } catch {
-            print("stickerPostId 가져오기 실패: \(error.localizedDescription)")
-            return ""
-        }
-    }
-    
-    private func fetchStickerImage(of stickerPostId: String) async -> UIImage {
-        do {
-            let postData: PostData = try await dataManager.fetch(
-                path: "Rooms/\(connectUserInfo.roomId ?? "")/posts/\(stickerPostId)"
-            )
-            guard let url = URL(string: postData.frontImageURL) else {
-                print("스티커 이미지 URL 생성 실패")
-                return UIImage()
-            }
-            
-            let image = try await KingfisherManager.shared.retrieveImage(with: url).image
-            
-            return image
-        } catch {
-            print("스티커 이미지 가져오기 실패: \(error.localizedDescription)")
-            return  UIImage()
-        }
-    }
-    
     /// 누끼 마스크 두 번 적용해 클리핑 이미지 생성
     private func getClippedImage(of stickerImage: UIImage) -> UIImage {
         guard let mask = ImageUtils.makeMask(from: stickerImage) else {

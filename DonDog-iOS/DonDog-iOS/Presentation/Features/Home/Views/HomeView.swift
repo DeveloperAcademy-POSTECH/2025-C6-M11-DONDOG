@@ -14,6 +14,7 @@ struct HomeView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @StateObject private var stickerViewModel = StickerViewModel()
     @EnvironmentObject var connectUserInfo: UserPairingStore
+    @ObservedObject var stickerGridService = StickerGridService.shared
     
     var body: some View {
         if connectUserInfo.isConnected == .unknown {
@@ -37,8 +38,8 @@ struct HomeView: View {
                     TabView(selection: $viewModel.currentIndex) {
                         if viewModel.isUploadingLocalImage, viewModel.selectedPostType == .myArchive, let frontImage = viewModel.localFrontImage, let backImage = viewModel.localBackImage {
                             Group {
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(frontImage), tag: 0, postId: nil)
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(backImage), tag: 1, postId: nil)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(frontImage), tag: 0, postId: nil, isShowGradient: !viewModel.isLoading)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(backImage), tag: 1, postId: nil, isShowGradient: !viewModel.isLoading)
                             }
                         } else if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
                             Group {
@@ -92,6 +93,9 @@ struct HomeView: View {
                                             await stickerViewModel.fetchStickers()
                                         }
                                     }
+                                    if let firstCategory = StickerCategory.allCases.first {
+                                        stickerGridService.selectedCategory = firstCategory
+                                    }
                                     viewModel.isShowStickerSheet = true
                                 } label: {
                                     Image("AddStickerIcon")
@@ -138,7 +142,7 @@ struct HomeView: View {
                     Spacer()
                     Button {
                         cameraViewModel.resetCameraState()
-                        viewModel.checkAndShowCamera()
+                        viewModel.checkAndShowCamera() 
                     } label: {
                         Circle()
                             .foregroundColor(.ppWhite)
@@ -182,18 +186,26 @@ struct HomeView: View {
                 Task {
                     await viewModel.loadPosts()
                 }
+                
+                if stickerViewModel.shouldReopenSheetAfterCamera {
+                    stickerViewModel.shouldReopenSheetAfterCamera = false
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        viewModel.isShowStickerSheet = true
+                    }
+                }
             }
             .sheet(isPresented: $viewModel.isShowStickerSheet) {
                 if let currentPost = viewModel.currentPost {
                     StickerSheetView(
-                        viewModel: stickerViewModel, postId: currentPost.postId,
+                        stickerViewModel: stickerViewModel, postId: currentPost.postId,
                         onRequestCamera: {
                             stickerViewModel.shouldReopenSheetAfterCamera = true
                             viewModel.isShowStickerSheet = false
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 coordinator.push(.camera(isStickerCamera: true))
                             }
-                        }, gridService: StickerGridService()
+                        }, gridService: stickerGridService
                     )
                     .presentationDetents([.height(317)])
                     .presentationBackgroundInteraction(.enabled)
@@ -205,7 +217,9 @@ struct HomeView: View {
             .onChange(of: viewModel.isShowStickerSheet) {
                 if !viewModel.isShowStickerSheet {
                     Task {
-                        await stickerViewModel.saveStickers()
+                        if stickerViewModel.isStickerAttached {
+                            await stickerViewModel.saveStickers()
+                        }
                         stickerViewModel.selectedStickerID = nil
                     }
                 }

@@ -23,10 +23,10 @@ struct PostContentsView: View {
                 VStack(spacing: 0) {
                     GeometryReader {
                         let size = $0.size
-                        ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail)
+                        ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail, isFront: true)
                             .frame(width: size.width, height: size.height)
                             .clipShape(RoundedRectangle(cornerRadius: isShowDetail ? 0 : 15))
-                            .pinchZoom(isZooming: $isZooming)
+                            .pinchZoom(isZooming: $isZooming, isShowDetail: isShowDetail)
                     }
                     .frame(height: isShowDetail ? 524 : 470)
                     
@@ -40,10 +40,10 @@ struct PostContentsView: View {
                 VStack(spacing: 0) {
                     GeometryReader {
                         let size = $0.size
-                        ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail)
+                        ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail, isFront: false)
                             .frame(width: size.width, height: size.height)
                             .clipShape(RoundedRectangle(cornerRadius: isShowDetail ? 0 : 15))
-                            .pinchZoom(isZooming: $isZooming)
+                            .pinchZoom(isZooming: $isZooming, isShowDetail: isShowDetail)
                     }
                     .frame(height: isShowDetail ? 524 : 470)
                     
@@ -82,11 +82,5 @@ struct PostContentsView: View {
             Spacer()
         }
         .padding(.top, 44)
-        .onChange(of: isFrontOrBack) { _, newValue in
-            Task {
-                viewModel.postImageType = (newValue == 0) ? .front : .back
-                await viewModel.fetchStickers()
-            }
-        }
     }
 }

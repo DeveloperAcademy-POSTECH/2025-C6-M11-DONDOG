@@ -15,10 +15,15 @@ struct ImageView: View {
     @Binding var isZooming: Bool  // @Environment 대신 Binding 사용
     @Binding var isShowDetail: Bool
     @State private var loadFailed: Bool = false
+    let isFront: Bool
     
     private var url: URL? {
         URL(string: urlString)
     }
+    
+    private var stickers: Binding<[AttachedSticker]> {
+            isFront ? $viewModel.frontStickers : $viewModel.backStickers
+        }
     
     var body: some View {
         ZStack {
@@ -62,7 +67,7 @@ struct ImageView: View {
                 }
             
             if !isShowDetail {
-                ForEach(viewModel.postImageType == PostImageType.front ? $viewModel.frontStickers : $viewModel.backStickers) { $sticker in
+                ForEach(stickers) { $sticker in
                     StickerView(
                         sticker: $sticker,
                         isSelected: viewModel.selectedStickerID == sticker.id,

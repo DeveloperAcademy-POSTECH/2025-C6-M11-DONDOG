@@ -23,7 +23,7 @@ struct PostContentsView: View {
                 VStack(spacing: 0) {
                     GeometryReader {
                         let size = $0.size
-                        ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail)
+                        ImageView(urlString: post.frontImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail, isFront: true)
                             .frame(width: size.width, height: size.height)
                             .clipShape(RoundedRectangle(cornerRadius: isShowDetail ? 0 : 15))
                             .pinchZoom(isZooming: $isZooming, isShowDetail: isShowDetail)
@@ -40,7 +40,7 @@ struct PostContentsView: View {
                 VStack(spacing: 0) {
                     GeometryReader {
                         let size = $0.size
-                        ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail)
+                        ImageView(urlString: post.backImageURL, isEditing: $isEditing, viewModel: viewModel, isZooming: $isZooming, isShowDetail: $isShowDetail, isFront: false)
                             .frame(width: size.width, height: size.height)
                             .clipShape(RoundedRectangle(cornerRadius: isShowDetail ? 0 : 15))
                             .pinchZoom(isZooming: $isZooming, isShowDetail: isShowDetail)

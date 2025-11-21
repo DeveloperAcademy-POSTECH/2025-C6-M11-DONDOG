@@ -123,7 +123,13 @@ struct StickerCellView: View {
     
     var body: some View {
         if let url {
-            VStack(spacing: 4) {
+            ZStack {
+                KFImage(url)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 120, height: 100, alignment: .center)
+                    .onTapGesture(perform: onTapLoaded)
+                
                 if isLoading {
                     ZStack {
                         ProgressView()
@@ -149,7 +155,8 @@ struct StickerCellView: View {
         } else if isLoading {
             ZStack {
                 ProgressView()
-                    .tint(Color.ppPrime)
+                    .tint(showedAt == .sheet ? .ppGray300 : Color.ppPrime)
+                    .opacity(showedAt == .sheet ? 0.5 : 1.0)
                     .frame(width: 24, height: 24)
                     .padding(.horizontal, 48)
                     .padding(.top, 28)

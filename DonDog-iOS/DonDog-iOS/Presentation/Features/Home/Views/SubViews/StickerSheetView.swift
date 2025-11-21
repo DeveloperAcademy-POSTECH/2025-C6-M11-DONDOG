@@ -83,11 +83,11 @@ struct StickerSheetView: View {
                     
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
+                            dismiss()
+                            
                             Task {
                                 await viewModel.saveStickers()
                                 viewModel.selectedStickerID = nil
-                                gridService.selectedCategory = categories[0]
-                                dismiss()
                             }
                         } label: {
                             Image(systemName: "checkmark")

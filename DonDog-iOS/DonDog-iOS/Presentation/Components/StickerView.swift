@@ -37,6 +37,7 @@ struct StickerView: View {
                             .padding(-8)
                     }
                 }
+                .scaleEffect(sticker.scale * gestureScale)
             
             if isEditable && isSelected {
                 Button(action: onDelete) {
@@ -51,7 +52,7 @@ struct StickerView: View {
                                 .frame(width: 25, height: 25)
                         )
                 }
-                .offset(x: -65, y: -55)
+                .offset(x: -65 * (sticker.scale * gestureScale), y: -55 * (sticker.scale * gestureScale))
                 
                 Image(systemName: "arrow.up.backward.and.arrow.down.forward")
                     .resizable()
@@ -63,14 +64,13 @@ struct StickerView: View {
                             .fill(.ddBlack)
                             .frame(width: 25, height: 25)
                     )
-                    .offset(x: 65, y: 55)
+                    .offset(x: 65 * (sticker.scale * gestureScale), y: 55 * (sticker.scale * gestureScale))
                     .gesture(transformGesture)
             }
         }
         .onAppear {
             localPosition = sticker.position
         }
-        .scaleEffect(sticker.scale * gestureScale)
         .rotationEffect(.degrees(sticker.rotation))
         .offset(x: sticker.position.x, y: sticker.position.y)
     }

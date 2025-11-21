@@ -89,6 +89,13 @@ struct TabItemView: View {
                         Color.clear
                             .contentShape(Rectangle())
                             .allowsHitTesting(true)
+                            .onTapGesture {
+                                isEditing = false
+                                Task {
+                                    await viewModel.saveStickers()
+                                    viewModel.selectedStickerID = nil
+                                }
+                            }
                             .gesture(
                                 DragGesture(minimumDistance: 0)
                                     .onChanged { _ in }

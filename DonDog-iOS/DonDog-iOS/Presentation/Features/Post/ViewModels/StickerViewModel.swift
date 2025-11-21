@@ -99,7 +99,7 @@ final class StickerViewModel: ObservableObject {
                 selectedStickerID = newSticker.id
             }
         }
-        selectedStickerID = newSticker.id
+        //selectedStickerID = newSticker.id
         isStickerAttached = true
     }
     

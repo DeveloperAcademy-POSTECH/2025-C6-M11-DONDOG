@@ -35,7 +35,7 @@ extension CustomCameraViewController {
             if isConfirmed {
                 self.step1Label.isHidden = true
                 self.step1CheckmarkImageView.isHidden = false
-                self.step1Circle.backgroundColor = .ddAlert
+                self.step1Circle.backgroundColor = .ppSubPrime
                 
                 // Step 1 펄스 애니메이션 멈춤
                 self.step1PulseView.isHidden = true
@@ -64,7 +64,7 @@ extension CustomCameraViewController {
             if isConfirmed {
                 self.step2Label.isHidden = true
                 self.step2CheckmarkImageView.isHidden = false
-                self.step2Circle.backgroundColor = .ddAlert
+                self.step2Circle.backgroundColor = .ppSubPrime
                 
                 // Step 2 펄스 애니메이션 멈춤
                 self.step2PulseView.isHidden = true
@@ -114,12 +114,12 @@ extension CustomCameraViewController {
             
             self.step1Label.isHidden = false
             self.step1CheckmarkImageView.isHidden = true
-            self.step1Circle.backgroundColor = .ddAlert
+            self.step1Circle.backgroundColor = .ppSubPrime
             self.step1Label.textColor = .white
             
             self.step2Label.isHidden = false
             self.step2CheckmarkImageView.isHidden = true
-            self.step2Circle.backgroundColor = .ddGray300
+            self.step2Circle.backgroundColor = .ppSubPrime
             self.step2Label.textColor = .white
             
             self.bottomButtonContainer.isHidden = true

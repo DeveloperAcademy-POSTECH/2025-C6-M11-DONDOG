@@ -61,6 +61,7 @@ final class StickerViewModel: ObservableObject {
             backStickers = try await dataManager.fetchWhereEqual(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments", field: "postImageType", isEqualTo: PostImageType.back.rawValue)
         } catch {
             print("붙여진 스티커 로드 실패: \(error.localizedDescription)")
+            await self.fetchStickers()
         }
     }
     

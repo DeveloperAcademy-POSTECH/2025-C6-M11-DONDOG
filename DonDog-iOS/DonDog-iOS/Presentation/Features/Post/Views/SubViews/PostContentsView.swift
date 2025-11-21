@@ -82,11 +82,5 @@ struct PostContentsView: View {
             Spacer()
         }
         .padding(.top, 44)
-        .onChange(of: isFrontOrBack) { _, newValue in
-            Task {
-                viewModel.postImageType = (newValue == 0) ? .front : .back
-                await viewModel.fetchStickers()
-            }
-        }
     }
 }

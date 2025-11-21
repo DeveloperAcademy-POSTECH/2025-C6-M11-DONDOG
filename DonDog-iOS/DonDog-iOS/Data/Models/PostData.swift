@@ -15,10 +15,9 @@ struct PostData: Codable, Hashable {
     let caption: String
     let createdAt: Timestamp
     let updatedAt: Timestamp
-    let stickerPostId: String?
     let stickerType: String?
     
-    init(postId: String, authorId: String, frontImageURL: String, backImageURL: String, caption: String, createdAt: Timestamp? = nil, stickerPostId: String, stickerType: String?) {
+    init(postId: String, authorId: String, frontImageURL: String, backImageURL: String, caption: String, createdAt: Timestamp? = nil, stickerType: String?) {
         self.postId = postId
         self.authorId = authorId
         self.frontImageURL = frontImageURL
@@ -26,7 +25,6 @@ struct PostData: Codable, Hashable {
         self.caption = caption
         self.createdAt = createdAt ?? Timestamp()
         self.updatedAt = Timestamp()
-        self.stickerPostId = stickerPostId
         self.stickerType = stickerType
     }
 }

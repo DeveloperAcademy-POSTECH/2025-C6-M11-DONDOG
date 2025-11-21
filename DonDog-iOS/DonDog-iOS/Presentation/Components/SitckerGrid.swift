@@ -87,7 +87,6 @@ struct StickerCellView: View {
                 KFImage(url)
                     .resizable()
                     .scaledToFit()
-                    .opacity(hasSelection ? (isSelected ? 1.0 : 0.5) : 1.0)
                     .frame(width: 120, height: 100, alignment: .center)
                     .onTapGesture(perform: onTapLoaded)
                 

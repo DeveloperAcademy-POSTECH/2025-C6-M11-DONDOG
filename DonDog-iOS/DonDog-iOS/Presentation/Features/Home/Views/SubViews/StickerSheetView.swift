@@ -84,6 +84,11 @@ struct StickerSheetView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             dismiss()
+                            
+                            Task {
+                                await viewModel.saveStickers()
+                                viewModel.selectedStickerID = nil
+                            }
                         } label: {
                             Image(systemName: "checkmark")
                                 .font(.captionRegular13)

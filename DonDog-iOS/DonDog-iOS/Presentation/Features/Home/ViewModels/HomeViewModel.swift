@@ -88,10 +88,7 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
             
             await MainActor.run {
                 self.todayPosts = todayPosts
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-                    self?.isLoading = false
-                }
+                self.isLoading = false
             }
         } catch {
             print("게시물 로드 실패: \(error.localizedDescription)")

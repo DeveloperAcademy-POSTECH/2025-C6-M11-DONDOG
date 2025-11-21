@@ -94,10 +94,11 @@ struct StickerSheetView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             dismiss()
-                            
                             Task {
-                                await stickerViewModel.saveStickers()
-                                stickerViewModel.selectedStickerID = nil
+                                if viewModel.isStickerAttached {
+                                    await viewModel.saveStickers()
+                                }
+                                viewModel.selectedStickerID = nil
                             }
                         } label: {
                             Image(systemName: "checkmark")

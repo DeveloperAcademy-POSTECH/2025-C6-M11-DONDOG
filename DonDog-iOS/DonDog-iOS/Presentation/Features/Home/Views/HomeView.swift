@@ -38,8 +38,8 @@ struct HomeView: View {
                     TabView(selection: $viewModel.currentIndex) {
                         if viewModel.isUploadingLocalImage, viewModel.selectedPostType == .myArchive, let frontImage = viewModel.localFrontImage, let backImage = viewModel.localBackImage {
                             Group {
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(frontImage), tag: 0, postId: nil)
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(backImage), tag: 1, postId: nil)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(frontImage), tag: 0, postId: nil, isShowGradient: !viewModel.isLoading)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(backImage), tag: 1, postId: nil, isShowGradient: !viewModel.isLoading)
                             }
                         } else if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
                             Group {
@@ -142,7 +142,7 @@ struct HomeView: View {
                     Spacer()
                     Button {
                         cameraViewModel.resetCameraState()
-                        viewModel.checkAndShowCamera()
+                        viewModel.checkAndShowCamera() 
                     } label: {
                         Circle()
                             .foregroundColor(.ppWhite)
@@ -217,7 +217,9 @@ struct HomeView: View {
             .onChange(of: viewModel.isShowStickerSheet) {
                 if !viewModel.isShowStickerSheet {
                     Task {
-                        await stickerViewModel.saveStickers()
+                        if stickerViewModel.isStickerAttached {
+                            await stickerViewModel.saveStickers()
+                        }
                         stickerViewModel.selectedStickerID = nil
                     }
                 }

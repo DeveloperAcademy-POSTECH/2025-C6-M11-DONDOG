@@ -43,15 +43,6 @@ final class AppCoordinator: ObservableObject {
             self.handleDeepLink(deeplink)
         }
         
-        DispatchQueue.main.async {
-            if let appDelegate = UIApplication.shared.delegate as? AppDelegate, let deepLink = appDelegate.initialDeepLink {
-                print("저장된 딥링크 처리: \(deepLink)")
-                self.handleDeepLink(deepLink)
-                
-                // 처리 후 중복 실행 방지
-                appDelegate.initialDeepLink = nil
-            }
-        }
     }
     
     deinit {
@@ -121,9 +112,7 @@ final class AppCoordinator: ObservableObject {
     func handleDeepLink(_ urlString: String) {
         guard let url = URL(string: urlString), let scheme = url.scheme, scheme == "dondog" else { return }
         
-        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        
-        // 모든 딥링크는 피드에서 시작
+        // 모든 딥링크는 홈에서 시작
         if root != .home {
             replaceRoot(.home)
         } else {
@@ -131,23 +120,6 @@ final class AppCoordinator: ObservableObject {
         }
         
         switch url.host {
-        case "post":
-            let roomId = components?.queryItems?.first(where: { $0.name == "roomId" })?.value
-            let postId = components?.queryItems?.first(where: { $0.name == "postId" })?.value
-            
-            if let roomId = roomId, let postId = postId {
-                Task {
-                    do {
-                        let post: PostData = try await DataManager.shared.fetch(path: "Rooms/\(roomId)/posts/\(postId)")
-                        await MainActor.run {
-                            self.push(.post(post: post, postType: .post))
-                        }
-                    } catch {
-                        print("게시물 이동 실패: \(error)")
-                    }
-                }
-            }
-            
         case "camera":
             self.showCameraInDeeplink = true
             

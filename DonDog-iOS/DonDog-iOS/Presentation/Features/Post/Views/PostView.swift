@@ -69,10 +69,8 @@ struct PostView: View {
         .animation(.easeInOut, value: isShowDetail)
         .navigationBarBackButtonHidden(true)
         .task {
-            Task {
-                stickerViewModel.postId = viewModel.post.postId
-                await stickerViewModel.fetchStickers()
-            }
+            stickerViewModel.postId = viewModel.post.postId
+            await stickerViewModel.fetchStickers()
         }
     }
 }

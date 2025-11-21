@@ -20,7 +20,7 @@ struct TabItemView: View {
     let imageSource: HomeImageSource
     let tag: Int
     let postId: String?
-    var isShowGradient: Bool?
+    var isShowGradient: Bool
     
     private var postImageType: PostImageType {
         tag == 0 ? .front : .back
@@ -78,6 +78,9 @@ struct TabItemView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 15))
                             .background {
                                 Color.ppGray200
+                                    .frame(maxHeight: 468)
+                                    .frame(width: 353)
+                                    .clipShape(RoundedRectangle(cornerRadius: 15))
                             }
                         }
                         .fade(duration: 0.25)
@@ -89,6 +92,15 @@ struct TabItemView: View {
                         Color.clear
                             .contentShape(Rectangle())
                             .allowsHitTesting(true)
+                            .onTapGesture {
+                                isEditing = false
+                                Task {
+                                    if viewModel.isStickerAttached {
+                                        await viewModel.saveStickers()
+                                    }
+                                    viewModel.selectedStickerID = nil
+                                }
+                            }
                             .gesture(
                                 DragGesture(minimumDistance: 0)
                                     .onChanged { _ in }
@@ -125,10 +137,11 @@ struct TabItemView: View {
         .overlay(alignment: .bottom) {
             if !isEditing {
                 LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                    .opacity(0.6)
+                    .opacity(isShowGradient ? 0.6 : 0)
                     .frame(maxHeight: 97)
+                    .frame(width: 353)
+                    .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 12, bottomTrailingRadius: 12))
             }
-            
         }
         .overlay {
             if DateUtils.isOver3daysSinceLastUpload() {
@@ -149,13 +162,6 @@ struct TabItemView: View {
                 viewModel.postId = postId
                 viewModel.postImageType = postImageType
                 await viewModel.fetchStickers()
-            }
-        }
-        .onChange(of: viewModel.postImageType) { _, newType in
-            if newType == postImageType {
-                Task {
-                    await viewModel.fetchStickers()
-                }
             }
         }
     }

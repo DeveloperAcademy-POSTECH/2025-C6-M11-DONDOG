@@ -41,6 +41,7 @@ final class StickerViewModel: ObservableObject {
     @Published var targetItemID: StickerItem.ID?
     @Published var previewURL: URL?
     
+    @Published var isStickerAttached: Bool = false
     @MainActor
     @Published var isSaving = false
     
@@ -64,6 +65,7 @@ final class StickerViewModel: ObservableObject {
             backStickers = try await dataManager.fetchWhereEqual(path: "Rooms/\(roomId)/posts/\(postId)/stickerAttachments", field: "postImageType", isEqualTo: PostImageType.back.rawValue)
         } catch {
             print("붙여진 스티커 로드 실패: \(error.localizedDescription)")
+            await self.fetchStickers()
         }
     }
     
@@ -97,6 +99,8 @@ final class StickerViewModel: ObservableObject {
                 selectedStickerID = newSticker.id
             }
         }
+        selectedStickerID = newSticker.id
+        isStickerAttached = true
     }
     
     private func orderedPosition() -> CGPoint {
@@ -174,5 +178,6 @@ final class StickerViewModel: ObservableObject {
         } catch {
             print("stickerUdpatedAt 최신화 실패: \(error.localizedDescription)")
         }
+        isStickerAttached = false
     }
 }

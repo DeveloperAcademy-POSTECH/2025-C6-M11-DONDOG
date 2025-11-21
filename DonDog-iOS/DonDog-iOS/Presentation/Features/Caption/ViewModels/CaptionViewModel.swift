@@ -64,7 +64,7 @@ final class CaptionViewModel: ObservableObject {
                 let (frontURL, backURL) = try await (frontURLTask, backURLTask)
                 print("전면/후면 이미지 업로드 모두 완료")
 
-                let postData = PostData(postId: postId, authorId: myUid, frontImageURL: frontURL, backImageURL: backURL, caption: captionSnapshot, stickerPostId: "", stickerType: nil)
+                let postData = PostData(postId: postId, authorId: myUid, frontImageURL: frontURL, backImageURL: backURL, caption: captionSnapshot, stickerType: nil)
 
                 var dict = try Firestore.Encoder().encode(postData)
                 dict["authorId"] = postData.authorId

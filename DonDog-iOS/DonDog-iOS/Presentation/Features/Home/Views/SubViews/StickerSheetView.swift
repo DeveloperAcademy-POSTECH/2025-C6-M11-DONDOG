@@ -85,7 +85,9 @@ struct StickerSheetView: View {
                         Button {
                             dismiss()
                             Task {
-                                await viewModel.saveStickers()
+                                if viewModel.isStickerAttached {
+                                    await viewModel.saveStickers()
+                                }
                                 viewModel.selectedStickerID = nil
                             }
                         } label: {

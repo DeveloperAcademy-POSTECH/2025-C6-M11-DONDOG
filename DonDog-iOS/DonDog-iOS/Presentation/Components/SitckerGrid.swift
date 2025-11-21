@@ -87,7 +87,7 @@ struct StickerCellView: View {
     let url: URL?
     let isLoading: Bool
     let isSelected: Bool
-    let hasSelection: Bool
+    let hasSelection: Bool?
     let index: Int
     let categoryKey: String?
     let role: String?
@@ -99,7 +99,7 @@ struct StickerCellView: View {
         
         let order = index + 1
         let stateSuffix: String
-        if hasSelection {
+        if hasSelection == true {
             stateSuffix = isSelected ? "off" : "on"
         } else {
             stateSuffix = "on"
@@ -123,13 +123,7 @@ struct StickerCellView: View {
     
     var body: some View {
         if let url {
-            ZStack {
-                KFImage(url)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 120, height: 100, alignment: .center)
-                    .onTapGesture(perform: onTapLoaded)
-                
+            VStack(spacing: 4) {
                 if isLoading {
                     ZStack {
                         ProgressView()
@@ -144,13 +138,14 @@ struct StickerCellView: View {
                     KFImage(url)
                         .resizable()
                         .scaledToFit()
-                        .opacity(hasSelection ? (isSelected ? 1.0 : 0.5) : 1.0)
+                        .opacity(hasSelection == true ? (isSelected ? 1.0 : 0.5) : 1.0)
                         .frame(width: 120, height: 100, alignment: .center)
                         .onTapGesture(perform: onTapLoaded)
                 }
                 
                 Text(title)
                     .font(.polaroidCaptionRegular16)
+                    .foregroundColor(showedAt == .sheet ? .ppGray200 : .ppBlack)
             }
         } else if isLoading {
             ZStack {
@@ -170,7 +165,6 @@ struct StickerCellView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 120, height: 100)
-                        // .opacity(hasSelection ? (isSelected ? 1.0 : 0.5) : 1.0)
                 } else {
                     ZStack {
                         Circle()

@@ -14,6 +14,7 @@ struct HomeView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @StateObject private var stickerViewModel = StickerViewModel()
     @EnvironmentObject var connectUserInfo: UserPairingStore
+    @StateObject var stickerGridService = StickerGridService()
     
     var body: some View {
         if connectUserInfo.isConnected == .unknown {
@@ -182,18 +183,26 @@ struct HomeView: View {
                 Task {
                     await viewModel.loadPosts()
                 }
+                
+                if stickerViewModel.shouldReopenSheetAfterCamera {
+                    stickerViewModel.shouldReopenSheetAfterCamera = false
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        viewModel.isShowStickerSheet = true
+                    }
+                }
             }
             .sheet(isPresented: $viewModel.isShowStickerSheet) {
                 if let currentPost = viewModel.currentPost {
                     StickerSheetView(
-                        viewModel: stickerViewModel, postId: currentPost.postId,
+                        stickerViewModel: stickerViewModel, postId: currentPost.postId,
                         onRequestCamera: {
                             stickerViewModel.shouldReopenSheetAfterCamera = true
                             viewModel.isShowStickerSheet = false
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 coordinator.push(.camera(isStickerCamera: true))
                             }
-                        }, gridService: StickerGridService()
+                        }, gridService: stickerGridService
                     )
                     .presentationDetents([.height(317)])
                     .presentationBackgroundInteraction(.enabled)

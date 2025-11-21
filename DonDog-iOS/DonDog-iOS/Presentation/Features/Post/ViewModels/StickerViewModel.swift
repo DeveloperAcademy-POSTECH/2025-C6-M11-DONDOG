@@ -41,6 +41,9 @@ final class StickerViewModel: ObservableObject {
     @Published var targetItemID: StickerItem.ID?
     @Published var previewURL: URL?
     
+    @MainActor
+    @Published var isSaving = false
+    
     let dataManager: DataManagerProtocol = DataManager.shared
     let connectUserInfo = UserPairingStore.shared
     var roomId: String = ""
@@ -129,6 +132,11 @@ final class StickerViewModel: ObservableObject {
     }
     
     func saveStickers() async {
+        if isSaving { return }
+        isSaving = true
+        
+        defer { isSaving = false }
+        
         for sticker in postImageType == .front ? frontStickers : backStickers {
             let data: [String: Any] = [
                 "id": sticker.id.uuidString,

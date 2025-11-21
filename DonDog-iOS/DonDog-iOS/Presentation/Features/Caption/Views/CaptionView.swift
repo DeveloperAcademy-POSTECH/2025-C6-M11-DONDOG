@@ -47,7 +47,7 @@ struct CaptionView: View {
                                 UIPageControl.appearance().pageIndicatorTintColor = UIColor(Color.ppPrime50)
                             }
                         }
-                        .frame(height: max(470 - keyboard.keyboardHeight, 366))
+                        .frame(maxHeight: 470)
                         .animation(.easeInOut(duration: 0.3), value: keyboard.keyboardHeight)
                         .padding(.vertical, 8)
                         .onTapGesture {
@@ -91,7 +91,9 @@ struct CaptionView: View {
                                 .foregroundStyle(.ppGray200)
                         }
                     }
-                    
+                    Rectangle()
+                        .frame(height: max(0, keyboard.keyboardHeight - 103))
+                        .opacity(0)
                     Spacer()
                     
                     Button {

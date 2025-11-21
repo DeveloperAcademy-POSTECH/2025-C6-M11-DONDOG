@@ -385,7 +385,6 @@
 				8BA793CB2EC073E500FF05B3 /* SitckerGrid.swift */,
 				8BEA2CD42EC3A1E500BC27EC /* OutlinedTitleImageMaker.swift */,
 				CAC4C62A2EC6D39800131F6A /* CustomAlert.swift */,
-				D297CE7E2EB0305E00F28395 /* StickerView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -738,6 +737,7 @@
 			children = (
 				D219F21E2EAEA10100BD82B7 /* PostContentsView.swift */,
 				D27750982EC0186400E27680 /* ImageView.swift */,
+				D297CE7E2EB0305E00F28395 /* StickerView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";

@@ -42,6 +42,8 @@ final class StickerViewModel: ObservableObject {
     @Published var previewURL: URL?
     
     @Published var isStickerAttached: Bool = false
+    @MainActor
+    @Published var isSaving = false
     
     let dataManager: DataManagerProtocol = DataManager.shared
     let connectUserInfo = UserPairingStore.shared
@@ -68,18 +70,34 @@ final class StickerViewModel: ObservableObject {
     }
     
     func addSticker(with url: URL) {
-        let newSticker = AttachedSticker(
-            createdAt: Date.now,
-            stickerURL: url,
-            postImageType: postImageType.rawValue,
-            position: orderedPosition(),
-            scale: 1.0,
-            rotation: .zero
-        )
         if postImageType == .front {
-            frontStickers.append(newSticker)
+            if frontStickers.count < 24 {
+                let newSticker = AttachedSticker(
+                    createdAt: Date.now,
+                    stickerURL: url,
+                    postImageType: postImageType.rawValue,
+                    position: orderedPosition(),
+                    scale: 1.0,
+                    rotation: .zero
+                )
+                
+                frontStickers.append(newSticker)
+                selectedStickerID = newSticker.id
+            }
         } else {
-            backStickers.append(newSticker)
+            if backStickers.count < 24 {
+                let newSticker = AttachedSticker(
+                    createdAt: Date.now,
+                    stickerURL: url,
+                    postImageType: postImageType.rawValue,
+                    position: orderedPosition(),
+                    scale: 1.0,
+                    rotation: .zero
+                )
+                
+                backStickers.append(newSticker)
+                selectedStickerID = newSticker.id
+            }
         }
         selectedStickerID = newSticker.id
         isStickerAttached = true
@@ -118,6 +136,11 @@ final class StickerViewModel: ObservableObject {
     }
     
     func saveStickers() async {
+        if isSaving { return }
+        isSaving = true
+        
+        defer { isSaving = false }
+        
         for sticker in postImageType == .front ? frontStickers : backStickers {
             let data: [String: Any] = [
                 "id": sticker.id.uuidString,

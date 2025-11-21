@@ -112,6 +112,7 @@ struct ArchiveView: View {
                                             .padding(.horizontal, 10)
                                         }
                                     }
+                                    .padding(.bottom, 100)
                                 }
                                 .padding(.top, 20)
                             }

@@ -11,28 +11,32 @@ import Kingfisher
 import SwiftUI
 
 struct StickerSheetView: View {
-    @ObservedObject var viewModel: StickerViewModel
+    @ObservedObject var stickerViewModel: StickerViewModel
     let postId: String
     let onRequestCamera: () -> Void
     
-    @State private var select = 0
+    @State private var select: Int
     @Environment(\.dismiss) var dismiss
     private let categories = StickerCategory.allCases
     
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 3)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: -10), count: 3)
     @StateObject private var cameraVM = CameraViewModel()
     @ObservedObject private var gridService: StickerGridService
     
     init(
-        viewModel: StickerViewModel,
+        stickerViewModel: StickerViewModel,
         postId: String,
         onRequestCamera: @escaping () -> Void,
         gridService: StickerGridService
     ) {
-        self.viewModel = viewModel
+        self.stickerViewModel = stickerViewModel
         self.postId = postId
         self.onRequestCamera = onRequestCamera
         self._gridService = ObservedObject(wrappedValue: gridService)
+        
+        let allCategories = StickerCategory.allCases
+        let initialIndex = allCategories.firstIndex(of: gridService.selectedCategory) ?? 0
+        self._select = State(initialValue: initialIndex)
     }
 
     var body: some View {
@@ -46,22 +50,28 @@ struct StickerSheetView: View {
                     columns: columns,
                     rowSpacing: 8,
                     onItemAppear: { id in
-                        if let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id }) {
-                            Task { await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory) }
+                        guard gridService.stickerImageURLs[id] == nil, gridService.loadingItemIDs.contains(id) == false, let item = gridService.stickerItems(for: gridService.selectedCategory).first(where: { $0.id == id }) else { return }
+                        
+                        Task {
+                            await gridService.fetchStickerImage(for: item, in: gridService.selectedCategory)
                         }
                     },
                     onItemTap: { item in
                         if let url = gridService.stickerImageURLs[item.id] {
-                            viewModel.targetItemID = item.id
-                            viewModel.addSticker(with: url)
+                            stickerViewModel.targetItemID = item.id
+                            stickerViewModel.addSticker(with: url)
                         }
                     },
                     onPlusTap: { item in
                         let keyword = item.title
-                        StickerEmotionTagManager.shared.emotionTags = [gridService.selectedCategory.rawValue, keyword]
-                        viewModel.targetItemID = item.id
+                        StickerEmotionTagManager.shared.emotionTags = [
+                            gridService.selectedCategory.rawValue,
+                            keyword
+                        ]
                         onRequestCamera()
                     },
+                    categoryKey: gridService.selectedCategory.assetKey,
+                    role: UserPairingStore.shared.myRole
                 )
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {

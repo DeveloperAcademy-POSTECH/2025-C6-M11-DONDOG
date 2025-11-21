@@ -242,10 +242,12 @@ struct HomeView: View {
                         .ignoresSafeArea()
                 }
             }
-            .task {
-                if coordinator.showCameraInDeeplink {
-                    viewModel.isShowCameraView = true
-                    coordinator.showCameraInDeeplink = false
+            .onChange(of: coordinator.showCameraInDeeplink) { _, newValue in
+                if newValue {
+                    DispatchQueue.main.async {
+                        viewModel.isShowCameraView = true
+                        coordinator.showCameraInDeeplink = false
+                    }
                 }
             }
             .animation(.smooth(duration: 0.5), value: viewModel.isShowingATimePost)

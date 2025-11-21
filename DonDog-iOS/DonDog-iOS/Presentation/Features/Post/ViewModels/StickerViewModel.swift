@@ -83,6 +83,7 @@ final class StickerViewModel: ObservableObject {
                 
                 frontStickers.append(newSticker)
                 selectedStickerID = newSticker.id
+                isStickerAttached = true
             }
         } else {
             if backStickers.count < 24 {
@@ -97,10 +98,9 @@ final class StickerViewModel: ObservableObject {
                 
                 backStickers.append(newSticker)
                 selectedStickerID = newSticker.id
+                isStickerAttached = true
             }
         }
-        //selectedStickerID = newSticker.id
-        isStickerAttached = true
     }
     
     private func orderedPosition() -> CGPoint {

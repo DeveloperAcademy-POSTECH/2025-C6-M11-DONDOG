@@ -123,13 +123,12 @@ struct TabItemView: View {
         .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
         .tag(tag)
         .overlay(alignment: .bottom) {
-            if let isShowGradient = isShowGradient {
-                if isShowGradient && !isEditing {
-                    LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
-                        .opacity(0.6)
-                        .frame(maxHeight: 97)
-                }
+            if !isEditing {
+                LinearGradient(colors: [.clear, .ppBlack], startPoint: .top, endPoint: .bottom)
+                    .opacity(0.6)
+                    .frame(maxHeight: 97)
             }
+            
         }
         .overlay {
             if DateUtils.isOver3daysSinceLastUpload() {

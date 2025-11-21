@@ -25,11 +25,12 @@ final class StickerGridService: ObservableObject {
     init(role: String? = nil) {
         let resolvedRole = role ?? UserPairingStore.shared.myRole ?? "child"
         self.role = resolvedRole
-        self.itemsByCategory = StickerCategoryData.itemsByCategory(for: role)
+        self.itemsByCategory = StickerCategoryData.itemsByCategory(for: resolvedRole)
     }
     
     func stickerItems(for category: StickerCategory) -> [StickerItem] {
-        itemsByCategory[category] ?? []
+        let items = itemsByCategory[category] ?? []
+        return items
     }
     
     func fetchStickerImage(for item: StickerItem, in category: StickerCategory) async {
@@ -89,6 +90,8 @@ final class StickerGridService: ObservableObject {
     }
     
     func updateRole() {
-        itemsByCategory = StickerCategoryData.itemsByCategory(for: UserPairingStore.shared.myRole)
+        let resolvedRole = UserPairingStore.shared.myRole ?? "child"
+        role = resolvedRole
+        itemsByCategory = StickerCategoryData.itemsByCategory(for: resolvedRole)
     }
 }

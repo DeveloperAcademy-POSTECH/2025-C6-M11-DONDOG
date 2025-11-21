@@ -111,44 +111,6 @@ struct HomeView: View {
                             }
                             .padding(.horizontal, 20)
                         }
-                    } else if viewModel.isUploadingLocalImage, let localCaption = viewModel.localCaption {
-                        if !DateUtils.isOver3daysSinceLastUpload() {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(localCaption)
-                                        .font(.subtitleSemiBold16)
-                                        .foregroundStyle(.ppWhite)
-                                    
-                                    if let localDate = viewModel.localUploadDate {
-                                        Text(DateUtils.string(from: localDate, format: .home))
-                                            .font(.captionRegular13)
-                                            .foregroundStyle(.ppWhite)
-                                    }
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.bottom, 21)
-                                
-                                Spacer()
-                                Button {
-                                    // editableView
-                                } label: {
-                                    Image("AddStickerIcon")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 64, height: 64)
-                                        .background {
-                                            Circle()
-                                                .frame(width: 70, height: 70)
-                                                .foregroundStyle(.ppPrime)
-                                        }
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 16)
-                                .buttonStyle(.plain)
-                                .opacity(viewModel.selectedPostType == .myArchive ? 0 : 1)
-                            }
-                            .padding(.horizontal, 20)
-                        }
                     }
                 }
                 .frame(maxHeight: 468)

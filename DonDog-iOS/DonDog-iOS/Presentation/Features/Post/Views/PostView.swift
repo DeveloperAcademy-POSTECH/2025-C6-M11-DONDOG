@@ -2,8 +2,6 @@ import FirebaseFirestore
 import Kingfisher
 import SwiftUI
 
-
-// MARK: - PostView
 struct PostView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject var viewModel: PostViewModel

@@ -72,7 +72,7 @@ struct PhotoPickerView: View {
                                         ZStack(alignment: .topTrailing) {
                                             KFImage(imageURL)
                                                 .placeholder {
-                                                    Color(.secondarySystemBackground)
+                                                    Color(.ppPrime50)
                                                         .clipShape(RoundedRectangle(cornerRadius: 8))
                                                 }
                                                 .resizable()

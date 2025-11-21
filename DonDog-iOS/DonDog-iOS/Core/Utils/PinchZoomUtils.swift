@@ -36,7 +36,7 @@ struct ZoomContainer<Content: View>: View {
                     Group {
                         if containerData.dimsBackground {
                             Rectangle()
-                                .fill(.black.opacity(0.9))
+                                .fill(.ppRealBlack)
                         }
                         
                         view

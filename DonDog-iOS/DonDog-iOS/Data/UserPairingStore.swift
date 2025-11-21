@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 enum ConnectionState {
-    case unknown      // 아직 서버/스토리지에서 안 불러옴 - 홈뷰에서 
+    case unknown      // 아직 서버/스토리지에서 안 불러옴 - 홈뷰에서
     case connected
     case notConnected
 }
@@ -23,7 +23,7 @@ final class UserPairingStore: ObservableObject {
     @Published var roomId: String?
     @Published var myUid: String?
     @Published var myName: String?
-    @Published var myRole: String?
+    @Published var myRole: String? { didSet { StickerGridService.shared.updateRole() }}
     @Published var partnerUid: String?
     @Published var partnerName: String?
     @Published var lastUploadedAt: Date?

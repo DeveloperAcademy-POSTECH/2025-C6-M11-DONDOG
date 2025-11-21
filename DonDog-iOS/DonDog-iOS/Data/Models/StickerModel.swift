@@ -24,6 +24,14 @@ struct StickerItem: Identifiable, Hashable {
     let id = UUID()
     let title: String // 세부 감정 문구 (예: "보고싶다")
     var image: UIImage? // 누끼 완료된 스티커 이미지
+    
+    init(
+        title: String,
+        image: UIImage? = nil
+    ) {
+        self.title = title
+        self.image = image
+    }
 }
 
 enum StickerCategory: String, CaseIterable, Identifiable {
@@ -31,6 +39,17 @@ enum StickerCategory: String, CaseIterable, Identifiable {
     case character = "픽픽 캐릭터"
     case speechBubble = "말풍선"
     var id: String { rawValue }
+}
+
+extension StickerCategory {
+    /// 에셋 네이밍용
+    var assetKey: String {
+        switch self {
+        case .bigEmotion:   return "big"
+        case .character:    return "char"
+        case .speechBubble: return "bubble"
+        }
+    }
 }
 
 struct StickerCategoryData {

@@ -72,6 +72,7 @@
 		8C5A1EDA2ECD57E800C08B0E /* NotConnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5A1ED92ECD57DB00C08B0E /* NotConnectedView.swift */; };
 		8C5A1EDC2ECD58E900C08B0E /* TabItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5A1EDB2ECD589400C08B0E /* TabItemView.swift */; };
 		8C5A1EDE2ECD5B6900C08B0E /* HomeEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5A1EDD2ECD5B5E00C08B0E /* HomeEmptyView.swift */; };
+		8C95EAFB2ECF63760045A2BD /* PinchZoomUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C95EAFA2ECF636B0045A2BD /* PinchZoomUtils.swift */; };
 		8CAD89DB2EA9FD91004318F0 /* HapticUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */; };
 		8CF3BD742EAE0BA30050003C /* DataManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */; };
 		8CF3BD762EAE0EAB0050003C /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF3BD752EAE0EA40050003C /* DataManager.swift */; };
@@ -105,12 +106,14 @@
 		CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEE42E8FC1B40047A89A /* InviteView.swift */; };
 		CAA9AEF02E8FE2990047A89A /* ModuleFactoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEEF2E8FE2990047A89A /* ModuleFactoryProtocol.swift */; };
 		CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */; };
+		CAB47B7A2ECDCB8A007E57C9 /* InitialOnBoardingContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB47B792ECDCB8A007E57C9 /* InitialOnBoardingContentView.swift */; };
 		CAB6B1E22EB5082D00F778EC /* UserPairingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1E12EB5082D00F778EC /* UserPairingStore.swift */; };
 		CAB6B1E42EB5089600F778EC /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1E32EB5089600F778EC /* DateUtils.swift */; };
 		CAB6B1EE2EB6375A00F778EC /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1ED2EB6375A00F778EC /* View+.swift */; };
 		CAB6B1F42EB63D9000F778EC /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1F32EB63D9000F778EC /* Errors.swift */; };
 		CAB6B3102EBB20AF00F778EC /* CustomSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B30F2EBB20AF00F778EC /* CustomSegmentedControl.swift */; };
 		CAC4C62B2EC6D39800131F6A /* CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC4C62A2EC6D39800131F6A /* CustomAlert.swift */; };
+		CAD0899F2ECDD49900F89827 /* InitialOnBoardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD0899E2ECDD49900F89827 /* InitialOnBoardingView.swift */; };
 		D219F1E32EAE0A3700BD82B7 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1E22EAE0A3200BD82B7 /* PostView.swift */; };
 		D219F1E52EAE0A4400BD82B7 /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F1E42EAE0A3D00BD82B7 /* PostViewModel.swift */; };
 		D219F21F2EAEA10500BD82B7 /* PostContentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D219F21E2EAEA10100BD82B7 /* PostContentsView.swift */; };
@@ -130,6 +133,7 @@
 		61C9B19D2E9BEC130007C8F4 /* ArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveView.swift; sourceTree = "<group>"; };
 		61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveViewModel.swift; sourceTree = "<group>"; };
 		61C9B1A52E9BFCBE0007C8F4 /* ArchiveDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDate.swift; sourceTree = "<group>"; };
+		8B102CC62ECF441C00736A01 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8B38DBE12EBCFB5800DD7562 /* PhotoPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewModel.swift; sourceTree = "<group>"; };
 		8B5F44552E90FA74003137F2 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -168,7 +172,6 @@
 		8BDF768D2E9F498B007F12BB /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		8BDF76972E9F72CE007F12BB /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeService.swift; sourceTree = "<group>"; };
-		8BE3DC882ECE91F4002F02ED /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8BEA2CD42EC3A1E500BC27EC /* OutlinedTitleImageMaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlinedTitleImageMaker.swift; sourceTree = "<group>"; };
 		8BF73ECA2ECB3FE3007BCBDA /* CameraStickerConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraStickerConfirmView.swift; sourceTree = "<group>"; };
 		8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorView.swift; sourceTree = "<group>"; };
@@ -176,9 +179,11 @@
 		8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		8C3E79212EBB28EF000ADEF6 /* HomePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePost.swift; sourceTree = "<group>"; };
 		8C3F8FBE2EB8DAAD00699BC3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		8C43E0A32ECF4B8E00A9D6C6 /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DonDog-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C5A1ED92ECD57DB00C08B0E /* NotConnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotConnectedView.swift; sourceTree = "<group>"; };
 		8C5A1EDB2ECD589400C08B0E /* TabItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabItemView.swift; sourceTree = "<group>"; };
 		8C5A1EDD2ECD5B5E00C08B0E /* HomeEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeEmptyView.swift; sourceTree = "<group>"; };
+		8C95EAFA2ECF636B0045A2BD /* PinchZoomUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchZoomUtils.swift; sourceTree = "<group>"; };
 		8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticUtils.swift; sourceTree = "<group>"; };
 		8CF3BD732EAE0AE30050003C /* DataManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagerProtocol.swift; sourceTree = "<group>"; };
 		8CF3BD752EAE0EA40050003C /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
@@ -213,12 +218,14 @@
 		CAA9AEE42E8FC1B40047A89A /* InviteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteView.swift; sourceTree = "<group>"; };
 		CAA9AEEF2E8FE2990047A89A /* ModuleFactoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleFactoryProtocol.swift; sourceTree = "<group>"; };
 		CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteViewModel.swift; sourceTree = "<group>"; };
+		CAB47B792ECDCB8A007E57C9 /* InitialOnBoardingContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialOnBoardingContentView.swift; sourceTree = "<group>"; };
 		CAB6B1E12EB5082D00F778EC /* UserPairingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPairingStore.swift; sourceTree = "<group>"; };
 		CAB6B1E32EB5089600F778EC /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		CAB6B1ED2EB6375A00F778EC /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 		CAB6B1F32EB63D9000F778EC /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		CAB6B30F2EBB20AF00F778EC /* CustomSegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedControl.swift; sourceTree = "<group>"; };
 		CAC4C62A2EC6D39800131F6A /* CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlert.swift; sourceTree = "<group>"; };
+		CAD0899E2ECDD49900F89827 /* InitialOnBoardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialOnBoardingView.swift; sourceTree = "<group>"; };
 		D219F1E22EAE0A3200BD82B7 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		D219F1E42EAE0A3D00BD82B7 /* PostViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		D219F21E2EAEA10100BD82B7 /* PostContentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContentsView.swift; sourceTree = "<group>"; };
@@ -379,6 +386,7 @@
 				8BA793CB2EC073E500FF05B3 /* SitckerGrid.swift */,
 				8BEA2CD42EC3A1E500BC27EC /* OutlinedTitleImageMaker.swift */,
 				CAC4C62A2EC6D39800131F6A /* CustomAlert.swift */,
+				D297CE7E2EB0305E00F28395 /* StickerView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -487,6 +495,7 @@
 				8C5A1EDD2ECD5B5E00C08B0E /* HomeEmptyView.swift */,
 				8C5A1EDB2ECD589400C08B0E /* TabItemView.swift */,
 				8C5A1ED92ECD57DB00C08B0E /* NotConnectedView.swift */,
+				8BA793C92EC06DF000FF05B3 /* StickerSheetView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -541,6 +550,7 @@
 		CAA62D002EA1E3FD00C60E05 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				8C95EAFA2ECF636B0045A2BD /* PinchZoomUtils.swift */,
 				8CAD89DA2EA9FD8D004318F0 /* HapticUtils.swift */,
 				CAA62CFD2EA1E3FD00C60E05 /* ImageUtils.swift */,
 				CAA62CFE2EA1E3FD00C60E05 /* KeyboardUtils.swift */,
@@ -554,6 +564,7 @@
 			isa = PBXGroup;
 			children = (
 				CAA9AED52E8FC15C0047A89A /* DonDog-iOS */,
+				8C43E0A32ECF4B8E00A9D6C6 /* DonDog-iOS.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -666,6 +677,7 @@
 		CAA9AEED2E8FC72E0047A89A /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				CAB47B782ECDCB6B007E57C9 /* OnBoarding */,
 				8C3F8FBB2EB8DA9400699BC3 /* Home */,
 				D219F1E12EAE0A2B00BD82B7 /* Post */,
 				CAA9AEC72E8FC15C0047A89A /* Auth */,
@@ -685,6 +697,23 @@
 				CAA9AEEF2E8FE2990047A89A /* ModuleFactoryProtocol.swift */,
 			);
 			path = Factory;
+			sourceTree = "<group>";
+		};
+		CAB47B782ECDCB6B007E57C9 /* OnBoarding */ = {
+			isa = PBXGroup;
+			children = (
+				CAB47B7B2ECDCBA1007E57C9 /* SubViews */,
+				CAD0899E2ECDD49900F89827 /* InitialOnBoardingView.swift */,
+			);
+			path = OnBoarding;
+			sourceTree = "<group>";
+		};
+		CAB47B7B2ECDCBA1007E57C9 /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				CAB47B792ECDCB8A007E57C9 /* InitialOnBoardingContentView.swift */,
+			);
+			path = SubViews;
 			sourceTree = "<group>";
 		};
 		CABD05372E9F7E21004E048E /* SubViews */ = {
@@ -710,8 +739,6 @@
 			children = (
 				D219F21E2EAEA10100BD82B7 /* PostContentsView.swift */,
 				D27750982EC0186400E27680 /* ImageView.swift */,
-				8BA793C92EC06DF000FF05B3 /* StickerSheetView.swift */,
-				D297CE7E2EB0305E00F28395 /* StickerView.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
@@ -810,7 +837,8 @@
 				8B822D7B2EAB617800D708D7 /* Kingfisher */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8BE3DC882ECE91F4002F02ED /* DonDog-iOS.app */;
+			productReference = 8B102CC62ECF441C00736A01 /* DonDog-iOS.app */;
+			productReference = 8C43E0A32ECF4B8E00A9D6C6 /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -934,6 +962,7 @@
 				CAB6B1EE2EB6375A00F778EC /* View+.swift in Sources */,
 				8B7377E02E9546030001EFCD /* AuthService.swift in Sources */,
 				8B6E118D2E976F380082B24C /* ProfileViewModel.swift in Sources */,
+				CAD0899F2ECDD49900F89827 /* InitialOnBoardingView.swift in Sources */,
 				D2AB17BF2EBAEF10005292FD /* PostType.swift in Sources */,
 				8B38DBE22EBCFB5800DD7562 /* PhotoPickerViewModel.swift in Sources */,
 				8B736DF42EBB415100E2AB76 /* PhotoPickerView.swift in Sources */,
@@ -962,6 +991,7 @@
 				8BD1C14F2EC9C0E10064CF70 /* CameraViewModel.swift in Sources */,
 				8BD1C1502EC9C0E10064CF70 /* CameraViewController+Actions.swift in Sources */,
 				8BD1C1512EC9C0E10064CF70 /* ShootingGuideView.swift in Sources */,
+				CAB47B7A2ECDCB8A007E57C9 /* InitialOnBoardingContentView.swift in Sources */,
 				CAA62D062EA1E57200C60E05 /* CustomPageIndicator.swift in Sources */,
 				8BF73ECB2ECB3FE3007BCBDA /* CameraStickerConfirmView.swift in Sources */,
 				D219F21F2EAEA10500BD82B7 /* PostContentsView.swift in Sources */,
@@ -982,6 +1012,7 @@
 				CAA62D012EA1E3FD00C60E05 /* SwipeBackUtils.swift in Sources */,
 				CAA62D032EA1E3FD00C60E05 /* ImageUtils.swift in Sources */,
 				CAA62D042EA1E3FD00C60E05 /* KeyboardUtils.swift in Sources */,
+				8C95EAFB2ECF63760045A2BD /* PinchZoomUtils.swift in Sources */,
 				CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */,
 				8B6E11912E9771EA0082B24C /* SettingViewModel.swift in Sources */,
 				CAA9AEF02E8FE2990047A89A /* ModuleFactoryProtocol.swift in Sources */,

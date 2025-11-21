@@ -12,16 +12,27 @@ import FirebaseFirestore
 final class PostViewModel: ObservableObject {
     @Published var post: PostData
     @Published var isMyPost = false
+    @Published var postOwnerNickname: String = ""
+    @Published var frontImageURL: URL?
+    @Published var backImageURL: URL?
     
     private let connectUserInfo = UserPairingStore.shared
     
     init(post: PostData) {
         self.post = post
         checkIfItsMyPost()
+        setupZoomedImages()
     }
     
     private func checkIfItsMyPost() {
-        isMyPost = post.authorId == connectUserInfo.myUid
+        let isMine = post.authorId == connectUserInfo.myUid
+        isMyPost = isMine
+        postOwnerNickname = isMine ? "\(connectUserInfo.myName ?? "")" : "\(connectUserInfo.partnerName ?? "")"
+    }
+    
+    private func setupZoomedImages() {
+        frontImageURL = URL(string: post.frontImageURL)
+        backImageURL = URL(string: post.backImageURL)
     }
     
     func deletePost() async {

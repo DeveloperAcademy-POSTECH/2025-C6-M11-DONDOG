@@ -24,6 +24,9 @@ struct HomeView: View {
             VStack(spacing: 0) {
                 CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "sun.max.fill" : "moon.fill"), navigationColor: .black)
                     .padding(.horizontal, 26)
+                    .onTapGesture {
+                        viewModel.isShowStickerSheet = false
+                    }
                 
                 if !viewModel.isShowStickerSheet {
                     CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
@@ -90,44 +93,6 @@ struct HomeView: View {
                                         }
                                     }
                                     viewModel.isShowStickerSheet = true
-                                } label: {
-                                    Image("AddStickerIcon")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 64, height: 64)
-                                        .background {
-                                            Circle()
-                                                .frame(width: 70, height: 70)
-                                                .foregroundStyle(.ppPrime)
-                                        }
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 16)
-                                .buttonStyle(.plain)
-                                .opacity(viewModel.selectedPostType == .myArchive ? 0 : 1)
-                            }
-                            .padding(.horizontal, 20)
-                        }
-                    } else if viewModel.isUploadingLocalImage, let localCaption = viewModel.localCaption {
-                        if !DateUtils.isOver3daysSinceLastUpload() {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(localCaption)
-                                        .font(.subtitleSemiBold16)
-                                        .foregroundStyle(.ppWhite)
-                                    
-                                    if let localDate = viewModel.localUploadDate {
-                                        Text(DateUtils.string(from: localDate, format: .home))
-                                            .font(.captionRegular13)
-                                            .foregroundStyle(.ppWhite)
-                                    }
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.bottom, 21)
-                                
-                                Spacer()
-                                Button {
-                                    // editableView
                                 } label: {
                                     Image("AddStickerIcon")
                                         .resizable()
@@ -230,10 +195,19 @@ struct HomeView: View {
                             }
                         }, gridService: StickerGridService()
                     )
-                    .presentationDetents([.height(270)])
+                    .presentationDetents([.height(317)])
                     .presentationBackgroundInteraction(.enabled)
                     .presentationDragIndicator(.hidden)
-                    .background(Color.ddGray100.opacity(0.5))
+                    .background(Color.ppRealBlack.opacity(0.95))
+                    .interactiveDismissDisabled(true)
+                }
+            }
+            .onChange(of: viewModel.isShowStickerSheet) {
+                if !viewModel.isShowStickerSheet {
+                    Task {
+                        await stickerViewModel.saveStickers()
+                        stickerViewModel.selectedStickerID = nil
+                    }
                 }
             }
             .background {

@@ -11,8 +11,8 @@ import UIKit
 // MARK: - PinchZoom Extension
 extension View {
     @ViewBuilder
-    func pinchZoom(_ dimsBackground: Bool = true, isZooming: Binding<Bool>? = nil) -> some View {
-        PinchZoomHelper(dimsBackground: dimsBackground, isZooming: isZooming ?? .constant(false)) {
+    func pinchZoom(_ dimsBackground: Bool = true, isZooming: Binding<Bool>? = nil, isShowDetail: Bool) -> some View {
+        PinchZoomHelper(dimsBackground: dimsBackground, isZooming: isZooming ?? .constant(false), isShowDetail: isShowDetail) {
             self
         }
     }
@@ -71,18 +71,26 @@ struct PinchZoomHelper<Content: View>: View {
     @Environment(ZoomContainerData.self) private var containerData
     @State private var config: Config = .init()
     @Binding var isZooming: Bool
+    var isShowDetail: Bool
     
     // 명시적 초기화자 추가
-    init(dimsBackground: Bool, isZooming: Binding<Bool>, @ViewBuilder content: () -> Content) {
+    init(dimsBackground: Bool, isZooming: Binding<Bool>, isShowDetail: Bool, @ViewBuilder content: () -> Content) {
         self.dimsBackground = dimsBackground
         self._isZooming = isZooming
+        self.isShowDetail = isShowDetail
         self.content = content()
     }
     
     var body: some View {
         content
             .opacity(config.hidesSourceView ? 0 : 1)
-            .overlay(GestureOverlay(config: $config))
+            .overlay {
+                if isShowDetail {
+                    GestureOverlay(config: $config)
+                } else {
+                    Color.clear
+                }
+            }
             .overlay {
                 GeometryReader {
                     let rect = $0.frame(in: .global)

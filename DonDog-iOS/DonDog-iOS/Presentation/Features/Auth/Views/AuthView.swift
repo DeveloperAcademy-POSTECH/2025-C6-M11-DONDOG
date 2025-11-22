@@ -13,7 +13,7 @@ struct AuthView: View {
     @AppStorage("hasSeenInitialOnboarding") var hasSeenInitialOnboarding: Bool = false
     
     var body: some View {
-        if hasSeenInitialOnboarding == false {
+        if hasSeenInitialOnboarding == false && !viewModel.isWithDraw {
             InitialOnBoardingView()
         } else {
             VStack(spacing: 0) {

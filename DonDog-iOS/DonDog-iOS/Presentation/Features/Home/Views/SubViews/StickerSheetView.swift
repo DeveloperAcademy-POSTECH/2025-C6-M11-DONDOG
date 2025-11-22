@@ -73,6 +73,7 @@ struct StickerSheetView: View {
                     categoryKey: gridService.selectedCategory.assetKey,
                     role: UserPairingStore.shared.myRole
                 )
+                .hapticFeedback(.heavy)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .principal) {

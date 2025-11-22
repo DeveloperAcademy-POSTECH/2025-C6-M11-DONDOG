@@ -96,11 +96,9 @@ struct StickerSheetView: View {
                         Button {
                             dismiss()
                             Task {
-                                if stickerViewModel.isStickerAttached {
-                                    await stickerViewModel.saveStickers()
-                                }
-                                stickerViewModel.selectedStickerID = nil
+                                await stickerViewModel.saveStickers()
                             }
+                            stickerViewModel.selectedStickerID = nil
                         } label: {
                             Image(systemName: "checkmark")
                                 .font(.captionRegular13)

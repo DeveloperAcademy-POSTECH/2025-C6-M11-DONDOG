@@ -106,6 +106,7 @@ struct StickerSheetView: View {
                                 .font(.captionRegular13)
                                 .foregroundColor(.ppWhite)
                         }
+                        .hapticFeedback(.light)
                     }
                 }
             }

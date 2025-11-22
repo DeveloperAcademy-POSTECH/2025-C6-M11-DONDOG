@@ -159,6 +159,10 @@ struct TabItemView: View {
         .padding(.horizontal, 20)
         .task(id: postId) {
             if let postId = postId {
+                viewModel.frontStickers = []
+                viewModel.backStickers = []
+                viewModel.selectedStickerID = nil
+                
                 viewModel.postId = postId
                 viewModel.postImageType = postImageType
                 await viewModel.fetchStickers()

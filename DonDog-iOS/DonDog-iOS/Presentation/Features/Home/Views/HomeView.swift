@@ -23,7 +23,7 @@ struct HomeView: View {
             NotConnectedView()
         } else {
             VStack(spacing: 0) {
-                CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "sun.max.fill" : "moon.fill"), navigationColor: .black)
+                CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .none, navigationColor: .black)
                     .padding(.horizontal, 26)
                     .onTapGesture {
                         viewModel.isShowStickerSheet = false

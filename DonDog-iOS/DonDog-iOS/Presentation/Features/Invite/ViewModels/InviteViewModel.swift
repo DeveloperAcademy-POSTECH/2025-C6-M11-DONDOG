@@ -110,6 +110,7 @@ final class InviteViewModel: ObservableObject {
     }
     
     // MARK: - 다른 사람 초대코드 입력
+    // swiftlint:disable function_body_length
     func connectWithInviteCode() {
         message = ""
         connectSucceeded = false
@@ -117,14 +118,12 @@ final class InviteViewModel: ObservableObject {
         allowInviteCodeError = false
         
         let inputcode = inputInviteCode.trimmingCharacters(in: .whitespacesAndNewlines)
-        
         if inputcode == inviteCode {
             message = "초대 코드를 다시 확인해 주세요."
             self.allowInviteCodeError = true
             isLoading = false
             return
         }
-
         Task { [weak self] in
             guard let self = self else { return }
             do {
@@ -150,6 +149,15 @@ final class InviteViewModel: ObservableObject {
                 if let inviterRoomId = inviterUser.roomId, !inviterRoomId.isEmpty {
                     let roomDoc = self.db.collection("Rooms").document(inviterRoomId)
                     do {
+                        let roomSnap = try await roomDoc.getDocument()
+                        if let participants = roomSnap.data()?["participants"] as? [String], participants.count >= 2 {
+                            await MainActor.run {
+                                self.message = "이미 사용된 코드라 사용할 수 없어요"
+                                self.allowInviteCodeError = true
+                                self.isLoading = false
+                            }
+                            return
+                        }
                         try await self.commitRoomJoin(
                             roomDoc: roomDoc,
                             myUserDoc: myUserDoc,
@@ -214,6 +222,7 @@ final class InviteViewModel: ObservableObject {
             }
         }
     }
+    // swiftlint:enable function_body_length
     
     private func commitRoomJoin(
         roomDoc: DocumentReference,

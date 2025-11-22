@@ -260,6 +260,14 @@ struct HomeView: View {
                     isStickerCamera: false
                 )
             }
+            .onReceive(coordinator.$navigateToMyPost) { navigate in
+                if navigate {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        viewModel.selectedPostType = .myArchive
+                        coordinator.navigateToMyPost = false
+                    }
+                }
+            }
             .overlay {
                 if viewModel.isShowToast {
                     VStack {

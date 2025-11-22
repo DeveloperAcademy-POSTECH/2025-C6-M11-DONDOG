@@ -65,34 +65,41 @@ extension CustomCameraViewController: AVCapturePhotoCaptureDelegate {
             guard let self = self else { return }
             let sticker = await StickerService().makeSticker(from: image)
             let finalImage = sticker
-            
-            let confirmVC = UIHostingController(
-                rootView: StickerConfirmView(
-                    viewModel: StickerConfirmViewModel(image: finalImage),
-                    route: .camera,
-                    onRetake: { [weak self] in
-                        guard let self = self else { return }
-                        self.presentedViewController?.dismiss(animated: true) {
-                            self.navigationController?.setNavigationBarHidden(true, animated: false)
-                            self.navigationItem.hidesBackButton = true
-                            self.resetCameraState()
-                        }
-                    },
-                    onComplete: { [weak self] in
-                        guard let self = self else { return }
-                        self.dismiss(animated: true) {
+
+            let rootView = StickerConfirmView(
+                viewModel: StickerConfirmViewModel(image: finalImage),
+                route: .camera,
+                onRetake: { [weak self] in
+                    guard let self = self else { return }
+                    self.presentedViewController?.dismiss(animated: true) {
+                        self.navigationController?.setNavigationBarHidden(true, animated: false)
+                        self.navigationItem.hidesBackButton = true
+                        self.resetCameraState()
+                    }
+                },
+                onComplete: { [weak self] in
+                    guard let self = self else { return }
+                    if let confirm = self.presentedViewController {
+                        confirm.dismiss(animated: false) {
+                            self.navigationController?.popViewController(animated: true)
                             self.delegate?.didCancel()
                         }
-                    },
-                    onUploaded: { tags in
-                        Task {
-                            await StickerGridService.shared.reloadSticker(tags: tags)
-                        }
+                    } else {
+                        self.navigationController?.popViewController(animated: true)
+                        self.delegate?.didCancel()
                     }
-                )
+                },
+                onUploaded: { tags in
+                    Task {
+                        await StickerGridService.shared.reloadSticker(tags: tags)
+                    }
+                }
             )
+
+            let confirmVC = UIHostingController(rootView: rootView)
             confirmVC.modalPresentationStyle = .fullScreen
             confirmVC.modalTransitionStyle = .crossDissolve
+
             self.present(confirmVC, animated: false)
         }
     }

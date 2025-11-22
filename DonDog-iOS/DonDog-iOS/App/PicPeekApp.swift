@@ -22,9 +22,7 @@ struct PicPeekApp: App {
                     if Auth.auth().canHandle(url) {
                         return
                     }
-                    
-                    guard let scheme = url.scheme, scheme == "dondog" else { return }
-                    coordinator.handleDeepLink(url.absoluteString)
+                    coordinator.handleDeepLink(url: url)
                 }
         }
     }

@@ -31,8 +31,6 @@ final class StickerViewModel: ObservableObject {
     @Published var postId = ""
     @Published var postImageType: PostImageType = .front
     
-    // @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
-    
     @Published var frontStickers: [AttachedSticker] = []
     @Published var backStickers: [AttachedSticker] = []
     @Published var selectedStickerID: UUID?
@@ -48,15 +46,17 @@ final class StickerViewModel: ObservableObject {
     let dataManager: DataManagerProtocol = DataManager.shared
     let connectUserInfo = UserPairingStore.shared
     var roomId: String = ""
+    private var cancellables = Set<AnyCancellable>()
     
     private var offsetIndex = [0, 0]
     
     init() {
-        guard let id = connectUserInfo.roomId else {
-            print("roomId 가져오기 실패")
-            return
-        }
-        self.roomId = id
+        UserPairingStore.shared.$roomId
+            .compactMap { $0 }
+            .sink { [weak self] id in
+                self?.roomId = id
+            }
+            .store(in: &cancellables)
     }
     
     func fetchStickers() async {

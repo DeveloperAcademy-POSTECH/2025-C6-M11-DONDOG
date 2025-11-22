@@ -31,8 +31,6 @@ final class StickerViewModel: ObservableObject {
     @Published var postId = ""
     @Published var postImageType: PostImageType = .front
     
-    // @Published var itemsByCategory: [StickerCategory: [StickerItem]] = StickerCategoryData.itemsByCategory
-    
     @Published var frontStickers: [AttachedSticker] = []
     @Published var backStickers: [AttachedSticker] = []
     @Published var selectedStickerID: UUID?
@@ -48,15 +46,17 @@ final class StickerViewModel: ObservableObject {
     let dataManager: DataManagerProtocol = DataManager.shared
     let connectUserInfo = UserPairingStore.shared
     var roomId: String = ""
+    private var cancellables = Set<AnyCancellable>()
     
     private var offsetIndex = [0, 0]
     
     init() {
-        guard let id = connectUserInfo.roomId else {
-            print("roomId 가져오기 실패")
-            return
-        }
-        self.roomId = id
+        UserPairingStore.shared.$roomId
+            .compactMap { $0 }
+            .sink { [weak self] id in
+                self?.roomId = id
+            }
+            .store(in: &cancellables)
     }
     
     func fetchStickers() async {
@@ -164,20 +164,23 @@ final class StickerViewModel: ObservableObject {
             }
         }
         
-        let postData: [String: Any] = [
-            "stickerUpdatedAt": Date.now
-        ]
-        
-        do {
-            try await dataManager.batchUpdate([
-                .update(
-                    path: "Rooms/\(roomId)/posts/\(postId)",
-                    data: postData
-                )
-            ])
-        } catch {
-            print("stickerUdpatedAt 최신화 실패: \(error.localizedDescription)")
+        if isStickerAttached {
+            let postData: [String: Any] = [
+                "stickerUpdatedAt": Date.now
+            ]
+            
+            do {
+                try await dataManager.batchUpdate([
+                    .update(
+                        path: "Rooms/\(roomId)/posts/\(postId)",
+                        data: postData
+                    )
+                ])
+            } catch {
+                print("stickerUdpatedAt 최신화 실패: \(error.localizedDescription)")
+            }
+            
+            isStickerAttached = false
         }
-        isStickerAttached = false
     }
 }

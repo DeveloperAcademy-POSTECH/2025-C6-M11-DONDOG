@@ -113,13 +113,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         completionHandler([.banner, .sound, .badge])
     }
     
-    // 푸시 알림을 누르면 포함된 link의 정보를 추출하여 딥링크 수행
+    // 푸시 알림을 누르면 포함된 userInfo를 그대로 전달하여 딥링크 수행
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         NSLog("tapped notification: \(userInfo)")
-        if let link = userInfo["link"] as? String {
-            NotificationCenter.default.post(name: .openDeepLink, object: link)
-        }
+        NotificationCenter.default.post(name: .openDeepLink, object: userInfo)
         completionHandler()
     }
     

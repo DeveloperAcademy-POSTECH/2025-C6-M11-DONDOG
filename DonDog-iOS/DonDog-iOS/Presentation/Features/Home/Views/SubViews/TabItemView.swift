@@ -122,6 +122,7 @@ struct TabItemView: View {
                                 }
                             }
                         )
+                        .zIndex(viewModel.selectedStickerID == sticker.id ? 1: 0)
                         .onTapGesture {
                             if isEditing {
                                 viewModel.selectedStickerID = sticker.id

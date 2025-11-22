@@ -164,20 +164,23 @@ final class StickerViewModel: ObservableObject {
             }
         }
         
-        let postData: [String: Any] = [
-            "stickerUpdatedAt": Date.now
-        ]
-        
-        do {
-            try await dataManager.batchUpdate([
-                .update(
-                    path: "Rooms/\(roomId)/posts/\(postId)",
-                    data: postData
-                )
-            ])
-        } catch {
-            print("stickerUdpatedAt 최신화 실패: \(error.localizedDescription)")
+        if isStickerAttached {
+            let postData: [String: Any] = [
+                "stickerUpdatedAt": Date.now
+            ]
+            
+            do {
+                try await dataManager.batchUpdate([
+                    .update(
+                        path: "Rooms/\(roomId)/posts/\(postId)",
+                        data: postData
+                    )
+                ])
+            } catch {
+                print("stickerUdpatedAt 최신화 실패: \(error.localizedDescription)")
+            }
+            
+            isStickerAttached = false
         }
-        isStickerAttached = false
     }
 }

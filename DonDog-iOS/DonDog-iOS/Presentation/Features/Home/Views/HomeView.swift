@@ -226,11 +226,9 @@ struct HomeView: View {
             .onChange(of: viewModel.isShowStickerSheet) {
                 if !viewModel.isShowStickerSheet {
                     Task {
-                        if stickerViewModel.isStickerAttached {
-                            await stickerViewModel.saveStickers()
-                        }
-                        stickerViewModel.selectedStickerID = nil
+                        await stickerViewModel.saveStickers()
                     }
+                    stickerViewModel.selectedStickerID = nil
                 }
             }
             .background {

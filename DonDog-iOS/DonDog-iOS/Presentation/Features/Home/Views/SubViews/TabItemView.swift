@@ -95,11 +95,9 @@ struct TabItemView: View {
                             .onTapGesture {
                                 isEditing = false
                                 Task {
-                                    if viewModel.isStickerAttached {
-                                        await viewModel.saveStickers()
-                                    }
-                                    viewModel.selectedStickerID = nil
+                                    await viewModel.saveStickers()
                                 }
+                                viewModel.selectedStickerID = nil
                             }
                             .gesture(
                                 DragGesture(minimumDistance: 0)

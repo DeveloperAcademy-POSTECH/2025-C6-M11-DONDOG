@@ -31,7 +31,7 @@ struct HomeView: View {
                 
                 if !viewModel.isShowStickerSheet {
                     CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
-                        .padding(.top, 33)
+                        .padding(.top, 27)
                 }
                 
                 ZStack(alignment: .bottom) {
@@ -175,7 +175,7 @@ struct HomeView: View {
                     Spacer()
                 }
                 .padding(.vertical, 22)
-                .padding(.bottom, 12)
+                .padding(.bottom, 24)
                 .background {
                     Rectangle()
                         .foregroundStyle(.ppGray200)

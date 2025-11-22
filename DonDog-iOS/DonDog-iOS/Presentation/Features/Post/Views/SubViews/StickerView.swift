@@ -41,16 +41,22 @@ struct StickerView: View {
             
             if isEditable && isSelected {
                 Button(action: onDelete) {
-                    Image(systemName: "trash.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 14, height: 16)
-                        .foregroundColor(.ddBlack)
-                        .background(
-                            Circle()
-                                .fill(.ddWhite)
-                                .frame(width: 25, height: 25)
-                        )
+                    ZStack {
+                        Rectangle()
+                            .tint(.clear)
+                            .frame(width: 44, height: 44)
+                        
+                        Image(systemName: "trash.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 14, height: 16)
+                            .foregroundColor(.ddBlack)
+                            .background(
+                                Circle()
+                                    .fill(.ddWhite)
+                                    .frame(width: 25, height: 25)
+                            )
+                    }
                 }
                 .offset(x: -65 * (sticker.scale * gestureScale), y: -55 * (sticker.scale * gestureScale))
                 
@@ -64,6 +70,7 @@ struct StickerView: View {
                             .fill(.ddBlack)
                             .frame(width: 25, height: 25)
                     )
+                    .frame(width: 44, height: 44)
                     .offset(x: 65 * (sticker.scale * gestureScale), y: 55 * (sticker.scale * gestureScale))
                     .gesture(transformGesture)
             }

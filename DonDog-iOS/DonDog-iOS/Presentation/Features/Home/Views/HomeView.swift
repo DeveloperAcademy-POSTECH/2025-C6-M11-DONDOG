@@ -23,7 +23,7 @@ struct HomeView: View {
             NotConnectedView()
         } else {
             VStack(spacing: 0) {
-                CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .timeType(time: viewModel.isShowingATimePost ? "sun.max.fill" : "moon.fill"), navigationColor: .black)
+                CustomNavigationBar(leadingType: .none, centerType: .logoImage(logoImage: "PicPeekLogo"), trailingType: .none, navigationColor: .black)
                     .padding(.horizontal, 26)
                     .onTapGesture {
                         viewModel.isShowStickerSheet = false
@@ -31,7 +31,7 @@ struct HomeView: View {
                 
                 if !viewModel.isShowStickerSheet {
                     CustomSegmentedControl(items: ArchiveSegment.allCases, selectedItem: $viewModel.selectedPostType, titleProvider: { $0.rawValue })
-                        .padding(.top, 33)
+                        .padding(.top, 27)
                 }
                 
                 ZStack(alignment: .bottom) {
@@ -175,7 +175,7 @@ struct HomeView: View {
                     Spacer()
                 }
                 .padding(.vertical, 22)
-                .padding(.bottom, 12)
+                .padding(.bottom, 24)
                 .background {
                     Rectangle()
                         .foregroundStyle(.ppGray200)
@@ -281,8 +281,4 @@ struct HomeView: View {
             }
         }
     }
-}
-
-#Preview {
-    HomeView(viewModel: HomeViewModel())
 }

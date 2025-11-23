@@ -29,7 +29,7 @@ extension CustomCameraViewController {
     }
     
     func setupStep1Circle() {
-        step1PulseView.backgroundColor = UIColor.ddAlert.withAlphaComponent(0.7)
+        step1PulseView.backgroundColor = UIColor.ppSubPrime.withAlphaComponent(0.7)
         step1PulseView.layer.cornerRadius = 12
         stepIndicatorContainer.addSubview(step1PulseView)
         step1PulseView.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +41,7 @@ extension CustomCameraViewController {
         ])
         step1PulseView.isHidden = true
         
-        step1Circle.backgroundColor = .ddAlert
+        step1Circle.backgroundColor = .ppSubPrime
         step1Circle.layer.cornerRadius = 12
         stepIndicatorContainer.addSubview(step1Circle)
         step1Circle.translatesAutoresizingMaskIntoConstraints = false
@@ -65,7 +65,7 @@ extension CustomCameraViewController {
         
         step1TextLabel.text = "셀카 촬영"
         step1TextLabel.font = UIFont(name: FontName.pretendardMedium.rawValue, size: 14) ?? UIFont.systemFont(ofSize: 14, weight: .medium)
-        step1TextLabel.textColor = .ddAlert
+        step1TextLabel.textColor = .ppSubPrime
         step1TextLabel.textAlignment = .center
         stepIndicatorContainer.addSubview(step1TextLabel)
         step1TextLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -108,7 +108,7 @@ extension CustomCameraViewController {
         for i in 0..<dotsCount {
             let dot = UIView()
             let alpha = 1.0 - (CGFloat(i) * 0.08)
-            dot.backgroundColor = UIColor.ddAlert.withAlphaComponent(alpha)
+            dot.backgroundColor = UIColor.ppSubPrime.withAlphaComponent(alpha)
             dot.layer.cornerRadius = 2
             stepDotsContainer.addSubview(dot)
             dot.translatesAutoresizingMaskIntoConstraints = false
@@ -126,22 +126,22 @@ extension CustomCameraViewController {
         for (index, dot) in dots.enumerated() {
             if isCapturingFront {
                 let alpha = 1.0 - (CGFloat(index) * 0.08)
-                dot.backgroundColor = UIColor.ddAlert.withAlphaComponent(alpha)
+                dot.backgroundColor = UIColor.ppSubPrime.withAlphaComponent(alpha)
             } else {
                 let alpha = 0.2 + (CGFloat(index) * 0.08)
-                dot.backgroundColor = UIColor.ddAlert.withAlphaComponent(alpha)
+                dot.backgroundColor = UIColor.ppSubPrime.withAlphaComponent(alpha)
             }
         }
     }
     
     func setupStep2Circle() {
-        step2PulseView.backgroundColor = UIColor.ddAlert.withAlphaComponent(0.7)
+        step2PulseView.backgroundColor = UIColor.ppSubPrime.withAlphaComponent(0.7)
         step2PulseView.layer.cornerRadius = 12
         stepIndicatorContainer.addSubview(step2PulseView)
         step2PulseView.translatesAutoresizingMaskIntoConstraints = false
         step2PulseView.isHidden = true
         
-        step2Circle.backgroundColor = .ddGray300
+        step2Circle.backgroundColor = .ppGray300
         step2Circle.layer.cornerRadius = 12
         stepIndicatorContainer.addSubview(step2Circle)
         step2Circle.translatesAutoresizingMaskIntoConstraints = false
@@ -174,7 +174,7 @@ extension CustomCameraViewController {
         
         step2TextLabel.text = "배경 촬영"
         step2TextLabel.font = UIFont(name: FontName.pretendardMedium.rawValue, size: 14) ?? UIFont.systemFont(ofSize: 14, weight: .medium)
-        step2TextLabel.textColor = .ddGray400
+        step2TextLabel.textColor = .ppGray300
         step2TextLabel.textAlignment = .center
         stepIndicatorContainer.addSubview(step2TextLabel)
         step2TextLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -202,11 +202,11 @@ extension CustomCameraViewController {
         guard !isStickerCamera else { return }
         
         if isCapturingFront {
-            step1Circle.backgroundColor = .ddAlert
+            step1Circle.backgroundColor = .ppSubPrime
             step1Label.isHidden = false
             step1CheckmarkImageView.isHidden = true
             step1Label.textColor = .white
-            step1TextLabel.textColor = .ddAlert
+            step1TextLabel.textColor = .ppSubPrime
             
             step1PulseView.isHidden = false
             addPulseAnimation(to: step1PulseView)
@@ -214,25 +214,25 @@ extension CustomCameraViewController {
             step2PulseView.isHidden = true
             removePulseAnimation(from: step2PulseView)
             
-            step2Circle.backgroundColor = .ddGray300
+            step2Circle.backgroundColor = .ppGray300
             step2Label.isHidden = false
             step2CheckmarkImageView.isHidden = true
             step2Label.textColor = .white
-            step2TextLabel.textColor = .ddGray400
+            step2TextLabel.textColor = .ppGray300
         } else {
-            step1Circle.backgroundColor = .ddGray300
+            step1Circle.backgroundColor = .ppGray300
             step1Label.isHidden = true
             step1CheckmarkImageView.isHidden = false
-            step1TextLabel.textColor = .ddGray400
+            step1TextLabel.textColor = .ppGray300
             
             step1PulseView.isHidden = true
             removePulseAnimation(from: step1PulseView)
             
-            step2Circle.backgroundColor = .ddAlert
+            step2Circle.backgroundColor = .ppSubPrime
             step2Label.isHidden = false
             step2CheckmarkImageView.isHidden = true
             step2Label.textColor = .white
-            step2TextLabel.textColor = .ddAlert
+            step2TextLabel.textColor = .ppSubPrime
             
             step2PulseView.isHidden = false
             addPulseAnimation(to: step2PulseView)

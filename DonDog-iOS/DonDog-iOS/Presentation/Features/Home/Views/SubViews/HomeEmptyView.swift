@@ -17,6 +17,7 @@ struct HomeEmptyView: View {
                 .overlay {
                     VStack {
                         Image("HomeEmptyView")
+                            .padding(.top, selectedPostType == ArchiveSegment.partnerArchive ?  0 : 2 )
                         if selectedPostType == ArchiveSegment.partnerArchive {
                             Text("가족이 아직 사진을 올리지 않았어요.")
                                 .font(.subtitleSemiBold16)
@@ -38,7 +39,7 @@ struct HomeEmptyView: View {
                                     .foregroundStyle(.ppGray700)
                             }
                             .font(.subtitleSemiBold16)
-                            .padding(.top, 1)
+                            .padding(.top, 2)
                         }
                     }
                 }

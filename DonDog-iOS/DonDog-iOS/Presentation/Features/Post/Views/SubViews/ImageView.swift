@@ -12,7 +12,7 @@ struct ImageView: View {
     let urlString: String
     @Binding var isEditing: Bool
     @ObservedObject var viewModel: StickerViewModel
-    @Binding var isZooming: Bool  // @Environment 대신 Binding 사용
+    @Binding var isZooming: Bool
     @Binding var isShowDetail: Bool
     @State private var loadFailed: Bool = false
     let isFront: Bool
@@ -22,8 +22,8 @@ struct ImageView: View {
     }
     
     private var stickers: Binding<[AttachedSticker]> {
-            isFront ? $viewModel.frontStickers : $viewModel.backStickers
-        }
+        isFront ? $viewModel.frontStickers : $viewModel.backStickers
+    }
     
     var body: some View {
         ZStack {

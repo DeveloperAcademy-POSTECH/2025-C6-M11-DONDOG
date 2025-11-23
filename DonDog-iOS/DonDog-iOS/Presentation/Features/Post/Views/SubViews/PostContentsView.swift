@@ -18,7 +18,7 @@ struct PostContentsView: View {
     @Binding var isShowDetail: Bool
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             TabView(selection: $isFrontOrBack) {
                 VStack(spacing: 0) {
                     GeometryReader {
@@ -29,10 +29,6 @@ struct PostContentsView: View {
                             .pinchZoom(isZooming: $isZooming, isShowDetail: isShowDetail)
                     }
                     .frame(height: isShowDetail ? 524 : 470)
-                    
-                    Rectangle()
-                        .frame(height: isShowDetail ? 0 : 40)
-                        .foregroundStyle(.ppWhite)
                 }
                 .tag(0)
                 .padding(.horizontal, isShowDetail ? 0 : 20)
@@ -46,27 +42,12 @@ struct PostContentsView: View {
                             .pinchZoom(isZooming: $isZooming, isShowDetail: isShowDetail)
                     }
                     .frame(height: isShowDetail ? 524 : 470)
-                    
-                    Rectangle()
-                        .frame(height: isShowDetail ? 0 : 40)
-                        .foregroundStyle(.ppWhite)
                 }
                 .tag(1)
                 .padding(.horizontal, isShowDetail ? 0 : 20)
             }
-            .tabViewStyle(.page(indexDisplayMode: isShowDetail ? .never : .always))
-            .frame(maxHeight: isShowDetail ? 524 : 510)
-            
-            VStack(spacing: 4) {
-                Text(isShowDetail ? "" : post.caption)
-                    .font(.bodyRegular16)
-                    .foregroundStyle(.ppBlack)
-                
-                Text(isShowDetail ? "" : DateUtils.relativeTimeString(from: post.createdAt.dateValue()))
-                    .font(.captionRegular13)
-                    .foregroundStyle(.ppGray500)
-            }
-            .padding(.bottom, isShowDetail ? 0 : 50)
+            .tabViewStyle(.page(indexDisplayMode: isShowDetail ? .never : .never))
+            .frame(maxHeight: isShowDetail ? 524 : 470)
             
             if isShowDetail {
                 HStack(spacing: 7) {
@@ -77,10 +58,32 @@ struct PostContentsView: View {
                         .frame(width: 7, height: 7)
                         .foregroundStyle(isFrontOrBack == 1 ? .ppWhite : .ppWhite.opacity(0.3))
                 }
+                .padding(.top, 22)
+            } else {
+                HStack(spacing: 7) {
+                    Circle()
+                        .frame(width: 7, height: 7)
+                        .foregroundStyle(isFrontOrBack == 0 ? .ppPrime : .ppPrime.opacity(0.3))
+                    Circle()
+                        .frame(width: 7, height: 7)
+                        .foregroundStyle(isFrontOrBack == 1 ? .ppPrime : .ppPrime.opacity(0.3))
+                }
+                .padding(.top, 12)
             }
+            
+            VStack(spacing: 4) {
+                Text(isShowDetail ? "" : post.caption)
+                    .font(.bodyRegular16)
+                    .foregroundStyle(.ppBlack)
+                
+                Text(isShowDetail ? "" : DateUtils.relativeTimeString(from: post.createdAt.dateValue()))
+                    .font(.captionRegular13)
+                    .foregroundStyle(.ppGray500)
+            }
+            .padding(.top, 20)
             
             Spacer()
         }
-        .padding(.top, 44)
+        .padding(.top, isShowDetail ? 44 : 70)
     }
 }

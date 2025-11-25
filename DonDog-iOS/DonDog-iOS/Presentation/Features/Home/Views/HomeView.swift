@@ -36,19 +36,33 @@ struct HomeView: View {
                 
                 ZStack(alignment: .bottom) {
                     TabView(selection: $viewModel.currentIndex) {
-                        if viewModel.isUploadingLocalImage, viewModel.selectedPostType == .myArchive, let frontImage = viewModel.localFrontImage, let backImage = viewModel.localBackImage {
-                            Group {
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(frontImage), tag: 0, postId: nil, isShowGradient: !viewModel.isLoading)
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(backImage), tag: 1, postId: nil, isShowGradient: !viewModel.isLoading)
-                            }
-                        } else if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
-                            Group {
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(frontURL), tag: 0, postId: post.postId, isShowGradient: !viewModel.isLoading)
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(backURL), tag: 1, postId: post.postId, isShowGradient: !viewModel.isLoading)
-                            }
+                        if viewModel.isShowStickerSheet {
+                            TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: {
+                                if let frontImage = viewModel.localFrontImage, let backImage = viewModel.localBackImage {
+                                    return viewModel.currentIndex == 0 ? .local(frontImage) : .local(backImage)
+                                } else if let post = viewModel.currentPost,
+                                          let frontURL = post.frontImageURL, let backURL = post.backImageURL {
+                                    return viewModel.currentIndex == 0 ? .remote(frontURL) : .remote(backURL)
+                                } else {
+                                    return .local(UIImage())
+                                }
+                            }(), tag: viewModel.currentIndex, postId: nil, isShowGradient: !viewModel.isLoading)
+                            .tag(viewModel.currentIndex)
                         } else {
-                            HomeEmptyView(selectedPostType: viewModel.selectedPostType)
-                                .tag(0)
+                            if viewModel.isUploadingLocalImage, viewModel.selectedPostType == .myArchive, let frontImage = viewModel.localFrontImage, let backImage = viewModel.localBackImage {
+                                Group {
+                                    TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(frontImage), tag: 0, postId: nil, isShowGradient: !viewModel.isLoading)
+                                    TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(backImage), tag: 1, postId: nil, isShowGradient: !viewModel.isLoading)
+                                }
+                            } else if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
+                                Group {
+                                    TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(frontURL), tag: 0, postId: post.postId, isShowGradient: !viewModel.isLoading)
+                                    TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(backURL), tag: 1, postId: post.postId, isShowGradient: !viewModel.isLoading)
+                                }
+                            } else {
+                                HomeEmptyView(selectedPostType: viewModel.selectedPostType)
+                                    .tag(0)
+                            }
                         }
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
@@ -142,7 +156,7 @@ struct HomeView: View {
                     Spacer()
                     Button {
                         cameraViewModel.resetCameraState()
-                        viewModel.checkAndShowCamera() 
+                        viewModel.checkAndShowCamera()
                     } label: {
                         Circle()
                             .foregroundColor(.ppWhite)
@@ -209,11 +223,11 @@ struct HomeView: View {
                         },
                         gridService: stickerGridService
                     )
-                    .presentationDetents([.height(317)])
-                    .presentationBackgroundInteraction(.enabled)
-                    .presentationDragIndicator(.hidden)
-                    .interactiveDismissDisabled(true)
-
+                        .presentationDetents([.height(317)])
+                        .presentationBackgroundInteraction(.enabled)
+                        .presentationDragIndicator(.hidden)
+                        .interactiveDismissDisabled(true)
+                    
                     if #available(iOS 17.0, *) {
                         content
                             .presentationBackground(Color.ppRealBlack.opacity(0.95))

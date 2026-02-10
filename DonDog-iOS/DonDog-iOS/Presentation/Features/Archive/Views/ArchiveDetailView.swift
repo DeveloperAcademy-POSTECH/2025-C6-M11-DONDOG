@@ -2,9 +2,9 @@ import FirebaseFirestore
 import Kingfisher
 import SwiftUI
 
-struct PostView: View {
+struct ArchiveDetailView: View {
     @EnvironmentObject var coordinator: AppCoordinator
-    @StateObject var viewModel: PostViewModel
+    @StateObject var viewModel: ArchiveDetailViewModel
     @StateObject var stickerViewModel = StickerViewModel()
     
     @State private var showDeleteConfirmAlert: Bool = false
@@ -57,19 +57,10 @@ struct PostView: View {
                 )
             }
         }
-        .background {
-            if !isShowDetail {
-                Color.ppWhite
-                    .ignoresSafeArea()
-            } else {
-                Color.ppRealBlack
-                    .ignoresSafeArea()
-            }
-        }
         .animation(.easeInOut, value: isShowDetail)
         .navigationBarBackButtonHidden(true)
         .task {
-            stickerViewModel.postId = viewModel.post.postId
+            stickerViewModel.postId = viewModel.currentPostId
             await stickerViewModel.fetchStickers()
         }
     }

@@ -13,6 +13,7 @@ import SwiftUI
 
 final class ArchiveViewModel: ObservableObject {
     let connectUserInfo = UserPairingStore.shared
+    private let archiveCache = ArchiveCache.shared
     private weak var coordinator: AppCoordinator?
     private let dataManager: DataManagerProtocol = DataManager.shared
     
@@ -25,21 +26,8 @@ final class ArchiveViewModel: ObservableObject {
     @Published var selectedAuthorType: ArchiveSegment = .partnerArchive {
         didSet { updateDisplayArchives() }
     }
-
-    func attach(coordinator: AppCoordinator) {
-        self.coordinator = coordinator
-    }
     
-    var hasPreviousDisplayMonth: Bool {
-        guard !displayMonths.isEmpty else { return false }
-        return currentMonthIndex < displayMonths.count - 1
-    }
-
-    var hasNextDisplayMonth: Bool {
-        guard !displayMonths.isEmpty else { return false }
-        return currentMonthIndex > 0
-    }
-    
+    // MARK: - 사용자 상호작용
     func goToPreviousMonth() {
         if currentMonthIndex < displayMonths.count - 1 {
             currentMonthIndex += 1
@@ -53,23 +41,97 @@ final class ArchiveViewModel: ObservableObject {
     }
     
     // 각 Post로 이동
+    func attach(coordinator: AppCoordinator) {
+        self.coordinator = coordinator
+    }
     func moveToPost(day: ArchiveDay) {
         Task { @MainActor in
+            if let post = allPosts.first(where: { $0.postId == day.postId }) {
+                coordinator?.push(.archiveDetail(post: post, postType: .archive))
+                return
+            }
+            
             guard let roomId = connectUserInfo.roomId, !roomId.isEmpty else { return }
-            isLoading = true
-            defer { isLoading = false }
             do {
                 let post: PostData = try await dataManager.fetch(
                     path: "Rooms/\(roomId)/posts/\(day.postId)"
                 )
-                coordinator?.push(.post(post: post, postType: .archive))
+                coordinator?.push(.archiveDetail(post: post, postType: .archive))
             } catch {
                 print("Post 로드 실패: \(error.localizedDescription)")
             }
         }
     }
     
-    // 전체 기록 가져오기
+    // MARK: - posts 데이터 가져오기
+    func updateMonthlyArchives() async {
+        let cachedPosts = await archiveCache.allPosts
+        let localLastCreatedAt = await archiveCache.lastPostCreatedAt
+        
+        /// 캐싱이 있으면 즉시 표시 (로딩 없이 복귀)
+        await MainActor.run {
+            self.allPosts = cachedPosts
+            updateDisplayArchives()
+            self.isLoading = false
+        }
+        
+        /// A 서버에서 전부 가져오기 (캐시가 없거나, 캐시에 최신 시간이 없는 경우)
+        if cachedPosts.isEmpty || localLastCreatedAt == nil {
+            await MainActor.run { isLoading = true }
+            let allPosts = await fetchAllPosts()
+            await archiveCache.update(with: allPosts)
+            
+            await MainActor.run {
+                self.allPosts = allPosts
+                updateDisplayArchives()
+                self.isLoading = false
+            }
+            return
+        }
+        
+        let serverLastCreatedAt = await fetchLatestPostCreatedAt()
+        
+        /// B 캐싱 그대로 사용하기 (서버에서 최신 시간을 못 가져오거나, 서버=캐싱이라면)
+        guard let server = serverLastCreatedAt else { return }
+        if let local = localLastCreatedAt, server.dateValue() <= local.dateValue() {
+            return
+        }
+        
+        /// C 캐싱안된것 가져오기 (서버에 새 글이 있는 경우)
+        guard let local = localLastCreatedAt else { return }
+        let newPosts = await fetchPosts(after: local)
+        await archiveCache.merge(newPosts: newPosts)
+        
+        /// 최종: 캐싱된 것 UI에 보여주기
+        let merged = await archiveCache.allPosts
+        await MainActor.run {
+            self.allPosts = merged
+            updateDisplayArchives()
+            self.isLoading = false
+        }
+    }
+    
+    /// 서버의 가장 최근 게시물 날짜 가져오기
+    private func fetchLatestPostCreatedAt() async -> Timestamp? {
+        guard let roomId = connectUserInfo.roomId, !roomId.isEmpty else {
+            return nil
+        }
+        
+        do {
+            let posts: [PostData] = try await dataManager.fetchCollection(
+                path: "Rooms/\(roomId)/posts",
+                orderBy: "createdAt",
+                descending: true,
+                limit: 1
+            )
+            return posts.first?.createdAt
+        } catch {
+            print("최신 Post 조회 실패: \(error.localizedDescription)")
+            return nil
+        }
+    }
+    
+    // A 전체 기록 가져오기
     private func fetchAllPosts() async -> [PostData] {
         guard let roomId = connectUserInfo.roomId, !roomId.isEmpty else {
             return []
@@ -87,17 +149,38 @@ final class ArchiveViewModel: ObservableObject {
             return []
         }
     }
-    
-    func fetchMonthlyArchives() async {
-        await MainActor.run { isLoading = true }
-        
-        let allPosts = await fetchAllPosts()
-        
-        await MainActor.run {
-            self.allPosts = allPosts
-            updateDisplayArchives()
-            self.isLoading = false
+
+    /// C 캐싱 이후~서버 데이터 가져오기
+    private func fetchPosts(after lastCreatedAt: Timestamp) async -> [PostData] {
+        guard let roomId = connectUserInfo.roomId, !roomId.isEmpty else {
+            return []
         }
+        
+        do {
+            let posts: [PostData] = try await dataManager.fetchWhere(
+                path: "Rooms/\(roomId)/posts",
+                field: "createdAt",
+                isGreaterThanOrEqualTo: lastCreatedAt,
+                orderBy: "createdAt",
+                descending: false
+            )
+            let lastDate = lastCreatedAt.dateValue()
+            return posts.filter { $0.createdAt.dateValue() > lastDate }
+        } catch {
+            print("증분 Post 조회 실패: \(error.localizedDescription)")
+            return []
+        }
+    }
+
+    // MARK: - 기본 UIUX
+    var hasPreviousDisplayMonth: Bool {
+        guard !displayMonths.isEmpty else { return false }
+        return currentMonthIndex < displayMonths.count - 1
+    }
+
+    var hasNextDisplayMonth: Bool {
+        guard !displayMonths.isEmpty else { return false }
+        return currentMonthIndex > 0
     }
     
     func selectAuthorType(_ type: ArchiveSegment) {

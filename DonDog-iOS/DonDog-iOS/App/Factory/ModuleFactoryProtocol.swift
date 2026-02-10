@@ -17,7 +17,7 @@ protocol ModuleFactoryProtocol {
     func makeCameraView(isStickerCamera: Bool) -> CameraView
     func makeSettingView() -> SettingView
     func makeArchiveView() -> ArchiveView
-    func makePostView(with post: PostData, for postType: PostType) -> PostView
+    func makeArchiveDetailView(with post: PostData, for postType: PostType) -> ArchiveDetailView
     func makeHomeView() -> HomeView
     func makeStickerCollectionView() -> SitckerCollectionView
     func makePhotoPickerView() -> PhotoPickerView
@@ -69,14 +69,12 @@ final class ModuleFactory: ModuleFactoryProtocol {
     }
     
     func makeArchiveView() -> ArchiveView {
-        let viewModel = ArchiveViewModel()
-        let view = ArchiveView(viewModel: viewModel)
-        return view
+        ArchiveView()
     }
     
-    func makePostView(with post: PostData, for postType: PostType) -> PostView {
-        let viewModel = PostViewModel(post: post)
-        let view = PostView(viewModel: viewModel, postType: postType)
+    func makeArchiveDetailView(with post: PostData, for postType: PostType) -> ArchiveDetailView {
+        let viewModel = ArchiveDetailViewModel(post: post)
+        let view = ArchiveDetailView(viewModel: viewModel, postType: postType)
         return view
     }
     

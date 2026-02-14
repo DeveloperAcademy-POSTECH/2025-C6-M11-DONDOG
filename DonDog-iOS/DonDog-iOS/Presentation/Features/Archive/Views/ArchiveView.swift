@@ -37,17 +37,15 @@ struct ArchiveView: View {
                     HStack(spacing: 16) {
                         Spacer()
                         
-                        if viewModel.hasPreviousDisplayMonth {
-                            Button {
-                                viewModel.goToPreviousMonth()
-                            } label: {
-                                Image("ArchiveLeftButton")
-                                    .frame(width: 16, height: 16)
-                            }
-                            .padding(.horizontal, 10)
-                            .disabled(!viewModel.hasPreviousDisplayMonth)
+                        Button {
+                            viewModel.goToPreviousMonth()
+                        } label: {
+                            Image(viewModel.hasPreviousDisplayMonth ? "ArchiveLeftButton" : "ArchiveLeftButtonGray")
+                                .frame(width: 16, height: 16)
                         }
-                    
+                        .padding(.horizontal, 10)
+                        .disabled(!viewModel.hasPreviousDisplayMonth)
+                        
                         if !viewModel.displayMonths.isEmpty {
                             Text(DateUtils.string(from: viewModel.displayMonths[viewModel.currentMonthIndex].date, format: .month))
                                 .font(.subtitleMedium20)
@@ -56,16 +54,14 @@ struct ArchiveView: View {
                                 .font(.subtitleMedium20)
                         }
                         
-                        if viewModel.hasNextDisplayMonth {
-                            Button {
-                                viewModel.goToNextMonth()
-                            } label: {
-                                Image("ArchiveRightButton")
-                                    .frame(width: 16, height: 16)
-                            }
-                            .padding(.horizontal, 10)
-                            .disabled(!viewModel.hasNextDisplayMonth)
+                        Button {
+                            viewModel.goToNextMonth()
+                        } label: {
+                            Image(viewModel.hasNextDisplayMonth ? "ArchiveRightButton" : "ArchiveRightButtonGray")
+                                .frame(width: 16, height: 16)
                         }
+                        .padding(.horizontal, 10)
+                        .disabled(!viewModel.hasNextDisplayMonth)
                         
                         Spacer()
                     }

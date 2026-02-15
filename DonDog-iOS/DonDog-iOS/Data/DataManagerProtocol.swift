@@ -17,6 +17,14 @@ protocol DataManagerProtocol {
     
     /// 정렬된 컬렉션 조회
     func fetchCollection<T: Decodable>(path: String, orderBy field: String, descending: Bool) async throws -> [T]
+
+    /// 정렬 + 개수 제한 컬렉션 조회
+    func fetchCollection<T: Decodable>(
+        path: String,
+        orderBy field: String,
+        descending: Bool,
+        limit: Int
+    ) async throws -> [T]
     
     /// 날짜 지정 컬렉션 조회
     func fetchWhere<T: Decodable>(path: String, field: String, isGreaterThanOrEqualTo value: Any, orderBy: String, descending: Bool) async throws -> [T]

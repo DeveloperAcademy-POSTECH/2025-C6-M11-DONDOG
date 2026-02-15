@@ -99,8 +99,8 @@ final class AppCoordinator: ObservableObject {
             factory.makeStickerCollectionView()
         case .archive:
             factory.makeArchiveView()
-        case .post(let post, let postType):
-            factory.makePostView(with: post, for: postType)
+        case .archiveDetail(let post, let postType):
+            factory.makeArchiveDetailView(with: post, for: postType)
         case .setting:
             factory.makeSettingView()
         case .editprofile:

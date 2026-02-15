@@ -89,6 +89,7 @@ final class AuthService {
     private func replaceRootinAuthService(_ route: AppRoute, coordinator: AppCoordinator) {
         Task { @MainActor in
             // if coordinator.root == route { return }
+            NSLog("[AuthService] replaceRootinAuthService: \(coordinator.root) -> \(route)")
             coordinator.replaceRoot(route)
             NSLog("[AuthService replaceRootinAuthService함수] 🔄 \(coordinator.root) → \(route)")
         }

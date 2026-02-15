@@ -1,5 +1,5 @@
 //
-//  PostViewModel.swift
+//  ArchiveDetailViewModel.swift
 //  DonDog-iOS
 //
 //  Created by 이서현 on 10/26/25.
@@ -9,7 +9,7 @@ import Combine
 import FirebaseAuth
 import FirebaseFirestore
 
-final class PostViewModel: ObservableObject {
+final class ArchiveDetailViewModel: ObservableObject {
     @Published var post: PostData
     @Published var isMyPost = false
     @Published var postOwnerNickname: String = ""
@@ -20,24 +20,26 @@ final class PostViewModel: ObservableObject {
     
     init(post: PostData) {
         self.post = post
-        checkIfItsMyPost()
-        setupZoomedImages()
+        configure(with: post)
     }
     
-    private func checkIfItsMyPost() {
+    deinit {
+        print("ArchiveDetailViewModel deinit")
+    }
+    
+    private func configure(with post: PostData) {
         let isMine = post.authorId == connectUserInfo.myUid
         isMyPost = isMine
         postOwnerNickname = isMine ? "\(connectUserInfo.myName ?? "")" : "\(connectUserInfo.partnerName ?? "")"
-    }
-    
-    private func setupZoomedImages() {
         frontImageURL = URL(string: post.frontImageURL)
         backImageURL = URL(string: post.backImageURL)
     }
     
+    var currentPostId: String { post.postId }
+    
     func deletePost() async {
         do {
-            try await PostService.shared.deletePost(postId: post.postId)
+            try await PostService.shared.deletePost(postId: currentPostId)
         } catch {
             print("게시글 삭제에 실패했습니다: \(error)")
         }

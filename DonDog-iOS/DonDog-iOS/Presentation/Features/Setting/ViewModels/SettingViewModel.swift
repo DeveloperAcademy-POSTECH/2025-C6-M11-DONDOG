@@ -24,14 +24,12 @@ final class SettingViewModel: ObservableObject {
         do {
             try Auth.auth().signOut()
             // 메인에서 세션 리셋 + 캐시 제거
-            await MainActor.run {
-                URLCache.shared.removeAllCachedResponses()
-                
-                let gridService = StickerGridService.shared
-                gridService.stickerImageURLs.removeAll()
-                gridService.loadingItemIDs.removeAll()
-                gridService.fetchedItemIDs.removeAll()
-            }
+            URLCache.shared.removeAllCachedResponses()
+            
+            let gridService = StickerGridService.shared
+            gridService.stickerImageURLs.removeAll()
+            gridService.loadingItemIDs.removeAll()
+            gridService.fetchedItemIDs.removeAll()
             NSLog("로그아웃 성공")
         } catch {
             NSLog("로그아웃 실패: \(error.localizedDescription)")

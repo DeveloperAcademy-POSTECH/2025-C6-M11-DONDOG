@@ -45,7 +45,7 @@ final class ArchiveViewModel: ObservableObject {
         self.coordinator = coordinator
     }
     func moveToPost(day: ArchiveDay) {
-        Task { @MainActor in
+        Task {
             if let post = allPosts.first(where: { $0.postId == day.postId }) {
                 coordinator?.push(.archiveDetail(post: post, postType: .archive))
                 return
@@ -69,23 +69,19 @@ final class ArchiveViewModel: ObservableObject {
         let localLastCreatedAt = await archiveCache.lastPostCreatedAt
         
         /// 캐싱이 있으면 즉시 표시 (로딩 없이 복귀)
-        await MainActor.run {
-            self.allPosts = cachedPosts
-            updateDisplayArchives()
-            self.isLoading = false
-        }
+        self.allPosts = cachedPosts
+        updateDisplayArchives()
+        self.isLoading = false
         
         /// A 서버에서 전부 가져오기 (캐시가 없거나, 캐시에 최신 시간이 없는 경우)
         if cachedPosts.isEmpty || localLastCreatedAt == nil {
-            await MainActor.run { isLoading = true }
+            isLoading = true
             let allPosts = await fetchAllPosts()
             await archiveCache.update(with: allPosts)
             
-            await MainActor.run {
-                self.allPosts = allPosts
-                updateDisplayArchives()
-                self.isLoading = false
-            }
+            self.allPosts = allPosts
+            updateDisplayArchives()
+            self.isLoading = false
             return
         }
         
@@ -104,11 +100,9 @@ final class ArchiveViewModel: ObservableObject {
         
         /// 최종: 캐싱된 것 UI에 보여주기
         let merged = await archiveCache.allPosts
-        await MainActor.run {
-            self.allPosts = merged
-            updateDisplayArchives()
-            self.isLoading = false
-        }
+        self.allPosts = merged
+        updateDisplayArchives()
+        self.isLoading = false
     }
     
     /// 서버의 가장 최근 게시물 날짜 가져오기

@@ -76,16 +76,12 @@ final class StickerConfirmViewModel: ObservableObject {
                 ]
                 _ = try await DataManager.shared.createWithAutoId(path: "Stickers", data: data)
 
-                await MainActor.run {
-                    self.isUploading = false
-                    StickerEmotionTagManager.shared.emotionTags = []
-                    onSuccess?(selectedTags)
-                }
+                self.isUploading = false
+                StickerEmotionTagManager.shared.emotionTags = []
+                onSuccess?(selectedTags)
             } catch {
-                await MainActor.run {
-                    self.isUploading = false
-                    print("스티커 전송 오류: \(error.localizedDescription)")
-                }
+                self.isUploading = false
+                print("스티커 전송 오류: \(error.localizedDescription)")
             }
         }
     }

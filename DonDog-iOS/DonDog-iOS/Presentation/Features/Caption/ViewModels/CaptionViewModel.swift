@@ -43,8 +43,9 @@ final class CaptionViewModel: ObservableObject {
         delegate?.didStartUploading(frontImage: frontImage, backImage: backImage, caption: captionSnapshot)
         
         Task {
-            let captionSnapshot = await MainActor.run { self.caption }
-            
+            defer {
+                self.isUploading = false
+            }
             do {
                 guard let roomId = connectUserInfo.roomId else { return }
                 guard let myUid = connectUserInfo.myUid else { return }
@@ -75,17 +76,12 @@ final class CaptionViewModel: ObservableObject {
 
                 try await dataManager.update(path: "Users/\(myUid)", data: ["recentPostId": postId, "lastUploadedAt": FieldValue.serverTimestamp()])
 
-                await MainActor.run {
-                    connectUserInfo.lastUploadedAt = Date()
-                    self.isUploading = false
-                    print("[CaptionViewModel.uploadPost] 업로드 성공: \(postData.authorId)")
-                    self.delegate?.didUploadPost()
-                }
+                connectUserInfo.lastUploadedAt = Date()
+                print("[CaptionViewModel.uploadPost] 업로드 성공: \(postData.authorId)")
+                self.uploadStatusDelegate?.didFinishUploading(result: .success)
             } catch {
-                await MainActor.run {
-                    self.isUploading = false
-                    print("❌ 업로드 실패: \(error.localizedDescription)")
-                }
+                print("❌ 업로드 실패: \(error.localizedDescription)")
+                self.uploadStatusDelegate?.didFinishUploading(result: .failure(message: error.localizedDescription))
             }
         }
     }

@@ -71,12 +71,13 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
             .assign(to: &$currentPost)
     }
     
-    func loadPosts() async {
-        await MainActor.run { isLoading = true }
+    @discardableResult
+    func loadPosts() async -> Bool {
+        isLoading = true
         
         guard let roomId = connectUserInfo.roomId, let myUid = connectUserInfo.myUid else {
-            await MainActor.run { isLoading = false }
-            return
+            isLoading = false
+            return false
         }
         
         do {
@@ -86,13 +87,13 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
             
             let todayPosts = HomePost.todayPosts(from: homePosts)
             
-            await MainActor.run {
-                self.todayPosts = todayPosts
-                self.isLoading = false
-            }
+            self.todayPosts = todayPosts
+            self.isLoading = false
+            return true
         } catch {
             print("게시물 로드 실패: \(error.localizedDescription)")
-            await MainActor.run { isLoading = false }
+            isLoading = false
+            return false
         }
     }
     

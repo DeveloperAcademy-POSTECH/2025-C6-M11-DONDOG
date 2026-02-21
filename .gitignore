@@ -3,6 +3,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=xcode,macos,swift,swiftpackagemanager,cocoapods
 
 # Firebase config
+**/GoogleService-Info.plist
 GoogleService-Info.plist
 DonDog-iOS/DonDog-iOS/GoogleService-Info.plist
 

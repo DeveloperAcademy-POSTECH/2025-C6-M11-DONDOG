@@ -12,6 +12,7 @@
 		61C9B1A02E9BED150007C8F4 /* ArchiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */; };
 		61C9B1A62E9BFCBE0007C8F4 /* ArchiveDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C9B1A52E9BFCBE0007C8F4 /* ArchiveDate.swift */; };
 		8B1EB7932EA07F7A00F720CF /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 8B1EB7922EA07F7A00F720CF /* FirebaseAppCheck */; };
+		8B2187012F49892400EDD4AC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B2187002F49892400EDD4AC /* GoogleService-Info.plist */; };
 		8B31826A2E90CE1B004505AE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8B3182692E90CE1B004505AE /* FirebaseAnalytics */; };
 		8B31826C2E90CE1B004505AE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826B2E90CE1B004505AE /* FirebaseAuth */; };
 		8B31826E2E90CE1B004505AE /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 8B31826D2E90CE1B004505AE /* FirebaseAuthCombine-Community */; };
@@ -106,7 +107,6 @@
 		CAA9AEE52E8FC1B40047A89A /* InviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEE42E8FC1B40047A89A /* InviteView.swift */; };
 		CAA9AEF02E8FE2990047A89A /* ModuleFactoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEEF2E8FE2990047A89A /* ModuleFactoryProtocol.swift */; };
 		CAA9AEF22E8FE3070047A89A /* InviteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */; };
-		CAB47B7A2ECDCB8A007E57C9 /* InitialOnBoardingContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB47B792ECDCB8A007E57C9 /* InitialOnBoardingContentView.swift */; };
 		CAB6B1E22EB5082D00F778EC /* UserPairingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1E12EB5082D00F778EC /* UserPairingStore.swift */; };
 		CAB6B1E42EB5089600F778EC /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1E32EB5089600F778EC /* DateUtils.swift */; };
 		CAB6B1EE2EB6375A00F778EC /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB6B1ED2EB6375A00F778EC /* View+.swift */; };
@@ -133,6 +133,8 @@
 		61C9B19D2E9BEC130007C8F4 /* ArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveView.swift; sourceTree = "<group>"; };
 		61C9B19F2E9BED150007C8F4 /* ArchiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveViewModel.swift; sourceTree = "<group>"; };
 		61C9B1A52E9BFCBE0007C8F4 /* ArchiveDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveDate.swift; sourceTree = "<group>"; };
+		8B2187002F49892400EDD4AC /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8B2187032F49899000EDD4AC /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/픽픽/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8B38DBE12EBCFB5800DD7562 /* PhotoPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewModel.swift; sourceTree = "<group>"; };
 		8B5F44552E90FA74003137F2 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		8B5F44592E90FF95003137F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -173,7 +175,6 @@
 		8BDF769D2E9FDF88007F12BB /* GenerateCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateCodeService.swift; sourceTree = "<group>"; };
 		8BEA2CD42EC3A1E500BC27EC /* OutlinedTitleImageMaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlinedTitleImageMaker.swift; sourceTree = "<group>"; };
 		8BF73ECA2ECB3FE3007BCBDA /* CameraStickerConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraStickerConfirmView.swift; sourceTree = "<group>"; };
-		8BFBE93D2F4026EF000F61FB /* DonDog-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "DonDog-iOS.app"; path = "/Users/judy/Desktop/Swift-Ch/픽픽/2025-C6-M11-DONDOG/DonDog-iOS/build/Debug-iphoneos/DonDog-iOS.app"; sourceTree = "<absolute>"; };
 		8BFC735E2EA5CB4800B54F03 /* NetworkErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkErrorView.swift; sourceTree = "<group>"; };
 		8BFC73602EA5D18C00B54F03 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		8C3E791E2EBB2895000ADEF6 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
@@ -217,7 +218,6 @@
 		CAA9AEE42E8FC1B40047A89A /* InviteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteView.swift; sourceTree = "<group>"; };
 		CAA9AEEF2E8FE2990047A89A /* ModuleFactoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleFactoryProtocol.swift; sourceTree = "<group>"; };
 		CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteViewModel.swift; sourceTree = "<group>"; };
-		CAB47B792ECDCB8A007E57C9 /* InitialOnBoardingContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialOnBoardingContentView.swift; sourceTree = "<group>"; };
 		CAB6B1E12EB5082D00F778EC /* UserPairingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPairingStore.swift; sourceTree = "<group>"; };
 		CAB6B1E32EB5089600F778EC /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		CAB6B1ED2EB6375A00F778EC /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
@@ -596,27 +596,9 @@
 			children = (
 				CAA9AEC32E8FC15C0047A89A /* AuthViewModel.swift */,
 				8BBE41F12EA1E9CB00057A23 /* AuthNumberViewModel.swift */,
+				CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */,
 			);
 			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		CAA9AEC62E8FC15C0047A89A /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				CAA9AEC52E8FC15C0047A89A /* AuthView.swift */,
-				8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */,
-				8BDF768D2E9F498B007F12BB /* WelcomeView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		CAA9AEC72E8FC15C0047A89A /* Auth */ = {
-			isa = PBXGroup;
-			children = (
-				CAA9AEC62E8FC15C0047A89A /* Views */,
-				CAA9AEC42E8FC15C0047A89A /* ViewModels */,
-			);
-			path = Auth;
 			sourceTree = "<group>";
 		};
 		CAA9AED22E8FC15C0047A89A /* Presentation */ = {
@@ -642,6 +624,7 @@
 			isa = PBXGroup;
 			children = (
 				CA957C5C2E942B4200AEAB49 /* DonDog-iOS.entitlements */,
+				8B2187002F49892400EDD4AC /* GoogleService-Info.plist */,
 				8B5F44592E90FF95003137F2 /* Info.plist */,
 				CAA9AEBE2E8FC15C0047A89A /* App */,
 				CA957CEB2E98FC3D00AEAB49 /* Core */,
@@ -651,43 +634,16 @@
 			path = "DonDog-iOS";
 			sourceTree = "<group>";
 		};
-		CAA9AEE12E8FC17C0047A89A /* Invite */ = {
-			isa = PBXGroup;
-			children = (
-				CAA9AEE22E8FC18B0047A89A /* Views */,
-				CAA9AEE32E8FC1930047A89A /* ViewModels */,
-			);
-			path = Invite;
-			sourceTree = "<group>";
-		};
-		CAA9AEE22E8FC18B0047A89A /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				CAA9AEE42E8FC1B40047A89A /* InviteView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		CAA9AEE32E8FC1930047A89A /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				CAA9AEF12E8FE3070047A89A /* InviteViewModel.swift */,
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
 		CAA9AEED2E8FC72E0047A89A /* Features */ = {
 			isa = PBXGroup;
 			children = (
 				CAB47B782ECDCB6B007E57C9 /* OnBoarding */,
 				8C3F8FBB2EB8DA9400699BC3 /* Home */,
-				CAA9AEC72E8FC15C0047A89A /* Auth */,
 				8BD1C1452EC9C0E10064CF70 /* Camera */,
-				CAA9AEE12E8FC17C0047A89A /* Invite */,
 				D24402A72E992CD800D837C8 /* Caption */,
 				61C9B19A2E9BEBEB0007C8F4 /* Archive */,
-				8B6E118B2E976F2C0082B24C /* Setting */,
 				8B736DEB2EBB404E00E2AB76 /* Sticker */,
+				8B6E118B2E976F2C0082B24C /* Setting */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -703,18 +659,14 @@
 		CAB47B782ECDCB6B007E57C9 /* OnBoarding */ = {
 			isa = PBXGroup;
 			children = (
-				CAB47B7B2ECDCBA1007E57C9 /* SubViews */,
+				8BDF768D2E9F498B007F12BB /* WelcomeView.swift */,
 				CAD0899E2ECDD49900F89827 /* InitialOnBoardingView.swift */,
+				CAA9AEC52E8FC15C0047A89A /* AuthView.swift */,
+				8BBE41EF2EA1E9AD00057A23 /* AuthNumberView.swift */,
+				CAA9AEE42E8FC1B40047A89A /* InviteView.swift */,
+				CAA9AEC42E8FC15C0047A89A /* ViewModels */,
 			);
 			path = OnBoarding;
-			sourceTree = "<group>";
-		};
-		CAB47B7B2ECDCBA1007E57C9 /* SubViews */ = {
-			isa = PBXGroup;
-			children = (
-				CAB47B792ECDCB8A007E57C9 /* InitialOnBoardingContentView.swift */,
-			);
-			path = SubViews;
 			sourceTree = "<group>";
 		};
 		D219F1EB2EAE20B700BD82B7 /* SubViews */ = {
@@ -795,7 +747,7 @@
 				8B822D7B2EAB617800D708D7 /* Kingfisher */,
 			);
 			productName = "DonDog-iOS";
-			productReference = 8BFBE93D2F4026EF000F61FB /* DonDog-iOS.app */;
+			productReference = 8B2187032F49899000EDD4AC /* DonDog-iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -842,6 +794,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA957CFB2E98FCD700AEAB49 /* Pretendard-Bold.otf in Resources */,
+				8B2187012F49892400EDD4AC /* GoogleService-Info.plist in Resources */,
 				CA957CFF2E98FCD700AEAB49 /* Pretendard-Medium.otf in Resources */,
 				CA957D002E98FCD700AEAB49 /* Pretendard-SemiBold.otf in Resources */,
 				CA957D012E98FCD700AEAB49 /* Pretendard-Regular.otf in Resources */,
@@ -947,7 +900,6 @@
 				8BD1C14F2EC9C0E10064CF70 /* CameraViewModel.swift in Sources */,
 				8BD1C1502EC9C0E10064CF70 /* CameraViewController+Actions.swift in Sources */,
 				8BD1C1512EC9C0E10064CF70 /* ShootingGuideView.swift in Sources */,
-				CAB47B7A2ECDCB8A007E57C9 /* InitialOnBoardingContentView.swift in Sources */,
 				CAA62D062EA1E57200C60E05 /* CustomPageIndicator.swift in Sources */,
 				8BF73ECB2ECB3FE3007BCBDA /* CameraStickerConfirmView.swift in Sources */,
 				D219F21F2EAEA10500BD82B7 /* PostContentsView.swift in Sources */,
@@ -1117,7 +1069,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A65CGWHSL8;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 6TW9MCXPJD;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 47UM88R722;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1139,7 +1091,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.DonDog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "dondog debug";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = dondog2debug;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -1164,7 +1116,7 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A65CGWHSL8;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 6TW9MCXPJD;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 47UM88R722;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1186,7 +1138,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.DonDog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "dondog debug";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = dondog2debug;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

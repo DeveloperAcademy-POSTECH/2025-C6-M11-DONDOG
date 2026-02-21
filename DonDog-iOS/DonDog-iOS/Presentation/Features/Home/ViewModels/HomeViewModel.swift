@@ -26,7 +26,10 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
     @Published var localBackImage: UIImage?
     @Published var localCaption: String?
     @Published var localUploadDate: Date?
+    
     @Published var isUploadingLocalImage: Bool = false
+    @Published var isSyncingUploadedPost: Bool = false
+    
     @Published var todayPosts: [HomePost] = []
     @Published var currentPost: HomePost?
     @Published var isLoading: Bool = false
@@ -40,6 +43,13 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
     private let dataManager: DataManagerProtocol = DataManager.shared
     private var cancellables = Set<AnyCancellable>()
     private var timeCheckTimer: Timer?
+    
+    var shouldShowLocalUploadedPost: Bool {
+        (isUploadingLocalImage || isSyncingUploadedPost) &&
+        selectedPostType == .myArchive &&
+        localFrontImage != nil &&
+        localBackImage != nil
+    }
     
     init() {
         updateTimeTypeFromCurrentTime()
@@ -155,6 +165,7 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
     func didStartUploading(frontImage: UIImage?, backImage: UIImage?, caption: String) {
         isLoading = true
         isUploadingLocalImage = true
+        isSyncingUploadedPost = false
         localFrontImage = frontImage
         localBackImage = backImage
         localCaption = caption
@@ -162,19 +173,39 @@ final class HomeViewModel: ObservableObject, CaptionViewModelDelegate {
         selectedPostType = .myArchive
     }
     
-    func didUploadPost() {
+    func didFinishUploading(result: CaptionUploadResult) {
         isLoading = false
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.isUploadingLocalImage = false
-            self?.localFrontImage = nil
-            self?.localBackImage = nil
-            self?.localCaption = nil
-            self?.localUploadDate = nil
+        switch result {
+        case .success:
+            isUploadingLocalImage = false
+            isSyncingUploadedPost = true
+            Task {
+                let didSyncServerPost = await loadPosts()
+                
+                if didSyncServerPost {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        isSyncingUploadedPost = false
+                        clearLocalUploadedPost()
+                    }
+                } else {
+                    isSyncingUploadedPost = false
+                }
+            }
+        case .failure(let message):
+            isUploadingLocalImage = false
+            isSyncingUploadedPost = false
+            clearLocalUploadedPost()
+            toastMessage = "업로드에 실패했어요: \(message)"
+            isShowToast = true
         }
-        Task {
-            await loadPosts()
-        }
+    }
+    
+    private func clearLocalUploadedPost() {
+        localFrontImage = nil
+        localBackImage = nil
+        localCaption = nil
+        localUploadDate = nil
     }
     
     deinit {

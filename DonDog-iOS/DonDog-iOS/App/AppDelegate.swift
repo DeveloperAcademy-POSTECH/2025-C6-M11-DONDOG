@@ -42,7 +42,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
         // FCM 토큰/메시징 델리게이트
         Messaging.messaging().delegate = self
-        ensureFCMTokenAndSubscribe()
 
         if NotificationService.shared.getTokenFromUserDefaults() == nil {
             NSLog("UserDefaults에 FCM 토큰 없음")
@@ -73,6 +72,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // FCM
         Messaging.messaging().apnsToken = deviceToken
+        ensureFCMTokenAndSubscribe()
 
     }
     
@@ -120,6 +120,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
     
     private func ensureFCMTokenAndSubscribe() {
+        guard Messaging.messaging().apnsToken != nil else { return }
+
         Messaging.messaging().token { token, error in
             if let token {
                 NotificationService.shared.uploadFCMToken(token)

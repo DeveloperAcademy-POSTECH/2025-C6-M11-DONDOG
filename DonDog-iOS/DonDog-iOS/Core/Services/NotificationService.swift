@@ -62,7 +62,7 @@ final class NotificationService {
             if let err = err {
                 print("FCM 토큰 업로드 실패: \(err)")
             } else {
-                print("FCM 토큰 업로드 성공: \(token) [\(env)]")
+                print("FCM 토큰 업로드 성공: \(token.prefix(6))... [\(env)]")
                 self.saveTokenToUserDefaults(token) // 로컬 캐싱
                 self.saveUidToUserDefaults(uid)
             }

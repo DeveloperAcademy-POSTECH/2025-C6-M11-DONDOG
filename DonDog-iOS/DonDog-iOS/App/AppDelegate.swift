@@ -99,7 +99,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // FCM MessagingDelegate - FCM이 토큰을 갱신하면 사용, APNs 토큰이 이미 있다면 여기서 구독 시도
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         guard let token = fcmToken else { return }
-        NSLog("FCM 토큰 (delegate): \(token)")
+        NSLog("FCM 토큰 (delegate): \(token.prefix(6))...")
         NotificationService.shared.uploadFCMToken(token)
     }
 

@@ -44,9 +44,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         Messaging.messaging().delegate = self
         ensureFCMTokenAndSubscribe()
 
-        if let storedToken = NotificationService.shared.getTokenFromUserDefaults() {
-            NSLog("UserDefaults에 FCM 토큰 저장: \(storedToken)")
-        } else {
+        if NotificationService.shared.getTokenFromUserDefaults() == nil {
             NSLog("UserDefaults에 FCM 토큰 없음")
         }
 

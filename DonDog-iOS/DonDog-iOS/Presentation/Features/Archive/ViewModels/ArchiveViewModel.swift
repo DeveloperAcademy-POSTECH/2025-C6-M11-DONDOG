@@ -65,8 +65,19 @@ final class ArchiveViewModel: ObservableObject {
     
     // MARK: - posts 데이터 가져오기
     func updateMonthlyArchives() async {
-        let cachedPosts = await archiveCache.allPosts
-        let localLastCreatedAt = await archiveCache.lastPostCreatedAt
+        guard let roomId = connectUserInfo.roomId, !roomId.isEmpty else {
+            await archiveCache.clear()
+            await MainActor.run {
+                self.allPosts = []
+                updateDisplayArchives()
+                self.isLoading = false
+            }
+            return
+        }
+        
+        let snapshot = await archiveCache.snapshot(for: roomId)
+        let cachedPosts = snapshot.posts
+        let localLastCreatedAt = snapshot.lastPostCreatedAt
         
         /// 캐싱이 있으면 즉시 표시 (로딩 없이 복귀)
         self.allPosts = cachedPosts
@@ -77,7 +88,7 @@ final class ArchiveViewModel: ObservableObject {
         if cachedPosts.isEmpty || localLastCreatedAt == nil {
             isLoading = true
             let allPosts = await fetchAllPosts()
-            await archiveCache.update(with: allPosts)
+            await archiveCache.update(roomId: roomId, with: allPosts)
             
             self.allPosts = allPosts
             updateDisplayArchives()
@@ -96,13 +107,15 @@ final class ArchiveViewModel: ObservableObject {
         /// C 캐싱안된것 가져오기 (서버에 새 글이 있는 경우)
         guard let local = localLastCreatedAt else { return }
         let newPosts = await fetchPosts(after: local)
-        await archiveCache.merge(newPosts: newPosts)
+        await archiveCache.merge(roomId: roomId, newPosts: newPosts)
         
         /// 최종: 캐싱된 것 UI에 보여주기
-        let merged = await archiveCache.allPosts
-        self.allPosts = merged
-        updateDisplayArchives()
-        self.isLoading = false
+        let merged = await archiveCache.snapshot(for: roomId).posts
+        await MainActor.run {
+            self.allPosts = merged
+            updateDisplayArchives()
+            self.isLoading = false
+        }
     }
     
     /// 서버의 가장 최근 게시물 날짜 가져오기

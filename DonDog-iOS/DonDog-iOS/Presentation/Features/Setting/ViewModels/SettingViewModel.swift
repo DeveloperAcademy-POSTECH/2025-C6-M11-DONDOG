@@ -23,6 +23,7 @@ final class SettingViewModel: ObservableObject {
         
         do {
             try Auth.auth().signOut()
+            await ArchiveCache.shared.clear()
             // 메인에서 세션 리셋 + 캐시 제거
             URLCache.shared.removeAllCachedResponses()
             

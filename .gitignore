@@ -6,6 +6,8 @@
 **/GoogleService-Info.plist
 GoogleService-Info.plist
 DonDog-iOS/DonDog-iOS/GoogleService-Info.plist
+**/GoogleService-Info.plist
+GoogleService-Info-*.plist
 
 ### CocoaPods ###
 ## CocoaPods GitIgnore Template

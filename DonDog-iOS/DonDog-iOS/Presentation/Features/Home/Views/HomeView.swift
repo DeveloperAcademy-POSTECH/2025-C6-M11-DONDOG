@@ -36,15 +36,33 @@ struct HomeView: View {
                 
                 ZStack(alignment: .bottom) {
                     TabView(selection: $viewModel.currentIndex) {
-                        if viewModel.isUploadingLocalImage, viewModel.selectedPostType == .myArchive, let frontImage = viewModel.localFrontImage, let backImage = viewModel.localBackImage {
+                        if viewModel.shouldShowLocalUploadedPost, let frontImage = viewModel.localFrontImage, let backImage = viewModel.localBackImage {
                             Group {
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(frontImage), tag: 0, postId: nil, isShowGradient: !viewModel.isLoading)
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .local(backImage), tag: 1, postId: nil, isShowGradient: !viewModel.isLoading)
+                                TabItemView(
+                                    viewModel: stickerViewModel,
+                                    isEditing: $viewModel.isShowStickerSheet,
+                                    imageSource: .local(frontImage),
+                                    tag: 0,
+                                    postId: nil,
+                                    isShowGradient: !viewModel.isLoading,
+                                    isUploadingPost: viewModel.shouldShowLocalUploadedPost,
+                                    showLocalLoadingPlaceholder: viewModel.isUploadingLocalImage
+                                )
+                                TabItemView(
+                                    viewModel: stickerViewModel,
+                                    isEditing: $viewModel.isShowStickerSheet,
+                                    imageSource: .local(backImage),
+                                    tag: 1,
+                                    postId: nil,
+                                    isShowGradient: !viewModel.isLoading,
+                                    isUploadingPost: viewModel.shouldShowLocalUploadedPost,
+                                    showLocalLoadingPlaceholder: viewModel.isUploadingLocalImage
+                                )
                             }
                         } else if let post = viewModel.currentPost, let frontURL = post.frontImageURL, let backURL = post.backImageURL {
                             Group {
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(frontURL), tag: 0, postId: post.postId, isShowGradient: !viewModel.isLoading)
-                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(backURL), tag: 1, postId: post.postId, isShowGradient: !viewModel.isLoading)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(frontURL), tag: 0, postId: post.postId, isShowGradient: !viewModel.isLoading, isUploadingPost: viewModel.isUploadingLocalImage)
+                                TabItemView(viewModel: stickerViewModel, isEditing: $viewModel.isShowStickerSheet, imageSource: .remote(backURL), tag: 1, postId: post.postId, isShowGradient: !viewModel.isLoading, isUploadingPost: viewModel.isUploadingLocalImage)
                             }
                         } else {
                             HomeEmptyView(selectedPostType: viewModel.selectedPostType)
@@ -59,62 +77,63 @@ struct HomeView: View {
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     
-                    if let currentPost = viewModel.currentPost {
-                        if !DateUtils.isOver3daysSinceLastUpload() && !viewModel.isShowStickerSheet {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    if viewModel.isUploadingLocalImage {
-                                        Text("")
-                                            .font(.subtitleSemiBold16)
-                                            .foregroundStyle(.ppWhite)
-                                        Text("")
-                                            .font(.captionRegular13)
-                                            .foregroundStyle(.ppWhite)
-                                    } else {
-                                        Text(currentPost.post.caption)
-                                            .font(.subtitleSemiBold16)
-                                            .foregroundStyle(.ppWhite)
-                                        
-                                        Text(DateUtils.string(from: currentPost.createdAt, format: .home))
-                                            .font(.captionRegular13)
-                                            .foregroundStyle(.ppWhite)
-                                    }
+                    if !DateUtils.isOver3daysSinceLastUpload() && !viewModel.isShowStickerSheet && (viewModel.shouldShowLocalUploadedPost || viewModel.currentPost != nil) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                if viewModel.isUploadingLocalImage {
+                                    EmptyView()
+                                } else if viewModel.shouldShowLocalUploadedPost {
+                                    Text(viewModel.localCaption ?? "")
+                                        .font(.subtitleSemiBold16)
+                                        .foregroundStyle(.ppWhite)
+                                    
+                                    Text(DateUtils.string(from: viewModel.localUploadDate ?? .now, format: .home))
+                                        .font(.captionRegular13)
+                                        .foregroundStyle(.ppWhite)
+                                } else if let currentPost = viewModel.currentPost {
+                                    Text(currentPost.post.caption)
+                                        .font(.subtitleSemiBold16)
+                                        .foregroundStyle(.ppWhite)
+                                    
+                                    Text(DateUtils.string(from: currentPost.createdAt, format: .home))
+                                        .font(.captionRegular13)
+                                        .foregroundStyle(.ppWhite)
                                 }
-                                .padding(.horizontal, 16)
-                                .padding(.bottom, 21)
-                                
-                                Spacer()
-                                
-                                Button {
-                                    if let currentPost = viewModel.currentPost {
-                                        stickerViewModel.postId = currentPost.postId
-                                        stickerViewModel.postImageType = viewModel.currentIndex == 0 ? .front : .back
-                                        Task {
-                                            await stickerViewModel.fetchStickers()
-                                        }
-                                    }
-                                    if let firstCategory = StickerCategory.allCases.first {
-                                        stickerGridService.selectedCategory = firstCategory
-                                    }
-                                    viewModel.isShowStickerSheet = true
-                                } label: {
-                                    Image("AddStickerIcon")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 64, height: 64)
-                                        .background {
-                                            Circle()
-                                                .frame(width: 70, height: 70)
-                                                .foregroundStyle(.ppPrime)
-                                        }
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 16)
-                                .buttonStyle(.plain)
-                                .opacity(viewModel.selectedPostType == .myArchive ? 0 : 1)
                             }
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 21)
+                            
+                            Spacer()
+                            
+                            Button {
+                                if let currentPost = viewModel.currentPost {
+                                    stickerViewModel.postId = currentPost.postId
+                                    stickerViewModel.postImageType = viewModel.currentIndex == 0 ? .front : .back
+                                    Task {
+                                        await stickerViewModel.fetchStickers()
+                                    }
+                                }
+                                if let firstCategory = StickerCategory.allCases.first {
+                                    stickerGridService.selectedCategory = firstCategory
+                                }
+                                viewModel.isShowStickerSheet = true
+                            } label: {
+                                Image("AddStickerIcon")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 64, height: 64)
+                                    .background {
+                                        Circle()
+                                            .frame(width: 70, height: 70)
+                                            .foregroundStyle(.ppPrime)
+                                    }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 16)
+                            .buttonStyle(.plain)
+                            .opacity((viewModel.selectedPostType == .myArchive || viewModel.shouldShowLocalUploadedPost) ? 0 : 1)
                         }
+                        .padding(.horizontal, 20)
                     }
                 }
                 .frame(maxHeight: 468)

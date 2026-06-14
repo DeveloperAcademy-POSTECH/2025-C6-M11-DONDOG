@@ -84,7 +84,6 @@ final class ProfileViewModel: ObservableObject {
         self.coordinator = coordinator
     }
 
-    @MainActor
     func onAppearIfNeeded() async {
         guard mode == .edit else { return }
         await fetchCurrentProfile()
@@ -115,10 +114,8 @@ final class ProfileViewModel: ObservableObject {
             guard let self = self else { return }
             do {
                 guard let manager = self.dataManager as? DataManager else {
-                    await MainActor.run {
-                        self.errorMessage = "데이터 매니저를 찾을 수 없습니다. 잠시 후 다시 시도해 주세요."
-                        self.isLoading = false
-                    }
+                    self.errorMessage = "데이터 매니저를 찾을 수 없습니다. 잠시 후 다시 시도해 주세요."
+                    self.isLoading = false
                     return
                 }
                 try await manager.deleteWhereEqual(
@@ -126,14 +123,10 @@ final class ProfileViewModel: ObservableObject {
                     field: "authorUid",
                     isEqualTo: uid
                 )
-                await MainActor.run {
-                    self.saveForEdit()
-                }
+                self.saveForEdit()
             } catch {
-                await MainActor.run {
-                    self.errorMessage = "스티커 초기화 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요. (\(error.localizedDescription))"
-                    self.isLoading = false
-                }
+                self.errorMessage = "스티커 초기화 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요. (\(error.localizedDescription))"
+                self.isLoading = false
             }
         }
         
@@ -182,22 +175,17 @@ final class ProfileViewModel: ObservableObject {
             guard let self = self else { return }
             do {
                 try await self.dataManager.batchUpdate(options)
-                await MainActor.run {
-                    self.isLoading = false
-                    self.saveCompleted = true
-                    self.coordinator?.inviteShowSentHint = true
-                    self.coordinator?.replaceRoot(.invite)
-                }
+                self.isLoading = false
+                self.saveCompleted = true
+                self.coordinator?.inviteShowSentHint = true
+                self.coordinator?.replaceRoot(.invite)
             } catch {
-                await MainActor.run {
-                    self.errorMessage = "프로필 저장에 문제가 발생했습니다. 잠시 후 다시 시도해주세요. (\(error.localizedDescription))"
-                    self.isLoading = false
-                }
+                self.errorMessage = "프로필 저장에 문제가 발생했습니다. 잠시 후 다시 시도해주세요. (\(error.localizedDescription))"
+                self.isLoading = false
             }
         }
     }
 
-    @MainActor
     private func fetchCurrentProfile() async {
         if let myName = connectUserInfo.myName {
             self.name = myName
@@ -230,18 +218,14 @@ final class ProfileViewModel: ObservableObject {
             guard let self = self else { return }
             do {
                 try await self.dataManager.update(path: userPath, data: updateData)
-                await MainActor.run {
-                    self.isLoading = false
-                    self.initialName = self.name
-                    self.initialRole = self.selectedRole
-                    self.checkIfModified()
-                    self.saveCompleted = true
-                }
+                self.isLoading = false
+                self.initialName = self.name
+                self.initialRole = self.selectedRole
+                self.checkIfModified()
+                self.saveCompleted = true
             } catch {
-                await MainActor.run {
-                    self.errorMessage = "저장에 실패했습니다. 잠시 후 다시 시도해 주세요. (\(error.localizedDescription))"
-                    self.isLoading = false
-                }
+                self.errorMessage = "저장에 실패했습니다. 잠시 후 다시 시도해 주세요. (\(error.localizedDescription))"
+                self.isLoading = false
             }
         }
     }

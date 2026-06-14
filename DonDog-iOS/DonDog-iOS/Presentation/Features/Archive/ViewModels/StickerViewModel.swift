@@ -40,7 +40,6 @@ final class StickerViewModel: ObservableObject {
     @Published var previewURL: URL?
     
     @Published var isStickerAttached: Bool = false
-    @MainActor
     @Published var isSaving = false
     
     let dataManager: DataManagerProtocol = DataManager.shared

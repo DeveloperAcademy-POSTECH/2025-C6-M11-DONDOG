@@ -51,7 +51,7 @@ final class InviteViewModel: ObservableObject {
         
         Task { [weak self] in
             guard let self = self, let user: UserData = try? await self.dataManager.fetch(path: "Users/\(uid)") else { return }
-            await MainActor.run { self.userName = user.name }
+            self.userName = user.name
         }
         
         db.collection("Invites").whereField("inviterUid", isEqualTo: uid).getDocuments { [weak self] result, _ in
@@ -131,11 +131,9 @@ final class InviteViewModel: ObservableObject {
                 let invitedoc: InviteDoc = try await dataManager.fetch(path: "Invites/\(inputcode)")
                 /// 만료 시간 확인
                 if let ts = invitedoc.expireDate, ts.dateValue() < Date() {
-                    await MainActor.run {
-                        self.message = "유효하지 않은 초대코드입니다."
-                        self.allowInviteCodeError = true
-                        self.isLoading = false
-                    }
+                    self.message = "유효하지 않은 초대코드입니다."
+                    self.allowInviteCodeError = true
+                    self.isLoading = false
                     return
                 }
                 /// 초대자 uid 확인
@@ -151,11 +149,9 @@ final class InviteViewModel: ObservableObject {
                     do {
                         let roomSnap = try await roomDoc.getDocument()
                         if let participants = roomSnap.data()?["participants"] as? [String], participants.count >= 2 {
-                            await MainActor.run {
-                                self.message = "이미 사용된 코드라 사용할 수 없어요"
-                                self.allowInviteCodeError = true
-                                self.isLoading = false
-                            }
+                            self.message = "이미 사용된 코드라 사용할 수 없어요"
+                            self.allowInviteCodeError = true
+                            self.isLoading = false
                             return
                         }
                         try await self.commitRoomJoin(
@@ -165,16 +161,12 @@ final class InviteViewModel: ObservableObject {
                             roomId: inviterRoomId,
                             participantUids: [myUid]
                         )
-                        await MainActor.run {
-                            self.isLoading = false
-                            self.connectSucceeded = true
-                        }
+                        self.isLoading = false
+                        self.connectSucceeded = true
                     } catch {
-                        await MainActor.run {
-                            self.message = "유효하지 않은 초대코드입니다. \(error.localizedDescription)"
-                            self.allowInviteCodeError = true
-                            self.isLoading = false
-                        }
+                        self.message = "유효하지 않은 초대코드입니다. \(error.localizedDescription)"
+                        self.allowInviteCodeError = true
+                        self.isLoading = false
                     }
                 } else {
                     /// B) 초대자의 유저 문서에 roomId가 없는 경우 → 고유 roomId 생성 → Rooms 생성 → participants에 초대자/나 모두 추가 → 두 사용자 문서에 roomId/createdAt 저장
@@ -194,17 +186,13 @@ final class InviteViewModel: ObservableObject {
                                     roomId: candidate,
                                     participantUids: [inviterUid, myUid]
                                 )
-                                await MainActor.run {
-                                    self.isLoading = false
-                                    self.connectSucceeded = true
-                                }
+                                self.isLoading = false
+                                self.connectSucceeded = true
                                 break
                             } catch {
-                                await MainActor.run {
-                                    self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(error.localizedDescription)"
-                                    self.allowInviteCodeError = true
-                                    self.isLoading = false
-                                }
+                                self.message = "문제가 생겼어요. 잠시 후 다시 시도해 주세요. \(error.localizedDescription)"
+                                self.allowInviteCodeError = true
+                                self.isLoading = false
                                 return
                             }
                         }
@@ -214,11 +202,9 @@ final class InviteViewModel: ObservableObject {
                     }
                 }
             } catch {
-                await MainActor.run {
-                    self.message = "초대 코드를 다시 확인해 주세요."
-                    self.allowInviteCodeError = true
-                    self.isLoading = false
-                }
+                self.message = "초대 코드를 다시 확인해 주세요."
+                self.allowInviteCodeError = true
+                self.isLoading = false
             }
         }
     }
@@ -308,10 +294,8 @@ final class InviteViewModel: ObservableObject {
                     try await self.dataManager.delete(path: "Invites/\(oldCode)")
                     createNewInvite()
                 } catch {
-                    await MainActor.run {
-                        self.inviteText = "다시 시도해주세요"
-                        self.isLoading = false
-                    }
+                    self.inviteText = "다시 시도해주세요"
+                    self.isLoading = false
                 }
             }
         } else {

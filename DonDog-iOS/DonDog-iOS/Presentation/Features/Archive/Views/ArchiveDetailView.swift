@@ -58,7 +58,7 @@ struct ArchiveDetailView: View {
             }
         }
         .animation(.easeInOut, value: isShowDetail)
-        .navigationBarBackButtonHidden(true)
+        .backHiddenSwipeEnabled()
         .task {
             stickerViewModel.postId = viewModel.currentPostId
             await stickerViewModel.fetchStickers()

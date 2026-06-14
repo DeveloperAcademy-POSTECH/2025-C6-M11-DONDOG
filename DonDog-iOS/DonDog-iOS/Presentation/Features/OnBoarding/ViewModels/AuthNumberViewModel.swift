@@ -95,12 +95,10 @@ final class AuthNumberViewModel: ObservableObject {
                 exists = false
             }
             
-            await MainActor.run {
-                if exists {
-                    self.coordinator?.replaceRoot(.home)
-                } else {
-                    self.coordinator?.replaceRoot(.profileSetup)
-                }
+            if exists {
+                self.coordinator?.replaceRoot(.home)
+            } else {
+                self.coordinator?.replaceRoot(.profileSetup)
             }
         }
     }
@@ -112,16 +110,12 @@ final class AuthNumberViewModel: ObservableObject {
         gridService.fetchedItemIDs.removeAll()
         
         Task {
-            await MainActor.run {
-                AuthService.isAccountDeletionInProgress = true
-            }
+            AuthService.isAccountDeletionInProgress = true
             let success = await deleteUserDataAndAuth()
-            await MainActor.run {
-                if success {
-                    self.coordinator?.replaceRoot(.welcome)
-                }
-                NotificationCenter.default.post(name: .authServiceReconfigureRouting, object: nil)
+            if success {
+                self.coordinator?.replaceRoot(.welcome)
             }
+            NotificationCenter.default.post(name: .authServiceReconfigureRouting, object: nil)
         }
     }
     
@@ -131,9 +125,7 @@ final class AuthNumberViewModel: ObservableObject {
             return false
         }
 
-        await MainActor.run {
-            AuthService.isAccountDeletionInProgress = true
-        }
+        AuthService.isAccountDeletionInProgress = true
 
         let uid = user.uid
         let db = Firestore.firestore()
@@ -156,10 +148,8 @@ final class AuthNumberViewModel: ObservableObject {
         } catch {
             let nsError = error as NSError
             print("[회원탈퇴] 오류: \(nsError.localizedDescription)")
-            await MainActor.run {
-                self.showWithdrawErrorAlert = true
-                self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
-            }
+            self.showWithdrawErrorAlert = true
+            self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
             return false
         }
     }
@@ -302,10 +292,8 @@ final class AuthNumberViewModel: ObservableObject {
             } else {
                 print("[회원탈퇴] Auth 삭제 중 오류: \(nsError.localizedDescription)")
             }
-            await MainActor.run {
-                self.showWithdrawErrorAlert = true
-                self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
-            }
+            self.showWithdrawErrorAlert = true
+            self.alertMessage = "탈퇴 중 오류가 생겼습니다. 다시 시도해주세요."
             return false
         }
     }

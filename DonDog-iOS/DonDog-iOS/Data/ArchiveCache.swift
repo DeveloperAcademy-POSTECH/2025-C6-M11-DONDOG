@@ -11,18 +11,26 @@ actor ArchiveCache {
     static let shared = ArchiveCache()
     private init() {}
     
+    private var cachedRoomId: String?
     private var cachedPosts: [PostData] = []
     private var cachedLastPostCreatedAt: Timestamp?
     
-    var allPosts: [PostData] { cachedPosts }
-    var lastPostCreatedAt: Timestamp? { cachedLastPostCreatedAt }
+    func snapshot(for roomId: String) -> (posts: [PostData], lastPostCreatedAt: Timestamp?) {
+        guard cachedRoomId == roomId else { return ([], nil) }
+        return (cachedPosts, cachedLastPostCreatedAt)
+    }
     
-    func update(with posts: [PostData]) {
+    func update(roomId: String, with posts: [PostData]) {
+        cachedRoomId = roomId
         cachedPosts = posts.sorted { $0.createdAt.dateValue() < $1.createdAt.dateValue() }
         cachedLastPostCreatedAt = cachedPosts.last?.createdAt
     }
     
-    func merge(newPosts: [PostData]) {
+    func merge(roomId: String, newPosts: [PostData]) {
+        guard cachedRoomId == roomId else {
+            update(roomId: roomId, with: newPosts)
+            return
+        }
         guard newPosts.isEmpty == false else { return }
         var dict: [String: PostData] = [:]
         for post in cachedPosts { dict[post.postId] = post }
@@ -34,6 +42,7 @@ actor ArchiveCache {
     }
     
     func clear() {
+        cachedRoomId = nil
         cachedPosts = []
         cachedLastPostCreatedAt = nil
     }

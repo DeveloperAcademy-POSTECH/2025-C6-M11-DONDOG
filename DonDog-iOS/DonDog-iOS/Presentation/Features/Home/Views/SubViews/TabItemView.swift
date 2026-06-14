@@ -131,7 +131,6 @@ struct TabItemView: View {
                 .frame(maxHeight: 468)
             }
         }
-        .blur(radius: DateUtils.isOver3daysSinceLastUpload() ? 12 : 0)
         .tag(tag)
         .overlay(alignment: .bottom) {
             if !isEditing {
@@ -140,18 +139,6 @@ struct TabItemView: View {
                     .frame(maxHeight: 97)
                     .frame(width: 353)
                     .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 12, bottomTrailingRadius: 12))
-            }
-        }
-        .overlay {
-            if DateUtils.isOver3daysSinceLastUpload() {
-                VStack(spacing: 6) {
-                    Image("LockerIcon")
-                    Text("사진을 업로드한 지 3일이 지나\n사진을 확인할 수 없어요")
-                        .font(.subtitleSemiBold16)
-                        .foregroundStyle(.ppWhite)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(3)
-                }
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))

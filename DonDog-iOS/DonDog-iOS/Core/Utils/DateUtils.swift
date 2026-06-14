@@ -82,25 +82,6 @@ final class DateUtils {
         return hour >= 0 && hour < 15
     }
     
-    static func isOver3daysSinceLastUpload() -> Bool {
-        let connectUserInfo = UserPairingStore.shared
-        
-        guard let lastUploadedAt = connectUserInfo.lastUploadedAt else {
-            return false
-        }
-        
-        let uploadDateStart = startOfDay(for: lastUploadedAt)
-        
-        let now = Date()
-        let todayStart = startOfDay(for: now)
-        
-        guard let threeDaysLater = calendar.date(byAdding: .day, value: 3, to: uploadDateStart) else {
-            return false
-        }
-        
-        return todayStart >= threeDaysLater
-    }
-    
     static func remainingHoursForUpload() -> (hours: Int, period: String) {
         let now = Date()
         let hour = calendar.component(.hour, from: now)

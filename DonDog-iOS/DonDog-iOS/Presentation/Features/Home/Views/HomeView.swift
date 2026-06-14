@@ -60,7 +60,7 @@ struct HomeView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     
                     if let currentPost = viewModel.currentPost {
-                        if !DateUtils.isOver3daysSinceLastUpload() && !viewModel.isShowStickerSheet {
+                        if !viewModel.isShowStickerSheet {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
                                     if viewModel.isUploadingLocalImage {

@@ -43,9 +43,7 @@ final class SitckerCollectionViewModel: ObservableObject {
         
         Task {
             await StickerGridService().fetchStickerImage(for: item, in: category)
-            await MainActor.run {
-                StickerEmotionTagManager.shared.emotionTags = []
-            }
+            StickerEmotionTagManager.shared.emotionTags = []
         }
     }
 }

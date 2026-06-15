@@ -30,11 +30,14 @@ final class AuthService {
     // MARK: - 라우팅 진입점/코어
     func configureAuthBasedRouting(coordinator: AppCoordinator) {
         self.coordinatorRef = coordinator
-        applyRouteForUser(coordinator: coordinator)
-        authHandle = Auth.auth().addStateDidChangeListener { [weak self] _, _ in
-            guard let self = self else { return }
-            self.applyRouteForUser(coordinator: coordinator)
+        
+        if authHandle == nil {
+            authHandle = Auth.auth().addStateDidChangeListener { [weak self] _, _ in
+                guard let self = self, let coord = self.coordinatorRef else { return }
+                self.applyRouteForUser(coordinator: coord)
+            }
         }
+        
         if reconfigureObserver == nil {
             reconfigureObserver = NotificationCenter.default.addObserver(
                 forName: .authServiceReconfigureRouting,
@@ -78,7 +81,7 @@ final class AuthService {
             let userDoc = Firestore.firestore().collection("Users").document(uid)
             
             self.userDocListenr?.remove()
-            self.userDocListenr = userDoc.addSnapshotListener(includeMetadataChanges: true) { [weak self] userDoc, error in
+            self.userDocListenr = userDoc.addSnapshotListener(includeMetadataChanges: false) { [weak self] userDoc, error in
                 guard let self = self else { return }
                 self.handleUserSnapshot(coordinator: coordinator, userDoc: userDoc, error: error, refreshUser: refreshUser)
             }
@@ -88,10 +91,7 @@ final class AuthService {
     // MARK: - 라우팅 처리 1: 라우팅 & FCM 토큰 관리
     private func replaceRootinAuthService(_ route: AppRoute, coordinator: AppCoordinator) {
         Task { @MainActor in
-            // if coordinator.root == route { return }
-            NSLog("[AuthService] replaceRootinAuthService: \(coordinator.root) -> \(route)")
             coordinator.replaceRoot(route)
-            NSLog("[AuthService replaceRootinAuthService함수] 🔄 \(coordinator.root) → \(route)")
         }
     }
     
@@ -193,7 +193,7 @@ final class AuthService {
                     let partnerDoc = try await db.collection("Users").document(partnerUid).getDocument()
                     state.partnerUid = partnerUid
                     state.partnerName = partnerDoc.data()?["name"] as? String
-                    NSLog("[AuthService] Partner Info: uid = \(partnerUid), name = \(state.partnerName ?? "nil")")
+                    NSLog("[AuthService1 - Partner Info] uid = \(partnerUid), name = \(state.partnerName ?? "nil")")
                 } else {
                     state.partnerUid = nil
                     state.partnerName = nil
@@ -202,8 +202,8 @@ final class AuthService {
                 state.roomId = rid
                 state.isConnected = .connected
                 
-                NSLog("[AuthService] My Info: uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil"), role = \(state.myRole ?? "nil")")
-                NSLog("[AuthService] 상태: 연결 상태 =\(state.isConnected), roomId=\(state.roomId ?? "nil"), lastUploadedAt = \(DateUtils.string(from: state.lastUploadedAt ?? .now, format: .full))")
+                NSLog("[AuthService2 - My Info] uid = \(state.myUid ?? "nil"), name = \(state.myName ?? "nil"), role = \(state.myRole ?? "nil")")
+                NSLog("[AuthService3 - 연결 상태] \(state.isConnected), roomId=\(state.roomId ?? "nil"), lastUploadedAt = \(DateUtils.string(from: state.lastUploadedAt ?? .now, format: .full))")
                 
                 if previousRoomId == nil {
                     replaceRootinAuthService(.home, coordinator: coordinator)

@@ -21,6 +21,8 @@ struct TabItemView: View {
     let tag: Int
     let postId: String?
     var isShowGradient: Bool
+    var isUploadingPost: Bool = false
+    var showLocalLoadingPlaceholder: Bool = false
     
     private var postImageType: PostImageType {
         tag == 0 ? .front : .back
@@ -33,26 +35,33 @@ struct TabItemView: View {
     var body: some View {
         Group {
             switch imageSource {
-            case .local:
-                HStack {
-                    Spacer()
-                    VStack {
+            case .local(let image):
+                if showLocalLoadingPlaceholder {
+                    HStack {
                         Spacer()
-                        Image("LoadingView")
-                        Text("지금 사진을 불러오는 중이에요.")
-                            .font(.subtitleSemiBold16)
-                            .foregroundStyle(.ppGray700)
-                        Text("곧 사진이 도착해요! 잠시만 기다려 주세요.")
-                            .font(.captionRegular14)
-                            .foregroundStyle(.ppGray500)
-                            .padding(.top, 2)
+                        VStack {
+                            Spacer()
+                            Image("LoadingView")
+                            Text("지금 사진을 불러오는 중이에요.")
+                                .font(.subtitleSemiBold16)
+                                .foregroundStyle(.ppGray700)
+                            Text("곧 사진이 도착해요! 잠시만 기다려 주세요.")
+                                .font(.captionRegular14)
+                                .foregroundStyle(.ppGray500)
+                                .padding(.top, 2)
+                            Spacer()
+                        }
                         Spacer()
                     }
-                    Spacer()
-                }
-                .frame(maxHeight: 468)
-                .background {
-                    Color.ppGray200
+                    .frame(maxHeight: 468)
+                    .background {
+                        Color.ppGray200
+                    }
+                } else {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxHeight: 468)
                 }
                 
             case .remote(let url):

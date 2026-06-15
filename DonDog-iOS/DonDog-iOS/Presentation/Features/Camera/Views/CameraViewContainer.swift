@@ -86,7 +86,7 @@ struct CameraViewContainer: View {
                     backImage: cameraViewModel.backImage
                 )
                 
-                newCaptionVM.delegate = delegate
+                newCaptionVM.uploadStatusDelegate = delegate
                 
                 captionViewModel = newCaptionVM
             } else {

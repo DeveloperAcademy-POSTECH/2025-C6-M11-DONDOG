@@ -45,7 +45,7 @@ final class ArchiveViewModel: ObservableObject {
         self.coordinator = coordinator
     }
     func moveToPost(day: ArchiveDay) {
-        Task { @MainActor in
+        Task {
             if let post = allPosts.first(where: { $0.postId == day.postId }) {
                 coordinator?.push(.archiveDetail(post: post, postType: .archive))
                 return
@@ -65,27 +65,34 @@ final class ArchiveViewModel: ObservableObject {
     
     // MARK: - posts 데이터 가져오기
     func updateMonthlyArchives() async {
-        let cachedPosts = await archiveCache.allPosts
-        let localLastCreatedAt = await archiveCache.lastPostCreatedAt
-        
-        /// 캐싱이 있으면 즉시 표시 (로딩 없이 복귀)
-        await MainActor.run {
-            self.allPosts = cachedPosts
-            updateDisplayArchives()
-            self.isLoading = false
-        }
-        
-        /// A 서버에서 전부 가져오기 (캐시가 없거나, 캐시에 최신 시간이 없는 경우)
-        if cachedPosts.isEmpty || localLastCreatedAt == nil {
-            await MainActor.run { isLoading = true }
-            let allPosts = await fetchAllPosts()
-            await archiveCache.update(with: allPosts)
-            
+        guard let roomId = connectUserInfo.roomId, !roomId.isEmpty else {
+            await archiveCache.clear()
             await MainActor.run {
-                self.allPosts = allPosts
+                self.allPosts = []
                 updateDisplayArchives()
                 self.isLoading = false
             }
+            return
+        }
+        
+        let snapshot = await archiveCache.snapshot(for: roomId)
+        let cachedPosts = snapshot.posts
+        let localLastCreatedAt = snapshot.lastPostCreatedAt
+        
+        /// 캐싱이 있으면 즉시 표시 (로딩 없이 복귀)
+        self.allPosts = cachedPosts
+        updateDisplayArchives()
+        self.isLoading = false
+        
+        /// A 서버에서 전부 가져오기 (캐시가 없거나, 캐시에 최신 시간이 없는 경우)
+        if cachedPosts.isEmpty || localLastCreatedAt == nil {
+            isLoading = true
+            let allPosts = await fetchAllPosts()
+            await archiveCache.update(roomId: roomId, with: allPosts)
+            
+            self.allPosts = allPosts
+            updateDisplayArchives()
+            self.isLoading = false
             return
         }
         
@@ -100,10 +107,10 @@ final class ArchiveViewModel: ObservableObject {
         /// C 캐싱안된것 가져오기 (서버에 새 글이 있는 경우)
         guard let local = localLastCreatedAt else { return }
         let newPosts = await fetchPosts(after: local)
-        await archiveCache.merge(newPosts: newPosts)
+        await archiveCache.merge(roomId: roomId, newPosts: newPosts)
         
         /// 최종: 캐싱된 것 UI에 보여주기
-        let merged = await archiveCache.allPosts
+        let merged = await archiveCache.snapshot(for: roomId).posts
         await MainActor.run {
             self.allPosts = merged
             updateDisplayArchives()

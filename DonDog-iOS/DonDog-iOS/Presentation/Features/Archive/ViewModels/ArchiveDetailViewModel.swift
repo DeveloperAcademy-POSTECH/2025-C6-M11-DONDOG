@@ -23,10 +23,6 @@ final class ArchiveDetailViewModel: ObservableObject {
         configure(with: post)
     }
     
-    deinit {
-        print("ArchiveDetailViewModel deinit")
-    }
-    
     private func configure(with post: PostData) {
         let isMine = post.authorId == connectUserInfo.myUid
         isMyPost = isMine

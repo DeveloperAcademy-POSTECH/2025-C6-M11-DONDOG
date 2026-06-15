@@ -11,19 +11,24 @@ import FirebaseFirestore
 import FirebaseStorage
 import SwiftUI
 
+enum CaptionUploadResult {
+    case success
+    case failure(message: String)
+}
+
 protocol CaptionViewModelDelegate: AnyObject {
-    func didUploadPost()
     func didStartUploading(frontImage: UIImage?, backImage: UIImage?, caption: String)
+    func didFinishUploading(result: CaptionUploadResult)
 }
 
 final class CaptionViewModel: ObservableObject {
     @Published var caption: String = ""
-    @Published var isUploading: Bool = false
     @Published var currentIndex: Int = 0
     
     let connectUserInfo = UserPairingStore.shared
-    weak var delegate: CaptionViewModelDelegate?
+    weak var uploadStatusDelegate: CaptionViewModelDelegate?
     private let dataManager: DataManagerProtocol = DataManager.shared
+    private var isUploading: Bool = false
     
     var frontImage: UIImage?
     var backImage: UIImage?
@@ -34,21 +39,30 @@ final class CaptionViewModel: ObservableObject {
     }
     
     func uploadPost() {
+        guard !isUploading else { return }
+        
         guard let frontImage = frontImage, let backImage = backImage else {
             print("❌ 전면 또는 후면 이미지가 없습니다")
             return
         }
+        guard let roomId = connectUserInfo.roomId else {
+            uploadStatusDelegate?.didFinishUploading(result: .failure(message: "roomId를 찾을 수 없습니다"))
+            return
+        }
+        guard let myUid = connectUserInfo.myUid else {
+            uploadStatusDelegate?.didFinishUploading(result: .failure(message: "myUid를 찾을 수 없습니다"))
+            return
+        }
         
+        isUploading = true
         let captionSnapshot = self.caption
-        delegate?.didStartUploading(frontImage: frontImage, backImage: backImage, caption: captionSnapshot)
+        uploadStatusDelegate?.didStartUploading(frontImage: frontImage, backImage: backImage, caption: captionSnapshot)
         
         Task {
-            let captionSnapshot = await MainActor.run { self.caption }
-            
+            defer {
+                self.isUploading = false
+            }
             do {
-                guard let roomId = connectUserInfo.roomId else { return }
-                guard let myUid = connectUserInfo.myUid else { return }
-
                 let postId = UUID().uuidString
                 print("전면/후면 이미지 업로드 시작 - Post ID: \(postId)")
 
@@ -75,17 +89,12 @@ final class CaptionViewModel: ObservableObject {
 
                 try await dataManager.update(path: "Users/\(myUid)", data: ["recentPostId": postId, "lastUploadedAt": FieldValue.serverTimestamp()])
 
-                await MainActor.run {
-                    connectUserInfo.lastUploadedAt = Date()
-                    self.isUploading = false
-                    print("[CaptionViewModel.uploadPost] 업로드 성공: \(postData.authorId)")
-                    self.delegate?.didUploadPost()
-                }
+                connectUserInfo.lastUploadedAt = Date()
+                print("[CaptionViewModel.uploadPost] 업로드 성공: \(postData.authorId)")
+                self.uploadStatusDelegate?.didFinishUploading(result: .success)
             } catch {
-                await MainActor.run {
-                    self.isUploading = false
-                    print("❌ 업로드 실패: \(error.localizedDescription)")
-                }
+                print("❌ 업로드 실패: \(error.localizedDescription)")
+                self.uploadStatusDelegate?.didFinishUploading(result: .failure(message: error.localizedDescription))
             }
         }
     }

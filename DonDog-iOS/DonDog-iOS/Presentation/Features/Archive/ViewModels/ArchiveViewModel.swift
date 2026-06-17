@@ -282,13 +282,4 @@ final class ArchiveViewModel: ObservableObject {
         
         return currentDisplayMonth.year == currentYear && currentDisplayMonth.month == currentMonth
     }
-    
-    // 게시물 업로드 3일 초과시 처리
-    func isPostBlurred(for day: ArchiveDay) -> Bool {
-        let isOver3Days = DateUtils.isOver3daysSinceLastUpload()
-        let isPartnerArchive = selectedAuthorType == .partnerArchive
-        let lastUploadedAt = connectUserInfo.lastUploadedAt ?? Date()
-        
-        return isOver3Days && isPartnerArchive && day.date > lastUploadedAt
-    }
 }

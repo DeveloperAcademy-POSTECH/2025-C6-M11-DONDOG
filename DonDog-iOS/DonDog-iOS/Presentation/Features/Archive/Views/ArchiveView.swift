@@ -97,13 +97,9 @@ struct ArchiveView: View {
                                     VStack {
                                         LazyVGrid(columns: grid, spacing: 4) {
                                             ForEach(month.days) { day in
-                                                ArchivePostContainer(url: day.thumbnailURL, day: day.day, date: day.date, isBlurred: viewModel.isPostBlurred(for: day))
+                                                ArchivePostContainer(url: day.thumbnailURL, day: day.day, date: day.date)
                                                     .onTapGesture {
-                                                        if !viewModel.isPostBlurred(for: day) {
-                                                            viewModel.moveToPost(day: day)
-                                                        } else {
-                                                            showToastView = true
-                                                        }
+                                                        viewModel.moveToPost(day: day)
                                                     }
                                                     .hapticFeedback(.medium)
                                             }
@@ -124,13 +120,13 @@ struct ArchiveView: View {
                                     .multilineTextAlignment(.center)
                                     .font(.bodyMedium16)
                                     .foregroundStyle(.ppGray500)
-                            Spacer()
+                                Spacer()
+                            }
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        }
             
             if viewModel.isLoading {
                 VStack(alignment: .center, spacing: 16) {
@@ -143,23 +139,6 @@ struct ArchiveView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(.ppWhite)
-            }
-            
-            if showToastView {
-                VStack {
-                    Spacer()
-                    ToastView(toastText: "게시물을 올린지 3일이 지났어요!")
-                        .padding(.bottom, 101)
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                withAnimation { showToastView = false }
-                            }
-                        }
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .bottom).animation(.spring()),
-                            removal: .opacity.animation(.easeOut(duration: 0.7))
-                        ))
-                }
             }
         }
         .background(.ppWhite)
@@ -183,7 +162,6 @@ struct ArchivePostContainer: View {
     let url: URL
     let day: Int
     let date: Date
-    let isBlurred: Bool
     
     @State private var isFailed = false
     
@@ -208,25 +186,11 @@ struct ArchivePostContainer: View {
                 .scaledToFill()
                 .frame(width: 72, height: 96)
                 .transition(.opacity)
-                .blur(radius: isBlurred ? 4 : 0)
                 .cornerRadius(2)
                 .clipped()
                 .overlay(
                     Group {
-                        if isBlurred {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(.ppBlack.opacity(0.3))
-                                .overlay {
-                                    VStack {
-                                        Text("\(day)일")
-                                            .font(.subtitleSemiBold16)
-                                            .foregroundStyle(.ddWhite)
-                                        Image(systemName: DateUtils.isATime(date: date) ? "sun.max.fill" : "moon.fill")
-                                            .font(.bodyMedium16)
-                                            .foregroundStyle(.ddWhite)
-                                    }
-                                }
-                        } else if isFailed {
+                        if isFailed {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 2)
                                     .fill(.ppGray600)

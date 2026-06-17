@@ -77,7 +77,7 @@ struct HomeView: View {
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     
-                    if !DateUtils.isOver3daysSinceLastUpload() && !viewModel.isShowStickerSheet && (viewModel.shouldShowLocalUploadedPost || viewModel.currentPost != nil) {
+                    if !viewModel.isShowStickerSheet && (viewModel.shouldShowLocalUploadedPost || viewModel.currentPost != nil) {
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 if viewModel.isUploadingLocalImage {

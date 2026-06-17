@@ -150,19 +150,6 @@ struct TabItemView: View {
                     .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 12, bottomTrailingRadius: 12))
             }
         }
-        .blur(radius: (!isUploadingPost && DateUtils.isOver3daysSinceLastUpload()) ? 12 : 0)
-        .overlay {
-            if !isUploadingPost && DateUtils.isOver3daysSinceLastUpload() {
-                VStack(spacing: 6) {
-                    Image("LockerIcon")
-                    Text("사진을 업로드한 지 3일이 지나\n사진을 확인할 수 없어요")
-                        .font(.subtitleSemiBold16)
-                        .foregroundStyle(.ppWhite)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(3)
-                }
-            }
-        }
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .padding(.horizontal, 20)
         .task(id: postId) {
